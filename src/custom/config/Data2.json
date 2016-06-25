@@ -1,0 +1,81 @@
+configManager.configs.push({
+	configName:"data2", /*mandatory field, must be unique among other configs*/
+	prefix:"DT2", /*mandatory field, must be unique among other configs*/
+	neo4jconnection:{	
+		sourceName:"schema",
+		server:"http://localhost:7474",
+		username:"neo4j",
+		password:"Password@123456"
+	},
+	startupOptions:{
+		//defaultConnection:"local", //used unless source is otherwise specified.
+		startupSearch:[
+		  /*{label:"SOME_LABEL", source:"NEO4J_CONNECTION, properties:[{key:"KEYNAME", value:"VALUE"}]"*/
+			//{label:"Person", properties:[{key:"name", value:"Amy"}] }
+			//,{"label":"ROOT"}
+			//,{"label":"host"}
+			//,{"label":"service"}
+			//,{"label":"ipv4network"}
+			//,{"label":"site"}
+		],
+		startupQueries:[
+			{fromEntity:"Human"},
+			{fromEntity:"Person"},
+			{fromEntity:"Transport"},
+			{fromEntity:"House"}
+			//{fromEntity:"service", whereProperty:"serviceName", equalsValue:"vanguard2"},
+			//{fromEntity:"version", whereProperty:"versionName", equalsValue:"V23"}
+		],
+		nodeDisplayValues:[
+		  /*{label:"SOME_LABEL", displayField??label, displayLabel??label},*/
+			//{label:"Human", displayField:"Name"},
+			{label:"service", displayField:"status"},
+			{label:"version", displayField:"versionName"}
+		],
+		nodeDisplayBody: [
+			/*{label:"SOME_LABEL", "image":"IMAGE_URL"??none, "color":"HEXVALUE"??auto, "size":30, "labelPos":"above/under/left/right"??center},*/
+			//{label:"host", color:"#002533"}
+		],
+	},
+
+	viewOptions:{
+		prefetchLabelSelectors:true
+	},
+	displaySettings:{
+			selectorColor:"#0066cc",
+			graphBackground:"linear-gradient(white, white)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
+			
+			entityShape:"circle",
+			entityRgbRange:{min:150,max:200},/*The 4bit rgb range from which label colors can be automatically generated.*/			
+			entityLabelColor:"black",
+			entityBorderColor:"black", /*null=auto-color*/
+			entityOpacity: 1,
+			
+			linkColor:"black", /*...html/hex color*/
+			linkMainTextColor:"black",
+			linkSubTextColor:"black",
+			linkThickness: 2,
+			linkOpacity:1,
+			
+			opaque:false,
+			labelSizing:"fontsize", /*choices: "hyphenate" (make labels shorter) "fontsize" (make the font size smaller) "" (no sizing, labels may extend past the boundaries of the node)*/
+			
+			/*effects...*/
+			
+			haze:false, /*...outer node haze*/
+			highlightHaze:true, /*...outer node haze*/
+			shadow:false, /*...outer node shadow*/
+			glow:false, /*...outer node glow*/
+			rounded:false, /*...inner node shadow*/
+			
+			//node data...
+			showLabels:true,
+			loadNodePopouts:true,
+			
+			//link data
+			showRelationships:"all",/*showRelationships: "all/on-highlight/none" */
+			loadRelationPopouts:false,
+			showRelationProperties: true
+			
+	}
+})
