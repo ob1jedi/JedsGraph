@@ -7,8 +7,8 @@
     <script type="text/javascript" src="deps/vivagraph.js"></script>
 	<script type="text/javascript" src="custom/configloader.json"></script>
 	<script type="text/javascript" src="custom/defaultConfig.json"></script>
-	<script type="text/javascript" src="custom/config/Data1.json"></script>
 	<script type="text/javascript" src="custom/config/Data2.json"></script>
+	
     <!--
     This example uses jQuery, but it's only for convenience of listenting
     to DOM events. The jQuery can be replaced with your favorite library.
@@ -195,7 +195,8 @@
 		
 		function neoLabel(setName, setColor, setColorRGB, setSourceConfig)
 		{
-			this.sourceConfig = setSourceConfig;
+			this.data = {};
+			this.data.sourceConfig = setSourceConfig;
 			this.instanceCount = 0;
 			this.name = setName;
 			this.color = setColor;
@@ -301,7 +302,6 @@
 			//$topBar.addEventListener('dragend', handleDragEnd, false);
 			
 			config.viewOptions.panels.forEach(function(panel){
-				//jed3
 				//$elParent = document.getElementById(panel.parent)	
 				$elPanel = document.getElementById(panel.name);
 				//elParent.innerHtml += elPanel;
@@ -360,7 +360,6 @@
 		
 		function toggleToolPanel(panelName)
 		{
-			//jed
 			var panel;
 			currentTheme.sourceConfig.viewOptions.panels.map(function (p) {if (p.name==panelName){panel = p;}})
 			$elButton = document.getElementById('toolbar.'+ panel.name);
@@ -565,10 +564,10 @@
                         .attr('y', 0)
                         .attr('rx', 7)
                         .attr('height', 0)
-						.attr('fill','#141414')
+						.attr('fill',currentTheme.sourceConfig.displaySettings.entityPopoutBoxColor)
 						//.attr('width','20%')
 
-                    if (!currentTheme.sourceConfig.displaySettings.opaque) {CommonUI.popoutBodyUI.attr('fill-opacity',0.3);}
+                    //if (!currentTheme.sourceConfig.displaySettings.opaque) {CommonUI.popoutBodyUI.attr('fill-opacity',0.3);}
 					
 			CommonUI.popoutInfoUI.append(CommonUI.popoutBodyUI);
 			CommonUI.popoutInfoUI.append(CommonUI.popoutTextUI);
@@ -1219,7 +1218,7 @@
 		{
 			var x;
 				labelsList.forEach(function(labelobj, index){
-				if (labelobj.name == byName &&  labelobj.sourceConfig.prefix == sourcePrefix){
+				if (labelobj.name == byName &&  labelobj.data.sourceConfig.prefix == sourcePrefix){
 					x = labelobj;
 					return labelobj;
 				}
@@ -1429,11 +1428,11 @@
 			if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML = '<option value=""></option>';}
 			
 			labelsList.forEach(function(label,index){
-				color = label.sourceConfig.displaySettings.selectorColor;
-				button_onclick = "Neo4jGetNodesByLabel('"+label.name+"', '"+ label.sourceConfig.prefix +"')";
+				color = label.data.sourceConfig.displaySettings.selectorColor;
+				button_onclick = "Neo4jGetNodesByLabel('"+label.name+"', '"+ label.data.sourceConfig.prefix +"')";
 				fetchButton = '<button id="labelSelector.fetcher.'+label.name+'" class="forlabelselector mytooltip" style="background-color:'+label.color+'" onclick="'+button_onclick+'">'+label.instanceCount+'<div class="mytooltiptext ttleft ttupper">Fetch from database</div></button>'
 				labelSelectorHtml += '<tr><td><div onclick="highlightLabel('+index+')" class="labelSelectorPanel" style="background-color:'+color+';">' + label.name +'</div></td><td>'+fetchButton+'</td></tr>';
-				if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML += '<option value="' + label.name + label.sourceConfig.prefix + '">' +( label.name + " (" +label.sourceConfig.prefix+ ")") + '</option>';}
+				if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML += '<option value="' + label.name + label.data.sourceConfig.prefix + '">' +( label.name + " (" +label.data.sourceConfig.prefix+ ")") + '</option>';}
 			});
 			labelSelectorHtml += '</table>';
 			var LabelsDiv = document.getElementById('selectorLabels');
@@ -1786,7 +1785,7 @@
 		{
 			if (!nodeID){nodeID = selectedNodeID;}
 			var node = GRAPH.getNode(nodeID);
-			var _sourceConfig = node.sourceConfig;
+			var _sourceConfig = node.data.sourceConfig;
 			var entityName = document.getElementById('new.entity.name').value;
 			if (!entityName || entityName == ''){alert('Save failed!\nNo entity name specified.'); return;}
 			var propIndex = 0;
@@ -1815,7 +1814,7 @@
 		{
 			var node1 = GRAPH.getNode(nodeID1);
 			var node2 = GRAPH.getNode(nodeID2);
-			if (node1.sourceConfig.prefix != node2.sourceConfig.prefix){
+			if (node1.data.sourceConfig.prefix != node2.data.sourceConfig.prefix){
 				alert('Save failed!\nYou cannot relate nodes from different sources.'); return;
 			} 
 			var relationName = document.getElementById('new.relation.name').value;
@@ -2292,6 +2291,55 @@
 			*/
 		}
 		
+		
+		function arrangeBy2(rootNode, processedNodeIds, posLeft, posTop, level)
+		{
+			console.log()
+			if (!rootNode){
+				squares = [];
+				var startPos = layout.getNodePosition(nodeList[0].id);
+				var rootNodes = getDataRootNodes();
+				processedNodeIds = [];
+				nodeList.forEach(function(node){
+					layout.pinNode(node, true);
+					node.data.isPinned = true;
+					layout.setNodePosition(node.id, startPos.x, startPos.y);
+				});
+			
+				posLeft = startPos.x;
+				posTop = startPos.y;
+				var rootTop = startPos.y;
+				rootNodes.forEach(function(rootNode, index){
+					console.log(rootNode.id + ' = ' + posTop);
+					posTop += 100;
+					posTop = arrangeBy2(rootNode, processedNodeIds, posLeft, posTop, 0);
+					var parentPos = rootTop + ((posTop - rootTop)/2);
+					layout.setNodePosition(rootNode.id, posLeft, parentPos);
+					rootTop = posTop;
+				});
+			}
+			else{
+				level++;
+				processedNodeIds.push(rootNode.id);
+				var rootNodePos = {x:posLeft, y:posTop};
+				posLeft += 100;
+				var currentChildTop = posTop - 100;
+				rootNode.data.toNodes.forEach(function(childNode, index){
+					//jed
+					if (processedNodeIds.indexOf(childNode.id) < 0){					
+						currentChildTop += 100;
+						//posTop += 100;
+						layout.setNodePosition(childNode.id, posLeft + 100, currentChildTop);
+						posTop = arrangeBy2(childNode, processedNodeIds, posLeft, currentChildTop, level);
+					}
+				});
+				//var parentPos = rootNodePos.y + ((posTop - rootNodePos.y)/2);
+				//layout.setNodePosition(rootNode.id, posLeft, parentPos);
+			}
+			return posTop;
+		}
+		
+		
 		function addNodeToGraph(nodeId, nodeData)
 		{
 			var node = GRAPH.getNode(nodeId);
@@ -2488,7 +2536,7 @@
 				newNodes.forEach(function (newNode){
 					layout.pinNode(newNode, true);
 					var pos = layout.getNodePosition(nodeId);
-					layout.setNodePosition(newNode.id, pos.x, pos.y-10);
+					layout.setNodePosition(newNode.id, getRandomArbitrary(pos.x-newNode.data.nodeSize/2, pos.x+newNode.data.nodeSize/2), getRandomArbitrary(pos.y-newNode.data.nodeSize/2, pos.y+newNode.data.nodeSize/2));
 					layout.pinNode(newNode, false);
 				});
 				
@@ -2582,7 +2630,7 @@
 			var callback = function (relationsResult, sourceConfig) {
 				addSingleRelationFromResults(relationsResult, sourceConfig);
 			}
-			var command = 'MATCH (n)-[r]-(m) RETURN id(n), id(m), id(r), type(r), r';
+			var command = 'MATCH (n)-[r]->(m) RETURN id(n), id(m), id(r), type(r), r';
 			Neo4j_Command([command], callback, _sourceConfig);
 		}
 		
@@ -2987,7 +3035,7 @@
 			   var linkUI = graphics.getLinkUI(link.id);
 			   if (linkUI) {
 				   if (!link.data.checked) {
-						linkUI.children[LINK_INDEX_0].attr('stroke', isOn ? '#cc3300' : link.data.color)
+						linkUI.children[LINK_INDEX_0].attr('stroke', isOn ? currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)
 					}
 			   }
 		   });
@@ -3004,7 +3052,7 @@
 				descendantNode.data.toLinks.forEach(function(link){
 					var linkUI = graphics.getLinkUI(link.id);
 					if (linkUI) {
-						if (!link.data.checked) {linkUI.children[LINK_INDEX_0].attr('stroke', isOn ? '#cc3300' : link.data.color)}
+						if (!link.data.checked) {linkUI.children[LINK_INDEX_0].attr('stroke', isOn ? currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)}
 					}
 				});
 				
@@ -3026,7 +3074,7 @@
 				ancestorNode.data.fromLinks.forEach(function(link){
 					var linkUI = graphics.getLinkUI(link.id);
 					if (linkUI) {
-						if (!link.data.checked) {linkUI.children[LINK_INDEX_0].attr('stroke', isOn ? '#cc3300' : link.data.color)}
+						if (!link.data.checked) {linkUI.children[LINK_INDEX_0].attr('stroke', isOn ? currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)}
 					}
 				});
 				ancestorNode.data.fromNodes.forEach(function (node){
@@ -3953,8 +4001,7 @@
 						showLinkDetails(link);
 						toggleLink(link);
 					});
-					
-					
+
 					link.data.UI.fullUI = ui;
 					link.data.UI.pathUI = linkPath;
 					link.data.UI.popoutBodyUI = linkRect;
@@ -4008,7 +4055,7 @@
 					var linkPath = Viva.Graph.svg('path')
 							   .attr('id',linklabelId)
 							   .attr('stroke', link.data.color)
-							   .attr('stroke-width', link.sourceConfig.displaySettings.linkThickness)
+							   .attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness)
 							   .attr("fill", 'transparent');
 							   if (!link.data.sourceConfig.displaySettings.opaque) {linkPath.attr('stroke-opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
 
@@ -4023,14 +4070,16 @@
 				}
 				
 				ui.attr('linkType', link.data.linkType);
+				ui.attr('textOrient', '-1');
 				return ui;   
             })
 			
 			//LINKS DRAWING/RENDERING (occurs continuously for every link...)
 			//var geom = Viva.Graph.geom();
 			graphics.placeLink(function(linkUI, fromPos, toPos) {
+				var linkDataIndex = linkUI.attr('linkDataIndex');	
 				var linkIndex = linkUI.attr('linkPos');
-
+				
 				var from = fromPos;
 				var to = toPos;
 
@@ -4057,34 +4106,36 @@
 					for (var h = 0; h < child.children.length; h++)
 					{
 						if (!child.children[h]) continue;
-						//if (!child.children[h].attr) continue;
-						//if (!child.children[h].attr('x')) continue;
-						//child.children[h].attr('x', curvex);
 					}
 				}
-				//linkUI.children.forEach(function (child){ 
-				//	if (child.attr('refx'))
-				//	{
-				//		child.attr('x',to.x - Number(child.attr('refx')));
-				//		child.attr('y',to.y - Number(child.attr('refy')));
-				//	}
-				//})
+
+				//Flip the text orientation on relationships so that the text is never upside down...
+				if (linkUI.attr('labelVisible') == 'true'){
+					if (to.x > 0 && (linkUI.attr('textOrient') == '0' || linkUI.attr('textOrient') == '-1')){
+						//console.log(linkList[Number(linkDataIndex)].data.UI.toMarkerUI);
+						linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(1,1)');
+						linkUI.attr('textOrient','1');
+						console.log(linkUI.attr('textOrient'));
+					}
+					else if (to.x < 0 && (linkUI.attr('textOrient') == '1' || linkUI.attr('textOrient') == '-1')){
+						linkUI.attr('textOrient', '0');
+						linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(-1,-1)');
+						console.log(linkUI.attr('textOrient'));
+					}
+				}
+				
 				var distance = Math.sqrt(Math.pow(to.x,2) + Math.pow(to.y,2));
 				var data;
+				//Place link line...
 				if (linkIndex == 0)
 				{
 					data = 'M '+0+' '+0+' L '+curvex + ' '+curvey + ' L '+to.x + ','+to.y;
-					
 				}else{
 					//var multiplier = (((linkIndex)%2 == 0)?-1:1);
-					
 					var arc = linkIndex*(distance);
-					//For angled lines, with marker...
-					//For curvey lines, but marker won't show...
-					//var data = 'M '+0+' '+0+' q '+curvex + ' '+curvey + ' ' + to.x + ' ' + to.y;
 					data = 'M0,0 A' +arc +','+arc +' 0 0,0 ' +to.x+','+to.y;
 				}
-				linkPath.attr("d", data);			
+				linkPath.attr("d", data); //...DRAW LINE			
 				linkPath.attr("stroke-dasharray", "0,0");
 				
 				var fromNodeRadius = Number(linkUI.attr('fromNodeRadius'));
@@ -4099,18 +4150,14 @@
 					linkPath.attr("stroke-dasharray", "0," + (fromNodeRadius + 5) + "," + firstSegment + ","+ linkTextWidth + "," + secondSegment + "," + (toNodeRadius +10) + ",0");
 				}
 				
-				
-				//Place arrow marker...
-				var linkDataIndex = linkUI.attr('linkDataIndex');			
+				//Place arrow marker...		
 				if (linkDataIndex){
 					var rad = toNodeRadius/6.5 + 2.4 //...'2' is the height of the triangle
 					if(linkList[Number(linkDataIndex)]){linkList[Number(linkDataIndex)].data.UI.toMarkerUI.attr('refX', rad);}
 				}
 				
+				//Set dashed-pattern if the link is actually a planned link...
 				if (linkUI.attr('linkType') == 'planned'){linkPath.attr("stroke-dasharray", "5,5");}
-				//if (linkUI)
-				//linkPath.attr("stroke-dasharray", "0,40,50, 2, 10");
-            
 			});
 			
 			//==============================================================================================================
@@ -5019,7 +5066,7 @@ hr {
 				</button>
 				<button onclick='Neo4jInitAllNodes()'>Fetch</button>
 				<button onclick='unPinAllNodes()'>Unpin</button>
-				<button onclick='arrangeBy()'>Arrange</button>
+				<button onclick='arrangeBy2()'>Arrange</button>
 			</div>
 		</div>
 

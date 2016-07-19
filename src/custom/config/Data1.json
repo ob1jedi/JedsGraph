@@ -1,5 +1,5 @@
 configManager.configs.push({
-	configName:"Data", /*mandatory field, must be unique among other configs*/
+	configName:"local", /*mandatory field, must be unique among other configs*/
 	prefix:"DT1", /*mandatory field, must be unique among other configs*/
 	neo4jconnection:{	
 		sourceName:"local"

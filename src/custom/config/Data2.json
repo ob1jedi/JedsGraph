@@ -1,8 +1,8 @@
 configManager.configs.push({
-	configName:"data2", /*mandatory field, must be unique among other configs*/
-	prefix:"DT2", /*mandatory field, must be unique among other configs*/
+	configName:"local", /*mandatory field, must be unique among other configs*/
+	prefix:"LOC", /*mandatory field, must be unique among other configs*/
 	neo4jconnection:{	
-		sourceName:"schema",
+		sourceName:"local",
 		server:"http://localhost:7474",
 		username:"neo4j",
 		password:"Password@123456"
@@ -42,7 +42,7 @@ configManager.configs.push({
 		prefetchLabelSelectors:true
 	},
 	displaySettings:{
-			selectorColor:"#0066cc",
+			selectorColor:"gray",
 			graphBackground:"linear-gradient(white, white)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
 			
 			entityShape:"circle",

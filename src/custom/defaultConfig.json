@@ -54,6 +54,7 @@ configManager.configs.push({
 			,entityBorderColor:null /*null=auto-color*/
 			,entityOpacity: 0.2
 			,entityPopoutTextColor:"#0077b3"
+			,entityPopoutBoxColor:"#bfbfbf"
 			,entityFont:{family:"Arial, Helvetica, sans-serif", weight:"normal"}
 			
 			
@@ -62,6 +63,7 @@ configManager.configs.push({
 			,linkSubTextColor:"#ffa64d"
 			,linkThickness: 3
 			,linkOpacity:1
+			,linkHighlightColor:"red"
 			
 			,opaque:false
 			,labelSizing:"fontsize" /*choices: "hyphenate" (make labels shorter) "fontsize" (make the font size smaller) "" (no sizing, labels may extend past the boundaries of the node)*/
