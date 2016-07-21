@@ -1391,7 +1391,6 @@
 			
 			var allNodeLists = nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
 			var i = -1;
-			//console.log(nodeList);
 			while (++i < nodeList.length){if (nodeList[i].id == nodeID) {nodeList.splice(i, 1);}}
 			var i = -1;
 			while (++i < monitoredNodes.length){if (monitoredNodes[i].id == nodeID) {monitoredNodes.splice(i, 1);}}
@@ -1469,22 +1468,18 @@
 		
 		function evaluateAugmentsAndUpdateNodeDisplay(config, nodeData)
 		{
-
 			var nodeAugments = [];
 			if (!config.startupOptions.nodeAugments){return;}
 			config.startupOptions.nodeAugments.map(function (nconfig) {
 				if (nconfig.label == nodeData.labels[0]) {
 					if (nconfig.property){ //...we need to check if it has the specified property
-						console.log('get property...')
 						if (hasProperty(nodeData.properties, nconfig.property)){
-							console.log('has property...')
 							if (nconfig.value){//...we need to check if it has the specified property value
-								console.log('get value...')
 								if (hasPropertyWithValue(nodeData.properties, nconfig.property, nconfig.value)){
-									console.log('HAS value...')
 									nodeAugments.push(nconfig.nodeDisplayBody);
 								}
-							}else{//, no value wanted, passed evaluation by having label and property name...
+							}
+							else{//, no value wanted, passed evaluation by having label and property name...
 								nodeAugments.push(nconfig.nodeDisplayBody);
 							}
 						}
@@ -1492,9 +1487,7 @@
 						nodeAugments.push(nconfig.nodeDisplayBody);
 					}
 				}
-			});
-			console.log(nodeAugments);
-			
+			});		
 			var finalDisplay = {};
 			nodeAugments.forEach(function (nodeDisplayBody){
 				for (var prop in nodeDisplayBody)
@@ -1505,6 +1498,47 @@
 			return finalDisplay;
 		}
 		
+		function addPetals()
+		{
+			petalize(selectedNode, 15, 0, 20, '#002533');
+		}
+		
+		function getCircumferenceCoordinates(itemCount, radius)
+		{
+			var coords = [];
+			for(var i = 0; i < itemCount; i++) {
+				var x = 0 + radius * Math.cos(2 * Math.PI * i / itemCount);
+				var y = 0 + radius * Math.sin(2 * Math.PI * i / itemCount);   
+				coords.push({x:x, y:y});
+			}
+			return coords;
+		}
+
+		function petalize(node, petalCount, petalShapeIndex, innerRadius, petalColor)
+		{
+			var PETAL_SHAPES = [];
+			PETAL_SHAPES.push('M 0.03840601,0.01972475 C 8.2867315,0.11675375 31.858718,-12.453976 31.025552,-0.98099125 29.886875,14.699041 -0.03542154,2.5583847 0.03840601,0.01972475 Z');
+			
+			var degreeInterval = 360 /petalCount;
+			var coords = getCircumferenceCoordinates(petalCount, innerRadius);
+			var degreePosition = 0;
+			var petalArray = Viva.Graph.svg('g')
+			for (var i = 0; i < petalCount; i++){	
+				var petal = Viva.Graph.svg('g');
+				var petalPath =  Viva.Graph.svg('path')
+					.attr('d', PETAL_SHAPES[petalShapeIndex])
+					.attr('fill',petalColor)
+					//.attr('border-width',3)
+					//.attr('color','black')
+					.attr('opacity',0.5)
+					.attr('transform','translate(' + coords[i].x + ',' + coords[i].y + ') rotate('+degreePosition+')');
+				
+				petal.append(petalPath);
+				petalArray.append(petal);
+				degreePosition += degreeInterval;
+			}
+			node.data.UI.fullUI.insertBefore(petalArray, node.data.UI.bodyUI);
+		}
 		
 		function addDataNode(nodeId, nodeData, _sourceConfig)
 		{
@@ -1556,7 +1590,7 @@
 			for (var prop in nodeDisplayBody){
 				nodeData.config.nodeDisplayBody[prop] = nodeDisplayBody[prop];
 			}
-			console.log(nodeData.config.nodeDisplayBody);
+			
 			
 			//set display attributes based on config...
 			if (nodeData.config.nodeDisplayBody.size) {nodeData.nodeSize = nodeData.config.nodeDisplayBody.size};
@@ -1596,9 +1630,17 @@
 					var updateIndicatorNode = function (toCount, fromCount){
 						dataNode.data.totalToLinks = toCount;
 						dataNode.data.totalFromLinks = fromCount;
+						
+						//console.log(dataNode.data.totalToLinks);
+						//console.log(dataNode.data.totalFromLinks);
+						petalize(dataNode, dataNode.data.totalToLinks, 0, 10, '#0099ff');
+						petalize(dataNode, dataNode.data.totalFromLinks, 0, 20, '#ff6600');
+				
 					}
 					Neo4jGetRelationCounts(dataNode.id, updateIndicatorNode);
 				};
+				
+				
 				return dataNode; //RETURN ONLY IF NODE IS NEW
 			}
 		}
@@ -2370,7 +2412,6 @@
 		
 		function arrangeBy2(rootNode, processedNodeIds, posLeft, posTop, level)
 		{
-			console.log()
 			if (!rootNode){
 				squares = [];
 				var startPos = layout.getNodePosition(nodeList[0].id);
@@ -2386,7 +2427,6 @@
 				posTop = startPos.y;
 				var rootTop = startPos.y;
 				rootNodes.forEach(function(rootNode, index){
-					console.log(rootNode.id + ' = ' + posTop);
 					posTop += 100;
 					posTop = arrangeBy2(rootNode, processedNodeIds, posLeft, posTop, 0);
 					var parentPos = rootTop + ((posTop - rootTop)/2);
@@ -3482,7 +3522,7 @@
 						.attr('font-size','20')
 						
 						.text(node.data.displayLabel);
-						if (cnf.textHaze == true) {console.log('texthaze'); displayText.attr('filter','url(#darkHazeEffect)');} //haze
+						if (cnf.textHaze == true) {displayText.attr('filter','url(#darkHazeEffect)');} //haze
 						/*
 					popoutTextUI = Viva.Graph.svg('text')
 						.attr('class', 'slidetext')
@@ -3862,7 +3902,6 @@
 				{		
 					//var ele = document.getElementById("panel.bulkactions").style['left'] = pos.x;
 					//var ele = document.getElementById("floating.details").style['left'] = pos.x;
-					//console.log(ele);
 					//detailsUI.attr('transform','translate(' +(pos.x) + ',' + (pos.y) + ')');
 				}
 				
@@ -4191,15 +4230,14 @@
 				//Flip the text orientation on relationships so that the text is never upside down...
 				if (linkUI.attr('labelVisible') == 'true'){
 					if (to.x > 0 && (linkUI.attr('textOrient') == '0' || linkUI.attr('textOrient') == '-1')){
-						//console.log(linkList[Number(linkDataIndex)].data.UI.toMarkerUI);
 						linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(1,1)');
 						linkUI.attr('textOrient','1');
-						console.log(linkUI.attr('textOrient'));
+
 					}
 					else if (to.x < 0 && (linkUI.attr('textOrient') == '1' || linkUI.attr('textOrient') == '-1')){
 						linkUI.attr('textOrient', '0');
 						linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(-1,-1)');
-						console.log(linkUI.attr('textOrient'));
+
 					}
 				}
 				
@@ -5066,6 +5104,7 @@ hr {
 			</button>
 			<button onclick='animateTest()'>Add Indicator</button>
 			<button onclick='json2GraphDlg.showModal()'>Create from json</button>
+			<button onclick='addPetals()'>Petalize</button>
 			<!--button onclick='testFunction()'>Test2</button-->
 			
 		</div>

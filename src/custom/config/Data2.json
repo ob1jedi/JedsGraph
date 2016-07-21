@@ -35,7 +35,7 @@ configManager.configs.push({
 		nodeDisplayBody: [
 			/*{label:"SOME_LABEL", "image":"IMAGE_URL"??none, "color":"HEXVALUE"??auto, "size":30, "labelPos":"above/under/left/right"??center},*/
 			//{label:"host", color:"#002533"}
-		],
+		]
 	},
 
 	viewOptions:{
