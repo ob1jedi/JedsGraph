@@ -1335,6 +1335,34 @@
 			return x;
 		}
 		
+		function hasProperty(propertyList, propertyName)
+		{
+			var x = false;
+				if (!propertyList) return;
+				propertyList.forEach(function (prop, index){
+					if (prop.key == propertyName)
+					{
+						x = true;
+						return true;
+					}
+				}); 
+			return x;
+		}
+		
+		function hasPropertyWithValue(propertyList, propertyName, value)
+		{
+			var x = false;
+				if (!propertyList) return;
+				propertyList.forEach(function (prop, index){
+					if (prop.key == propertyName)
+					{
+						x = (value == prop.value);
+						return (value == prop.value);
+					}
+				}); 
+			return x;
+		}
+		
 		function getDataNode(nodeID)
 		{
 			for (var i = 0; i < nodeList.length; i++){
@@ -1439,6 +1467,45 @@
 			if (LabelsDiv) {LabelsDiv.innerHTML = labelSelectorHtml;}
 		}
 		
+		function evaluateAugmentsAndUpdateNodeDisplay(config, nodeData)
+		{
+
+			var nodeAugments = [];
+			if (!config.startupOptions.nodeAugments){return;}
+			config.startupOptions.nodeAugments.map(function (nconfig) {
+				if (nconfig.label == nodeData.labels[0]) {
+					if (nconfig.property){ //...we need to check if it has the specified property
+						console.log('get property...')
+						if (hasProperty(nodeData.properties, nconfig.property)){
+							console.log('has property...')
+							if (nconfig.value){//...we need to check if it has the specified property value
+								console.log('get value...')
+								if (hasPropertyWithValue(nodeData.properties, nconfig.property, nconfig.value)){
+									console.log('HAS value...')
+									nodeAugments.push(nconfig.nodeDisplayBody);
+								}
+							}else{//, no value wanted, passed evaluation by having label and property name...
+								nodeAugments.push(nconfig.nodeDisplayBody);
+							}
+						}
+					}else{//, no property name wanted,, passed evaluation by having label...
+						nodeAugments.push(nconfig.nodeDisplayBody);
+					}
+				}
+			});
+			console.log(nodeAugments);
+			
+			var finalDisplay = {};
+			nodeAugments.forEach(function (nodeDisplayBody){
+				for (var prop in nodeDisplayBody)
+				{
+					finalDisplay[prop] = nodeDisplayBody[prop];
+				}
+			})
+			return finalDisplay;
+		}
+		
+		
 		function addDataNode(nodeId, nodeData, _sourceConfig)
 		{
 			nodeData.sourceConfig = _sourceConfig ? _sourceConfig : currentTheme.sourceConfig ;
@@ -1485,6 +1552,15 @@
 			//find config for node if any is specified...
 			_sourceConfig.startupOptions.nodeDisplayBody.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeDisplayBody = nconfig;}});
 			_sourceConfig.startupOptions.nodeDisplayValues.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeDisplayValues = nconfig;}});
+			var nodeDisplayBody = evaluateAugmentsAndUpdateNodeDisplay(nodeData.sourceConfig, nodeData);
+			for (var prop in nodeDisplayBody){
+				nodeData.config.nodeDisplayBody[prop] = nodeDisplayBody[prop];
+			}
+			console.log(nodeData.config.nodeDisplayBody);
+			
+			//set display attributes based on config...
+			if (nodeData.config.nodeDisplayBody.size) {nodeData.nodeSize = nodeData.config.nodeDisplayBody.size};
+			
 			//set display label...
 			nodeData.displayLabel = "";
 			nodeData.labels.forEach(function(label, index){
@@ -2105,9 +2181,9 @@
 				fromNode.data.toNodes.push(toNode);
 				
 				//Node sizing...
-				if (config_ext.viewOptions.nodeSizing == 'relationCount'){increaseNodeSize(fromNodeID); increaseNodeSize(toNodeID);}
-				if (config_ext.viewOptions.nodeSizing == 'outRelationCount' ) {increaseNodeSize(fromNodeID);}
-				if (config_ext.viewOptions.nodeSizing == 'inRelationCount' ) {increaseNodeSize(toNodeID);}
+				//if (config_ext.viewOptions.nodeSizing == 'relationCount'){increaseNodeSize(fromNodeID); increaseNodeSize(toNodeID);}
+				//if (config_ext.viewOptions.nodeSizing == 'outRelationCount' ) {increaseNodeSize(fromNodeID);}
+				//if (config_ext.viewOptions.nodeSizing == 'inRelationCount' ) {increaseNodeSize(toNodeID);}
 			}
 			
 			fixTextWidth4Link(link);
@@ -3782,10 +3858,13 @@
 					//nodeUI.attr('transform','translate(' +(pos.x) + ',' + (pos.y) + ')');
 					//nodeUI.attr('transform','translate(' +(pos.x) + ',' + (pos.y) + ')');
 				//}
-				//if (nodeid == selectedNodeID)
-				//{					
+				if (nodeid == selectedNodeID)
+				{		
+					//var ele = document.getElementById("panel.bulkactions").style['left'] = pos.x;
+					//var ele = document.getElementById("floating.details").style['left'] = pos.x;
+					//console.log(ele);
 					//detailsUI.attr('transform','translate(' +(pos.x) + ',' + (pos.y) + ')');
-				//}
+				}
 				
 				
             });
@@ -4900,7 +4979,7 @@ hr {
 	
 	<div id='topBar'>
 	</div>
-	
+
 	<div id='leftColumn'>
 	</div>
 	
@@ -4913,7 +4992,6 @@ hr {
 		<button onclick='deleteNode()'>Delete entity</button>
 	</div-->
 
-	
 
 </body>
 
@@ -5138,6 +5216,9 @@ hr {
 			  </form>
 			</div>
 		</div>
+		
+
+		
 	</div>
 	<dialog class='dialog' id="myDialog">
 		<textarea id="myDialogText"></textarea>

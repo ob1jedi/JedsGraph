@@ -14,6 +14,10 @@ configManager.configs.push({
 		,nodeDisplayValues:[]
 		,nodeDisplayBody: []
 		,linkDisplayValues:[]
+		,nodeAugments:[
+			{label:"Category", property:"categoryID", value:5, nodeDisplayBody:{color:"gray", size:50}}
+		]
+		
 	},
 	viewOptions:{
 		prefetchLabelSelectors:false,
