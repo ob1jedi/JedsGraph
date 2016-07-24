@@ -29,8 +29,8 @@ configManager.configs.push({
 		nodeDisplayBody: [
 		  /*{label:"SOME_LABEL", "image":"IMAGE_URL"??none, "color":"HEXVALUE"??auto, "size":30, "labelPos":"above/under/left/right"??center},*/
 			{label:"host", labelPos:"right"}
-			,{label:"service", image:"custom/binoculars.svg", labelPos:"right", color:"transparent"}
-			,{label:"site", image:"custom/placeholder.svg" }
+			,{label:"service", image:"custom/svg/binoculars.svg", labelPos:"right", color:"transparent"}
+			,{label:"site", image:"custom/svg/placeholder.svg" }
 			,{label:"ipv4network", size:50}
 			
 		],

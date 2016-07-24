@@ -14,9 +14,24 @@ configManager.configs.push({
 		,nodeDisplayValues:[]
 		,nodeDisplayBody: []
 		,linkDisplayValues:[]
-		,nodeAugments:[
-			{label:"Category", property:"categoryID", value:5, nodeDisplayBody:{color:"gray", size:50}}
+		/*stat Reachers: "getRelationCounts"*/
+		,nodeStatReachers: [
+			{label: "Category", functionName:"getRelationCounts"} /*updates ParentCount, ChildCount*/
+			,{label: "Order", functionName:"getRelationCounts"}
+			,{label: "Product", functionName:"getRelationCounts"}
 		]
+		,nodeTransformers:[
+			/*Petalize params: petal-count(number)/node-object-path-petal-count(string)/petal-list(object array)), image-url, inner-radius, width, height*/
+			 //{label: "Category", name: "Petalize", params:["data.stats.fromEntityCount", 'custom/svg/Leaves/subulate.svg', 15, 20]}
+			{label: "Category", name: "Petalize", params:["data.propertiesObject.categoryID", 'custom/svg/Leaves/black-willow.svg', 25, 30]}
+			,{label: "Order", name: "Petalize", params:["data.stats.toEntityCount", 'custom/svg/Misc/man.svg', 25, 20]}
+			,{label: "Product", name: "Ringulate", params:["data.stats.fromEntityCount"]}
+			
+		]
+		,nodeAugments:[
+			{label:"Category", property:"categoryID", value:5, nodeDisplayBody:{color:"gray", size:50, image:"custom/svg/placeholder.svg"}}
+		]
+		
 		
 	},
 	viewOptions:{

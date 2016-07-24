@@ -100,8 +100,8 @@
 		  this.properties = [];
 		  this.toLinks = [];
 		  this.fromLinks = [];
-		  this.totalToLinks = 0; //fetched from database
-		  this.totalFromLinks = 0; //fetched from database
+		  //this.toEntityCount = 0; //fetched from database
+		  //this.fromEntityCount = 0; //fetched from database
 		  this.toNodes = [];
 		  this.fromNodes = [];
 		  this.subNodes = [];
@@ -111,6 +111,12 @@
 		  this.sourceConfig = currentTheme.sourceConfig; 
 		  this.config.nodeDisplayBody = {};
 		  this.config.nodeDisplayValues = {};
+		  this.config.nodeStatReachers = [];
+		  this.config.nodeTransformers = [];
+		  this.stats = {}
+		  this.stats.toEntityCount = 0;
+		  this.stats.fromEntityCount = 0;
+		  
 		  return this;
 		}
 		
@@ -801,11 +807,6 @@
 			
 		}
 		
-		function testFunction(){
-			var x = function callback(){};
-			Neo4jGetRelationCounts(selectedNodeID, x);
-		}
-		
 		function animateTest(node)
 		{	
 			if(!node){node = selectedNode;}
@@ -1011,6 +1012,7 @@
 			if (Array.isArray(p)) return 'array';
 			else if (typeof p == 'string') return 'string';
 			else if (p != null && typeof p == 'object') return 'object';
+			else if (p != null && typeof p == 'number') return 'number';
 			else return 'other';
 		}
 
@@ -1203,6 +1205,17 @@
 			}
 			return propArray;
 		}
+		
+		function neoPropertyObjectList(obj)
+		{
+			return obj;
+			//var propObject = {};
+			//for (var thiskey in obj) {
+			//	propObject[thiskey] = obj[thiskey];
+			//}
+			//return propArray;
+		}
+		
 		function propertyListToSvgList(propertyList, prefix, suffix)
 		{
 			var proplist = ''; 
@@ -1514,11 +1527,10 @@
 			return coords;
 		}
 
-		function petalize(node, petalCount, petalShapeIndex, innerRadius, petalColor)
+		function petalize_shape(node, petalCount, petalShapeIndex, innerRadius, petalColor)
 		{
 			var PETAL_SHAPES = [];
 			PETAL_SHAPES.push('M 0.03840601,0.01972475 C 8.2867315,0.11675375 31.858718,-12.453976 31.025552,-0.98099125 29.886875,14.699041 -0.03542154,2.5583847 0.03840601,0.01972475 Z');
-			
 			var degreeInterval = 360 /petalCount;
 			var coords = getCircumferenceCoordinates(petalCount, innerRadius);
 			var degreePosition = 0;
@@ -1528,11 +1540,8 @@
 				var petalPath =  Viva.Graph.svg('path')
 					.attr('d', PETAL_SHAPES[petalShapeIndex])
 					.attr('fill',petalColor)
-					//.attr('border-width',3)
-					//.attr('color','black')
 					.attr('opacity',0.5)
-					.attr('transform','translate(' + coords[i].x + ',' + coords[i].y + ') rotate('+degreePosition+')');
-				
+					.attr('transform','translate(' + coords[i].x + ',' + coords[i].y + ') rotate('+degreePosition+')');				
 				petal.append(petalPath);
 				petalArray.append(petal);
 				degreePosition += degreeInterval;
@@ -1540,9 +1549,14 @@
 			node.data.UI.fullUI.insertBefore(petalArray, node.data.UI.bodyUI);
 		}
 		
+		
+
+
+		
 		function addDataNode(nodeId, nodeData, _sourceConfig)
 		{
 			nodeData.sourceConfig = _sourceConfig ? _sourceConfig : currentTheme.sourceConfig ;
+			
 			var dataNode = getDataNode(nodeId);
 			var nodeUI;
 			var isNewNode = false;
@@ -1574,8 +1588,6 @@
 				else{//no changes have been made to the node...
 					return; //NOTE: DO NOT RETURN THE DATA-NODE
 				}
-				//return;
-
 			}
 			else 
 			{
@@ -1586,63 +1598,198 @@
 			//find config for node if any is specified...
 			_sourceConfig.startupOptions.nodeDisplayBody.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeDisplayBody = nconfig;}});
 			_sourceConfig.startupOptions.nodeDisplayValues.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeDisplayValues = nconfig;}});
+			_sourceConfig.startupOptions.nodeStatReachers.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeStatReachers.push(nconfig);}});
+			_sourceConfig.startupOptions.nodeTransformers.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeTransformers.push(nconfig);}});
 			var nodeDisplayBody = evaluateAugmentsAndUpdateNodeDisplay(nodeData.sourceConfig, nodeData);
 			for (var prop in nodeDisplayBody){
 				nodeData.config.nodeDisplayBody[prop] = nodeDisplayBody[prop];
 			}
 			
+			//execute triggerred augmetation functions
+			
+			//complete node dislay...
+			//fn_CompleteNodeDisplay = function(thisNodeData, thisIsNewNode, this_sourceConfig){
+			
+			thisNodeData = nodeData;
+			thisIsNewNode = newNode;
+			this_sourceConfig = _sourceConfig;
 			
 			//set display attributes based on config...
-			if (nodeData.config.nodeDisplayBody.size) {nodeData.nodeSize = nodeData.config.nodeDisplayBody.size};
+			if (thisNodeData.config.nodeDisplayBody.size) {thisNodeData.nodeSize = thisNodeData.config.nodeDisplayBody.size};
 			
 			//set display label...
-			nodeData.displayLabel = "";
-			nodeData.labels.forEach(function(label, index){
-				//addDataLabel(label, undefined, nodeData.sourceConfig);
+			thisNodeData.displayLabel = "";
+			thisNodeData.labels.forEach(function(label, index){
+				//addDataLabel(label, undefined, thisNodeData.sourceConfig);
 				//refreshLabelSelectors();
-				if (nodeData.displayLabel) {nodeData.displayLabel += ','}
-				if(!nodeData.displayLabel) {nodeData.displayLabel = '';}
-				if (nodeData.config.nodeDisplayValues.displayField){
-					if (nodeData.displayLabel!=""){nodeData.displayLabel + '\n';}
-					var propertyValue = getNodePropertyValue(nodeData.properties, nodeData.config.nodeDisplayValues.displayField);
-					nodeData.displayLabel += propertyValue ? propertyValue : ' ';
+				if (thisNodeData.displayLabel) {thisNodeData.displayLabel += ','}
+				if(!thisNodeData.displayLabel) {thisNodeData.displayLabel = '';}
+				if (thisNodeData.config.nodeDisplayValues.displayField){
+					if (thisNodeData.displayLabel!=""){thisNodeData.displayLabel + '\n';}
+					var propertyValue = getNodePropertyValue(thisNodeData.properties, thisNodeData.config.nodeDisplayValues.displayField);
+					thisNodeData.displayLabel += propertyValue ? propertyValue : ' ';
 				}
-				if(nodeData.config.nodeDisplayValues.displayValue){
-					if (nodeData.displayLabel!=""){nodeData.displayLabel + '\n';}
-					nodeData.displayLabel += nodeData.config.nodeDisplayValues.displayValue;
+				if(thisNodeData.config.nodeDisplayValues.displayValue){
+					if (thisNodeData.displayLabel!=""){thisNodeData.displayLabel + '\n';}
+					thisNodeData.displayLabel += thisNodeData.config.nodeDisplayValues.displayValue;
 				}
-				if(nodeData.displayLabel=="") {
-					nodeData.displayLabel = label;
+				if(thisNodeData.displayLabel=="") {
+					thisNodeData.displayLabel = label;
 				}
 			});
-			//nodeData.displayLabel;
-			var aNeoLabel = getNeoLabel(nodeData.labels[0], _sourceConfig.prefix);
+			
+			//thisNodeData.displayLabel;
+			var aNeoLabel = getNeoLabel(thisNodeData.labels[0], this_sourceConfig.prefix);
 			if (aNeoLabel) {
-				nodeData.nodeColor = aNeoLabel.color; 
-				nodeData.nodeColorRGB = aNeoLabel.colorRGB;
-				nodeData.nodeBorderColor = rgb2hex(nodeData.nodeColorRGB.r-20, nodeData.nodeColorRGB.g-20, nodeData.nodeColorRGB.b-20);
+				thisNodeData.nodeColor = aNeoLabel.color; 
+				thisNodeData.nodeColorRGB = aNeoLabel.colorRGB;
+				thisNodeData.nodeBorderColor = rgb2hex(thisNodeData.nodeColorRGB.r-20, thisNodeData.nodeColorRGB.g-20, thisNodeData.nodeColorRGB.b-20);
 			}
 			
-			if (isNewNode){
-				dataNode = addNodeToGraph(nodeId,nodeData);	
+			if (thisIsNewNode){
+				
+				dataNode = addNodeToGraph(thisNodeData.id, thisNodeData);	
 				nodeList.push(dataNode);
-				if (_sourceConfig.viewOptions.prefetchCounts==true){
-					var updateIndicatorNode = function (toCount, fromCount){
-						dataNode.data.totalToLinks = toCount;
-						dataNode.data.totalFromLinks = fromCount;
-						
-						//console.log(dataNode.data.totalToLinks);
-						//console.log(dataNode.data.totalFromLinks);
-						petalize(dataNode, dataNode.data.totalToLinks, 0, 10, '#0099ff');
-						petalize(dataNode, dataNode.data.totalFromLinks, 0, 20, '#ff6600');
-				
-					}
-					Neo4jGetRelationCounts(dataNode.id, updateIndicatorNode);
-				};
-				
-				
+				//if (this_sourceConfig.viewOptions.prefetchCounts==true){
+				//};
+				PerformNodeStatFunctions(dataNode);
 				return dataNode; //RETURN ONLY IF NODE IS NEW
 			}
+			else
+			{
+				PerformNodeStatFunctions(dataNode);
+			}
+		}
+		
+		function PerformNodeStatFunctions(node)
+		{
+				//procedurally execute stat-reachers...
+				var reacherIndex = 0;
+				var reachers = node.data.config.nodeStatReachers;
+				if (reachers.length == 0){ExecuteNodeTransformers(node);}
+				var fn_callback = function(){
+					if (reacherIndex >= reachers.length){
+						ExecuteNodeTransformers(node);
+						return;
+					}
+					var reacherName = reachers[reacherIndex].functionName;
+					reacherIndex = reacherIndex + 1;
+					executeReacher(node.data, reacherName, fn_callback);
+				};
+				fn_callback();
+		}
+		
+		function ExecuteNodeTransformers(node)
+		{
+			var transformers = node.data.config.nodeTransformers;
+			
+			transformers.forEach(function(tranformer){
+				switch (tranformer.name)
+				{
+					case "Petalize":
+						/*petalize_image(dataNode, data, imageUrl, innerRadius, imageSize);*/
+						petalize_image(node, tranformer.params[0], tranformer.params[1], tranformer.params[2], tranformer.params[3]);
+						break;
+					case "Ringulate":
+						/*Ringulate(dataNode, data, imageUrl,  innerRadius, opacity, orientate);*/
+						ringulate(node, tranformer.params[0]);
+						break
+				}
+				
+			});
+		}
+		
+		function executeReacher(nodeData, reacherName, callback)
+		{
+			var callWhenFinished = function(){callback();}
+			switch(reacherName)
+			{
+				case "getRelationCounts": getRelationCounts(nodeData, callWhenFinished); break;
+				default: callWhenFinished();
+			}
+		}
+				function getNodeValueWithConstant(node, inputData){
+			var x = node;
+			var parts = inputData.split('.');
+			parts.forEach(function (part){
+				//jed
+				x = x[part];
+				//console.log(x);
+			})
+			return x;
+		}
+		
+		//**********Generators**********
+		function petalize_image(node, inputData, imageUrl, innerRadius, size)
+		{
+			var petalCount = 0;
+			if (typeof(inputData) == "number"){
+				petalCount = inputData;
+			}
+			else if (typeof(inputData) == "string"){
+				petalCount = getNodeValueWithConstant(node, inputData)
+			}
+		
+			var degreeInterval = 360 /petalCount;
+			var coords = getCircumferenceCoordinates(petalCount, innerRadius);
+			var degreePosition = 0;
+			var petalArray = Viva.Graph.svg('g')
+			for (var i = 0; i < petalCount; i++){	
+				var petal = Viva.Graph.svg('g');
+				var petalPath = Viva.Graph.svg('image')
+						.link(imageUrl)
+						.attr('width', Number(size))
+						.attr('height', Number(size))
+						//.attr('stroke', 'red')
+						.attr('transform','translate(' + coords[i].x + ',' + coords[i].y + ') rotate('+(degreePosition +20)+')');
+				petal.append(petalPath);
+				//petal.attr('transform','rotate(10)');
+				petalArray.append(petal);
+				degreePosition += degreeInterval;
+			}
+			node.data.UI.fullUI.insertBefore(petalArray, node.data.UI.displayTextUI);
+		}
+		function ringulate(node, inputData)
+		{
+			var petalCount = 0;
+			if (typeof(inputData) == "number"){
+				petalCount = inputData;
+			}
+			else if (typeof(inputData) == "string"){
+				petalCount = getNodeValueWithConstant(node, inputData)
+			}
+			var petalArray = Viva.Graph.svg('g')
+			for (var i = 0; i < petalCount; i++){	
+				console.log('adding circle')
+				var petal = Viva.Graph.svg('g');
+				var petalPath = Viva.Graph.svg('circle')
+							.attr('cx', 0) //...for circle
+							.attr('cy', 0)//...for circle
+							.attr('r',node.data.nodeSize + (i * 3))
+							.attr('fill','transparent')//'#4dffc3')
+							.attr('stroke',node.data.nodeColor)
+							.attr('stroke-width',2)
+				petal.append(petalPath);
+				petalArray.append(petal);
+			}
+			node.data.UI.fullUI.insertBefore(petalArray, node.data.UI.bodyUI);
+		}
+		//********************************
+		
+		function getRelationCounts(nodeData, callback)
+		{
+			
+			var updateIndicatorNode = function (toCount, fromCount){
+				
+				nodeData.stats.toEntityCount = toCount;
+				nodeData.stats.fromEntityCount = fromCount;
+				callback();
+				//petalize(dataNode, dataNode.data.toEntityCount, 0, 10, '#0099ff');
+				//petalize(dataNode, dataNode.data.fromEntityCount, 0, 20, '#ff6600');
+				//petalize_image(dataNode, dataNode.data.toEntityCount, 'custom/server.svg', 10, '#0099ff');
+				//petalize_image(dataNode, dataNode.data.fromEntityCount, 'custom/placeholder.svg', 30, '#0099ff');
+			}
+			Neo4jGetRelationCounts(nodeData.id, updateIndicatorNode);
 		}
 		
 		function removeSubNode(subNode, updateSuperNode = false)
@@ -1990,6 +2137,7 @@
 					datN.id =_sourceConfig.prefix + row[I_N_ID];
 					if (row[I_N_LABELS]){datN.labels = row[I_N_LABELS];}
 					if (row[I_N_PROPS]){datN.properties = new neoPropertyList(row[I_N_PROPS]);}
+					if (row[I_N_PROPS]){datN.propertiesObject = row[I_N_PROPS]}
 					var fromNode = addDataNode(datN.id, datN, _sourceConfig);
 					if (fromNode){newNodes.push(fromNode);}
 					//if (!GRAPH.getNode(row[I_N_ID])){
@@ -2001,6 +2149,7 @@
 					datM.id =_sourceConfig.prefix + row[I_M_ID];
 					if (row[I_M_LABELS]){datM.labels = row[I_M_LABELS];}
 					if (row[I_M_PROPS]){datM.properties = new neoPropertyList(row[I_M_PROPS]);}
+					if (row[I_M_PROPS]){datN.propertiesObject = row[I_M_PROPS]}
 					var toNode = addDataNode(datM.id, datM, _sourceConfig);
 					if (toNode){newNodes.push(toNode);}
 					
@@ -2011,6 +2160,7 @@
 					//linkdata.id = _sourceConfig.prefix + row[I_R_ID];
 					//linkdata.name = row[I_R_LABELS];
 					linkdata.properties = new neoPropertyList(row[I_R_PROPS]);
+					linkdata.propertiesObject = row[I_R_PROPS];
 					var link = addDataLink(datN.id, datM.id, linkdata, _sourceConfig);
 				}
 			}	
@@ -2032,6 +2182,7 @@
 					dat.id =_sourceConfig.prefix +row[I_N_ID];
 					if (row[I_N_LABELS]){dat.labels = row[I_N_LABELS];}
 					if (row[I_N_PROPS]){dat.properties = new neoPropertyList(row[I_N_PROPS]);}
+					if (row[I_N_PROPS]){dat.propertiesObject = row[I_N_PROPS];}
 					addDataNode(dat.id, dat, _sourceConfig);
 				}
 			}
@@ -2056,6 +2207,7 @@
 					//dat.id = _sourceConfig.prefix + row[I_R_ID];
 					//if (row[I_R_TYPE]){dat.name = row[I_R_TYPE];}
 					if (row[I_R_PROPS]){dat.properties = new neoPropertyList(row[I_R_PROPS]);}
+					if (row[I_R_PROPS]){dat.propertiesObject = row[I_R_PROPS]}
 					var node = addDataLink(dat.fromNodeID, dat.toNodeID, dat, _sourceConfig);
 				}
 			}
@@ -2438,14 +2590,14 @@
 				level++;
 				processedNodeIds.push(rootNode.id);
 				var rootNodePos = {x:posLeft, y:posTop};
-				posLeft += 100;
+				posLeft += 200;
 				var currentChildTop = posTop - 100;
 				rootNode.data.toNodes.forEach(function(childNode, index){
 					//jed
 					if (processedNodeIds.indexOf(childNode.id) < 0){					
 						currentChildTop += 100;
 						//posTop += 100;
-						layout.setNodePosition(childNode.id, posLeft + 100, currentChildTop);
+						layout.setNodePosition(childNode.id, posLeft, currentChildTop);
 						posTop = arrangeBy2(childNode, processedNodeIds, posLeft, currentChildTop, level);
 					}
 				});
@@ -3374,11 +3526,11 @@
 
 			//show sub nodes...
 			if (config_ext.viewOptions.subnodes.relations=="ifany"){
-				var diffCount = node.data.totalToLinks - node.data.toLinks.length;
+				var diffCount = node.data.stats.toEntityCount - node.data.toLinks.length;
 				if (diffCount > 0) {
 					addSubNode(node, 'subto' + node.id, '#80ffe5', diffCount);
 				}
-				diffCount = node.data.totalFromLinks - node.data.fromLinks.length;
+				diffCount = node.data.stats.fromEntityCount - node.data.fromLinks.length;
 				if (diffCount > 0) {
 					addSubNode(node, 'subfrom' + node.id, '#99ccff', diffCount);
 				}
