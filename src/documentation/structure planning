@@ -1,0 +1,42 @@
+--------PROCESS--------------------
+//Global variables config\Globals
+	static accessors
+
+//vivagraph config\Singletons
+	static accessors
+
+//startup sequence (main.js)
+	--plumbing
+
+//Models (define the structure of an object)
+	//environment
+	//node
+	//property
+	//nodeUiElements
+	
+	//link
+	
+
+//Functions
+	--take input and return an output
+
+//Mutators
+	--Mutate data inside models
+	
+//Accessors
+	--Extract data out of models
+	
+//Cycles
+	--Perform an action repeatedly
+
+//Services
+	--Make calls to external sources
+
+	
+--------CONFIG--------------------
+//Cascading configs
+
+--------OVERLAYS--------------------
+//Panels
+//Overlay Environment (panel areas)
+//Selection overlays
