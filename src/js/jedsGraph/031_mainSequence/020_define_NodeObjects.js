@@ -72,6 +72,27 @@ function defineNodes()
 				
 				.text(node.data.displayLabel);
 				if (cnf.textHaze == true) {displayText.attr('filter','url(#darkHazeEffect)');} //haze
+				
+			circleTextPath =  Viva.Graph.svg('path')
+					.attr('id', 'npath_' + node.data.id)
+					.attr('d', 'M'+(-node.data.nodeSize-3)+',' + (-1.5) +' a1,1 0 1,1 '+ (node.data.nodeSize * 2 + 6) +',0')
+					.attr('fill', 'transparent')
+					.attr('stroke-width', 0)
+					.attr('stroke', 'black')
+					
+			circleText = Viva.Graph.svg('text')
+				.attr('y', 0) 
+				.attr('x', 0)
+				.attr('fill','black')
+				.attr('stroke-width','0')
+				//.attr('font-family',cnf.entityFont.family)
+				//.attr('font-weight',cnf.entityFont.weight)
+				.attr('font-size','10')
+			circleText.innerHTML += '<textPath xlink:href="#npath_' + node.data.id + '">'+node.data.displayLabel+'</textPath>';
+			//console.log(node);
+			//circleTextPathLink =  Viva.Graph.svg('textPath')
+			//		.attr('xlink:href'="#myTextPath")
+			//		.attr('d', 'M75,20 a1,1 0 0,0 100,0')
 				/*
 			popoutTextUI = Viva.Graph.svg('text')
 				.attr('class', 'slidetext')
@@ -108,6 +129,9 @@ function defineNodes()
 			visDefs += '</defs>'; 				
 			ui.innerHTML = visDefs;
 			
+			//var defs = graphics.getSvgRoot().append('defs');
+			//defs.append(circleTextPath);
+				
 			
 			ui.attr('class', 'datanode')
 			
@@ -115,12 +139,16 @@ function defineNodes()
 			node.data.UI.bodyUI = nodeBody;
 			node.data.UI.imageUI = nodeBodyImage;
 			node.data.UI.displayTextUI = displayText;
+			node.data.UI.circleTextPath = circleTextPath;
+			node.data.UI.circleText = circleText;
 			//node.data.UI.popoutBodyUI = popoutBodyUI;
 			//node.data.UI.popoutTextUI = popoutTextUI;
 
 			//if (cnf.loadNodePopouts){ui.append(node.data.UI.bodyUI);}//else{ui.append(rectblank);}
 			//if (cnf.loadNodePopouts){ui.append(node.data.UI.popoutBodyUI);}
 			ui.append(node.data.UI.bodyUI);
+			ui.append(node.data.UI.circleTextPath);
+			ui.append(node.data.UI.circleText);
 			if (nodeConfig.image){ui.append(node.data.UI.imageUI);}
 			//ui.append(node.data.UI.focusUI);
 			if (cnf.showLabels){ui.append(node.data.UI.displayTextUI);}

@@ -25,7 +25,7 @@ configManager.configs.push({
 			 //{label: "Category", name: "Petalize", params:["data.stats.fromEntityCount", 'custom/svg/Leaves/subulate.svg', 15, 20]}
 			{label: "Category", name: "Petalize", params:["data.propertiesObject.categoryID", 'custom/svg/Leaves/black-willow.svg', 25, 30]}
 			,{label: "Order", name: "Petalize", params:["data.stats.toEntityCount", 'custom/svg/Misc/man.svg', 25, 20]}
-			,{label: "Product", name: "Ringulate", params:["data.stats.fromEntityCount"]}
+			//,{label: "Product", name: "Ringulate", params:["data.stats.fromEntityCount"]}
 			
 		]
 		,nodeAugments:[
