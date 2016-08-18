@@ -11,7 +11,7 @@ configManager.configs.push({
 		//defaultConnection:"local", //used unless source is otherwise specified.
 		 startupSearch:[]
 		,startupQueries:[]
-		,nodeDisplayValues:[]
+		,nodeDisplayValues:[/*{label:"SOME_LABEL", displayField??label, circleText??label}*/]
 		,nodeDisplayBody: []
 		,linkDisplayValues:[]
 		/*stat Reachers: "getRelationCounts"*/
@@ -100,6 +100,7 @@ configManager.configs.push({
 			//node data...
 			,showLabels:true
 			,loadNodePopouts:true
+			,showCircleText:true
 			
 			//link data
 			,showRelationships:"on-highlight"/*showRelationships: "all/on-highlight/none" */

@@ -44,19 +44,27 @@
 		while (propertyElement)
 		{
 			var propertyValueElement = document.getElementById('new.entity.property.value.' + propIndex);
-			if (!propertyValueElement || propertyValueElement.value == '') {alert('Save failed!\nInvalid property name.'); return;}
 			if (propList != '') {propList += ','}
-			propList += ' n.' + propertyElement.value + '=' + parseDataType(propertyValueElement.value);
+			if (!propertyValueElement || propertyValueElement.value == '') {
+			    propList += ' n.' + propertyElement.value + '=null';
+			}
+			else {
+			    propList += ' n.' + propertyElement.value + '=' + parseDataType(propertyValueElement.value);
+			}
+
 			propIndex++;
 			propertyElement = document.getElementById('new.entity.property.key.' + propIndex);	
 		}
 		if (propList != '') {propList = ' SET ' + propList + '';}
 
 		var callback = function(nodesResult, sourceConfig){
-			addSingleNodesFromResults(nodesResult, sourceConfig)
+
+		    addSingleNodesFromResults(nodesResult, sourceConfig);
+		    UiShow_EditEntity(selectedNode);
 		};
 		var command = 'MATCH (n) WHERE ID(n)=' + getNeoId(nodeID) + propList + ' return id(n), labels(n), n'
 		Neo4j_Command([command], callback, _sourceConfig);
+		
 	}
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	function Neo4jCreateRelation(nodeID1, nodeID2, planOnly, _sourceConfig)

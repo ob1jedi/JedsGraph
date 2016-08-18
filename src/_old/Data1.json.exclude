@@ -27,10 +27,21 @@ configManager.configs.push({
 			//{fromEntity:"version", whereProperty:"versionName", equalsValue:"V23"}
 		],
 		nodeDisplayValues:[
-		  /*{label:"SOME_LABEL", displayField??label, displayLabel??label},*/
+		  /*{label:"SOME_LABEL", displayField??label, circleText??label},*/
 			//{label:"Human", displayField:"Name"},
-			{label:"service", displayField:"status"},
-			{label:"version", displayField:"versionName"}
+      {
+        label: "service",
+        displayField: "status"
+      },
+      {
+        label: "version",
+        displayField: "versionName"
+      },
+      {
+        label: "Category",
+        displayField: "categoryName"
+      }
+
 		],
 		nodeDisplayBody: [
 			/*{label:"SOME_LABEL", "image":"IMAGE_URL"??none, "color":"HEXVALUE"??auto, "size":30, "labelPos":"above/under/left/right"??center},*/

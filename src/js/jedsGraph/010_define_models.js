@@ -15,6 +15,7 @@ function nodeDataType() {
   this.nodeOpacity = '1'
   this.textColor = '#ffffff';
   this.displayLabel = '';
+  this.circleText = '';
   this.isPinned = false; 
   this.properties = [];
   this.toLinks = [];

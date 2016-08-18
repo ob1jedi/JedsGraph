@@ -7,7 +7,7 @@
     <script type="text/javascript" src="deps/vivagraph.js"></script>
 	<script type="text/javascript" src="custom/configloader.json"></script>
 	<script type="text/javascript" src="custom/defaultConfig.json"></script>
-	<script type="text/javascript" src="custom/config/Data2.json"></script>
+	<script type="text/javascript" src="custom/config/Data1.json"></script>
 	
 	
 	
@@ -44,7 +44,7 @@
     <script type="text/javascript" src="js/jedsGraph/020_define_globals.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/030_run_initSequence.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/030_initSequence/011_import_config.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/030_initSequence/012.set_globalConfig.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/030_initSequence/012.setup_UI.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_run_mainSequence.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/010_prepare_GraphObject.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/020_define_NodeObjects.js"></script>
@@ -193,6 +193,7 @@
 			</table>
 			<hr>
 			<table id='panel.entity.props'>
+                <tbody></tbody>
 			</table>
 			<hr>
 			<button onclick='Neo4jCreateEntity()'>Create New Entity</button>
@@ -217,6 +218,7 @@
 			</table>
 			<hr style="border-color:#262626;">
 			<table id='panel.relation.props'>
+                <tbody></tbody>
 			</table>
 			<hr style="border-color:#262626;">
 			<button onclick='relateSelectedToNode()'>Create Relation To...</button>

@@ -309,11 +309,7 @@
 			html += '</table>'
 			processingElement.innerHTML = html;
 			
-			var updateElement = document.getElementById('new.entity.name');
-			if (updateElement)
-			{
-				updateElement.value = node.data.labels[0];
-			}
+			UiShow_EditEntity(node);
 			//node.data.properties.forEach(function(property, index){
 			//	html += '<tr>'
 			//	var button_onclick = 'showOnNode(' + node.id + ', \'' + property.value + '\')';
@@ -323,7 +319,20 @@
 			
 		}
 		
-		
+		function UiShow_EditEntity(node){
+		    var updateElement = document.getElementById('new.entity.name');
+		    var panel = document.getElementById('panel.entity.props');
+		    panel.children[0].innerHTML = '';
+		    
+		    node.data.properties.forEach(function(prop){
+		        panelAddKeyValue('panel.entity.props', 'new.entity', prop.key, prop.value);
+		    });
+		    if (updateElement)
+		    {
+		        updateElement.value = node.data.labels[0];
+		    }
+		}
+
 		function refreshNodeAppearance(nodeId){
 			var node = GRAPH.getNode(nodeId?nodeId:selectedNodeID);
 			addNodeToGraph(node.id,node.data);

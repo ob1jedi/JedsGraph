@@ -439,27 +439,38 @@
 			//set display attributes based on config...
 			if (thisNodeData.config.nodeDisplayBody.size) {thisNodeData.nodeSize = thisNodeData.config.nodeDisplayBody.size};
 			
+			var finalLabel = '';
+			thisNodeData.labels.forEach(function (label, index) {
+			    //addDataLabel(label, undefined, thisNodeData.sourceConfig);
+			    //refreshLabelSelectors();
+			    if (finalLabel) { finalLabel += ',' }
+			    if (!finalLabel) { finalLabel = ''; }
+			    if (finalLabel == "") {
+			        finalLabel = label;
+			    }
+			});
+
 			//set display label...
 			thisNodeData.displayLabel = "";
-			thisNodeData.labels.forEach(function(label, index){
-				//addDataLabel(label, undefined, thisNodeData.sourceConfig);
-				//refreshLabelSelectors();
-				if (thisNodeData.displayLabel) {thisNodeData.displayLabel += ','}
-				if(!thisNodeData.displayLabel) {thisNodeData.displayLabel = '';}
-				if (thisNodeData.config.nodeDisplayValues.displayField){
-					if (thisNodeData.displayLabel!=""){thisNodeData.displayLabel + '\n';}
-					var propertyValue = getNodePropertyValue(thisNodeData.properties, thisNodeData.config.nodeDisplayValues.displayField);
-					thisNodeData.displayLabel += propertyValue ? propertyValue : ' ';
-				}
-				if(thisNodeData.config.nodeDisplayValues.displayValue){
-					if (thisNodeData.displayLabel!=""){thisNodeData.displayLabel + '\n';}
-					thisNodeData.displayLabel += thisNodeData.config.nodeDisplayValues.displayValue;
-				}
-				if(thisNodeData.displayLabel=="") {
-					thisNodeData.displayLabel = label;
-				}
-			});
-			
+			if (thisNodeData.config.nodeDisplayValues.displayField) {
+			    if (thisNodeData.displayLabel != "") { thisNodeData.displayLabel + '\n'; }
+			    var propertyValue = getNodePropertyValue(thisNodeData.properties, thisNodeData.config.nodeDisplayValues.displayField);
+			    thisNodeData.displayLabel += propertyValue ? propertyValue : ' ';
+			}
+			else {
+			    thisNodeData.displayLabel = finalLabel;
+			}
+
+			//set circle text...
+			if (thisNodeData.config.nodeDisplayValues.circleText) {
+			    if (thisNodeData.circleText != "") { thisNodeData.circleText + '\n'; }
+			    var propertyValue = getNodePropertyValue(thisNodeData.properties, thisNodeData.config.nodeDisplayValues.displayField);
+			    thisNodeData.circleText += propertyValue ? propertyValue : ' ';
+			}
+			else {
+			    thisNodeData.circleText = finalLabel;
+			}
+
 			//thisNodeData.displayLabel;
 			var aNeoLabel = getNeoLabel(thisNodeData.labels[0], this_sourceConfig.prefix);
 			if (aNeoLabel) {

@@ -69,7 +69,6 @@ function defineNodes()
 				.attr('font-family',cnf.entityFont.family)
 				.attr('font-weight',cnf.entityFont.weight)
 				.attr('font-size','20')
-				
 				.text(node.data.displayLabel);
 				if (cnf.textHaze == true) {displayText.attr('filter','url(#darkHazeEffect)');} //haze
 				
@@ -88,7 +87,7 @@ function defineNodes()
 				//.attr('font-family',cnf.entityFont.family)
 				//.attr('font-weight',cnf.entityFont.weight)
 				.attr('font-size','10')
-			circleText.innerHTML += '<textPath xlink:href="#npath_' + node.data.id + '">'+node.data.displayLabel+'</textPath>';
+			circleText.innerHTML += '<textPath xlink:href="#npath_' + node.data.id + '">'+node.data.circleText+'</textPath>';
 			//console.log(node);
 			//circleTextPathLink =  Viva.Graph.svg('textPath')
 			//		.attr('xlink:href'="#myTextPath")
@@ -147,8 +146,11 @@ function defineNodes()
 			//if (cnf.loadNodePopouts){ui.append(node.data.UI.bodyUI);}//else{ui.append(rectblank);}
 			//if (cnf.loadNodePopouts){ui.append(node.data.UI.popoutBodyUI);}
 			ui.append(node.data.UI.bodyUI);
-			ui.append(node.data.UI.circleTextPath);
-			ui.append(node.data.UI.circleText);
+			
+			if (cnf.showCircleText){
+				ui.append(node.data.UI.circleTextPath);
+				ui.append(node.data.UI.circleText);
+			}
 			if (nodeConfig.image){ui.append(node.data.UI.imageUI);}
 			//ui.append(node.data.UI.focusUI);
 			if (cnf.showLabels){ui.append(node.data.UI.displayTextUI);}

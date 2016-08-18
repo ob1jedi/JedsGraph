@@ -1,6 +1,6 @@
 configManager.configs.push({
-	configName:"Default", /*mandatory field, must be unique among other configs*/
-	prefix:"DEF", /*mandatory field, must be unique among other configs*/
+	configName:"local", /*mandatory field, must be unique among other configs*/
+	prefix:"DT1", /*mandatory field, must be unique among other configs*/
 	neo4jconnection:{	
 		sourceName:"local"
 		,server:"http://localhost:7474"
@@ -9,23 +9,39 @@ configManager.configs.push({
 	},
 	startupOptions:{
 		//defaultConnection:"local", //used unless source is otherwise specified.
-		startupSearch:[],
-		startupQueries:[],
-		nodeDisplayValues:[],
-		nodeDisplayBody: [],
-		linkDisplayValues:[]
+		startupSearch:[
+		  /*{label:"SOME_LABEL", source:"NEO4J_CONNECTION, properties:[{key:"KEYNAME", value:"VALUE"}]"*/
+			//{label:"Person", properties:[{key:"name", value:"Amy"}] }
+			//,{"label":"ROOT"}
+			//,{"label":"host"}
+			//,{"label":"service"}
+			//,{"label":"ipv4network"}
+			//,{"label":"site"}
+		],
+		startupQueries:[
+			//{fromEntity:"SCHEMA_ROOT", whereProperty:"name", equalsValue:"Every"}
+			//{fromEntity:"SCHEMA_ROOT"}
+		],
+		nodeDisplayValues:[
+		  /*{label:"SOME_LABEL", displayField??label, displayLabel??label},*/
+			//{label:"Determiner", displayField:"name"}
+		],
+		nodeDisplayBody: [
+		  /*{label:"SOME_LABEL", "image":"IMAGE_URL"??none, "color":"HEXVALUE"??auto, "size":30, "labelPos":"above/under/left/right"??center},*/
+			{label:"host", labelPos:"right"}
+			,{label:"service", image:"custom/svg/binoculars.svg", labelPos:"right", color:"transparent"}
+			,{label:"site", image:"custom/svg/placeholder.svg" }
+			,{label:"ipv4network", size:50}
+			
+		],
+		linkDisplayValues:[
+		  /*{label:"SOME_LABEL", displayField??label, displayLabel??label},*/
+			{labelFrom:"Person", labelTo:"Car", type:"TEST", displayField:"Age"},
+		]
 	},
 	viewOptions:{
+		prefetchLabelSelectors:true,
 		prefetchCounts:true,
-		panels:[
-			{name:"panel.appearance", parent:"leftColumn", visible:true}
-			,{name:"panel.bulkactions", parent:"leftColumn", visible:true}
-			,{name:"panel.selection", parent:"leftColumn", visible:true}
-			,{name:"panel.highlight", parent:"leftColumn", visible:true}
-			,{name:"panel.navigation", parent:"leftColumn", visible:true}
-			,{name:"", parent:"", visible:true}
-
-		],
 		subnodes:{relations:"ifany"},
 		nodeSizing:"relationCount" /*relationCount/outRelationCount/inRelationCount(increase node size based on relationships)*/
 	},
@@ -50,6 +66,7 @@ configManager.configs.push({
 			,linkMainTextColor:"#d9d9d9"
 			,linkSubTextColor:"#ffa64d"
 			,linkThickness: 3
+			,linkOpacity:1
 			
 			,opaque:false
 			,labelSizing:"fontsize" /*choices: "hyphenate" (make labels shorter) "fontsize" (make the font size smaller) "" (no sizing, labels may extend past the boundaries of the node)*/
