@@ -32,7 +32,7 @@ function defineNodes()
 			nodeBody = Viva.Graph.svg(cnf.entityShape)
 				.attr('cx', 0)//...for circle
 				.attr('cy', 0)//...for circle
-				.attr('r', node.data.nodeSize) //...for circle
+				.attr('r', node.data.nodeSize + (node.data.nodeIndex +1) *1.5) //...for circle
 				.attr('fill',node.data.nodeColor)//node.data.nodeColor)//'#4dffc3')
 				.attr('stroke-width',3)
 				.attr('stroke', cnf.entityBorderColor==null?node.data.nodeBorderColor:currentTheme.entityBorderColor)
@@ -442,6 +442,7 @@ function defineNodes()
 			});
 		}
 		
+		ui.attr('depth', 5);
 		ui.attr('class','node');
 		ui.attr('nodeSize',node.data.nodeSize);
 		ui.attr('nodeid',node.id);

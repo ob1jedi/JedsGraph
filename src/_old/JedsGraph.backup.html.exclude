@@ -2163,6 +2163,17 @@
 			return newNodes;
 		}
 		
+		function depthAdjust()
+		{
+			graph.forEachNode(function(node){
+				layout.pinNode(node, true);
+				var pos = layout.getNodePosition(node.id);
+				pos.x = pos.x + (offset.x * node.data.randomNumber);
+				pos.y = pos.y + (offset.y * node.data.randomNumber);
+				layout.setNodePosition(node.id, pos.x, pos.y);
+			});
+		}
+		
 		function addSingleNodesFromResults(nodesResults, _sourceConfig)
 		{
 			for (var i = 0; i < nodesResults.results.length; i++){
