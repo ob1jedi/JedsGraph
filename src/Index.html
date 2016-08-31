@@ -4,7 +4,7 @@
     <title>Graph Engine</title>
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/jedsGraph.css" rel="stylesheet">
-    <script type="text/javascript" src="deps/jeds_vivagraph.js"></script>
+    <script type="text/javascript" src="deps/vivagraph.js"></script>
 	<script type="text/javascript" src="custom/configloader.json"></script>
 	<script type="text/javascript" src="custom/defaultConfig.json"></script>
 	<script type="text/javascript" src="custom/config/Data1.json"></script>
@@ -240,6 +240,8 @@
 			</div>
 		</div>
 
+
+
 		<div class='toolPanel' id='panel.appearance'>
 			<div class="panelheader">Appearance</div>
 			<button class="popup">Node
@@ -286,6 +288,10 @@
 			<div id='newNode'>
 			  <div class="panelheader">Selection Options:</div>
 			  <input class="check" id="vo.ch" onclick="updateInteractionOptions()" type="checkbox" name="descendants" value=""> Multi Select<br>
+                <form action="">
+                    <input class="check" id="vo.dd" onclick="setScreenDragType('flat')" type="radio" name="related" value="" checked="true"> Flat<br>
+                    <input class="check" id="vo.df" onclick="setScreenDragType('depth')" type="radio" name="related" value=""> Depth<br>
+                </form>
 			</div>
 		</div>
 		
@@ -300,6 +306,16 @@
 			</div>
 		</div>
 	
+        <div class='toolPanel' id='panel.dragOption'>
+            <div id='newNode'>
+                <div class="panelheader">Drag Options:</div>
+                <form action="">
+                    <input class="check" id="do.flat" onclick="updateDragOptions()" type="radio" name="related" value="" checked="true"> Flat<br>
+                    <input class="check" id="do.depth" onclick="updateDragOptions()" type="radio" name="related" value=""> Depth<br>
+                </form>
+            </div>
+        </div>
+
 		<div class='toolPanel' id='panel.navigation'>
 			<div id='newNode'>
 			  <div class="panelheader">Navigation: (on entity double-click)</div>

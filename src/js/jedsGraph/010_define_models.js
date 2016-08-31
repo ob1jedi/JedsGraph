@@ -44,6 +44,8 @@ function propertyType(key, value)
 {
 	this.key = key;
 	this.value = value;
+	this.datatype = getType(value);
+	console.log(key + ': ' + this.datatype + ' = ' + value);
 	return this;
 }
 function nodeUiElementsType()
@@ -141,6 +143,7 @@ function neoLabelType(setName, setColor, setColorRGB, setSourceConfig)
 
 function viewOptionsType()
 {
+    this.screenDragType = true;
 	this.highlightRelated = true;
 	this.highlightAncestors = false;
 	this.highlightdescendants = false;

@@ -35,4 +35,63 @@ function defineNodeDrawing(){
 		
 		
 	});
+
+
+	//if (viewOptions.screenDragType == 'depth') {
+	//    graphics.dragScreen(function (offset) {
+
+	//        GRAPH.forEachNode(function (node, index) {
+	//            layout.pinNode(node, true);
+	//            var pos = layout.getNodePosition(node.id);
+	//            pos.x = pos.x + (offset.x * (node.data.nodeIndex + 1) * 0.1);
+	//            pos.y = pos.y + (offset.y * (node.data.nodeIndex + 1) * 0.1);
+	//            layout.setNodePosition(node.id, pos.x, pos.y);
+	//        });
+
+	//    });
+	//}
+
+    graphics.translateRel = function (dx, dy) {
+        var svgRoot = graphics.getSvgRoot();
+        var svgContainer = graphics.getGraphicsRoot().children[0];
+
+        var p = svgRoot.createSVGPoint(),
+            t = svgContainer.getCTM(),
+            origin = svgRoot.createSVGPoint().matrixTransform(t.inverse());
+
+        p.x = dx;
+        p.y = dy;
+
+        p = p.matrixTransform(t.inverse());
+        p.x = (p.x - origin.x) * t.a;
+        p.y = (p.y - origin.y) * t.d;
+
+        t.e += p.x;
+        t.f += p.y;
+
+        var transform = "matrix(" + t.a + ", 0, 0," + t.d + "," + t.e + "," + t.f + ")";
+        svgContainer.attr("transform", transform);
+
+        if (viewOptions.screenDragType == 'depth') {
+            updateNodesDepth({ x: dx, y: dy })
+        }
+    }
+
+
+    function updateNodesDepth(offset)
+    {
+        //graphics.dragScreen(function (offset) {
+
+            GRAPH.forEachNode(function (node, index) {
+                layout.pinNode(node, true);
+                var pos = layout.getNodePosition(node.id);
+                pos.x = pos.x + (offset.x * (node.data.nodeIndex + 1) * 0.1);
+                pos.y = pos.y + (offset.y * (node.data.nodeIndex + 1) * 0.1);
+                layout.setNodePosition(node.id, pos.x, pos.y);
+            });
+
+        //});
+    }
+
+
 }

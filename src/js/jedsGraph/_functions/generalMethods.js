@@ -2,12 +2,35 @@
 			return Math.sqrt(Math.pow(pos2.x - pos1.x,2) + Math.pow(pos2.y - pos1.y,2));
 		}
 		
-		function parseDataType(n) {
+		function parseDataType(n, _type) {
+
+		    if (_type)
+		    {
+		        switch (_type) {
+		            case "string":
+		                return '"' + n + '"';
+		                break;
+		            case "number":
+		                if (!isNaN(parseFloat(n)) && isFinite(n)) return Number(n);
+		                break;
+		            case "other": //boolean
+		                if (n == "true") { return true; }
+		                if (n == "false") { return false; }
+		                break;
+		            case "array":
+		                
+		                return '[' + n.split(',').map(function (m) { return '"' + m + '"' }).join() + ']';
+		                break;
+ 		        }
+		    }
+
+
 			if (n=="true"){return true;}
 			if (n=="false"){return false;}
 			if (n=="null"){return null;}
 			if (n=="undefined"){return undefined;}
 			if (!isNaN(parseFloat(n)) && isFinite(n)) return Number(n);
+
 			return '"' + n + '"';
 		}
 

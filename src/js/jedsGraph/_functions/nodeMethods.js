@@ -341,7 +341,7 @@
 		    panel.children[0].innerHTML = '';
 		    
 		    node.data.properties.forEach(function(prop){
-		        panelAddKeyValue('panel.entity.props', 'new.entity', prop.key, prop.value);
+		        panelAddKeyValue('panel.entity.props', 'new.entity', prop.key, prop.value, prop.datatype);
 		    });
 		    if (updateElement)
 		    {
@@ -469,9 +469,7 @@
 			var x = node;
 			var parts = inputData.split('.');
 			parts.forEach(function (part){
-				//jed
 				x = x[part];
-				//console.log(x);
 			})
 			return x;
 		}
@@ -591,7 +589,6 @@
 			}
 			var petalArray = Viva.Graph.svg('g')
 			for (var i = 0; i < petalCount; i++){	
-				console.log('adding circle')
 				var petal = Viva.Graph.svg('g');
 				var petalPath = Viva.Graph.svg('circle')
 							.attr('cx', 0) //...for circle

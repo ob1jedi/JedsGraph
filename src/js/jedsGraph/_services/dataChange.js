@@ -13,10 +13,11 @@
 		
 		while (propertyElement)
 		{
+		    var propertyTypeElement = document.getElementById('new.entity.property.type.' + propIndex);
 			var propertyValueElement = document.getElementById('new.entity.property.value.' + propIndex);
 			if (!propertyValueElement || propertyValueElement.value == '') {alert('Save failed!\nInvalid property name.'); return;}
 			if (propList != '') {propList += ','}
-			propList += propertyElement.value + ':' + parseDataType(propertyValueElement.value);
+			propList += propertyElement.value + ':' + parseDataType(propertyValueElement.value, propertyTypeElement.value);
 			propIndex++;
 			propertyElement = document.getElementById('new.entity.property.key.' + propIndex);	
 		}
@@ -38,18 +39,19 @@
 		var entityName = document.getElementById('new.entity.name').value;
 		if (!entityName || entityName == ''){alert('Save failed!\nNo entity name specified.'); return;}
 		var propIndex = 0;
-		var propertyElement = document.getElementById('new.entity.property.key.' + propIndex);
 		var propList = '';
-		
+
+		var propertyElement = document.getElementById('new.entity.property.key.' + propIndex);
 		while (propertyElement)
 		{
-			var propertyValueElement = document.getElementById('new.entity.property.value.' + propIndex);
+		    var propertyValueElement = document.getElementById('new.entity.property.value.' + propIndex);
+		    var propertyTypeElement = document.getElementById('new.entity.property.type.' + propIndex);
 			if (propList != '') {propList += ','}
 			if (!propertyValueElement || propertyValueElement.value == '') {
 			    propList += ' n.' + propertyElement.value + '=null';
 			}
 			else {
-			    propList += ' n.' + propertyElement.value + '=' + parseDataType(propertyValueElement.value);
+			    propList += ' n.' + propertyElement.value + '=' + parseDataType(propertyValueElement.value, propertyTypeElement.value);
 			}
 
 			propIndex++;
@@ -66,6 +68,91 @@
 		Neo4j_Command([command], callback, _sourceConfig);
 		
 	}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	function panelCyclePropertyType(propertyIndex)
+	{
+
+	    var elementButton = document.getElementById("new.entity.property.type." + propertyIndex);
+	    if (elementButton.value == 'string') {
+	        elementButton.innerHTML = 'N<div class="mytooltiptext">number</div>';
+	        elementButton.value = 'number';
+	    }
+	    else if (elementButton.value == 'number') {
+	        elementButton.innerHTML = 'A<div class="mytooltiptext">array</div>';
+	        elementButton.value = 'array';
+	    }
+	    else if (elementButton.value == 'array') {
+	        elementButton.innerHTML = 'B<div class="mytooltiptext">boolean</div>';
+	        elementButton.value = 'other';
+	    }
+	    else if (elementButton.value == 'other') {
+	        elementButton.innerHTML = 'S<div class="mytooltiptext">string</div>';
+	        elementButton.value = 'string';
+	    }
+	    
+	}
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	function panelAddKeyValue(panelId, panelScope, _sKey, _sValue, datatype) {
+	    if (!_sKey) { _sKey = ''; }
+	    if (!_sValue) { _sValue = ''; }
+	    var $panel = document.getElementById(panelId);
+	    var nextIndex = 0;
+	    var typehtml;
+
+	    var getTypeHtml = function(type){
+	        switch (type) {
+	            case 'string':
+	                typehtml = 'S<div class="mytooltiptext">string</div>';
+	                break;
+	            case 'number':
+	                typehtml = 'N<div class="mytooltiptext">number</div>';
+	                break;
+	            case 'array':
+	                typehtml = 'A<div class="mytooltiptext">array</div>';
+	                break;
+	            case 'other': //boolean
+	                typehtml = 'B<div class="mytooltiptext">boolean</div>';
+	                break;
+	        }
+	        return typehtml;
+	    }
+
+	    var addRow = function (index, key, value, dataType, currentHtml) {
+	        currentHtml += ("<tr><td><input id='" + panelScope +
+            ".property.key." + index +
+            "' class='dynamic' value='" + key +
+            "'></input></td><td><input id='" + panelScope + ".property.value." + index +
+            "' class='dynamic2' value='" + value +
+            "'></input></td>" +
+            "<td>" + '<button id="new.entity.property.type.' + index + '" value="' + dataType + '" class="paneloption mytooltip" onclick="panelCyclePropertyType(' + index + ')" >' + getTypeHtml(dataType) + '</button>' + "</td></tr>");
+	        return currentHtml;
+	    };
+
+	    var newHtml = '';
+	    for (var i = 0; i < $panel.children[0].children.length; i++) {
+	        var currval = document.getElementById('new.entity.property.value.' + i).value;
+	        var currkey = document.getElementById('new.entity.property.key.' + i).value;
+	        var dataType = document.getElementById('new.entity.property.type.' + i).value;
+	        newHtml = addRow(i, currkey, currval, dataType, newHtml);
+	        nextIndex = i + 1;
+	    }
+
+	    newHtml = addRow(nextIndex, _sKey, _sValue, datatype, newHtml);
+	    $panel.children[0].innerHTML = newHtml;
+	}
+
+	function panelRemoveKeyValue(panelId) {
+	    var panel = document.getElementById(panelId);
+	    if (panel.children[0].children.length == 0) { return; }
+	    panel.children[0].children[panel.children[0].children.length - 1].remove();
+	}
+
+	function removeLastElement() {
+	    var ui = selectedNodeUI.children[selectedNodeUI.children.length - 1];
+	    selectedNode.data.UI.focusUI.remove();
+	}
+
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	function Neo4jCreateRelation(nodeID1, nodeID2, planOnly, _sourceConfig)
 	{

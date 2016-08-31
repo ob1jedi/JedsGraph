@@ -30,7 +30,12 @@
 			});
 		}
 		
-		
+		function setScreenDragType(key)
+		{
+		    viewOptions.screenDragType = key;
+		}
+
+
 		function getDataRootNodes()
 		{
 			var rootNodes = [];

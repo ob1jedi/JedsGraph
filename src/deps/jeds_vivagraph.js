@@ -4580,20 +4580,11 @@ function renderer(graph, settings) {
       containerDrag = dragndrop(container);
       containerDrag.onDrag(function(e, offset) {
         graphics.translateRel(offset.x, offset.y);
-		depthAdjust(offset);
+        graphics.dragScreenEvent(offset);
         renderGraph();
       });
     }
-	function depthAdjust(offset)
-	{
-		graph.forEachNode(function(node, index){
-			layout.pinNode(node, true);
-			var pos = layout.getNodePosition(node.id);
-			pos.x = pos.x + (offset.x * (node.data.nodeIndex + 1) * 0.1);
-			pos.y = pos.y + (offset.y * (node.data.nodeIndex + 1) * 0.1);
-			layout.setNodePosition(node.id, pos.x, pos.y);
-		});
-	}
+
     if (isInteractive('scroll')) {
       if (!containerDrag) {
         containerDrag = dragndrop(container);
@@ -4672,6 +4663,7 @@ function svgGraphics() {
             nodeUI.attr("x", pos.x - 5)
                   .attr("y", pos.y - 5);
         },
+
 
         linkBuilder = function (link) {
             return svg("line").attr("stroke", "#999");
@@ -4761,6 +4753,14 @@ function svgGraphics() {
         placeLink : function (newPlaceLinkCallback) {
             linkPositionCallback = newPlaceLinkCallback;
             return this;
+        },
+
+        dragScreenEvent: function (offset) {
+            //...can override with graphics.Drag
+        },
+
+        dragScreen: function (callback) {
+            graphics.dragScreenEvent = callback;
         },
 
         /**
