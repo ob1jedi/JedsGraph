@@ -5,7 +5,6 @@
 		var body = new neo_APIcall(); 
 		statements.forEach(function(statement){
 			body.statements.push(new neo_Statement(statement));
-			//console.log(statement);
 		});
 		
 		$.ajax({

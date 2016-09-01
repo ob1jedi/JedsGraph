@@ -367,7 +367,6 @@
 		
 		function addWindowNode()
 		{
-		
 			var nodeId = 'DetailsWindow';
 			var data = new nodeDataType();
 			data.height = 200;
@@ -380,7 +379,7 @@
 			return graphics.getNodeUI(nodeId);	
 		}
 		
-				function addDataNode(nodeId, nodeData, _sourceConfig)
+		function addDataNode(nodeId, nodeData, _sourceConfig)
 		{
 			nodeData.sourceConfig = _sourceConfig ? _sourceConfig : currentTheme.sourceConfig ;
 			
@@ -475,6 +474,8 @@
 			else {
 			    thisNodeData.circleText = finalLabel;
 			}
+
+		    
 
 			//thisNodeData.displayLabel;
 			var aNeoLabel = getNeoLabel(thisNodeData.labels[0], this_sourceConfig.prefix);

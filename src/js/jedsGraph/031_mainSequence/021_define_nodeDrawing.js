@@ -51,6 +51,8 @@ function defineNodeDrawing(){
 	//    });
 	//}
 
+
+    //OVERRIDE drag drawing...
     graphics.translateRel = function (dx, dy) {
         var svgRoot = graphics.getSvgRoot();
         var svgContainer = graphics.getGraphicsRoot().children[0];
@@ -76,22 +78,22 @@ function defineNodeDrawing(){
             updateNodesDepth({ x: dx, y: dy })
         }
     }
-
-
     function updateNodesDepth(offset)
     {
-        //graphics.dragScreen(function (offset) {
-
-            GRAPH.forEachNode(function (node, index) {
-                layout.pinNode(node, true);
-                var pos = layout.getNodePosition(node.id);
-                pos.x = pos.x + (offset.x * (node.data.nodeIndex + 1) * 0.1);
-                pos.y = pos.y + (offset.y * (node.data.nodeIndex + 1) * 0.1);
-                layout.setNodePosition(node.id, pos.x, pos.y);
-            });
-
-        //});
+        GRAPH.forEachNode(function (node, index) {
+            layout.pinNode(node, true);
+            var pos = layout.getNodePosition(node.id);
+            pos.x = pos.x + (offset.x * node.data.depth);
+            pos.y = pos.y + (offset.y * node.data.depth);
+            layout.setNodePosition(node.id, pos.x, pos.y);
+        });
     }
+
+
+    //graphics.getNodeUI = function (nodeId) {
+    //    return .allNodes[nodeId];
+    //}
+
 
 
 }

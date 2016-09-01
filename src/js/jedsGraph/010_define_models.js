@@ -7,6 +7,7 @@ function nodeDataType() {
   this.labels = []; //string array of labels
   this.nodeSize = 25;
   this.nodeColor = '#808080';
+  this.depth = 1;
   this.nodeBorderColor = '#808080';
   this.nodeShape = 'circle';
   this.height = 25;
@@ -45,11 +46,12 @@ function propertyType(key, value)
 	this.key = key;
 	this.value = value;
 	this.datatype = getType(value);
-	console.log(key + ': ' + this.datatype + ' = ' + value);
+	//console.log(key + ': ' + this.datatype + ' = ' + value);
 	return this;
 }
 function nodeUiElementsType()
 {
+    this.outerUI;
 	this.fullUI;
 	this.bodyUI;
 	this.imageUI;

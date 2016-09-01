@@ -47,7 +47,7 @@
 		    var propertyValueElement = document.getElementById('new.entity.property.value.' + propIndex);
 		    var propertyTypeElement = document.getElementById('new.entity.property.type.' + propIndex);
 			if (propList != '') {propList += ','}
-			if (!propertyValueElement || propertyValueElement.value == '') {
+			if (!propertyValueElement || propertyValueElement.value == 'null') {
 			    propList += ' n.' + propertyElement.value + '=null';
 			}
 			else {
@@ -75,44 +75,45 @@
 
 	    var elementButton = document.getElementById("new.entity.property.type." + propertyIndex);
 	    if (elementButton.value == 'string') {
-	        elementButton.innerHTML = 'N<div class="mytooltiptext">number</div>';
+	        elementButton.innerHTML = '123';
 	        elementButton.value = 'number';
 	    }
 	    else if (elementButton.value == 'number') {
-	        elementButton.innerHTML = 'A<div class="mytooltiptext">array</div>';
+	        elementButton.innerHTML = '[A]';
 	        elementButton.value = 'array';
 	    }
 	    else if (elementButton.value == 'array') {
-	        elementButton.innerHTML = 'B<div class="mytooltiptext">boolean</div>';
+	        elementButton.innerHTML = 'T/F';
 	        elementButton.value = 'other';
 	    }
 	    else if (elementButton.value == 'other') {
-	        elementButton.innerHTML = 'S<div class="mytooltiptext">string</div>';
+	        elementButton.innerHTML = 'abc';
 	        elementButton.value = 'string';
 	    }
 	    
 	}
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	function panelAddKeyValue(panelId, panelScope, _sKey, _sValue, datatype) {
+	function panelAddKeyValue(panelId, panelScope, _sKey, _sValue, _sDatatype) {
 	    if (!_sKey) { _sKey = ''; }
 	    if (!_sValue) { _sValue = ''; }
+	    if (!_sDatatype) { _sDatatype = 'string'; }
 	    var $panel = document.getElementById(panelId);
-	    var nextIndex = 0;
+	   
 	    var typehtml;
 
 	    var getTypeHtml = function(type){
 	        switch (type) {
 	            case 'string':
-	                typehtml = 'S<div class="mytooltiptext">string</div>';
+	                typehtml = 'abc';
 	                break;
 	            case 'number':
-	                typehtml = 'N<div class="mytooltiptext">number</div>';
+	                typehtml = '123';
 	                break;
 	            case 'array':
-	                typehtml = 'A<div class="mytooltiptext">array</div>';
+	                typehtml = '[A]';
 	                break;
 	            case 'other': //boolean
-	                typehtml = 'B<div class="mytooltiptext">boolean</div>';
+	                typehtml = 'T/F';
 	                break;
 	        }
 	        return typehtml;
@@ -129,6 +130,7 @@
 	        return currentHtml;
 	    };
 
+	    var nextIndex = 0;
 	    var newHtml = '';
 	    for (var i = 0; i < $panel.children[0].children.length; i++) {
 	        var currval = document.getElementById('new.entity.property.value.' + i).value;
@@ -138,7 +140,7 @@
 	        nextIndex = i + 1;
 	    }
 
-	    newHtml = addRow(nextIndex, _sKey, _sValue, datatype, newHtml);
+	    newHtml = addRow(nextIndex, _sKey, _sValue, _sDatatype, newHtml);
 	    $panel.children[0].innerHTML = newHtml;
 	}
 

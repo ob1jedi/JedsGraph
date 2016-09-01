@@ -51,7 +51,11 @@ function addNodesFromResults(nodesResults, _sourceConfig)
 			linkdata.propertiesObject = row[I_R_PROPS];
 			var link = addDataLink(datN.id, datM.id, linkdata, _sourceConfig);
 		}
-	}	
+	}
+
+    //Refresh all nodes to ensure depths are correct:
+	refreshNodesDepths();
+
 	return newNodes;
 }
 
@@ -74,6 +78,8 @@ function addSingleNodesFromResults(nodesResults, _sourceConfig)
 			addDataNode(dat.id, dat, _sourceConfig);
 		}
 	}
+    //Refresh all nodes to ensure depths are correct:
+	refreshNodesDepths();
 }
 
 function addSingleRelationFromResults(nodesResults, _sourceConfig)

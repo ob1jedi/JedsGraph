@@ -120,18 +120,23 @@
 		}
 
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		function increaseNodeDepth(nodeid)
+		function increaseNodeDepth(node, addDepthValue)
 		{
-		    if (!nodeid){nodeid=selectedNodeID;}
-		    nodeUI = graphics.getNodeUI(nodeid);
-		    nodeUI.attr('depth', Number(nodeUI.attr('depth')) + 0.1);
+            //set defaults...
+		    if (!node){node=selectedNode;}
+		    if (!addDepthValue){addDepthValue = 0.5;}
+                      
+            //perform transformations...
+		    node.data.depth += addDepthValue;
+
+		    refreshNodesDepths();
 		}
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		function decreaseNodeDepth(nodeid)
+		function decreaseNodeDepth(node)
 		{
-		    if (!nodeid){nodeid=selectedNodeID;}
-		    nodeUI = graphics.getNodeUI(nodeid);
-		    nodeUI.attr('depth', Number(nodeUI.attr('depth')) - 0.1);
+		    if (!node){node=selectedNode;}
+		    //nodeUI = graphics.getNodeUI(nodeid);
+		    //nodeUI.attr('depth', Number(nodeUI.attr('depth')) - 0.1);
 
 		}
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -351,9 +356,25 @@
 
 		function refreshNodeAppearance(nodeId){
 			var node = GRAPH.getNode(nodeId?nodeId:selectedNodeID);
-			addNodeToGraph(node.id,node.data);
+			addNodeToGraph(node.id, node.data);
+			node.data.UI.fullUI.attr('transform', 'scale(' + node.data.depth + ')');
 		}
 		
+		function refreshNodesDepths() {
+		    var nodeZOrder = [];
+		    for (var n = 0; n < nodeList.length; n++) {
+		        var inserted = false;
+		        for (var z = 0; z < nodeZOrder.length; z++) {
+		            if (nodeList[n].data.depth < nodeZOrder[z].data.depth) {
+		                nodeZOrder.splice(z, 0, nodeList[n]);
+		                inserted = true;
+		                break;
+		            }
+		        }
+		        if (!inserted) { nodeZOrder.push(nodeList[n]); }
+		    }
+		    nodeZOrder.forEach(function (znode) { refreshNodeAppearance(znode.id) });
+		}
 			
 		function increaseNodeSize(nodeId)
 		{
@@ -620,7 +641,7 @@
 			Neo4jGetRelationCounts(nodeData.id, updateIndicatorNode);
 		}
 		
-		function removeSubNode(subNode, updateSuperNode = false)
+		function removeSubNode(subNode, updateSuperNode)
 		{
 			if (updateSuperNode == true){
 				subNode.superNodes.forEach(function(superNode,index){

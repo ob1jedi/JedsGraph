@@ -201,7 +201,7 @@
 			}
 
 		  .toolPanel {
-			width:200px;
+			//width:200px;
 			margin:5px;
 			margin-left:5px;
 			padding:5px;
@@ -210,7 +210,7 @@
 			border-color:#0d0d0d;
 			color: deepskyblue;
 			background-color:#1a1a1a;
-			border-radius:10px;
+			border-radius:8px;
 			font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
 			font-size: 12px;
 			letter-spacing: 0px;

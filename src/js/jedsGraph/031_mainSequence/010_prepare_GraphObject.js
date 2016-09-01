@@ -8,7 +8,6 @@ function prepareGraph()
 	//graph.addNode('indexzero',function(){var d = new Date(); return d.getTime() }()); // 'd43e8ea63b61e7669ded5b9d3c2e980f');
 	//graph.addNode('asdasd', 'test3'); //'d43e8ea63b61e7669ded5b9d3c2e980f');
 	//graph.addLink('anvaka', 'indexzero'); //'indexzero');
-	//addDataNode
 
 	// Custom physics... (include/exclude in the 'renderer' at the bottom of the script)
 	var idealLength = 150;
