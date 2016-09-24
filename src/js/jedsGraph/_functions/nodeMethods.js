@@ -358,6 +358,13 @@
 			var node = GRAPH.getNode(nodeId?nodeId:selectedNodeID);
 			addNodeToGraph(node.id, node.data);
 			node.data.UI.fullUI.attr('transform', 'scale(' + node.data.depth + ')');
+
+			if (node.data.depth > 1) {
+			    node.data.UI.fullUI.attr('opacity', 1 / node.data.depth);
+			}
+			else {
+			    node.data.UI.fullUI.attr('opacity', node.data.depth);
+			}
 		}
 		
 		function refreshNodesDepths() {

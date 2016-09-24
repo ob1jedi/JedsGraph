@@ -70,10 +70,10 @@
 	}
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	function panelCyclePropertyType(propertyIndex)
+	function panelCyclePropertyType(panelId)
 	{
 
-	    var elementButton = document.getElementById("new.entity.property.type." + propertyIndex);
+	    var elementButton = document.getElementById(panelId); //"new.entity.property.type." + propertyIndex);
 	    if (elementButton.value == 'string') {
 	        elementButton.innerHTML = '123';
 	        elementButton.value = 'number';
@@ -98,7 +98,7 @@
 	    if (!_sValue) { _sValue = ''; }
 	    if (!_sDatatype) { _sDatatype = 'string'; }
 	    var $panel = document.getElementById(panelId);
-	   
+	    console.log(panelScope);
 	    var typehtml;
 
 	    var getTypeHtml = function(type){
@@ -120,22 +120,21 @@
 	    }
 
 	    var addRow = function (index, key, value, dataType, currentHtml) {
-	        currentHtml += ("<tr><td><input id='" + panelScope +
-            ".property.key." + index +
+	        currentHtml += ("<tr><td><input id='" + panelScope + ".property.key." + index +
             "' class='dynamic' value='" + key +
             "'></input></td><td><input id='" + panelScope + ".property.value." + index +
             "' class='dynamic2' value='" + value +
             "'></input></td>" +
-            "<td>" + '<button id="new.entity.property.type.' + index + '" value="' + dataType + '" class="paneloption mytooltip" onclick="panelCyclePropertyType(' + index + ')" >' + getTypeHtml(dataType) + '</button>' + "</td></tr>");
+            "<td>" + '<button id="' + panelScope +'.property.type.' + index + '" value="' + dataType + '" class="paneloption mytooltip" onclick="panelCyclePropertyType(\'' + panelScope + '.property.type.' + index + '\')" >' + getTypeHtml(dataType) + '</button>' + "</td></tr>");
 	        return currentHtml;
 	    };
 
 	    var nextIndex = 0;
 	    var newHtml = '';
 	    for (var i = 0; i < $panel.children[0].children.length; i++) {
-	        var currval = document.getElementById('new.entity.property.value.' + i).value;
-	        var currkey = document.getElementById('new.entity.property.key.' + i).value;
-	        var dataType = document.getElementById('new.entity.property.type.' + i).value;
+	        var currval = document.getElementById(panelScope + '.property.value.' + i).value;
+	        var currkey = document.getElementById(panelScope + '.property.key.' + i).value;
+	        var dataType = document.getElementById(panelScope + '.property.type.' + i).value;
 	        newHtml = addRow(i, currkey, currval, dataType, newHtml);
 	        nextIndex = i + 1;
 	    }
