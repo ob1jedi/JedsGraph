@@ -17,7 +17,7 @@
 		}
 		
 		
-				function showLinkDetails(link)
+		function showLinkDetails(link)
 		{
 			var processingElement = document.getElementById('selectedLink');
 			var labellist = ''
@@ -109,7 +109,8 @@
 				checkedLinks.map(function(l,index){if (l.data.id == link.data.id){checkedLinks.splice(index,1);}})
 		}
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		function toggleLink(link, bvalue){
+		function toggleLink(link, bvalue) {
+		    
 			if (bvalue == true && link.data.checked){return;}
 			if (bvalue == false && !link.data.checked){return;}
 			link.data.checked = !link.data.checked;
@@ -148,6 +149,11 @@
 			//drawLink(link.data.UI.fullUI, {x:0,y:0}, {x:0,y:0});
 		}
 		
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		function getLinkById(linkId)
+		{
+		    return linkList.find(function (l) { return l.data.id === linkId });
+		}
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		function showLinkData(link)
 		{

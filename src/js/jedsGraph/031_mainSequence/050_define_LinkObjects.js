@@ -152,7 +152,8 @@ function defineLinkObjects()
 			});
 			
 			$(linkPath).click(function() { // MOUSE CLICK
-				showLinkDetails(link);
+			    selectedLink = link;
+			    showLinkDetails(link);
 				toggleLink(link);
 			});
 

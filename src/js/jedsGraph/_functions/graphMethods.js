@@ -569,8 +569,6 @@
 				var i = -1;
 				while (++i < node.data.fromNodes.length){if (node.data.fromNodes[i].id == nodeID) {node.data.fromNodes.splice(i, 1);}}
 				var i = -1;
-				while (++i < node.data.fromNodes.length){if (node.data.fromNodes[i].id == nodeID) {node.data.fromNodes.splice(i, 1);}}
-				var i = -1;
 				while (++i < node.data.toLinks.length){if (node.data.toLinks[i].toNodeID == nodeID) {node.data.toLinks.splice(i, 1);}}
 				var i = -1;
 				while (++i < node.data.fromLinks.length){if (node.data.fromLinks[i].fromNodeID == nodeID) {node.data.fromLinks.splice(i, 1);}}
@@ -583,6 +581,34 @@
 			GRAPH.removeNode(nodeID);
 		}
 		
+		function removeLinkFromStage(linkID) {
+		    if (!linkID) { linkID = selectedLink.data.id; }
+		    var link = getLinkById(linkID);
+		    //console.log('link', link);
+		    //return;
+		    //var allNodeLists = nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
+		    var i = -1;
+		    while (++i < linkList.length) { if (linkList[i].id == linkID) { linkList.splice(i, 1); } }
+		    var i = -1;
+		    while (++i < monitoredLinks.length) { if (monitoredLinks[i].id == linkID) { monitoredLinks.splice(i, 1); } }
+		    //var i = -1;
+		    //while (++i < checkedNodes.length) { if (checkedNodes[i].id == nodeID) { checkedNodes.splice(i, 1); } }
+		    var fromNode = GRAPH.getNode(link.data.fromNodeID);
+		    var toNode = GRAPH.getNode(link.data.toNodeID);
+
+		    while (++i < fromNode.data.toNodes.length) { if (fromNode.data.toNodes[i].id == link.data.toNodeID) { fromNode.data.toNodes.splice(i, 1); } }
+		    while (++i < toNode.data.fromNodes.length) { if (toNode.data.fromNodes[i].id == link.data.fromNodeID) { toNode.data.fromNodes.splice(i, 1); } }
+
+		    //console.log(link.id);
+		    GRAPH.removeLink(link);
+            
+		    //var relativeLinks = node.data.toLinks.concat(node.data.fromLinks);
+		    //relativeLinks.forEach(function (link) {
+		    //    GRAPH.removeLink(link.id);
+		    //});
+		    //GRAPH.removeNode(nodeID);
+		}
+
 		
 		function getDataNode(nodeID)
 		{

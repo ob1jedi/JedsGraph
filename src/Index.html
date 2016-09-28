@@ -32,15 +32,28 @@
 	<script type="text/javascript" src="js/jedsGraph/_functions/nodeMethods.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_services/common.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_services/data2Graph.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/_services/dataChange.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/_services/dataQuery.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_services/neo4j.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_services/graph2Data.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/animations.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/dataMonitoring.js"></script>
 
 	<!-- Procedural scripts -->
-	<script type="text/javascript" src="js/jedsGraph/010_define_models.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/010_define_models.js"></script>
+	
+	<script type="text/javascript" src="js/jedsGraph/_models/interactionOptionsType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/linkDataType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/linkUiElementsType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/neo_APIcall.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/neo_Statement.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/neo4jConnectionType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/neoLabelType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/nodeDataType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/nodeUiElementsType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/propertyType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/themeType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/timeoutElementType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_models/viewOptionsType.js"></script>
+
+    
     <script type="text/javascript" src="js/jedsGraph/020_define_globals.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/030_run_initSequence.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/030_initSequence/011_import_config.js"></script>
@@ -153,7 +166,7 @@
 					<div id="hovertext" onclick="clearAllMonitored()">Clear all</div>
 				</div>
 			</button>
-			<button onclick='animateTest()'>Add Indicator</button>
+			<button onclick='animateTest()'>Add Indicator</button>            
 			<button onclick='json2GraphDlg.showModal()'>Create from json</button>
 			<button onclick='increaseNodeDepth()'>IncNodeDepth</button>
 			<!--button onclick='testFunction()'>Test2</button-->
@@ -223,6 +236,7 @@
 			<hr style="border-color:#262626;">
 			<button onclick='relateSelectedToNode()'>Create Relation To...</button>
 			<button onclick='planRelateSelectedToNode()'>Plan Relation To...</button>
+            <button onclick='deleteLink()'>Delete selected</button>
 		</div>
 
 		<div class='toolPanel' id='panel.bulkactions'>

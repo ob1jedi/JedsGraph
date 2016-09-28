@@ -17,6 +17,7 @@
 		var selectedNodeID = '';
 		var selectedNodeData = '';
 		var selectedNode = '';
+		var selectedLink = '';
 		var selectedNodeUI = '';
 		var bRelate = false;
 		var bPlanRelate = false;

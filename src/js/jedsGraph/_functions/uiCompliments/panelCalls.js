@@ -13,6 +13,11 @@
 			Neo4jDeleteNode(selectedNodeID);
 		}
 		
+		function deleteLink() {
+		    if (!selectedLink) { return; }
+		    Neo4jDeleteRelationship(selectedLink.data.id);
+		}
+
 		function relateSelectedToNode(){
 			bRelate = true;
 		}
