@@ -7,6 +7,9 @@ configManager.configs.push({
 		,username:"neo4j"
 		,password:"Password@123456"
 	},
+	dataAccessOptions:{
+		generalFetchLimit: 100 /*when you build a query, the amount of results to fetch for option boxes*/
+	},
 	startupOptions:{
 		//defaultConnection:"local", //used unless source is otherwise specified.
 		 startupSearch:[]

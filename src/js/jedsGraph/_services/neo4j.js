@@ -38,15 +38,20 @@
 	{
 		var scope = selectType.split('.'); //...scope[0] = "qbuilder", scope[1] = "from"/"to", scope[2] = "entity"/"property"/"value"
 		var selectedEntityValue = document.getElementById('qbuilder.' + scope[1] + '.entity').value;
-		var sourcePrefix = selectedEntityValue.substring(selectedEntityValue.length-3);
-		var entityName = ':' + selectedEntityValue.substring(0, selectedEntityValue.length-3);
-		//if (entityName && entityName != ''){entityName = ':' +entityName;} 
-		
+		var sourcePrefix = selectedEntityValue.substring(selectedEntityValue.length - 3);
+		var entityName = selectedEntityValue.substring(0, selectedEntityValue.length-3);
+		var selectedEntityCount = getNeoLabel(entityName, sourcePrefix);
+        //var sourceConfig = 
+	    //if (entityName && entityName != ''){entityName = ':' +entityName;} 
+
+
 		if (scope[2] == 'entity'){
-			//get properties...
+		    //get properties...
+		    var valueElementName = 'qbuilder.' + scope[1] + '.selectproperty';
 			document.getElementById('qbuilder.' + scope[1] + '.value').value = '';
 			var childElementName = 'qbuilder.'+scope[1]+'.property';
 			var propertyElement = document.getElementById(childElementName);
+			var listedValues = [];
 			propertyElement.innerHTML = '<option value=""></option>';
 			//document.getElementById('qbuilder.'+scope[1]+'.value').innerHTML = '';
 			document.getElementById('qbuilder.'+scope[1]+'.selectvalue').innerHTML = '<option value=""></option>';
@@ -54,18 +59,28 @@
 			//var selectedEntityValue = document.getElementById(selectType).value;
 			//var sourcePrefix = selectedEntityValue.substring(selectedEntityValue.length-3);
 			//var entityName = selectedEntityValue.substring(0, selectedEntityValue.length-3);
-		
+			var command = "MATCH (n:" + entityName + ") RETURN n LIMIT 10 "; //...get 10 entities to get hopefully all the possible properties
 			
-			var command = "MATCH (n"+ entityName + ") return n";
-			var listedProperties = [];
 			var callback = function(nodesResult, sourceConfig){
-				var propertyList = Neo4jExtractProperties(nodesResult)
-				propertyList.sort(sort_by('key', false, function(a){return a.toUpperCase()})).forEach(function(prop){
-					if (listedProperties.indexOf(prop.key) == -1) {
-						listedProperties.push(prop.key);
-						propertyElement.innerHTML += '<option value="'+prop.key+'">' + prop.key + '</option>';
-					}
+				//var propertyList = Neo4jExtractProperties(nodesResult)
+				//propertyList.sort(sort_by('key', false, function(a){return a.toUpperCase()})).forEach(function(prop){
+				//	if (listedProperties.indexOf(prop.key) == -1) {
+				//		listedProperties.push(prop.key);
+				//		propertyElement.innerHTML += '<option value="'+prop.key+'">' + prop.key + '</option>';
+				//	}
+				//});
+			    var valueList = Neo4jExtractProperties(nodesResult)
+			    
+				var valueElement = document.getElementById(valueElementName);
+				
+				valueElement.innerHTML = '<option value=""></option>';
+				valueList.sort(sort_by('key', false, function (a) { return a.toUpperCase() })).forEach(function (prop) {
+				    if (listedValues.indexOf(prop.key) == -1) {
+				        listedValues.push(prop.key)
+				        valueElement.innerHTML += '<option value="' + prop.key + '">' + prop.key + '</option>';
+				    }
 				});
+
 			};
 			Neo4j_Command([command], callback, getConfigByPrefix(sourcePrefix));
 		}
@@ -77,7 +92,10 @@
 			//valueElementName.innerHTML = '<option value=""></option>';
 			var listedValues = [];
 			if (!selectedProperty){ return;}
-			var command = "MATCH (n"+entityName+") return distinct n." + selectedProperty;
+
+		    //Manage large datasets
+			var command = "MATCH (n:" + entityName + ") return distinct n." + selectedProperty + " LIMIT " + getConfigByPrefix(sourcePrefix).dataAccessOptions.generalFetchLimit;
+
 			var callback = function(nodesResult, sourceConfig){
 				var valueList = Neo4jExtractValues(nodesResult)
 				var valueElement = document.getElementById(valueElementName);
@@ -98,12 +116,12 @@
 		var propertyBlock = (whereProperty)?'{'+whereProperty+':'+parseDataType(equalsValue)+'}':'';
 		
 		if (fromEntity && fromEntity != ''){fromEntity = ':' + fromEntity;}
-		var command = 'MATCH (n'+fromEntity + propertyBlock + ') RETURN id(n), labels(n), n';
+		var command = 'MATCH (n' + fromEntity + propertyBlock + ') RETURN id(n), labels(n), n  LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 		
 		var callback = function(nodesResult, sourceConfig){
 			addSingleNodesFromResults(nodesResult, sourceConfig)
 			//Recurse...
-			var command = 'MATCH (n'+fromEntity + propertyBlock+')-[r]-(m) RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r)';
+			var command = 'MATCH (n' + fromEntity + propertyBlock + ')-[r]-(m) RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r)  LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 			var callback2 = function(nodesResult, sourceConfig){addNodesFromResults(nodesResult, sourceConfig)};
 			Neo4j_Command([command], callback2, sourceConfig);
 		};
@@ -116,13 +134,13 @@
 		var command = '';
 		switch(viewOptions.navigateDirection){
 		case 'child':
-			command = 'MATCH (n)-[r]->(m) WHERE ID(n) = ' + getNeoId(nodeId) + ' RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r)';
+		    command = 'MATCH (n)-[r]->(m) WHERE ID(n) = ' + getNeoId(nodeId) + ' RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 			break;
 		case 'parent':
-			command = 'MATCH (n)<-[r]-(m) WHERE ID(n) = ' + getNeoId(nodeId) + ' RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r)';
+		    command = 'MATCH (n)<-[r]-(m) WHERE ID(n) = ' + getNeoId(nodeId) + ' RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 			break;
 		default:
-			command = 'MATCH (n)-[r]-(m) WHERE ID(n) = ' + getNeoId(nodeId) + ' RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r)';
+		    command = 'MATCH (n)-[r]-(m) WHERE ID(n) = ' + getNeoId(nodeId) + ' RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 			break;
 		}
 		var callback2 = function(nodesResult, sourceConfig){
@@ -172,7 +190,7 @@
 		}
 		var matchPattern = 'n';
 		if (byLabel && byLabel != '') {matchPattern += ":" + byLabel;}
-		var command = 'MATCH ('+matchPattern+') RETURN id(n), labels(n), (n)';
+		var command = 'MATCH (' + matchPattern + ') RETURN id(n), labels(n), (n) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 		Neo4j_Command([command], callback, _sourceConfig);
 	}
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -195,7 +213,7 @@
 				command += ' WHERE' + conditions;
 			}
 		}
-		command += ' RETURN id(n), labels(n), (n)';
+		command += ' RETURN id(n), labels(n), (n) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 		Neo4j_Command([command], callback, _sourceConfig);
 	}
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -205,7 +223,7 @@
 			addSingleNodesFromResults(nodesResult, sourceConfig);
 			Neo4jInitAllRelations(_sourceConfig);
 		}
-		var command = 'MATCH (n) RETURN id(n), labels(n), (n)';
+		var command = 'MATCH (n) RETURN id(n), labels(n), (n) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 		Neo4j_Command([command], callback, _sourceConfig);
 	}
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -214,7 +232,7 @@
 		var callback = function (relationsResult, sourceConfig) {
 			addSingleRelationFromResults(relationsResult, sourceConfig);
 		}
-		var command = 'MATCH (n)-[r]->(m) RETURN id(n), id(m), id(r), type(r), r';
+		var command = 'MATCH (n)-[r]->(m) RETURN id(n), id(m), id(r), type(r), r LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 		Neo4j_Command([command], callback, _sourceConfig);
 	}
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
