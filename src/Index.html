@@ -28,8 +28,8 @@
 	<script type="text/javascript" src="js/jedsGraph/_functions/createJsonFromGraph.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_functions/generalMethods.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_functions/graphMethods.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/_functions/linkMethods.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/_functions/nodeMethods.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Link/Methods/linkMethods.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Methods/nodeMethods.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_services/common.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_services/data2Graph.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_services/neo4j.js"></script>
@@ -39,19 +39,19 @@
 
 	<!-- Procedural scripts -->
 	
-	<script type="text/javascript" src="js/jedsGraph/_models/interactionOptionsType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/linkDataType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/linkUiElementsType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/neo_APIcall.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/neo_Statement.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/neo4jConnectionType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/neoLabelType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/nodeDataType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/nodeUiElementsType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/propertyType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/themeType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/timeoutElementType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_models/viewOptionsType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/interactionOptionsType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/Link/Models/linkDataType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/Link/Models/linkUiElementsType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/neo_APIcall.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/neo_Statement.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/neo4jConnectionType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/neoLabelType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/Node/Models/nodeDataType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/Node/Models/nodeUiElementsType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/propertyType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/themeType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/timeoutElementType.js"></script>
+    <script type="text/javascript" src="js/jedsGraph/_components/viewOptionsType.js"></script>
 
     
     <script type="text/javascript" src="js/jedsGraph/020_define_globals.js"></script>
@@ -60,11 +60,11 @@
 	<script type="text/javascript" src="js/jedsGraph/030_initSequence/012.setup_UI.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_run_mainSequence.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/010_prepare_GraphObject.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/020_define_NodeObjects.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/021_define_nodeDrawing.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/040_define_LinkObjectsCommonAssets.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/050_define_LinkObjects.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/051_define_linkDrawing.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Templates/020_define_NodeObjects.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Methods/drawNode.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Link/Templates/040_define_LinkObjectsCommonAssets.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Link/Templates/050_define_LinkObjects.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Link/Methods/drawLink.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/070_render_GraphObject(starts_up_Cycles).js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/080_set_UiStartupSettings.js"></script>
 
@@ -137,9 +137,9 @@
 			<tr >
 				<td>where:</td>
 				<td>
-				<select onchange="Neo4jQbuilder('qbuilder.from.property')" id="qbuilder.from.property"></select>
-				<!--input onchange="Neo4jQbuilder('qbuilder.from.property')" type="text" name="" list="qbuilder.from.property">
-					<datalist id="qbuilder.from.property"></datalist-->
+				    <!--select onchange="Neo4jQbuilder('qbuilder.from.property')" id="qbuilder.from.property"></select-->
+                    <input onfocus="Neo4jQbuilder('qbuilder.from.property')" onchange="Neo4jQbuilder('qbuilder.from.property')" id="qbuilder.from.property" type="text" name="" list="qbuilder.from.selectproperty">
+					<datalist id="qbuilder.from.selectproperty"></datalist>
 					
 				</td>
 			</tr>
