@@ -16,13 +16,9 @@ configManager.configs.push({
 			//,{"label":"host"}
 			//,{"label":"service"}
 			//,{"label":"ipv4network"}
-			//,{"label":"site"}
+			{"label":"STUDY"}
 		],
 		startupQueries:[
-			{fromEntity:"Human"},
-			{fromEntity:"Person"},
-			{fromEntity:"Transport"},
-			{fromEntity:"House"}
 			//{fromEntity:"service", whereProperty:"serviceName", equalsValue:"vanguard2"},
 			//{fromEntity:"version", whereProperty:"versionName", equalsValue:"V23"}
 		],
@@ -38,7 +34,10 @@ configManager.configs.push({
 		],
 		nodeDisplayBody: [
 			/*{label:"SOME_LABEL", "image":"IMAGE_URL"??none, "color":"HEXVALUE"??auto, "size":30, "labelPos":"above/under/left/right"??center},*/
-			//{label:"host", color:"#002533"}
+			{label:"Sample", size:50, color:"#f2b3ab"},
+			{label:"BinomialDistribution", size:50, color:"#f2b3ab"},
+			{label:"Population", size:50, color:"#f2b3ab"},
+			{label:"SampleDistribution", size:50, color:"#f2b3ab"}
 		]
 	},
 

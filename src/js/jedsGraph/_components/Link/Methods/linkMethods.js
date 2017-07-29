@@ -50,7 +50,7 @@
 		   });
 		}
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------		
-		function highlightdescendantNodes(nodeId, isOn) {				   
+		function highlightDescendantNodes(nodeId, isOn) {				   
 		   // just enumerate all realted nodes and update link color:
 		   var descendantNodes = [];
 		   descendantNodes.push(nodeId);

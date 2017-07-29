@@ -1,56 +1,13 @@
 function defineNodeDrawing(){
 	//====== NODE DRAWING/RENDERING ...occurs continuously ========================================================================================================
-	graphics.placeNode(function(nodeUI, pos) {
-		//nodeUI.attr('x', pos.x - nodeSize / 2).attr('y', pos.y - nodeSize / 2);
-		var nodesize = nodeUI.attr('nodeSize');
-		var nodeid = nodeUI.attr('nodeid');
-		var nodetype = nodeUI.attr('nodetype');
-		var nodeDragging = nodeUI.attr('dragging');
-		//if (nodetype != 'window'){
-		nodeUI.attr('transform','translate(' +(pos.x) + ',' + (pos.y) + ')');
-		
-		if (nodeDragging == 'true' && nodetype=='subnode')
-		{
-			var parentNodeId = nodeUI.attr('parentnodeid')
-			var parentPos = layout.getNodePosition(parentNodeId);
-			var thisPos = layout.getNodePosition(nodeid);
-			var distance = calculateDistance(parentPos, thisPos);
-			
-			nodeUI.children[0].attr('r', distance/5);
-			//nodeUI.children[1].text(Math.ceil(distance/5)+'%');
-			fixTextWidth4Node(GRAPH.getNode(nodeid));
-		}
-		//}
-		//else
-		//{
-			//nodeUI.attr('transform','translate(' +(pos.x) + ',' + (pos.y) + ')');
-			//nodeUI.attr('transform','translate(' +(pos.x) + ',' + (pos.y) + ')');
-		//}
-		if (nodeid == selectedNodeID)
-		{		
-			//var ele = document.getElementById("panel.bulkactions").style['left'] = pos.x;
-			//var ele = document.getElementById("floating.details").style['left'] = pos.x;
-			//detailsUI.attr('transform','translate(' +(pos.x) + ',' + (pos.y) + ')');
-		}
-		
-		
+	graphics.placeNode(function (nodeUI, pos) {
+		//console.log('draw-UI', nodeUI.node);
+		nodeUI.attr('transform', 'translate(' + (pos.x) + ',' + (pos.y) + ')');
+
+		//if (nodeUI.attr('dragging') == 'true')
+		if (nodeUI.node.data.dragging == 'true')
+			node_Event("MouseDragging", nodeUI.node);
 	});
-
-
-	//if (viewOptions.screenDragType == 'depth') {
-	//    graphics.dragScreen(function (offset) {
-
-	//        GRAPH.forEachNode(function (node, index) {
-	//            layout.pinNode(node, true);
-	//            var pos = layout.getNodePosition(node.id);
-	//            pos.x = pos.x + (offset.x * (node.data.nodeIndex + 1) * 0.1);
-	//            pos.y = pos.y + (offset.y * (node.data.nodeIndex + 1) * 0.1);
-	//            layout.setNodePosition(node.id, pos.x, pos.y);
-	//        });
-
-	//    });
-	//}
-
 
     //OVERRIDE drag drawing...
     graphics.translateRel = function (dx, dy) {
@@ -75,10 +32,11 @@ function defineNodeDrawing(){
         svgContainer.attr("transform", transform);
 
         if (viewOptions.screenDragType == 'depth') {
-            updateNodesDepth({ x: dx, y: dy })
+            applyDepthOffset({ x: dx, y: dy })
         }
     }
-    function updateNodesDepth(offset)
+
+    function applyDepthOffset(offset)
     {
         GRAPH.forEachNode(function (node, index) {
             layout.pinNode(node, true);
