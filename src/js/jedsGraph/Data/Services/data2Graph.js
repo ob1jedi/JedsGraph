@@ -23,11 +23,15 @@ function addNodesFromResults(nodesResults, _sourceConfig)
 			//Node N...
 			var datN = new nodeDataType;
 			datN.id =_sourceConfig.prefix + row[I_N_ID];
-			if (row[I_N_LABELS]){datN.labels = row[I_N_LABELS];}
-			if (row[I_N_PROPS]){datN.properties = new neoPropertyList(row[I_N_PROPS]);}
-			if (row[I_N_PROPS]){datN.propertiesObject = row[I_N_PROPS]}
+			if (row[I_N_LABELS])
+				datN.labels = row[I_N_LABELS];
+			if (row[I_N_PROPS])
+				datN.properties = new neoPropertyList(row[I_N_PROPS]);
+			if (row[I_N_PROPS])
+				datN.propertiesObject = row[I_N_PROPS]
 			var fromNode = addDataNode(datN.id, datN, _sourceConfig);
-			if (fromNode){newNodes.push(fromNode);}
+			if (fromNode)
+				newNodes.push(fromNode);
 			//if (!GRAPH.getNode(row[I_N_ID])){
 			//	var pos = layout.getNodePosition(row[I_N_ID]);
 			//	layout.setNodePosition(row[I_N_ID], pos.x, pos.y);
@@ -35,11 +39,16 @@ function addNodesFromResults(nodesResults, _sourceConfig)
 			//Node M...
 			var datM = new nodeDataType();
 			datM.id =_sourceConfig.prefix + row[I_M_ID];
-			if (row[I_M_LABELS]){datM.labels = row[I_M_LABELS];}
-			if (row[I_M_PROPS]){datM.properties = new neoPropertyList(row[I_M_PROPS]);}
-			if (row[I_M_PROPS]){datN.propertiesObject = row[I_M_PROPS]}
+			if (row[I_M_LABELS])
+				datM.labels = row[I_M_LABELS];
+			if (row[I_M_PROPS])
+				datM.properties = new neoPropertyList(row[I_M_PROPS]);
+			if (row[I_M_PROPS])
+				datN.propertiesObject = row[I_M_PROPS]
 			var toNode = addDataNode(datM.id, datM, _sourceConfig);
-			if (toNode){newNodes.push(toNode);}
+			if (toNode)
+				newNodes.push(toNode);
+
 			
 			//link R...
 			var linkdata = new linkDataType(datN.id, datM.id, _sourceConfig.prefix + row[I_R_ID], row[I_R_LABELS], _sourceConfig);

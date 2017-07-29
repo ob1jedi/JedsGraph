@@ -432,16 +432,7 @@ function unPinNode(node)
 		
 
 	
-function Neo4jDeleteNode(nodeID, _sourceConfig)
-{
-	var callback = function (nodesResult, sourceConfig) {
-		//addSingleNodesFromResults(nodesResult);
-		removeNodeFromStage(nodeID)
-	}
-	var command = 'MATCH (n) where ID(n) = '+ getNeoId(nodeID) +' DETACH DELETE (n) RETURN ID(n)';
-	Neo4j_Command([command], callback, _sourceConfig);
 
-}
 		
 		
 		

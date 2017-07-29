@@ -87,40 +87,5 @@
 	{
 		setTimeout(function(){ Neo4jCheckMonitoredNodes();}, config_ext.monitoringOptions.pollInterval * 1000);
 	}
-	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	function Neo4jCheckMonitoredNodes(_sourceConfig)
-	{
-		if (monitoredNodes.length == 0){return;}
-		var id = 0;
-		var callback = function(nodesResult, sourceConfig){
-			addSingleNodesFromResults(nodesResult, sourceConfig);
-			if(id >= monitoredNodes.length){
-				performAnimations();
-				setTimeout(function(){ Neo4jCheckMonitoredLinks(); }, config_ext.monitoringOptions.pollInterval * 1000);
-				return;
-			}
-			var command = 'MATCH (n) WHERE ID(n) = '+ getNeoId(monitoredNodes[id++].id) + ' RETURN id(n), labels(n), n';
-			Neo4j_Command([command], callback, sourceConfig);
-		};
-		var command = 'MATCH (n) WHERE ID(n) = '+ getNeoId(monitoredNodes[id++].id) + ' RETURN id(n), labels(n), n';
-		Neo4j_Command([command], callback, _sourceConfig);
-	}
-	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	function Neo4jCheckMonitoredLinks(_sourceConfig)
-	{
-		if (monitoredLinks.length == 0){return;}
-		var id = 0;
-		var callback = function(relationsResult, sourceConfig){
-			addSingleRelationFromResults(relationsResult);
-			if(id >= monitoredLinks.length){
-				performAnimations();
-				setTimeout(function(){ pollDatabase(); }, config_ext.monitoringOptions.pollInterval * 1000);
-				return;
-			}
-			var command = 'MATCH (n)-[r]-(m) WHERE ID(r) = '+ getNeoId(monitoredLinks[id++].data.id) + ' RETURN id(n), id(m), id(r), type(r), r';
-			Neo4j_Command([command], callback, sourceConfig);
-		};
-		var command = 'MATCH (n)-[r]-(m) WHERE ID(r) = '+ getNeoId(monitoredLinks[id++].data.id) + ' RETURN id(n), id(m), id(r), type(r), r';
-		Neo4j_Command([command], callback, _sourceConfig);
-	}
+
 	/*loop*/
