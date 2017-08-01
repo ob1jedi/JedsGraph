@@ -1,109 +1,98 @@
-﻿function defineNodeAppearance_dataNode(node, ui) {
-	var cnf = node.data.sourceConfig.displaySettings;
-	var nodeConfig = node.data.config.nodeDisplayBody;
-	if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }
-	//Circle elements NODE-CIRCLE
-	//circleGlow = Viva.Graph.svg('circle')
-	//	.attr('cx', 0)
-	//	.attr('cy', 0)
-	//	.attr('r', node.data.nodeSize*1.7)
-	//	.attr('fill','transparent');//node.data.nodeColor)//'#4dffc3')
-	//if (cnf.glow) {circleGlow.attr('fill','url(#gradGlow)');}
-	//if (!cnf.opaque) {circleGlow.attr('fill-opacity',0.5);}
+﻿var nodeAppearanceHelper = {
+	addNodeBody: function (config, node) {
+		var nodeBody = Viva.Graph.svg(config.entityShape)
+			.attr('cx', 0)//...for circle
+			.attr('cy', 0)//...for circle
+			.attr('r', node.data.nodeSize) //...for circle
+			.attr('fill', node.data.nodeColor)//node.data.nodeColor)//'#4dffc3')
+			.attr('stroke-width', 3)
+			.attr('stroke', config.entityBorderColor == null ? node.data.nodeBorderColor : currentTheme.entityBorderColor)
+		if (config.entityShape == "rect") {
+			nodeBody.attr('width', node.data.nodeSize * 3);
+			nodeBody.attr('height', node.data.nodeSize * 2);
+			nodeBody.attr('rx', node.data.nodeSize / 4);
+			nodeBody.attr('x', -(node.data.nodeSize * 3 / 2));
+			nodeBody.attr('y', -(node.data.nodeSize * 2 / 2));
+		}
+		if (config.haze == true)
+			nodeBody.attr('filter', 'url(#hazeEffect)'); //haze
+		if (config.glass == true)
+			nodeBody.attr('fill', 'url(#gradGlass)');
+		if (config.rounded == true)
+			nodeBody.attr('fill', 'url(#gradRound)');
+		if (!config.opaque == true)
+			nodeBody.attr('fill-opacity', config.entityOpacity);
+		return nodeBody
+	},
 
-	//rectblank = Viva.Graph.svg('rect')
-	//	.attr('width', 0)
-	//	.attr('height', 0);
-
-	nodeBody = Viva.Graph.svg(cnf.entityShape)
-		.attr('cx', 0)//...for circle
-		.attr('cy', 0)//...for circle
-		.attr('r', node.data.nodeSize) //...for circle
-		.attr('fill', node.data.nodeColor)//node.data.nodeColor)//'#4dffc3')
-		.attr('stroke-width', 3)
-		.attr('stroke', cnf.entityBorderColor == null ? node.data.nodeBorderColor : currentTheme.entityBorderColor)
-
-	//.attr('stroke-opacity',0.5);
-	if (cnf.entityShape == "rect") {
-		nodeBody.attr('width', node.data.nodeSize * 3);
-		nodeBody.attr('height', node.data.nodeSize * 2);
-		nodeBody.attr('rx', node.data.nodeSize / 4);
-		nodeBody.attr('x', -(node.data.nodeSize * 3 / 2));
-		nodeBody.attr('y', -(node.data.nodeSize * 2 / 2));
-	}
-	if (cnf.haze == true) { nodeBody.attr('filter', 'url(#hazeEffect)'); } //haze
-	if (cnf.glass == true) { nodeBody.attr('fill', 'url(#gradGlass)'); }
-	if (cnf.rounded == true) { nodeBody.attr('fill', 'url(#gradRound)'); }
-	if (!cnf.opaque == true) { nodeBody.attr('fill-opacity', cnf.entityOpacity); }
-
-	nodeBodyImage = Viva.Graph.svg('image')
+	addNodeImage: function (config, nodeConfig, node) {
+		var nodeBodyImage = Viva.Graph.svg('image')
 		.attr('x', -node.data.nodeSize)
 		.attr('y', -node.data.nodeSize)
 		.attr('rx', node.data.nodeSize)
 		.attr('width', node.data.nodeSize * 2)
 		.attr('height', node.data.nodeSize * 2)
 		.link(nodeConfig.image ? nodeConfig.image : '');
-	if (cnf.rounded == true) { nodeBodyImage.attr('fill', 'url(#gradRound)'); }
-	if (!cnf.opaque == true) { nodeBodyImage.attr('fill-opacity', node.data.nodeOpacity); }
+		if (config.rounded == true)
+			nodeBodyImage.attr('fill', 'url(#gradRound)');
+		if (!config.opaque == true)
+			nodeBodyImage.attr('fill-opacity', node.data.nodeOpacity);
+		return nodeBodyImage;
+	},
 
-	//Text elements...
-	displayText = Viva.Graph.svg('text')
-		.attr('y', 0)
-		.attr('x', 0)
-		.attr('fill', cnf.entityLabelColor)
-		.attr('stroke-width', '0')
-		.attr('font-family', cnf.entityFont.family)
-		.attr('font-weight', cnf.entityFont.weight)
-		.attr('font-size', '20')
-		.text(node.data.displayLabel);
-	if (cnf.textHaze == true) { displayText.attr('filter', 'url(#darkHazeEffect)'); } //haze
+	addNodeText: function (config, node){
+		//Text elements...
+		var displayText = Viva.Graph.svg('text')
+			.attr('y', 0)
+			.attr('x', 0)
+			.attr('fill', config.entityLabelColor)
+			.attr('stroke-width', '0')
+			.attr('font-family', config.entityFont.family)
+			.attr('font-weight', config.entityFont.weight)
+			.attr('font-size', '20')
+			.text(node.data.displayLabel);
+		if (config.textHaze == true)
+			displayText.attr('filter', 'url(#darkHazeEffect)'); //haze
+		return displayText;
+	}
+
+
+}
+
+
+function defineNodeAppearance_dataNode(node, ui) {
+	var cnf = node.data.sourceConfig.displaySettings;
+	var nodeConfig = node.data.config.nodeDisplayBody;
+	if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }
+
+	//Circle elements NODE-CIRCLE
+	var nodeBody = nodeAppearanceHelper.addNodeBody(cnf, node);
+	var nodeBodyImage = nodeAppearanceHelper.addNodeImage(cnf, nodeConfig, node);
+	var displayText = nodeAppearanceHelper.addNodeText(cnf, node);
+
+	nodeOptions = Viva.Graph.svg('rect')
+		.attr('x', -node.data.nodeSize)
+		.attr('y', -node.data.nodeSize)
+		.attr('width', 100)
+		.attr('fill', 'green')
+		.attr('height', 20)
 
 	circleTextPath = Viva.Graph.svg('path')
-			.attr('id', 'npath_' + node.data.id)
-			.attr('d', 'M' + (-node.data.nodeSize - 3) + ',' + (-1.5) + ' a1,1 0 1,1 ' + (node.data.nodeSize * 2 + 6) + ',0')
-			.attr('fill', 'transparent')
-			.attr('stroke-width', 0)
-			.attr('stroke', 'black')
+		.attr('id', 'npath_' + node.data.id)
+		.attr('d', 'M' + (-node.data.nodeSize - 3) + ',' + (-1.5) + ' a1,1 0 1,1 ' + (node.data.nodeSize * 2 + 6) + ',0')
+		.attr('fill', 'transparent')
+		.attr('stroke-width', 0)
+		.attr('stroke', 'black')
 
 	circleText = Viva.Graph.svg('text')
 		.attr('y', 0)
 		.attr('x', 0)
 		.attr('fill', 'black')
 		.attr('stroke-width', '0')
-		//.attr('font-family',cnf.entityFont.family)
-		//.attr('font-weight',cnf.entityFont.weight)
+
 		.attr('font-size', '10')
 	circleText.innerHTML += '<textPath xlink:href="#npath_' + node.data.id + '">' + node.data.circleText + '</textPath>';
-	//console.log(node);
-	//circleTextPathLink =  Viva.Graph.svg('textPath')
-	//		.attr('xlink:href'="#myTextPath")
-	//		.attr('d', 'M75,20 a1,1 0 0,0 100,0')
-	/*
-popoutTextUI = Viva.Graph.svg('text')
-	.attr('class', 'slidetext')
-	.attr('y', -node.data.nodeSize) //node.data.nodeSize/2 + 5)
-	.attr('x', 200)// - node.data.displayLabel.length)
-	.attr('fill',cnf.entityPopoutTextColor)
-	.attr('stroke-width','0')
-	.attr('font-family','Arial, Helvetica, sans-serif')
-	.attr('font-size','10')
-	.text('--');
-popoutTextUI.innerHTML = propertyListToSvgList(node.data.properties, '<tspan x="50" dy="1.2em">', '</tspan>');
 
-popoutBodyUI = Viva.Graph.svg('rect')
-	.attr('class', 'slidebody')
-	.attr('x', node.data.nodeSize/2)
-	.attr('y', -node.data.nodeSize)
-	.attr('rx', 7)
-	.attr('height', 0)
-	.attr('fill','#141414')
-	.attr('width','20%')
-
-if (!cnf.opaque) {popoutBodyUI.attr('fill-opacity',0.3);}
-*/
-
-	//var defs = graphics.getSvgRoot().append('defs');
-	//defs.append(midMarker);
 
 	var visDefs = '<defs>';
 	visDefs += '<filter id="hazeEffect" x="-1" y="-1" width="300%" height="300%"><feOffset result="offOut" in="FillPaint" dx="0" dy="0" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>';
@@ -114,32 +103,28 @@ if (!cnf.opaque) {popoutBodyUI.attr('fill-opacity',0.3);}
 	visDefs += '</defs>';
 	ui.innerHTML = visDefs;
 
-	//var defs = graphics.getSvgRoot().append('defs');
-	//defs.append(circleTextPath);
-
-
 	ui.attr('class', 'datanode')
-
 	node.data.UI.fullUI = ui;
 	node.data.UI.bodyUI = nodeBody;
 	node.data.UI.imageUI = nodeBodyImage;
 	node.data.UI.displayTextUI = displayText;
 	node.data.UI.circleTextPath = circleTextPath;
 	node.data.UI.circleText = circleText;
-	//node.data.UI.popoutBodyUI = popoutBodyUI;
-	//node.data.UI.popoutTextUI = popoutTextUI;
-
-	//if (cnf.loadNodePopouts){ui.append(node.data.UI.bodyUI);}//else{ui.append(rectblank);}
-	//if (cnf.loadNodePopouts){ui.append(node.data.UI.popoutBodyUI);}
+	node.data.UI.options = nodeOptions;
 	ui.append(node.data.UI.bodyUI);
 
 	if (cnf.showCircleText) {
 		ui.append(node.data.UI.circleTextPath);
 		ui.append(node.data.UI.circleText);
 	}
-	if (nodeConfig.image) { ui.append(node.data.UI.imageUI); }
-	//ui.append(node.data.UI.focusUI);
-	if (cnf.showLabels) { ui.append(node.data.UI.displayTextUI); }
-	//if (cnf.loadNodePopouts){ui.append(node.data.UI.popoutTextUI);}
+
+	ui.append(node.data.UI.options);
+
+	if (nodeConfig.image)
+		ui.append(node.data.UI.imageUI);
+
+	if (cnf.showLabels) 
+		ui.append(node.data.UI.displayTextUI);
 
 }
+

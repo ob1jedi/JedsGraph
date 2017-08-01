@@ -1,4 +1,5 @@
 function defineNodeDrawing(){
+
 	//====== NODE DRAWING/RENDERING ...occurs continuously ========================================================================================================
 	graphics.placeNode(function (nodeUI, pos) {
 		//console.log('draw-UI', nodeUI.node);
@@ -51,7 +52,4 @@ function defineNodeDrawing(){
     //graphics.getNodeUI = function (nodeId) {
     //    return .allNodes[nodeId];
     //}
-
-
-
 }

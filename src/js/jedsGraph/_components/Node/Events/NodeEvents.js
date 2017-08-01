@@ -102,6 +102,11 @@ function dataNode_OnMouseDown(node) {
 	highlightSelectedNode(node.id);
 	layout.pinNode(node, true);
 	node.data.isPinned = true;
+
+	addSubNode(node, 'Create_X', 'blue', 'X');
+	addSubNode(node, 'Create_Y', 'red', 'Y');
+	addSubNode(node, 'Create_Z', 'green', 'Z');
+
 }
 
 function dataNode_OnMouseUp(node) {
@@ -109,6 +114,7 @@ function dataNode_OnMouseUp(node) {
 }
 
 function dataNode_OnMouseDblClick(node) {
+
 	Neo4jFetchEntitiesForNode(node.id, node.data.sourceConfig);
 }
 

@@ -9,7 +9,6 @@ function unPinAllNodes()
 		node.data.isPinned = false;
 	});
 }
-		
 				
 function uncheckAll(){
 	//check nodes
@@ -21,6 +20,7 @@ function uncheckAll(){
 		uncheckLink(link);
 	});
 }
+
 function checkAll(){
 	//check nodes
 	nodeList.forEach(function(node){
@@ -37,7 +37,6 @@ function setScreenDragType(key)
 	viewOptions.screenDragType = key;
 }
 
-
 function getDataRootNodes()
 {
 	var rootNodes = [];
@@ -49,7 +48,6 @@ function getDataRootNodes()
 	});
 	return rootNodes;
 }
-		
 		
 function arrangeBy(rootNode, processedNodeIds, maxxRight, maxxLeft, level, startY)
 {
@@ -72,17 +70,13 @@ function arrangeBy(rootNode, processedNodeIds, maxxRight, maxxLeft, level, start
 		maxxLeft = startPos.x;
 		startY = startPos.y;
 		rootNodes.forEach(function(rootNode, index){
-			//layout.setNodePosition(rootNode.id, maxxRight, startPos.y);
-			//processedNodeIds.push(rootNode.id);
 			maxxRight = arrangeBy(rootNode, processedNodeIds, maxxRight, maxxLeft, 0, startY);
-			//layout.setNodePosition(rootNode.id, maxxRight, startPos.y);
 		});
 	}
 	else{
 				
 
 		level++;
-		//layout.pinNode(rootNode, true);
 		processedNodeIds.push(rootNode.id);
 		var rootNodePos = layout.getNodePosition(rootNode.id);
 		var cb = rootNodePos.x - ((rootNode.data.toNodes.length*100) /2)
@@ -106,44 +100,8 @@ function arrangeBy(rootNode, processedNodeIds, maxxRight, maxxLeft, level, start
 		});
 	}
 	return maxxRight;
-	/*/------------------------------------------------------------------------------------
-	var startPos = layout.getNodePosition(nodeList[0].id);
-	var rootNodes = getDataRootNodes();
-	var allNodes = [];
-	var xpos = startPos.x;
 
-	rootNodes.forEach(function(node){
-		allNodes.push(node.id);
-	});
-
-	nodeList.forEach(function(node){
-		xpos = xpos + node.data.nodeSize * 2;
-		var currentNodePos = layout.getNodePosition(node.id);
-		layout.setNodePosition(node.id, xpos, startPos.y);
-		layout.pinNode(node, true);
-		node.data.isPinned = true;
-		node.data.maxlevel = 0;
-	});
-				
-	for (var i = 0; i< 2; i++)
-	{
-		nodeList.forEach(function(node){
-			node.data.toNodes.forEach(function(othernode, index){
-				if (othernode.data.maxlevel <= node.data.maxlevel){othernode.data.maxlevel = node.data.maxlevel+1}
-				var currentParentPos = layout.getNodePosition(othernode.id);
-				var currentNodePos = layout.getNodePosition(othernode.id);
-				//var newYPos = (currentParentPos<currentNodePos)?currentParentPos.y:currentNodePos.y + 100;
-				var newYPos = startPos.y + (othernode.data.maxlevel * 100);
-				//var newXPos = (currentParentPos.x + currentNodePos.y)/2;
-				layout.setNodePosition(othernode.id, currentNodePos.x, newYPos);
-			});
-		});
-	}
-
-	return;
-	*/
-}
-		
+}	
 		
 function arrangeBy2(rootNode, processedNodeIds, posLeft, posTop, level)
 {
@@ -176,33 +134,20 @@ function arrangeBy2(rootNode, processedNodeIds, posLeft, posTop, level)
 		posLeft += 200;
 		var currentChildTop = posTop - 100;
 		rootNode.data.toNodes.forEach(function(childNode, index){
-			//jed
 			if (processedNodeIds.indexOf(childNode.id) < 0){					
 				currentChildTop += 100;
-				//posTop += 100;
 				layout.setNodePosition(childNode.id, posLeft, currentChildTop);
 				posTop = arrangeBy2(childNode, processedNodeIds, posLeft, currentChildTop, level);
 			}
 		});
-		//var parentPos = rootNodePos.y + ((posTop - rootNodePos.y)/2);
-		//layout.setNodePosition(rootNode.id, posLeft, parentPos);
 	}
 	return posTop;
 }
-		
-		
+	
 function addNodeToGraph(nodeId, nodeData)
 {
 	var node = GRAPH.getNode(nodeId);
-	//if (!node){
 	node = GRAPH.addNode(nodeId, nodeData);
-	//}else{ //...node already exists
-	//	//refresh nodes appearance
-	//	if (node.data.UI.fullUI){
-
-	//		$(node.data.UI.fullUI).hide().show();
-	//	}
-	//}
 	fixTextWidth4Node(node);
 	return node;
 }
@@ -210,38 +155,16 @@ function addNodeToGraph(nodeId, nodeData)
 function highlightLabel(labelIndex)
 {
 	var label = labelsList[labelIndex];
-	//checkedNodes.forEach(function(node){
-		//var nodeUI = graphics.getNodeUI(node.id);
-		//if (node.data.UI.fullUI) {node.data.UI.fullUI.attr('stroke','transparent');}
-	//});
-			
-	//fadedNodes = [];
-			
-	//checkedNodes = [];
 	nodeList.forEach(function(node){
-		//var nodeUI = graphics.getNodeUI(node.id);
-		//node.data.toLinks.forEach(function(link){
-		//	var linkUI = graphics.getLinkUI(link);
-		//	linkUI.attr('stroke-opacity','0.1');
-		//});
-				
-		//if (node.data.labels.indexOf(label.name) > -1){	
 		node.data.UI.fullUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity);
 		node.data.UI.bodyUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity);
-		//}
 		if (label && node.data.labels.indexOf(label.name) == -1){
 			node.data.UI.fullUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity/ 5)
 			node.data.UI.bodyUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity/ 5);
-			//fadedNodes.push(node);
 		}
-	});
-			
-			
+	});	
 }
-		
-		
 
-		
 function addPlannedLink(fromNodeID, toNodeID, linkName, linkProperties)
 {
 	var plannedLinkData = new linkDataType()
@@ -251,7 +174,6 @@ function addPlannedLink(fromNodeID, toNodeID, linkName, linkProperties)
 	plannedLinkData.name = linkName;
 	plannedLinkData.displayLabel = linkName;
 	plannedLinkData.linkType = 'planned';
-	//plannedLinkData.properties = linkProperties;
 	plannedLinkData.color = 'red';
 	link = GRAPH.addLink(fromNodeID, toNodeID, plannedLinkData);
 	linkList.push(link);
@@ -264,14 +186,11 @@ function addDataLink(fromNodeID, toNodeID, linkData, _sourceConfig)
 	var link;
 	var existingLink = getDataLink(linkData.id);
 	if (existingLink){
-		//var linkUI = graphics.getLinkUI(linkData.id);
-		//check if any properties changed 
 		var updatedProperties = getUpdatedProperties(linkData.properties, existingLink.data.properties);
 		if (linkData.name != existingLink.data.name || updatedProperties.length > 0){
 			existingLink.data.name = linkData.name;
 			existingLink.data.displayLabel = linkData.name;
 			existingLink.data.properties = linkData.properties;
-			//$(linkUI).hide().show(0);
 			animUpdateLinks.push(existingLink);
 		}
 		link = existingLink;
@@ -284,9 +203,8 @@ function addDataLink(fromNodeID, toNodeID, linkData, _sourceConfig)
 		link.data.fromNodeID = fromNodeID;
 		link.data.toNodeID = toNodeID;
 		link.data.displayLabel = linkData.name;
-		linkList.push(link); //new linkType(fromNodeID,toNodeID, linkData, linkData.id)); 
+		linkList.push(link); 
 		fixLinkIndexes(fromNodeID, toNodeID);
-		//fixTextWidth4Link(link);
 	}
 
 	var toNode = GRAPH.getNode(toNodeID);
@@ -312,18 +230,12 @@ function addDataLink(fromNodeID, toNodeID, linkData, _sourceConfig)
 		toNode.data.fromNodes.push(fromNode);
 		fromNode.data.toLinks.push(link);
 		fromNode.data.toNodes.push(toNode);
-				
-		//Node sizing...
-		//if (config_ext.viewOptions.nodeSizing == 'relationCount'){increaseNodeSize(fromNodeID); increaseNodeSize(toNodeID);}
-		//if (config_ext.viewOptions.nodeSizing == 'outRelationCount' ) {increaseNodeSize(fromNodeID);}
-		//if (config_ext.viewOptions.nodeSizing == 'inRelationCount' ) {increaseNodeSize(toNodeID);}
 	}
 			
 	fixTextWidth4Link(link);
 }
 		
 function fixLinkIndexes(fromNodeID, toNodeID){ //Get sibling details...
-			
 	var totalSiblings = 0;
 	var leftSiblings = 0;
 	var rightSiblings = 0;
@@ -359,25 +271,10 @@ function fixLinkIndexes(fromNodeID, toNodeID){ //Get sibling details...
 		}
 	});
 }
-		
-function addWindowNode()
-{
-	var nodeId = 'DetailsWindow';
-	var data = new nodeDataType();
-	data.height = 200;
-	data.width = 200;
-	data.nodeShape = 'rect';
-	data.nodeType = 'window';
-	data.isPinned = true;
-	detailsNode = addNodeToGraph(nodeId, data);
-	layout.pinNode(detailsNode, true);
-	return graphics.getNodeUI(nodeId);	
-}
-		
+
 function addDataNode(nodeId, nodeData, _sourceConfig)
 {
-	nodeData.sourceConfig = _sourceConfig ? _sourceConfig : currentTheme.sourceConfig ;
-			
+	nodeData.sourceConfig = getConfig(_sourceConfig);
 	var dataNode = getDataNode(nodeId);
 	var nodeUI;
 	var isNewNode = false;

@@ -67,20 +67,34 @@ function Neo4jFetchEntitiesForNode(nodeId, _sourceConfig)
 		command = 'MATCH (n)-[r]-(m) WHERE ID(n) = ' + getNeoId(nodeId) + ' RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 		break;
 	}
-	var callback2 = function(nodesResult, sourceConfig){
+	var whenResultsComeBackFunction = function(nodesResult, sourceConfig){
 		var newNodes = addNodesFromResults(nodesResult, sourceConfig)
 		//popout effect
-		newNodes.forEach(function (newNode){
-			layout.pinNode(newNode, true);
-			var pos = layout.getNodePosition(nodeId);
-			layout.setNodePosition(newNode.id, getRandomArbitrary(pos.x-newNode.data.nodeSize/2, pos.x+newNode.data.nodeSize/2), getRandomArbitrary(pos.y-newNode.data.nodeSize/2, pos.y+newNode.data.nodeSize/2));
-			layout.pinNode(newNode, false);
+		newNodes.forEach(function (newNode) {
+			applyPopoutEffectToNode(newNode, nodeId)
 		});
 			
 	};
-	Neo4j_Command([command], callback2, _sourceConfig);
+
+	applyWaitingAffectToNode(nodeId);
+	Neo4j_Command([command], whenResultsComeBackFunction, _sourceConfig);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+function applyPopoutEffectToNode(newNode, parentNodeId) {
+	layout.pinNode(newNode, true);
+	var pos = layout.getNodePosition(parentNodeId);
+	layout.setNodePosition(newNode.id, getRandomArbitrary(pos.x - newNode.data.nodeSize / 2, pos.x + newNode.data.nodeSize / 2), getRandomArbitrary(pos.y - newNode.data.nodeSize / 2, pos.y + newNode.data.nodeSize / 2));
+	layout.pinNode(newNode, false);
+}
+
+function applyWaitingAffectToNode(nodeId) {
+	
+}
+function removeWaitingAffectFromNode(nodeId) {
+
+}
+
+
 function Neo4jGetRelationCounts(nodeId, callback, _sourceConfig)
 {
 	command = 'MATCH (n)-[r]->(m) where id(n) = '+getNeoId(nodeId)+' RETURN count(n) UNION MATCH (n)<-[r]-(m) where id(n) = '+getNeoId(nodeId)+ ' RETURN count(n)'

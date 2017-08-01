@@ -1,4 +1,4 @@
-﻿function defineNodeAppearance_dataNode(node, ui) {
+﻿function defineNodeAppearance_subNode(node, ui) {
 	var cnf = node.data.sourceConfig.displaySettings;
 	var nodeConfig = node.data.config.nodeDisplayBody;
 	if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }

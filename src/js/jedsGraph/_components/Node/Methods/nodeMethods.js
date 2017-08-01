@@ -405,14 +405,10 @@ function increaseNodeSize(nodeId)
 	node.data.fromLinks.forEach(function (link){
 		link.data.UI.fullUI.attr('toNodeRadius', node.data.nodeSize);
 	});
-			
-	//addNodeToGraph(node.id,node.data);
+
 	increaseNodeSprings(node.id);
 	fixTextWidth4Node(node);
-	//node.data.toLinks.forEach(function(link){
-		//var linkUI = graphics.getLinkUI(link.id);
-		//linkUI.attr('stroke-width',node.data.nodeSize/5);
-	//});			
+		
 }		
 		
 function decreaseNodeSize(nodeId)
@@ -659,16 +655,18 @@ function removeSubNode(subNode, updateSuperNode)
 }
 		
 function addSubNode(parentNode, id, color, displayLabel)
-{			
-
+{
+	//console.log('Node', GRAPH.getNode(id));
+	var existingNode = GRAPH.getNode(id);
+	if (existingNode)
+		return;
 	var subNodeData = new nodeDataType();
 	subNodeData.nodeSize = 5;
 	subNodeData.nodeType = 'subnode';
 	subNodeData.id = id; //'sub' + parentNode.id;
 	subNodeData.labels = ['subnode'];
 	subNodeData.nodeColor = color;
-			
-			
+	
 	subNodeData.displayLabel = displayLabel;
 	subNodeData.superNodes.push(parentNode);
 	//CREATE NODE
@@ -687,14 +685,21 @@ function addSubNode(parentNode, id, color, displayLabel)
 			
 	var linkData = new linkDataType(parent.id, subNodeData.id, parent.id +' ' + subNodeData.id);
 	linkData.linkType = 'sub';
-	linkData.color = color;
+	linkData.color = 'transparent';
 	//linkData.fromNodeID = parent.id;
 	//linkData.toNodeID = subNodeData.id;
 	var toRelLink = GRAPH.addLink(parentNode.id, subNodeData.id, linkData);
 	subNode.data.fromLinks.push(toRelLink);
-			
+	
+	//Adjust length of link...
 	var nodespring = layout.getSpring(parentNode.id, subNodeData.id);
-	nodespring.length = 30;
+	console.log('parentNode',parentNode);
+	nodespring.length = parentNode.data.nodeSize; //30;
+
+	//Adjust link bounciness...
+	//var nodebody = layout.getBody(id);
+	//nodebody.mass = 1;
+
 }
 		
 		
