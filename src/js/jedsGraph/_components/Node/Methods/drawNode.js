@@ -7,7 +7,7 @@ function defineNodeDrawing(){
 
 		//if (nodeUI.attr('dragging') == 'true')
 		if (nodeUI.node.data.dragging == 'true')
-			node_Event("MouseDragging", nodeUI.node);
+			node_Event("MouseDragging", nodeUI.node, pos.x, pos.y);
 	});
 
     //OVERRIDE drag drawing...
@@ -32,9 +32,13 @@ function defineNodeDrawing(){
         var transform = "matrix(" + t.a + ", 0, 0," + t.d + "," + t.e + "," + t.f + ")";
         svgContainer.attr("transform", transform);
 
-        if (viewOptions.screenDragType == 'depth') {
+        if (viewOptions.screenDragType == 'depth')
             applyDepthOffset({ x: dx, y: dy })
-        }
+
+        var nodeFlyout = document.getElementById('panel.node');
+
+        if (nodeFlyout.classList.contains('fadein'));
+			nodeFlyout.classList.add('fadeout');
     }
 
     function applyDepthOffset(offset)

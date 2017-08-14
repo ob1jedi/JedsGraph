@@ -80,7 +80,7 @@ function setConfigSettings(config) {
 
 		//GET STARTUP NODES>>
 		cnf.startupOptions.startupSearch.forEach(function (search, index) {
-			Neo4jGetNodesByDetails(search.label, search.properties, cnf)
+			Neo4jGetNodesByDetails(search.nodeLabel, search.properties, cnf)
 		});
 
 		//RUN STARTUP QUERIES>>

@@ -68,27 +68,31 @@ function addNodesFromResults(nodesResults, _sourceConfig)
 	return newNodes;
 }
 
-function addSingleNodesFromResults(nodesResults, _sourceConfig)
+function addSingleNodeFromResultsAndReturnIds(nodesResults, _sourceConfig)
 {
+	var Ids = [];
 	for (var i = 0; i < nodesResults.results.length; i++){
 		
 		var result = nodesResults.results[i];
-		for (var d = 0; d < result.data.length; d++){
+		for (var d = 0; d < result.data.length; d++) {
 			var row = result.data[d].row;
 			var I_N_ID = 0;
 			var I_N_LABELS = 1;
 			var I_N_PROPS = 2;
 			//Node N...
 			var dat = new nodeDataType();
-			dat.id =_sourceConfig.prefix +row[I_N_ID];
-			if (row[I_N_LABELS]){dat.labels = row[I_N_LABELS];}
-			if (row[I_N_PROPS]){dat.properties = new neoPropertyList(row[I_N_PROPS]);}
-			if (row[I_N_PROPS]){dat.propertiesObject = row[I_N_PROPS];}
+			dat.id = _sourceConfig.prefix + row[I_N_ID];
+			if (row[I_N_LABELS]) { dat.labels = row[I_N_LABELS]; }
+			if (row[I_N_PROPS]) { dat.properties = new neoPropertyList(row[I_N_PROPS]); }
+			if (row[I_N_PROPS]) { dat.propertiesObject = row[I_N_PROPS]; }
 			addDataNode(dat.id, dat, _sourceConfig);
+			Ids.push(dat.id);
 		}
 	}
     //Refresh all nodes to ensure depths are correct:
 	refreshNodesDepths();
+	
+	return Ids;
 }
 
 function addSingleRelationFromResults(nodesResults, _sourceConfig)

@@ -40,6 +40,7 @@
 		
 		function processJsonToGraph(name, obj, parentNodeData, level)
 		{
+			console.log('CONVERT', 1);
 			var stillRoot = parentNodeData ? false : true;
 			if (!stillRoot){if (!parentNodeData.temp.parentNodeData) {stillRoot = true;}}
 			var fromNodeId = parentNodeData ? parentNodeData.id : 'root';

@@ -1,0 +1,10 @@
+﻿<form class="form-group" role="search">
+	<h2>New Workflow</h2>
+	<br />
+	<label class="label" for="txtName">Name</label>
+	<input class="form-control" if="txtName" type="text" placeholder="Enter name">
+	<br />
+	<label class="label" for="txtName">Name</label>
+	<input class="form-control" if="txtName" type="text" placeholder="Enter name">
+</form>
+<button type="submit" class="btn btn-default pull-right">Submit</button>

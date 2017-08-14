@@ -34,6 +34,7 @@ function nodeDataType() {
     this.config.nodeDisplayBody = {};
     this.config.nodeDisplayValues = {};
     this.config.nodeStatReachers = [];
+    this.config.nodeFlyout = [];
     this.config.nodeTransformers = [];
     this.stats = {}
     this.stats.toEntityCount = 0;

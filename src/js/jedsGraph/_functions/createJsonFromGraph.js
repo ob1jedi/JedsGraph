@@ -25,18 +25,18 @@
 			var labels = [];
 			rootMostNodes.map(function(n, index) {if (labels.indexOf(n.data.labels[0]) == -1){labels.push(n.data.labels[0]);} });
 			
-			labels.forEach(function(label){
+			labels.forEach(function (nodeLabel) {
 				var useArray = false;
 				var count = 0;
-				rootMostNodes.map(function(n){if(n.data.labels[0]==label){count++;}});
+				rootMostNodes.map(function (n) { if (n.data.labels[0] == nodeLabel) { count++; } });
 				if (count > 1) {useArray = true;}
-				if (useArray) {rootObject[label] = [];}
+				if (useArray) { rootObject[nodeLabel] = []; }
 				rootMostNodes.forEach(function (node) {
-					if (node.data.labels[0] == label){
+					if (node.data.labels[0] == nodeLabel) {
 						if (useArray) 
-							rootObject[label].push(createJsonFromNode(node, {}, processedNodes));
+							rootObject[nodeLabel].push(createJsonFromNode(node, {}, processedNodes));
 						else
-							rootObject[label] = createJsonFromNode(node, {}, processedNodes);
+							rootObject[nodeLabel] = createJsonFromNode(node, {}, processedNodes);
 					}
 				})
 			});			
@@ -81,25 +81,25 @@
 			var labels = [];
 			node.data.toNodes.map(function(n, index) {if (labels.indexOf(n.data.labels[0]) == -1){labels.push(n.data.labels[0]);} });
 			
-			labels.forEach(function(label){
+			labels.forEach(function (nodeLabel) {
 				
 				var useArray = false;
 				var count = 0;
-				node.data.toNodes.map(function(n){if(n.data.labels[0]==label){count++;}});
+				node.data.toNodes.map(function (n) { if (n.data.labels[0] == nodeLabel) { count++; } });
 				if (count > 1) {useArray = true;}
-				if (useArray) {thisObject[label] = [];}
+				if (useArray) { thisObject[nodeLabel] = []; }
 				
 				node.data.toNodes.forEach(function (childNode){
-					if(childNode.data.labels[0] == label && count > 0)
+					if (childNode.data.labels[0] == nodeLabel && count > 0)
 					{
 						if (processedNodes.indexOf(childNode.id) == -1)
 						{
 							if (checkedNodes.map(function(n){return n.id}).indexOf(childNode.id) > -1)
 							{
 								if (useArray) 
-									thisObject[label].push(createJsonFromNode(childNode, {}, processedNodes, node));
+									thisObject[nodeLabel].push(createJsonFromNode(childNode, {}, processedNodes, node));
 								else 
-									thisObject[label] = createJsonFromNode(childNode, {}, processedNodes, node);
+									thisObject[nodeLabel] = createJsonFromNode(childNode, {}, processedNodes, node);
 							}
 						}
 					}

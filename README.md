@@ -3,7 +3,7 @@ A Neo4j graph visualizer built over VivaGraphJS.
 
 Hey, so I'm still in the process of laying things out in an orderly fashion, 
 but to try it out you can run the HTML file "src\JedsGraph.html"
-To hook it up to a Neo4jDatabase, just change the "neo4jconnection" values in the \src\custom\defaultConfig.json file(or one of the config files)
+To hook it up to a Neo4jDatabase, just change the "neo4jconnection" values in the \src\custom\config\defaultConfig.json file(or one of the config files)
 
 The VivaGraphJS library allows you to visually create a graph by adding nodes to a stage and then linking them.
 It handles the physics of the nodes and links.
@@ -16,7 +16,7 @@ JedsGraph adds:
 - functions such db-monitoring, generating json snippets, etc.
 
 To modify the appearance, or funcitons of the graph, you can adjust the following files
-\src\custom\defaultConfig.json
+\src\custom\config\defaultConfig.json
 \src\custom\config\Data1.json
 \src\custom\config\Data2.json
 

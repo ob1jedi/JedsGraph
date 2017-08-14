@@ -8,8 +8,10 @@ function defineNodes()
 		nodeOuterLayer = Viva.Graph.svg('g');
 	    nodeLayer = Viva.Graph.svg('g');
 
-	    if (isShadowEffectTurnedOnInConfig(node.data.sourceConfig))
+	    if (isShadowEffectTurnedOnInConfig(node.data.sourceConfig)) {
+	    	//console.log('Shadow on');
 	    	addShadowTo(nodeLayer);
+	    }
 
 	    if (node.data.nodeType == 'data')
 			defineNodeAppearance_dataNode(node, nodeLayer);
@@ -30,7 +32,8 @@ function defineNodes()
 	});
 
 	function isShadowEffectTurnedOnInConfig(config) {
-		config.displaySettings.shadow
+		//console.log('Shadow:', config.displaySettings.shadow);
+		return config.displaySettings.shadow;
 	}
 
 	function addShadowTo(nodeLayer){
@@ -50,31 +53,31 @@ function defineNodes()
 		//NODE EVENTS
 		// events (http://www.w3.org/TR/SVG/interact.html#SVGEvents ),
 		// including mouse events:
-		$(ui).mousedown(function () { // MOUSE CLICK
-			node_Event("MouseDown", node);
+		$(ui).mousedown(function (event) { // MOUSE CLICK
+			node_Event("MouseDown", node, event.pageX, event.pageY);
 		}),
 
-		$(ui).contextmenu(function () { // MOUSE CLICK
-			node_Event("MouseContextMenu", node);
+		$(ui).contextmenu(function (event) { // MOUSE CLICK
+			node_Event("MouseContextMenu", node, event.pageX, event.pageY);
 		}),
 
-		$(ui).mouseup(function () { // MOUSE CLICK
-			node_Event("MouseUp", node);
+		$(ui).mouseup(function (event) { // MOUSE CLICK
+			node_Event("MouseUp", node, event.pageX, event.pageY);
 		}),
 
-		$(ui).mouseover(function () { // MOUSE CLICK
-			node_Event("MouseOver", node);
+		$(ui).mouseover(function (event) { // MOUSE CLICK
+			node_Event("MouseOver", node, event.pageX, event.pageY);
 		}),
 
-		$(ui).dblclick(function () { // MOUSE CLICK
-			node_Event("MouseDblClick", node);
+		$(ui).dblclick(function (event) { // MOUSE CLICK
+			node_Event("MouseDblClick", node, event.pageX, event.pageY);
 		}),
 
-		$(ui).hover(function () { // MOUSE HOVER
-			node_Event("MouseEnter", node);
+		$(ui).hover(function (event) { // MOUSE HOVER
+			node_Event("MouseEnter", node, event.pageX, event.pageY);
 
 		}, function () { // MOUSE LEAVE
-			node_Event("MouseLeave", node);
+			node_Event("MouseLeave", node, event.pageX, event.pageY);
 		});
 	}
 }

@@ -43,7 +43,7 @@ function Neo4jQuerySimpleSearch(fromEntity, whereProperty, equalsValue, _sourceC
 	var command = 'MATCH (n' + fromEntity + propertyBlock + ') RETURN id(n), labels(n), n  LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 		
 	var callback = function(nodesResult, sourceConfig){
-		addSingleNodesFromResults(nodesResult, sourceConfig)
+		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig)
 		//Recurse...
 		var command = 'MATCH (n' + fromEntity + propertyBlock + ')-[r]-(m) RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r)  LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 		var callback2 = function(nodesResult, sourceConfig){addNodesFromResults(nodesResult, sourceConfig)};
@@ -113,7 +113,7 @@ function Neo4jGetRelationCounts(nodeId, callback, _sourceConfig)
 function Neo4jGetNodeById(nodeid, _sourceConfig)
 {
 	var callback = function (nodesResult, sourceConfig) {
-		addSingleNodesFromResults(nodesResult, sourceConfig);
+		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
 	}
 		
 	var command = 'MATCH (n) WHERE ID(n) = '+getNeoId(nodeid)+'  RETURN id(n), labels(n), (n)';
@@ -124,7 +124,7 @@ function Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix)
 {
 	var _sourceConfig = getConfigByPrefix(sourceConfigPrefix)
 	var callback = function (nodesResult, sourceConfig) {
-		addSingleNodesFromResults(nodesResult, sourceConfig);
+		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
 	}
 	var matchPattern = 'n';
 	if (byLabel && byLabel != '') {matchPattern += ":" + byLabel;}
@@ -132,13 +132,13 @@ function Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix)
 	Neo4j_Command([command], callback, _sourceConfig);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function Neo4jGetNodesByDetails(label, properties, _sourceConfig)
+function Neo4jGetNodesByDetails(nodeLabel, properties, _sourceConfig)
 {
 	var callback = function (nodesResult, sourceConfig) {
-		addSingleNodesFromResults(nodesResult, sourceConfig);
+		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
 	}
 	var matchPattern = 'n';
-	if (label) {matchPattern += ":" + label;}
+	if (nodeLabel) { matchPattern += ":" + nodeLabel; }
 	var command = 'MATCH ('+matchPattern+')';
 	if (properties){
 		if (properties.length > 0)
@@ -158,7 +158,7 @@ function Neo4jGetNodesByDetails(label, properties, _sourceConfig)
 function Neo4jInitAllNodes(_sourceConfig)
 {
 	var callback = function (nodesResult, sourceConfig) {
-		addSingleNodesFromResults(nodesResult, sourceConfig);
+		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
 		Neo4jInitAllRelations(_sourceConfig);
 	}
 	var command = 'MATCH (n) RETURN id(n), labels(n), (n) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
@@ -184,71 +184,50 @@ function Neo4jFetchRelation(fromNodeID, toNodeID, _sourceConfig)
 		
 }
 
-
-
 //============ DATA CREATE/UPDATE/DELETE ================================================================================================================================================================================================
 
-function Neo4jCreateEntity() {
+
+function Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback) {
 	var _sourceConfig = currentTheme.sourceConfig;
-	var entityName = document.getElementById('new.entity.name').value;
-	if (!entityName || entityName == '') { alert('Save failed!\nNo entity name specified.'); return; }
-	var propIndex = 0;
-	var propertyElement = document.getElementById('new.entity.property.key.' + propIndex);
-	var propList = '';
-
-	while (propertyElement) {
-	    var propertyTypeElement = document.getElementById('new.entity.property.type.' + propIndex);
-	    var propertyValueElement = document.getElementById('new.entity.property.value.' + propIndex);
-	    if (!propertyValueElement || propertyValueElement.value == '') { alert('Save failed!\nInvalid property name.'); return; }
-	    if (propList != '') { propList += ',' }
-	    propList += propertyElement.value + ':' + parseDataType(propertyValueElement.value, propertyTypeElement.value);
-	    propIndex++;
-	    propertyElement = document.getElementById('new.entity.property.key.' + propIndex);
-	}
-	if (propList != '') { propList = '{' + propList + '}'; }
-
+	//console.log('currentTheme', currentTheme);
 	var callback = function (nodesResult, sourceConfig) {
-	    addSingleNodesFromResults(nodesResult, sourceConfig);
+		var ids = addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
+		//layout.setNodePosition(ids[0], 0, 0);
+		if (inputCallback)
+			inputCallback(ids);
 	};
-	var command = 'CREATE (n:' + entityName + propList + ') return id(n), labels(n), n'
-	Neo4j_Command([command], callback, _sourceConfig);
+	var command = 'CREATE (n:' + entityName + _convertPropertyListToNeo4jString(propList) + ') return id(n), labels(n), n'
+	console.log('command', command);
+	return Neo4j_Command([command], callback, _sourceConfig);
+}
+function _convertPropertyListToNeo4jString(propList)
+{
+	var propsString = '';
+	if (propList.length > 0) propsString += '{';
+	for (var p = 0; p < propList.length; p++){
+		if (p > 0) propsString += ',';
+		propsString += propList[p].key + ':' ;
+		if (propList[p].datatype == "number" || "boolean")
+			propsString += propList[p].value;
+		else
+			propsString += '"' + propList[p].value + '"';
+	}
+	if (propList.length > 0) propsString += '}';
+	return propsString;
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-function Neo4jUpdateEntity(nodeID) {
-	if (!nodeID) { nodeID = selectedNodeID; }
-	var node = GRAPH.getNode(nodeID);
-	var _sourceConfig = node.data.sourceConfig;
-	var entityName = document.getElementById('new.entity.name').value;
-	if (!entityName || entityName == '') { alert('Save failed!\nNo entity name specified.'); return; }
-	var propIndex = 0;
-	var propList = '';
 
-	var propertyElement = document.getElementById('new.entity.property.key.' + propIndex);
-	while (propertyElement) {
-	    var propertyValueElement = document.getElementById('new.entity.property.value.' + propIndex);
-	    var propertyTypeElement = document.getElementById('new.entity.property.type.' + propIndex);
-	    if (propList != '') { propList += ',' }
-	    if (!propertyValueElement || propertyValueElement.value == 'null') {
-	        propList += ' n.' + propertyElement.value + '=null';
-	    }
-	    else {
-	        propList += ' n.' + propertyElement.value + '=' + parseDataType(propertyValueElement.value, propertyTypeElement.value);
-	    }
-
-	    propIndex++;
-	    propertyElement = document.getElementById('new.entity.property.key.' + propIndex);
-	}
-	if (propList != '') { propList = ' SET ' + propList + ''; }
-
+function Neo4jUpdateEntity(nodeID, newProperties, callback) {
+	
+	var _sourceConfig = currentTheme.sourceConfig;
 	var callback = function (nodesResult, sourceConfig) {
-
-	    addSingleNodesFromResults(nodesResult, sourceConfig);
-	    UiShow_EditEntity(selectedNode);
+		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
+		if (inputCallback)
+			inputCallback(ids);
 	};
-	var command = 'MATCH (n) WHERE ID(n)=' + getNeoId(nodeID) + propList + ' return id(n), labels(n), n'
+	var command = 'MATCH (n) WHERE ID(n)=' + getNeoId(nodeID) + newProperties + ' return id(n), labels(n), n'
 	Neo4j_Command([command], callback, _sourceConfig);
-
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -335,28 +314,10 @@ function removeLastElement() {
 	selectedNode.data.UI.focusUI.remove();
 }
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function Neo4jCreateRelation(nodeID1, nodeID2, planOnly, _sourceConfig) {
-	var node1 = GRAPH.getNode(nodeID1);
-	var node2 = GRAPH.getNode(nodeID2);
-	if (node1.data.sourceConfig.prefix != node2.data.sourceConfig.prefix) {
-	    alert('Save failed!\nYou cannot relate nodes from different sources.'); return;
-	}
-	var relationName = document.getElementById('new.relation.name').value;
-	if (!relationName || relationName == '') { alert('Save failed!\nNo relation name specified.'); return; }
-	var propIndex = 0;
-	var propertyElement = document.getElementById('new.relation.property.key.' + propIndex);
-	var propList = '';
 
-	while (propertyElement) {
-	    var propertyValueElement = document.getElementById('new.relation.property.value.' + propIndex);
-	    if (!propertyValueElement || propertyValueElement.value == '') { alert('Save failed!\nInvalid property name.'); return; }
-	    if (propList != '') { propList += ',' }
-	    propList += propertyElement.value + ':' + parseDataType(propertyValueElement.value);
-	    propIndex++;
-	    propertyElement = document.getElementById('new.relation.property.key.' + propIndex);
-	}
-	if (propList != '') { propList = '{' + propList + '}'; }
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+function Neo4jCreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly) {
+
 
 	if (!planOnly) {
 	    var callback = function (nodesResult, sourceConfig) {
@@ -372,7 +333,7 @@ function Neo4jCreateRelation(nodeID1, nodeID2, planOnly, _sourceConfig) {
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jCreateNode(labelName, _sourceConfig) {
 	var callback = function (nodesResult, sourceConfig) {
-	    addSingleNodesFromResults(nodesResult, sourceConfig);
+	    addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
 	}
 	var command = 'CREATE (n:' + labelName + ') RETURN id(n), labels(n), n';
 	Neo4j_Command([command], callback, _sourceConfig);

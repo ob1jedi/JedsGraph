@@ -110,3 +110,16 @@
 			return updatedProperties;
 		}
 		
+		function createChildNode(parentNodeId, newNodeName, nodeProperties, relationName, relationProperties)
+		{
+			var _callback = function (ids) {
+				for (var i = 0; i < ids.length; i++) {
+					var newNode = GRAPH.getNode(ids[i]);
+					//layout.pinNode(newNode, true);
+					//var parentPosition = layout.getNodePosition(parentNodeId);
+					//layout.setNodePosition(ids[i], parentPosition.x, parentPosition.y);
+					Neo4jCreateRelation(parentNodeId, ids[i], relationName, relationProperties);
+				}
+			}
+			Neo4jCreateEntityReturnCallbackWithIds(newNodeName, nodeProperties, _callback);
+		}

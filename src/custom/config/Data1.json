@@ -1,84 +1,186 @@
-configManager.configs.push({
-	configName:"local", /*mandatory field, must be unique among other configs*/
-	prefix:"LOC", /*mandatory field, must be unique among other configs*/
-	neo4jconnection:{	
-		sourceName:"local",
-		server:"http://localhost:7474",
-		username:"neo4j",
-		password:"Password@123456"
+configManager.configs.push( {
+	configName: "local", /*mandatory field, must be unique among other configs*/
+	prefix: "LOC", /*mandatory field, must be unique among other configs*/
+	neo4jconnection: {
+		sourceName: "local",
+		server: "http://localhost:7474",
+		username: "neo4j",
+		password: "Password@123456"
 	},
-	startupOptions:{
+	startupOptions: {
 		//defaultConnection:"local", //used unless source is otherwise specified.
-		startupSearch:[
-		  /*{label:"SOME_LABEL", source:"NEO4J_CONNECTION, properties:[{key:"KEYNAME", value:"VALUE"}]"*/
-			//{label:"Person", properties:[{key:"name", value:"Amy"}] }
-			//,{"label":"ROOT"}
-			//,{"label":"host"}
-			//,{"label":"service"}
-			//,{"label":"ipv4network"}
-			{"label":"STUDY"}
+		startupSearch: [
+			/*{nodeLabel:"SOME_LABEL", source:"NEO4J_CONNECTION, properties:[{key:"KEYNAME", value:"VALUE"}]"*/
+			/*{nodeLabel:"Person", properties:[{key:"name", value:"Amy"}] }*/
+			{ "nodeLabel": "WORKFLOW" },
+			{ "nodeLabel": "STREAM" }
 		],
-		startupQueries:[
+		startupQueries: [
 			//{fromEntity:"service", whereProperty:"serviceName", equalsValue:"vanguard2"},
 			//{fromEntity:"version", whereProperty:"versionName", equalsValue:"V23"}
 		],
-		nodeDisplayValues:[
-		  /*{label:"SOME_LABEL", displayField??label, displayLabel??label},*/
-			//{label:"Human", displayField:"Name"},
-			{label:"service", displayField:"status"},
-      {
-        label: "version",
-        displayField: "versionName"
-      },
-      {label:"Category", displayField:"categoryName"}
+		nodeDisplayValues: [
+			/*{nodeLabel:"SOME_LABEL", displayField??nodeLabel, displayLabel??nodeLabel},*/
+			//{nodeLabel:"Human", displayField:"Name"},
+			{
+				"nodeLabel": "service",
+				"displayField": "status"
+			},
+			{
+				"nodeLabel": "version",
+				"displayField": "versionName"
+			},
+			{
+				"nodeLabel": "Category",
+				"displayField": "categoryName"
+			},
+			{
+				"nodeLabel": "WORKFLOW",
+				"displayField": "workflowName"
+			},
+			{
+				"nodeLabel": "TOOL",
+				"displayField": "toolName"
+			}
 		],
 		nodeDisplayBody: [
-			/*{label:"SOME_LABEL", "image":"IMAGE_URL"??none, "color":"HEXVALUE"??auto, "size":30, "labelPos":"above/under/left/right"??center},*/
-			{label:"Sample", size:50, color:"#f2b3ab"},
-			{label:"BinomialDistribution", size:50, color:"#f2b3ab"},
-			{label:"Population", size:50, color:"#f2b3ab"},
-			{label:"SampleDistribution", size:50, color:"#f2b3ab"}
-		]
+			/*{nodeLabel:"SOME_LABEL", "image":"IMAGE_URL"??none, "color":"HEXVALUE"??auto, "size":30, "labelPos":"above/under/left/right"??center},*/
+			{
+				nodeLabel: "Sample",
+				size: 50,
+				color: "#f2b3ab"
+			},
+			{
+				nodeLabel: "BinomialDistribution",
+				size: 50,
+				color: "#f2b3ab"
+			},
+			{
+				nodeLabel: "Population",
+				size: 50,
+				color: "#f2b3ab"
+			},
+			{
+				nodeLabel: "SampleDistribution",
+				size: 50,
+				color: "#f2b3ab"
+			}
+		],
+			"nodeFlyout": [
+				{
+					"nodeLabel": "WORKFLOW",
+					"elementType": "button",
+					"innerHTML": "Configuration",
+					"onclick": "nodeFunctions.show_updateWorkflowModal()",
+					"tooltip": "Configure this workflow"
+				},
+				{
+					"nodeLabel": "WORKFLOW",
+					"elementType": "button",
+					"innerHTML": "New Workflow",
+					"onclick": "nodeFunctions.show_addWorkflowModal()",
+					"tooltip": "Create new workflow"
+				},
+				{
+					"nodeLabel": "WORKFLOW",
+					"elementType": "button",
+					"innerHTML": "-",
+					"onclick": "nodeFunctions.show_removeWorkflowModal()",
+					"tooltip": "Delete this workflow"
+				},
+				{
+					"nodeLabel": "WORKFLOW",
+					"elementType": "div",
+					"innerHTML": ""
+				},
+				{
+					"nodeLabel": "WORKFLOW",
+					"elementType": "button",
+					"innerHTML": "Add Content",
+					"onclick": "nodeFunctions.show_addContentModal()",
+					"tooltip": "Take a few files"
+				},
+				{
+					"nodeLabel": "WORKFLOW",
+					"elementType": "button",
+					"innerHTML": "Send to Tool",
+					"onclick": "nodeFunctions.show_addToolModal()",
+					"tooltip": "Process content with tool"
+				},
+				{
+					"nodeLabel": "WORKFLOW",
+					"elementType": "button",
+					"innerHTML": "Send to Collector",
+					"onclick": "nodeFunctions.show_addCollectorModal()",
+					"tooltip": "Collect processed content"
+				},
+				{
+					"nodeLabel": "TOOL",
+					"elementType": "button",
+					"innerHTML": "Configuration",
+					"onclick": "nodeFunctions.show_updateToolModal()",
+					"tooltip": "Adjust settings for tool"
+				},
+				{
+					"nodeLabel": "TOOL",
+					"elementType": "button",
+					"innerHTML": "Send to Tool",
+					"onclick": "nodeFunctions.show_addToolModal()",
+					"tooltip": "Process content with tool"
+				},
+
+				{
+					"nodeLabel": "COLLECTOR",
+					"elementType": "button",
+					"innerHTML": "Configuration",
+					"onclick": "nodeFunctions.show_updateCollectorModal()",
+					"tooltip": "Configure collector"
+				}
+
+			]
 	},
 
-	viewOptions:{
-		prefetchLabelSelectors:true
+	viewOptions: {
+		prefetchLabelSelectors: true
 	},
-	displaySettings:{
-			selectorColor:"gray",
-			graphBackground:"linear-gradient(white, white)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
-			
-			entityShape:"circle",
-			entityRgbRange:{min:150,max:200},/*The 4bit rgb range from which label colors can be automatically generated.*/			
-			entityLabelColor:"black",
-			entityBorderColor:"black", /*null=auto-color*/
-			entityOpacity: 1,
-			
-			linkColor:"black", /*...html/hex color*/
-			linkMainTextColor:"black",
-			linkSubTextColor:"black",
-			linkThickness: 2,
-			linkOpacity:1,
-			
-			opaque:false,
-			labelSizing:"fontsize", /*choices: "hyphenate" (make labels shorter) "fontsize" (make the font size smaller) "" (no sizing, labels may extend past the boundaries of the node)*/
-			
-			/*effects...*/
-			
-			haze:false, /*...outer node haze*/
-			highlightHaze:true, /*...outer node haze*/
-			shadow:false, /*...outer node shadow*/
-			glow:false, /*...outer node glow*/
-			rounded:false, /*...inner node shadow*/
-			
-			//node data...
-			showLabels:true,
-			loadNodePopouts:true,
-			
-			//link data
-			showRelationships:"all",/*showRelationships: "all/on-highlight/none" */
-			loadRelationPopouts:false,
-			showRelationProperties: true
-			
+	displaySettings: {
+		"selectorColor": "gray",
+		"graphBackground": "linear-gradient(#323a39, #323a39)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
+
+		"entityShape": "circle",
+		"entityRgbRange": {
+			"min": 150,
+			"max": 200
+		}, /*The 4bit rgb range from which nodeLabel colors can be automatically generated.*/
+		"entityLabelColor": "black",
+		"entityBorderColor": "black", /*null=auto-color*/
+		"entityOpacity": 1,
+
+		"linkColor": "black", /*...html/hex color*/
+		"linkMainTextColor": "black",
+		"linkSubTextColor": "black",
+		"linkThickness": 2,
+		"linkOpacity": 1,
+
+		"opaque": false,
+		"labelSizing": "fontsize", /*choices: "hyphenate" (make labels shorter) "fontsize" (make the font size smaller) "" (no sizing, labels may extend past the boundaries of the node)*/
+
+		/*effects...*/
+
+		"haze": false, /*...outer node haze*/
+		"highlightHaze": true, /*...outer node haze*/
+		"shadow": false, /*...outer node shadow*/
+		"glow": false, /*...outer node glow*/
+		"rounded": false, /*...inner node shadow*/
+
+		//node data...
+		"showLabels": true,
+		"loadNodePopouts": false,
+
+		//link data
+		"showRelationships": "all", /*showRelationships: "all/on-highlight/none" */
+		"loadRelationPopouts": false,
+		"showRelationProperties": true
+
 	}
 })

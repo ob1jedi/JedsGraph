@@ -203,7 +203,7 @@ function highlightSelectedNode(nodeId) {
 		if (bRelate == true)
 		{
 			if (nodeId != selectedNodeID){
-				Neo4jCreateRelation(selectedNodeID, nodeId)
+				submitCreateRelation(selectedNodeID, nodeId)
 			}
 			bRelate=false;
 		}
@@ -211,40 +211,37 @@ function highlightSelectedNode(nodeId) {
 		if (bPlanRelate==true)
 		{
 			if (nodeId != selectedNodeID){
-				Neo4jCreateRelation(selectedNodeID, nodeId, true)
+				submitCreateRelation(selectedNodeID, nodeId, true)
 			}
 			bPlanRelate=false;
 		}
 			   
 	}
+
 	var node = GRAPH.getNode(nodeId);
+	selectedNodeID = nodeId;
+	selectedNodeData = node.data;
+	selectedNode = node;
+
 	if (interactionOptions.checkNodes){
 		checkNode(node);
 	}
 	else{ //...not checking nodes...
-	checkedNodes.forEach(function(nodex){
-		uncheckNode(nodex);
-	});
-	checkedNodes = [];
+		checkedNodes.forEach(function(nodex){
+			uncheckNode(nodex);
+		});
+		checkedNodes = [];
 	}
 		   
 	//Display relationship details...
 	node.data.toLinks.forEach(function(l){highlightLink(l,true)});
 	node.data.fromLinks.forEach(function(l){highlightLink(l,true)});
 
-	selectedNodeID = nodeId;
-	selectedNodeData = node.data;
-	selectedNode = node;
-	selectedNode.data.UI.fullUI.insertBefore(CommonUI.focusUI, selectedNode.data.UI.bodyUI);
-	selectedNode.data.UI.focusUI = CommonUI.focusUI
-		.attr('r', node.data.nodeSize+ node.data.nodeSize/3)//...for circle
-		.attr('stroke-width',node.data.nodeSize/5);
+	addSelectionGraphic(node);
 
-	if (!node.data.UI.popoutBodyUI)
-	{
-		loadNodePopout(node);
-	}
-	showNodeDetails(node);	
+	loadNodePopout(node, node.data.sourceConfig);
+
+	showNodeDetailsInToolPanel(node);	
 
 	//show sub nodes...
 	if (config_ext.viewOptions.subnodes.relations=="ifany"){
@@ -258,7 +255,20 @@ function highlightSelectedNode(nodeId) {
 		}
 	};
 }
-		
+
+function addSelectionGraphic(node){
+	node.data.UI.fullUI.insertBefore(CommonUI.focusUI, node.data.UI.bodyUI);
+	node.data.UI.focusUI = CommonUI.focusUI
+		.attr('r', node.data.nodeSize + node.data.nodeSize / 3)//...for circle
+		.attr('stroke-width', node.data.nodeSize / 5);
+
+	node.data.UI.focusUI.attr('class', 'selectionRingOut');
+	setTimeout(function () {
+		node.data.UI.focusUI.attr('class', 'selectionRingIn');
+	}, 200);
+	
+}
+
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function checkNode(node)
 {
@@ -282,8 +292,11 @@ function checkNode(node)
 				
 }
 		
-function loadNodePopout(node)
+function loadNodePopout(node, config)
 {
+	if (config.displaySettings.loadNodePopouts == false)
+		return;
+
 	CommonUI.popoutTextUI.innerHTML = propertyListToSvgList(node.data.properties, '<tspan x="'+(node.data.nodeSize + 15)+'" dy="1.2em">', '</tspan>');
 			
 	node.data.UI.popoutBodyUI = CommonUI.popoutBodyUI.cloneNode(true);
@@ -298,18 +311,18 @@ function loadNodePopout(node)
 }
 		
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function showNodeDetails(node)
+function showNodeDetailsInToolPanel(node)
 {
 	var processingElement = document.getElementById('selectedNode');
 	var labellist = ''
 	var html = '<a class="panelheader">Selected Entity:</a> <a class="dataNameLabel">' + selectedNodeID + '</a>';
 	//html += '<br/><a class="panelheader">Entity type</a>:<br/>' //+ labellist;
 	html += '<table>'
-	node.data.labels.forEach(function(label, index){
+	node.data.labels.forEach(function (nodeLabel, index) {
 		if (index!=0){labellist += ', ';}
-		var button_onclick = 'Neo4jDeleteLabel(' + node.id + ', \'' + label + '\')';
+		var button_onclick = 'Neo4jDeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
 		html += '<tr>'
-		html += '<td><button class="paneloption mytooltip" onclick="'+button_onclick+'" >X<div class="mytooltiptext">delete label</div></button></td><td><a class="dataNameLabel">' + label + '</a></td>'	
+		html += '<td><button class="paneloption mytooltip" onclick="' + button_onclick + '" >X<div class="mytooltiptext">delete label</div></button></td><td><a class="dataNameLabel">' + nodeLabel + '</a></td>'
 		html += '</tr>'
 	});
 	html += '</table>'
@@ -494,7 +507,7 @@ function evaluateAugmentsAndUpdateNodeDisplay(config, nodeData)
 	var nodeAugments = [];
 	if (!config.startupOptions.nodeAugments){return;}
 	config.startupOptions.nodeAugments.map(function (nconfig) {
-		if (nconfig.label == nodeData.labels[0]) {
+		if (nconfig.nodeLabel == nodeData.labels[0]) {
 			if (nconfig.property){ //...we need to check if it has the specified property
 				if (hasProperty(nodeData.properties, nconfig.property)){
 					if (nconfig.value){//...we need to check if it has the specified property value

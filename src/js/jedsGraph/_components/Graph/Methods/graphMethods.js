@@ -154,11 +154,11 @@ function addNodeToGraph(nodeId, nodeData)
 		
 function highlightLabel(labelIndex)
 {
-	var label = labelsList[labelIndex];
+	var nodeLabel = labelsList[labelIndex];
 	nodeList.forEach(function(node){
 		node.data.UI.fullUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity);
 		node.data.UI.bodyUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity);
-		if (label && node.data.labels.indexOf(label.name) == -1){
+		if (nodeLabel && node.data.labels.indexOf(nodeLabel.name) == -1) {
 			node.data.UI.fullUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity/ 5)
 			node.data.UI.bodyUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity/ 5);
 		}
@@ -274,6 +274,7 @@ function fixLinkIndexes(fromNodeID, toNodeID){ //Get sibling details...
 
 function addDataNode(nodeId, nodeData, _sourceConfig)
 {
+	if (!_sourceConfig) _sourceConfig = config_ext;
 	nodeData.sourceConfig = getConfig(_sourceConfig);
 	var dataNode = getDataNode(nodeId);
 	var nodeUI;
@@ -314,10 +315,12 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 	}
 			
 	//find config for node if any is specified...
-	_sourceConfig.startupOptions.nodeDisplayBody.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeDisplayBody = nconfig;}});
-	_sourceConfig.startupOptions.nodeDisplayValues.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeDisplayValues = nconfig;}});
-	_sourceConfig.startupOptions.nodeStatReachers.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeStatReachers.push(nconfig);}});
-	_sourceConfig.startupOptions.nodeTransformers.map(function (nconfig) {if (nconfig.label == nodeData.labels[0]) {nodeData.config.nodeTransformers.push(nconfig);}});
+	_sourceConfig.startupOptions.nodeDisplayBody.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeDisplayBody = nconfig; } });
+	_sourceConfig.startupOptions.nodeDisplayValues.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeDisplayValues = nconfig; } });
+	_sourceConfig.startupOptions.nodeStatReachers.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeStatReachers.push(nconfig); } });
+	_sourceConfig.startupOptions.nodeTransformers.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeTransformers.push(nconfig); } });
+	_sourceConfig.startupOptions.nodeFlyout.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeFlyout.push(nconfig); } });
+
 	var nodeDisplayBody = evaluateAugmentsAndUpdateNodeDisplay(nodeData.sourceConfig, nodeData);
 	for (var prop in nodeDisplayBody){
 		nodeData.config.nodeDisplayBody[prop] = nodeDisplayBody[prop];
@@ -336,13 +339,11 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 	if (thisNodeData.config.nodeDisplayBody.size) {thisNodeData.nodeSize = thisNodeData.config.nodeDisplayBody.size};
 			
 	var finalLabel = '';
-	thisNodeData.labels.forEach(function (label, index) {
-		//addDataLabel(label, undefined, thisNodeData.sourceConfig);
-		//refreshLabelSelectors();
+	thisNodeData.labels.forEach(function (nodeLabel, index) {
 		if (finalLabel) { finalLabel += ',' }
 		if (!finalLabel) { finalLabel = ''; }
 		if (finalLabel == "") {
-			finalLabel = label;
+			finalLabel = nodeLabel;
 		}
 	});
 
@@ -431,12 +432,12 @@ function refreshLabelSelectors(){
 	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorPanel" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
 	if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML = '<option value=""></option>';}
 			
-	labelsList.forEach(function(label,index){
-		color = label.data.sourceConfig.displaySettings.selectorColor;
-		button_onclick = "Neo4jGetNodesByLabel('"+label.name+"', '"+ label.data.sourceConfig.prefix +"')";
-		fetchButton = '<button id="labelSelector.fetcher.'+label.name+'" class="forlabelselector mytooltip" style="background-color:'+label.color+'" onclick="'+button_onclick+'">'+label.instanceCount+'<div class="mytooltiptext ttleft ttupper">Fetch from database</div></button>'
-		labelSelectorHtml += '<tr><td><div onclick="highlightLabel('+index+')" class="labelSelectorPanel" style="background-color:'+color+';">' + label.name +'</div></td><td>'+fetchButton+'</td></tr>';
-		if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML += '<option value="' + label.name + label.data.sourceConfig.prefix + '">' +( label.name + " (" +label.data.sourceConfig.prefix+ ")") + '</option>';}
+	labelsList.forEach(function (nodeLabel, index) {
+		color = nodeLabel.data.sourceConfig.displaySettings.selectorColor;
+		button_onclick = "Neo4jGetNodesByLabel('" + nodeLabel.name + "', '" + nodeLabel.data.sourceConfig.prefix + "')";
+		fetchButton = '<button id="labelSelector.fetcher.' + nodeLabel.name + '" class="forlabelselector mytooltip" style="background-color:' + nodeLabel.color + '" onclick="' + button_onclick + '">' + nodeLabel.instanceCount + '<div class="mytooltiptext ttleft ttupper">Fetch from database</div></button>'
+		labelSelectorHtml += '<tr><td><div onclick="highlightLabel(' + index + ')" class="labelSelectorPanel" style="background-color:' + color + ';">' + nodeLabel.name + '</div></td><td>' + fetchButton + '</td></tr>';
+		if (qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML += '<option value="' + nodeLabel.name + nodeLabel.data.sourceConfig.prefix + '">' + (nodeLabel.name + " (" + nodeLabel.data.sourceConfig.prefix + ")") + '</option>'; }
 	});
 	labelSelectorHtml += '</table>';
 	var LabelsDiv = document.getElementById('selectorLabels');
@@ -517,10 +518,10 @@ function getNodesByMatchingLabels(nodesList, labels){
 	//iterate through 
 	nodesList.forEach(function(node){
 		var nodeEligible = true;
-		labels.forEach(function (label){
+		labels.forEach(function (nodeLabel) {
 			var labelFound = false;
 			node.data.labels.forEach(function(nodelabel){
-				if (nodelabel == label)
+				if (nodelabel == nodeLabel)
 					labelFound = true;
 			});
 			if (!labelFound){nodeEligible = false}

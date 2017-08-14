@@ -24,7 +24,8 @@
 		var counter = 10;	
 		var detailsUI;
 		var detailsNode;
-		var processUniqueId = 0; //...must be incremented every time its used
+		var processUniqueId = 0; //... must be incremented every time its used
+		var nodeFunctions = {}; //... This object instance will become an instance of the factory class "NodeFunctions", and get developer custom functions added to it.
 
 		//......Filter settings.............
 		var viewOptions = new viewOptionsType();
