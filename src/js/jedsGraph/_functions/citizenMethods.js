@@ -118,8 +118,8 @@
 					//layout.pinNode(newNode, true);
 					//var parentPosition = layout.getNodePosition(parentNodeId);
 					//layout.setNodePosition(ids[i], parentPosition.x, parentPosition.y);
-					Neo4jCreateRelation(parentNodeId, ids[i], relationName, relationProperties);
+					dataService.CreateRelation(parentNodeId, ids[i], relationName, relationProperties);
 				}
 			}
-			Neo4jCreateEntityReturnCallbackWithIds(newNodeName, nodeProperties, _callback);
+			dataService.CreateEntityReturnCallbackWithIds(newNodeName, nodeProperties, _callback);
 		}

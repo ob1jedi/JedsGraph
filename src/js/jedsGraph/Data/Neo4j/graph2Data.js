@@ -31,25 +31,6 @@ function Neo4j_Command(statements, successCallback, _sourceConfig, failCallback)
 		});
 }
 
-
-function Neo4jCreateNode(labelName, _sourceConfig) {
-	var callback = function (nodesResult, sourceConfig) {
-		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
-	}
-	var command = 'CREATE (n:' + labelName + ') RETURN id(n), labels(n), n';
-	Neo4j_Command([command], callback, _sourceConfig);
-}
-
-function Neo4jDeleteNode(nodeID, _sourceConfig) {
-	var callback = function (nodesResult, sourceConfig) {
-		//addSingleNodeFromResultsAndReturnIds(nodesResult);
-		removeNodeFromStage(nodeID)
-	}
-	var command = 'MATCH (n) where ID(n) = ' + getNeoId(nodeID) + ' DETACH DELETE (n) RETURN ID(n)';
-	Neo4j_Command([command], callback, _sourceConfig);
-
-}
-
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jCheckMonitoredNodes(_sourceConfig) {
 	if (monitoredNodes.length == 0) { return; }
@@ -58,7 +39,7 @@ function Neo4jCheckMonitoredNodes(_sourceConfig) {
 		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
 		if (id >= monitoredNodes.length) {
 			performAnimations();
-			setTimeout(function () { Neo4jCheckMonitoredLinks(); }, config_ext.monitoringOptions.pollInterval * 1000);
+			setTimeout(function () { dataService.CheckMonitoredLinks(); }, config_ext.monitoringOptions.pollInterval * 1000);
 			return;
 		}
 		var command = 'MATCH (n) WHERE ID(n) = ' + getNeoId(monitoredNodes[id++].id) + ' RETURN id(n), labels(n), n';

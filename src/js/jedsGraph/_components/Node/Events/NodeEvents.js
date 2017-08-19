@@ -137,7 +137,7 @@ function dataNode_OnMouseUp(node, x, y) {
 
 function dataNode_OnMouseDblClick(node, x, y) {
 
-	Neo4jFetchEntitiesForNode(node.id, node.data.sourceConfig);
+	dataService.FetchEntitiesForNode(node.id, node.data.sourceConfig);
 }
 
 function dataNode_OnMouseLeave(node, x, y) {
@@ -340,12 +340,12 @@ NodeFunctionsFactory.update_workflow = function () {
 	var callback = function () {
 		Alert("Update applied");
 	}
-	Neo4jUpdateEntity(this.node.id, this.node.data.nodeProperties, callback);
+	dataService.UpdateEntity(this.node.id, this.node.data.nodeProperties, callback);
 	modal.close();
 }
 
 NodeFunctionsFactory.remove_workflow = function () {
-	Neo4jDeleteNode(this.node.id);
+	dataService.DeleteNode(this.node.id);
 	modal.close();
 }
 // Tool functions
@@ -368,13 +368,13 @@ NodeFunctionsFactory.update_tool = function () {
 	var callback = function () {
 		Alert("Update applied");
 	}
-	Neo4jUpdateEntity(this.node.id, this.node.data.nodeProperties, callback);
+	dataService.UpdateEntity(this.node.id, this.node.data.nodeProperties, callback);
 	modal.close();
 }
 
 // Common functions ...
 NodeFunctionsFactory.remove_entity = function () {
-	Neo4jDeleteNode(this.node.id);
+	dataService.DeleteNode(this.node.id);
 	modal.close();
 }
 //nodeFunctions.createContentSubsetNode = function () { }

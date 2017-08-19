@@ -75,17 +75,17 @@ function setConfigSettings(config) {
 	masterConfigs.forEach(function (cnf) {
 
 		if (cnf.viewOptions.prefetchLabelSelectors) {
-			Neo4jGetAllLabels(cnf); //..get all entity names from the DB
+			dataService.GetAllLabels(cnf); //..get all entity names from the DB
 		}
 
 		//GET STARTUP NODES>>
 		cnf.startupOptions.startupSearch.forEach(function (search, index) {
-			Neo4jGetNodesByDetails(search.nodeLabel, search.properties, cnf)
+			dataService.GetNodesByDetails(search.nodeLabel, search.properties, cnf)
 		});
 
 		//RUN STARTUP QUERIES>>
 		cnf.startupOptions.startupQueries.forEach(function (search, index) {
-			Neo4jQuerySimpleSearch(search.fromEntity, search.whereProperty, search.equalsValue, cnf);
+			dataService.QuerySimpleSearch(search.fromEntity, search.whereProperty, search.equalsValue, cnf);
 		});
 	});
 

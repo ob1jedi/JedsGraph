@@ -1,5 +1,19 @@
 //Node methods
 
+function applyPopoutEffectToNode(newNode, parentNodeId) {
+	layout.pinNode(newNode, true);
+	var pos = layout.getNodePosition(parentNodeId);
+	layout.setNodePosition(newNode.id, getRandomArbitrary(pos.x - newNode.data.nodeSize / 2, pos.x + newNode.data.nodeSize / 2), getRandomArbitrary(pos.y - newNode.data.nodeSize / 2, pos.y + newNode.data.nodeSize / 2));
+	layout.pinNode(newNode, false);
+}
+
+function applyWaitingAffectToNode(nodeId) {
+
+}
+function removeWaitingAffectFromNode(nodeId) {
+
+}
+
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function fixTextWidth4Node(node)
 {	
@@ -320,7 +334,7 @@ function showNodeDetailsInToolPanel(node)
 	html += '<table>'
 	node.data.labels.forEach(function (nodeLabel, index) {
 		if (index!=0){labellist += ', ';}
-		var button_onclick = 'Neo4jDeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
+		var button_onclick = 'dataService.DeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
 		html += '<tr>'
 		html += '<td><button class="paneloption mytooltip" onclick="' + button_onclick + '" >X<div class="mytooltiptext">delete label</div></button></td><td><a class="dataNameLabel">' + nodeLabel + '</a></td>'
 		html += '</tr>'
@@ -645,7 +659,7 @@ function getRelationCounts(nodeData, callback)
 		//petalize_image(dataNode, dataNode.data.toEntityCount, 'custom/server.svg', 10, '#0099ff');
 		//petalize_image(dataNode, dataNode.data.fromEntityCount, 'custom/placeholder.svg', 30, '#0099ff');
 	}
-	Neo4jGetRelationCounts(nodeData.id, updateIndicatorNode);
+	dataService.GetRelationCounts(nodeData.id, updateIndicatorNode);
 }
 		
 function removeSubNode(subNode, updateSuperNode)

@@ -31,6 +31,7 @@
 		var viewOptions = new viewOptionsType();
 		var interactionOptions = new interactionOptionsType();
 
+
 		//......Display settings............
 		var currentTheme = new themeType();
 		var MaxLabelLength = 5; //the amount of characters allowed before elipse
@@ -46,3 +47,15 @@
 		
 		
 		var config_ext; //...default config for whenever there isn't a specific config available
+
+		//DATA PROVIDERS
+		var dataService = new DataService();
+
+		// UNIT TESTS
+		var unitTests = [];
+		unitTests.push(new DataDriver_Tests);
+		console.log(unitTests);
+
+		var unitTestFramework = new TestUnitFramework();
+		unitTestFramework.runAllTests(unitTests);
+		

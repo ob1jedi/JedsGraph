@@ -80,19 +80,7 @@ function Neo4jFetchEntitiesForNode(nodeId, _sourceConfig)
 	Neo4j_Command([command], whenResultsComeBackFunction, _sourceConfig);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function applyPopoutEffectToNode(newNode, parentNodeId) {
-	layout.pinNode(newNode, true);
-	var pos = layout.getNodePosition(parentNodeId);
-	layout.setNodePosition(newNode.id, getRandomArbitrary(pos.x - newNode.data.nodeSize / 2, pos.x + newNode.data.nodeSize / 2), getRandomArbitrary(pos.y - newNode.data.nodeSize / 2, pos.y + newNode.data.nodeSize / 2));
-	layout.pinNode(newNode, false);
-}
 
-function applyWaitingAffectToNode(nodeId) {
-	
-}
-function removeWaitingAffectFromNode(nodeId) {
-
-}
 
 
 function Neo4jGetRelationCounts(nodeId, callback, _sourceConfig)
@@ -159,7 +147,7 @@ function Neo4jInitAllNodes(_sourceConfig)
 {
 	var callback = function (nodesResult, sourceConfig) {
 		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
-		Neo4jInitAllRelations(_sourceConfig);
+		dataService.InitAllRelations(_sourceConfig);
 	}
 	var command = 'MATCH (n) RETURN id(n), labels(n), (n) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 	Neo4j_Command([command], callback, _sourceConfig);
@@ -230,89 +218,6 @@ function Neo4jUpdateEntity(nodeID, newProperties, callback) {
 	Neo4j_Command([command], callback, _sourceConfig);
 }
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function panelCyclePropertyType(panelId) {
-
-	var elementButton = document.getElementById(panelId); //"new.entity.property.type." + propertyIndex);
-	if (elementButton.value == 'string') {
-	    elementButton.innerHTML = '123';
-	    elementButton.value = 'number';
-	}
-	else if (elementButton.value == 'number') {
-	    elementButton.innerHTML = '[A]';
-	    elementButton.value = 'array';
-	}
-	else if (elementButton.value == 'array') {
-	    elementButton.innerHTML = 'T/F';
-	    elementButton.value = 'other';
-	}
-	else if (elementButton.value == 'other') {
-	    elementButton.innerHTML = 'abc';
-	    elementButton.value = 'string';
-	}
-
-}
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function panelAddKeyValue(panelId, panelScope, _sKey, _sValue, _sDatatype) {
-	if (!_sKey) { _sKey = ''; }
-	if (!_sValue) { _sValue = ''; }
-	if (!_sDatatype) { _sDatatype = 'string'; }
-	var $panel = document.getElementById(panelId);
-	console.log(panelScope);
-	var typehtml;
-
-	var getTypeHtml = function (type) {
-	    switch (type) {
-	        case 'string':
-	            typehtml = 'abc';
-	            break;
-	        case 'number':
-	            typehtml = '123';
-	            break;
-	        case 'array':
-	            typehtml = '[A]';
-	            break;
-	        case 'other': //boolean
-	            typehtml = 'T/F';
-	            break;
-	    }
-	    return typehtml;
-	}
-
-	var addRow = function (index, key, value, dataType, currentHtml) {
-	    currentHtml += ("<tr><td><input id='" + panelScope + ".property.key." + index +
-        "' class='dynamic' value='" + key +
-        "'></input></td><td><input id='" + panelScope + ".property.value." + index +
-        "' class='dynamic2' value='" + value +
-        "'></input></td>" +
-        "<td>" + '<button id="' + panelScope + '.property.type.' + index + '" value="' + dataType + '" class="paneloption mytooltip" onclick="panelCyclePropertyType(\'' + panelScope + '.property.type.' + index + '\')" >' + getTypeHtml(dataType) + '</button>' + "</td></tr>");
-	    return currentHtml;
-	};
-
-	var nextIndex = 0;
-	var newHtml = '';
-	for (var i = 0; i < $panel.children[0].children.length; i++) {
-	    var currval = document.getElementById(panelScope + '.property.value.' + i).value;
-	    var currkey = document.getElementById(panelScope + '.property.key.' + i).value;
-	    var dataType = document.getElementById(panelScope + '.property.type.' + i).value;
-	    newHtml = addRow(i, currkey, currval, dataType, newHtml);
-	    nextIndex = i + 1;
-	}
-
-	newHtml = addRow(nextIndex, _sKey, _sValue, _sDatatype, newHtml);
-	$panel.children[0].innerHTML = newHtml;
-}
-
-function panelRemoveKeyValue(panelId) {
-	var panel = document.getElementById(panelId);
-	if (panel.children[0].children.length == 0) { return; }
-	panel.children[0].children[panel.children[0].children.length - 1].remove();
-}
-
-function removeLastElement() {
-	var ui = selectedNodeUI.children[selectedNodeUI.children.length - 1];
-	selectedNode.data.UI.focusUI.remove();
-}
 
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

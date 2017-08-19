@@ -7,12 +7,15 @@
 		function submitJsonForGraph()
 		{
 			var jsonString = document.getElementById('dlg.text.json').value;
+
+			console.log('CONVERT -string ', jsonString);
 			jsonToGraph(jsonString);
 			closeDialog('json2GraphDlg');
 		}
 		
 		function jsonToGraph(jsonString, _sourceConfig){
-			
+			console.log('CONVERT -string ', jsonString);
+
 			var graphData = processJsonToGraph('root', jsonStringToObject(jsonString), null, 0);
 			//ADD NODES...
 			graphData.nodes.map(function(nData){

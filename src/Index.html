@@ -33,10 +33,12 @@
 		<script type="text/javascript" src="js/jedsGraph/_components/Node/Methods/nodeMethods.js"></script>
 
 		<script type="text/javascript" src="js/jedsGraph/_services/common.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/Data/Services/data2Graph.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/Data/Services/neo4j.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/Data/Services/graph2Data.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/animations.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Neo4j/data2Graph.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Neo4j/neo4j.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Neo4j/graph2Data.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Services/DataService_Neo4jAdapter.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Services/DataService_LocalStorageAdapter.js"></script>
+		<!--<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/animations.js"></script>-->
 		<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/dataMonitoring.js"></script>
 
 		<!-- Procedural scripts -->
@@ -168,15 +170,14 @@
 			<tr>
 				<td>from entity:</td>
 				<td>
-					<select onchange="Neo4jQbuilder('qbuilder.from.entity')" id="qbuilder.from.entity">
+					<select onchange="dataService.Qbuilder('qbuilder.from.entity')" id="qbuilder.from.entity">
 					</select>
 				</td>
 			</tr>
 			<tr >
 				<td>where:</td>
 				<td>
-					<!--select onchange="Neo4jQbuilder('qbuilder.from.property')" id="qbuilder.from.property"></select-->
-					<input onfocus="Neo4jQbuilder('qbuilder.from.property')" onchange="Neo4jQbuilder('qbuilder.from.property')" id="qbuilder.from.property" type="text" name="" list="qbuilder.from.selectproperty">
+					<input onfocus="dataService.Qbuilder('qbuilder.from.property')" onchange="dataService.Qbuilder('qbuilder.from.property')" id="qbuilder.from.property" type="text" name="" list="qbuilder.from.selectproperty">
 					<datalist id="qbuilder.from.selectproperty"></datalist>
 					
 				</td>
@@ -185,7 +186,7 @@
 				<td>is:</td>
 				<td>
 					<!--select onchange="qbuilder('qbuilder.from.value')" id="qbuilder.from.value"></select-->
-					<input onfocus="Neo4jQbuilder_ClearValue('qbuilder.from.value')" onchange="Neo4jQbuilder('qbuilder.from.value')" id="qbuilder.from.value" type="text" name="" list="qbuilder.from.selectvalue">
+					<input onfocus="dataService.Qbuilder_ClearValue('qbuilder.from.value')" onchange="dataService.Qbuilder('qbuilder.from.value')" id="qbuilder.from.value" type="text" name="" list="qbuilder.from.selectvalue">
 					<datalist id="qbuilder.from.selectvalue"></datalist>
 					
 				</td>
@@ -286,7 +287,7 @@
 						<div id="hovertext" onclick='checkAll()'>Check all</div>
 					</div>
 				</button>
-				<button onclick='Neo4jInitAllNodes()'>Fetch</button>
+				<button onclick='dataService.InitAllNodes()'>Fetch</button>
 				<button onclick='unPinAllNodes()'>Unpin</button>
 				<button onclick='arrangeBy2()'>Arrange</button>
 			</div>

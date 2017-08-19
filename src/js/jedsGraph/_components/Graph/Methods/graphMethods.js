@@ -426,7 +426,7 @@ function refreshLabelSelectors(){
 	//var qbuilderToEntitySelector = document.getElementById('qbuilder.to.entity');
 	//var LabelsDiv = document.getElementById('selectorLabels');
 	var color = 'gray';
-	var button_onclick = "Neo4jGetNodesByLabel(false, '"+ currentTheme.sourceConfig.prefix +"')";
+	var button_onclick = "dataService.GetNodesByLabel(false, '" + currentTheme.sourceConfig.prefix + "')";
 	//var fetchButton = '<button id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="'+button_onclick+'"> <div class="mytooltiptext">Fetch from database</div></button>'
 	var fetchButton = '<button id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="'+button_onclick+'"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></button>'
 	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorPanel" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
@@ -434,7 +434,7 @@ function refreshLabelSelectors(){
 			
 	labelsList.forEach(function (nodeLabel, index) {
 		color = nodeLabel.data.sourceConfig.displaySettings.selectorColor;
-		button_onclick = "Neo4jGetNodesByLabel('" + nodeLabel.name + "', '" + nodeLabel.data.sourceConfig.prefix + "')";
+		button_onclick = "dataService.GetNodesByLabel('" + nodeLabel.name + "', '" + nodeLabel.data.sourceConfig.prefix + "')";
 		fetchButton = '<button id="labelSelector.fetcher.' + nodeLabel.name + '" class="forlabelselector mytooltip" style="background-color:' + nodeLabel.color + '" onclick="' + button_onclick + '">' + nodeLabel.instanceCount + '<div class="mytooltiptext ttleft ttupper">Fetch from database</div></button>'
 		labelSelectorHtml += '<tr><td><div onclick="highlightLabel(' + index + ')" class="labelSelectorPanel" style="background-color:' + color + ';">' + nodeLabel.name + '</div></td><td>' + fetchButton + '</td></tr>';
 		if (qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML += '<option value="' + nodeLabel.name + nodeLabel.data.sourceConfig.prefix + '">' + (nodeLabel.name + " (" + nodeLabel.data.sourceConfig.prefix + ")") + '</option>'; }

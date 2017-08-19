@@ -85,7 +85,7 @@
 	/*The following 3 functions form a closed loop*/
 	function pollDatabase()
 	{
-		setTimeout(function(){ Neo4jCheckMonitoredNodes();}, config_ext.monitoringOptions.pollInterval * 1000);
+		setTimeout(function () { dataService.CheckMonitoredNodes(); }, config_ext.monitoringOptions.pollInterval * 1000);
 	}
 
 	/*loop*/
