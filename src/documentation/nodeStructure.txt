@@ -1,0 +1,52 @@
+Node {id: "LOC1488", links: Array(0), data: nodeDataType}
+
+data: 
+	CONFIGURATION
+		config: {nodeDisplayBody: {…}, nodeDisplayValues: {…}, nodeStatReachers: Array(0), nodeFlyout: Array(7), nodeTransformers: Array(0)}
+		sourceConfig: {configName: "local", prefix: "LOC", neo4jconnection: {…}, dataAccessOptions: {…}, startupOptions: {…}, …}
+
+	PERSONAL ATTRIBUTES
+		id: "LOC1488"
+		nodeType: "data"
+		labels: ["WORKFLOW"]
+		properties: [propertyType]
+		propertiesObject: {workflowName: "TestWorkflow"}
+	
+	RELATIONSHIPS
+		stats: {toEntityCount: 0, fromEntityCount: 0}
+		subNodes: []
+		superNodes: []
+		toLinks: []
+		toNodes: []
+		fromLinks: [Link]
+		fromNodes: [Node]
+	
+	GRAPH BEHAVIOURS
+		nodeIndex: -1
+		isPinned: true
+		depth: 1
+	
+	VISUAL DISPLAY 
+		dragging: "false"
+		displayLabel: "TestWorkflow"
+		circleText: "WORKFLOW"
+		nodeDataTypeUI: {bodyUI: circle, imageUI: undefined, displayTextUI: text, options: Array(0), circleTextPath: path#npath_LOC1488, …}
+		height: 25
+		width: 25
+		nodeBorderColor: "#8393a6"
+		nodeColor: "#97a7ba"
+		nodeColorRGB: {r: 151, g: 167, b: 186}
+		nodeOpacity: "1"
+		nodeShape: "circle"
+		nodeSize: 25
+		textColor: "#ffffff"
+	
+	
+	__proto__: 
+		Objectid: "LOC1488"
+		links: Array(1)
+		0: 
+			Linkdata: 
+				linkDataType {linkType: "data", fromNodeID: "LOC1485", toNodeID: "LOC1488", id: "LOC3538", color: "black", …}
+				UI: linkUiElementsType {midMarkerUI: marker#midLOC3538, toMarkerUI: marker#endLOC3538, fullUI: g, pathUI: path#LOC3538, popoutBodyUI: rect, …}
+				checked: falsecolor: "black"config: {linkDisplayValues: {…}}displayLabel: "SEND_TO"displayingData: falsefromNodeID: "LOC1485"id: "LOC3538"linkType: "data"name: "SEND_TO"properties: []propertiesObject: {}sourceConfig: {configName: "local", prefix: "LOC", neo4jconnection: {…}, dataAccessOptions: {…}, startupOptions: {…}, …}thickness: 1toNodeID: "LOC1488"__proto__: ObjectfromId: "LOC1485"id: "LOC1485👉 LOC1488"toId: "LOC1488"__proto__: Objectlength: 1__proto__: Array(0)__proto__: Object

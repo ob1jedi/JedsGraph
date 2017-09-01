@@ -75,7 +75,7 @@ function setConfigSettings(config) {
 	masterConfigs.forEach(function (cnf) {
 
 		if (cnf.viewOptions.prefetchLabelSelectors) {
-			dataService.GetAllLabels(cnf); //..get all entity names from the DB
+			dataService.getAllNodeLabels(cnf); //..get all entity names from the DB
 		}
 
 		//GET STARTUP NODES>>

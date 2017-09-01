@@ -20,6 +20,10 @@
 	
 		<script type="text/javascript" src="js/jedsGraph/_factoryClasses/NodeFunctions.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/Config/Methods/configMethods.js"></script>
+
+		<script type="text/javascript" src="js/jedsGraph/Tests/TestUnitFramework.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Tests/DataDriver_LocalStorage_Tests.js"></script>
+
 		<!-- Declarative scripts -->
 		<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/panelCalls.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/toolPanelMangement.js"></script>
@@ -33,12 +37,16 @@
 		<script type="text/javascript" src="js/jedsGraph/_components/Node/Methods/nodeMethods.js"></script>
 
 		<script type="text/javascript" src="js/jedsGraph/_services/common.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/Data/Neo4j/data2Graph.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/Data/Neo4j/neo4j.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/Data/Neo4j/graph2Data.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/Data/Services/DataService_Neo4jAdapter.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/Data/Services/DataService_LocalStorageAdapter.js"></script>
-		<!--<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/animations.js"></script>-->
+		<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/data2Graph.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/neo4j.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/graph2Data.js"></script>
+		<!--<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/DataService_Neo4jAdapter.js"></script>-->
+		<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/DataService_LocalStorageAdapter.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/data2Graph.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/LocalStorageDataDriver.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/DataStringHelper.js"></script>
+
+		<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/animations.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/dataMonitoring.js"></script>
 
 		<!-- Procedural scripts -->
@@ -61,8 +69,11 @@
 		<script type="text/javascript" src="js/jedsGraph/Models/themeType.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/Models/timeoutElementType.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/Models/viewOptionsType.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Models/GraphElement.js"></script>
 
 
+
+		<!--MAIN SEQUENCE-->
 		<script type="text/javascript" src="js/jedsGraph/020_define_globals.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/030_run_initSequence.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/030_initSequence/011_import_config.js"></script>
@@ -77,7 +88,7 @@
 		<script type="text/javascript" src="js/jedsGraph/031_mainSequence/070_render_GraphObject(starts_up_Cycles).js"></script>
 		<script type="text/javascript" src="js/jedsGraph/031_mainSequence/080_set_UiStartupSettings.js"></script>
 
-		
+
 
 
 	</head>

@@ -285,7 +285,6 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 		nodeData.labels.forEach(function (newLabel) {
 			var hasLabel = false;
 			for (var i = 0; i < nodeData.labels.length; i++){
-			//nodeData.labels.forEach(function (existingLabel) { 	
 				if (nodeData.labels[i] == newLabel){
 					hasLabel = true;
 					break;
@@ -301,7 +300,6 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 			}
 			dataNode.data.labels = nodeData.labels;
 			dataNode.data.properties = nodeData.properties;
-			//$(nodeUI).hide.show(0);
 			animUpdateNodes.push(dataNode);
 		}
 		else{//no changes have been made to the node...
@@ -325,16 +323,11 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 	for (var prop in nodeDisplayBody){
 		nodeData.config.nodeDisplayBody[prop] = nodeDisplayBody[prop];
 	}
-			
-	//execute triggerred augmetation functions
-			
-	//complete node dislay...
-	//fn_CompleteNodeDisplay = function(thisNodeData, thisIsNewNode, this_sourceConfig){
-			
+				
 	thisNodeData = nodeData;
 	thisIsNewNode = newNode;
 	this_sourceConfig = _sourceConfig;
-			
+
 	//set display attributes based on config...
 	if (thisNodeData.config.nodeDisplayBody.size) {thisNodeData.nodeSize = thisNodeData.config.nodeDisplayBody.size};
 			
@@ -379,11 +372,8 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 	}
 			
 	if (thisIsNewNode){
-				
 		dataNode = addNodeToGraph(thisNodeData.id, thisNodeData);	
 		nodeList.push(dataNode);
-		//if (this_sourceConfig.viewOptions.prefetchCounts==true){
-		//};
 		PerformNodeStatFunctions(dataNode);
 		return dataNode; //RETURN ONLY IF NODE IS NEW
 	}
@@ -423,11 +413,8 @@ function refreshLabelSelectors(){
 	labelsList.sort(sort_by('name', false, function(a){ if (a) {return a.toUpperCase()} }));
 	//Add selector to HTML...
 	var qbuilderFromEntitySelector = document.getElementById('qbuilder.from.entity');
-	//var qbuilderToEntitySelector = document.getElementById('qbuilder.to.entity');
-	//var LabelsDiv = document.getElementById('selectorLabels');
 	var color = 'gray';
 	var button_onclick = "dataService.GetNodesByLabel(false, '" + currentTheme.sourceConfig.prefix + "')";
-	//var fetchButton = '<button id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="'+button_onclick+'"> <div class="mytooltiptext">Fetch from database</div></button>'
 	var fetchButton = '<button id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="'+button_onclick+'"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></button>'
 	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorPanel" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
 	if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML = '<option value=""></option>';}
@@ -477,29 +464,17 @@ function removeNodeFromStage(nodeID)
 function removeLinkFromStage(linkID) {
 	if (!linkID) { linkID = selectedLink.data.id; }
 	var link = getLinkById(linkID);
-	//console.log('link', link);
-	//return;
-	//var allNodeLists = nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
 	var i = -1;
 	while (++i < linkList.length) { if (linkList[i].id == linkID) { linkList.splice(i, 1); } }
 	var i = -1;
 	while (++i < monitoredLinks.length) { if (monitoredLinks[i].id == linkID) { monitoredLinks.splice(i, 1); } }
-	//var i = -1;
-	//while (++i < checkedNodes.length) { if (checkedNodes[i].id == nodeID) { checkedNodes.splice(i, 1); } }
 	var fromNode = GRAPH.getNode(link.data.fromNodeID);
 	var toNode = GRAPH.getNode(link.data.toNodeID);
 
 	while (++i < fromNode.data.toNodes.length) { if (fromNode.data.toNodes[i].id == link.data.toNodeID) { fromNode.data.toNodes.splice(i, 1); } }
 	while (++i < toNode.data.fromNodes.length) { if (toNode.data.fromNodes[i].id == link.data.fromNodeID) { toNode.data.fromNodes.splice(i, 1); } }
 
-	//console.log(link.id);
 	GRAPH.removeLink(link);
-            
-	//var relativeLinks = node.data.toLinks.concat(node.data.fromLinks);
-	//relativeLinks.forEach(function (link) {
-	//    GRAPH.removeLink(link.id);
-	//});
-	//GRAPH.removeNode(nodeID);
 }
 
 		

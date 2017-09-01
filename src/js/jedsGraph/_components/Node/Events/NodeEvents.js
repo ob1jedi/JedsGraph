@@ -136,7 +136,6 @@ function dataNode_OnMouseUp(node, x, y) {
 }
 
 function dataNode_OnMouseDblClick(node, x, y) {
-
 	dataService.FetchEntitiesForNode(node.id, node.data.sourceConfig);
 }
 

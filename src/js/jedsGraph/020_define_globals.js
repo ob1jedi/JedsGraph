@@ -51,11 +51,9 @@
 		//DATA PROVIDERS
 		var dataService = new DataService();
 
-		// UNIT TESTS
+		// DECLARE & RUN UNIT TESTS...
 		var unitTests = [];
-		unitTests.push(new DataDriver_Tests);
-		console.log(unitTests);
-
+		unitTests.push(new LocalStorageDataDriver_Tests);
 		var unitTestFramework = new TestUnitFramework();
-		unitTestFramework.runAllTests(unitTests);
+		
 		

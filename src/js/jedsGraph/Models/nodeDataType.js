@@ -39,7 +39,6 @@ function nodeDataType() {
     this.stats = {}
     this.stats.toEntityCount = 0;
     this.stats.fromEntityCount = 0;
-    this.nodeIndex = nodeList.length - 1;
     return this;
 }
 

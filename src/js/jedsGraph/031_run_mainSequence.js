@@ -13,5 +13,7 @@ function main () {
 	//Configuration(connectUser);
 	//setup UI
 	checkTimeoutElements() //start monitoring timeout elements
-		
+	
+	// RUN UNIT TESTS...
+	unitTestFramework.runAllTests(unitTests);
 }

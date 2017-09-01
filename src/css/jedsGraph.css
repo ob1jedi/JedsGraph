@@ -583,7 +583,7 @@ dialog textarea{
 	height:85%;
 }
 .fadein {
-	opacity:0.8;
+	opacity:0.8;	
 	transition: opacity 0.2s linear;
 }
 .fadeout {
