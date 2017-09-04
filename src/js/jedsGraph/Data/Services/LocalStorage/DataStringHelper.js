@@ -162,6 +162,8 @@ var DataStringHelper = function () {
 	}
 
 	this.getAllElements = function (dataString) {
+		if (!dataString || dataString == null)
+			return [];
 		var elementArray = dataString.split('|');
 		return elementArray.splice(1, elementArray.length - 2);
 	}

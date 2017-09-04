@@ -25,20 +25,20 @@ data:
 		nodeIndex: -1
 		isPinned: true
 		depth: 1
+		dragging: "false"
 	
 	VISUAL DISPLAY 
-		dragging: "false"
-		displayLabel: "TestWorkflow"
-		circleText: "WORKFLOW"
 		nodeDataTypeUI: {bodyUI: circle, imageUI: undefined, displayTextUI: text, options: Array(0), circleTextPath: path#npath_LOC1488, …}
+		nodeShape: "circle"
+		nodeSize: 25
 		height: 25
 		width: 25
 		nodeBorderColor: "#8393a6"
 		nodeColor: "#97a7ba"
 		nodeColorRGB: {r: 151, g: 167, b: 186}
 		nodeOpacity: "1"
-		nodeShape: "circle"
-		nodeSize: 25
+		displayLabel: "TestWorkflow"
+		circleText: "WORKFLOW"
 		textColor: "#ffffff"
 	
 	
