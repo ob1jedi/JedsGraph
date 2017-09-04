@@ -18,7 +18,7 @@ var LocalStorageDataDriver_Tests = function () {
 
 	// Public...
 	this.runAllTests = function () {
-		localStorage.clear();
+		//localStorage.clear();
 		localStorage.removeItem('NEXT_NODE_ID');
 		localStorage.removeItem('NEXT_LINK_ID');
 		localStorage.removeItem('INDEX_ON_NODE_LABELS');
