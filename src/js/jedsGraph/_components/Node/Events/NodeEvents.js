@@ -26,6 +26,15 @@ function node_Event_subNodePulledOut(node, x, y)
 	// create new node
 }
 
+function nodeFlyout_Event_HideClick(nodeId) {
+	console.log('eye click', nodeId);
+	removeNodeFromGraph(nodeId);
+}
+
+function nodeFlyout_Event_PinClick(nodeId) {
+	console.log('pin click', nodeId);
+}
+
 function node_OnMouseEnter(node, x, y) {
 	if (node.data.nodeType == "data")
 		dataNode_OnMouseEnter(node, x, y);
@@ -129,9 +138,7 @@ function dataNode_OnMouseDown(node,x, y) {
 }
 
 function dataNode_OnMouseUp(node, x, y) {
-
-	var eventsHelper = new EventsHelper(node);
-	eventsHelper.ShowFlyout(node, x, y);
+	consoleService.ShowFlyout(node, x, y);
 	// Not yet implemented.
 }
 
@@ -224,41 +231,6 @@ var EventsHelper = function (node) {
 	this.distancePassedThreshold = function (distance) {
 		// Not yet implemented
 	}
-
-	this.ShowFlyout = function (node, x, y) {
-		var nodeFlyout = document.getElementById('panel.node');
-		var newContent = '';
-		newContent += '<h3>' + node.data.displayLabel + '<small><i class="btn-sm glyphicon glyphicon-pushpin pull-right"></i><i class="btn glyphicon glyphicon-eye-open pull-right"></i></small></h3>';
-		
-		//console.log('node', node)
-		node.data.config.nodeFlyout.forEach(function (element) {
-			newContent += '<' + element.elementType;
-			if (element.onclick)
-				newContent += ' onclick="' + element.onclick + '"';
-			newContent += '>';
-			newContent += element.innerHTML;
-			newContent += '</' + element.elementType + '>';
-		});
-
-		//console.log('dialogHtml', newContent);
-		showFlyout(x, y, newContent);
-	}
-
-
-
-	function showFlyout(x, y, newContent)
-	{
-		var nodeFlyout = document.getElementById('panel.node');
-		nodeFlyout.classList.remove('fadein');
-		nodeFlyout.classList.add('fadeout');
-		setTimeout(function () {
-			nodeFlyout.style.left = (x + 50) + 'px'; //(node.data.config.nodeDisplayBody.size + x) + 'px';
-			nodeFlyout.style.top = (y - 30) + 'px'; //y + 'px';
-			nodeFlyout.innerHTML = newContent;
-			nodeFlyout.classList.remove('fadeout');
-			nodeFlyout.classList.add('fadein');
-		}, 200);
-	}
 }
 
 
@@ -332,14 +304,15 @@ NodeFunctionsFactory.add_workflow = function () {
 NodeFunctionsFactory.update_workflow = function () {
 	var modal = document.getElementById('updateWorkflowModel');
 	var nameFieldValue = modal.children[0].children[3].value;
-	this.node.data.nodeProperties.forEach(function (property) {
+	console.log('update_workflow for node:', this.node);
+	this.node.data.properties.forEach(function (property) {
 		if (property.key = "workflowName")
 			property.value = nameFieldValue;
 	});
 	var callback = function () {
 		Alert("Update applied");
 	}
-	dataService.UpdateEntity(this.node.id, this.node.data.nodeProperties, callback);
+	dataService.UpdateEntity(this.node.id, this.node.data.properties, callback);
 	modal.close();
 }
 
@@ -360,14 +333,14 @@ NodeFunctionsFactory.add_tool = function () {
 NodeFunctionsFactory.update_tool = function () {
 	var modal = document.getElementById('updateToolModel');
 	var nameFieldValue = modal.children[0].children[3].value;
-	this.node.data.nodeProperties.forEach(function (property) {
+	this.node.data.properties.forEach(function (property) {
 		if (property.key = "toolName")
 			property.value = nameFieldValue;
 	});
 	var callback = function () {
 		Alert("Update applied");
 	}
-	dataService.UpdateEntity(this.node.id, this.node.data.nodeProperties, callback);
+	dataService.UpdateEntity(this.node.id, this.node.data.properties, callback);
 	modal.close();
 }
 

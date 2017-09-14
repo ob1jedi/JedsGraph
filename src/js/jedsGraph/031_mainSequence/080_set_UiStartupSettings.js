@@ -7,4 +7,7 @@ function initUi()
 	if (currentTheme.sourceConfig.displaySettings.backgroundImage!=null){
 		graphContainer.style['background-image'] =  'url('+currentTheme.sourceConfig.displaySettings.backgroundImage+')'
 	};
+
+	consoleService.hideNodeFlyout();
+
 }

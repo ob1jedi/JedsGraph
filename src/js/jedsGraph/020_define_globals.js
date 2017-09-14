@@ -27,6 +27,8 @@
 		var processUniqueId = 0; //... must be incremented every time its used
 		var nodeFunctions = {}; //... This object instance will become an instance of the factory class "NodeFunctions", and get developer custom functions added to it.
 
+		var consoleService = new ConsoleService();
+
 		//......Filter settings.............
 		var viewOptions = new viewOptionsType();
 		var interactionOptions = new interactionOptionsType();
@@ -51,7 +53,7 @@
 		//DATA PROVIDERS
 		var dataService = new DataService();
 
-		// DECLARE & RUN UNIT TESTS...
+		// DECLARE UNIT TESTS...
 		var unitTests = [];
 		unitTests.push(new LocalStorageDataDriver_Tests);
 		var unitTestFramework = new TestUnitFramework();

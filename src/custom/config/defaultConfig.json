@@ -89,8 +89,8 @@ configManager.configs.push( {
 			{
 				"name": "panel.config",
 				"parent": "leftColumn",
-				"available": true,
-				"visible": true,
+				"available": false,
+				"visible": false,
 				"icon": "glyphicon glyphicon-adjust",
 				"desc": "config"
 			},
@@ -122,7 +122,7 @@ configManager.configs.push( {
 				"name": "panel.simplequery",
 				"parent": "leftColumn",
 				"available": true,
-				"visible": true,
+				"visible": false,
 				"icon": "glyphicon glyphicon-search",
 				"desc": "query"
 			},

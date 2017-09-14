@@ -333,7 +333,7 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 			
 	var finalLabel = '';
 	thisNodeData.labels.forEach(function (nodeLabel, index) {
-		if (finalLabel) { finalLabel += ',' }
+		if (finalLabel) { finalLabel += ', ' + finalLabel }
 		if (!finalLabel) { finalLabel = ''; }
 		if (finalLabel == "") {
 			finalLabel = nodeLabel;
@@ -415,7 +415,7 @@ function refreshLabelSelectors(){
 	var qbuilderFromEntitySelector = document.getElementById('qbuilder.from.entity');
 	var color = 'gray';
 	var button_onclick = "dataService.GetNodesByLabel(false, '" + currentTheme.sourceConfig.prefix + "')";
-	var fetchButton = '<button id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="'+button_onclick+'"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></button>'
+	var fetchButton = '<div id="labelSelector.fetcher.All" class="btn mytooltip forlabelselector" onclick="' + button_onclick + '"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></div>'
 	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorPanel" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
 	if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML = '<option value=""></option>';}
 			

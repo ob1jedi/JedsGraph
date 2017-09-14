@@ -47,8 +47,11 @@ var LocalStorageDataDriver = function () {
 		link.fromNodeId = fromNodeId;
 		link.toNodeId = toNodeId;
 
-		console.log('fromName', fromNode);
+		console.log('fromNodeId', fromNodeId);
+		console.log('toNodeId', toNodeId);
+		console.log('link', link);
 		var fromNode = this.getNodeFromDatabase(fromNodeId);
+		console.log('fromNode', fromNode);
 		fromNode.links.push(link.id);
 		writeNodeToStorage(fromNode);
 
@@ -112,6 +115,7 @@ var LocalStorageDataDriver = function () {
 		var indexedData = localStorage.getItem('INDEX_ON_NODE_LABELS');
 		var dataStringHelper = new DataStringHelper();
 		var nodeIdList = dataStringHelper.getDataFromDataString(indexedData, labelName);
+		console.log('nodeIdList', nodeIdList);
 		var nodeIdArray = nodeIdList.split(',');
 		var nodeArray = [];
 		var dataDriver = this;

@@ -2,7 +2,7 @@
 	var dataDriver = new LocalStorageDataDriver();
 
 	this.FetchEntitiesForNode = function (nodeId, _sourceConfig) {
-		var graphElements = dataDriver.getRelatedNodesGraph(nodeId);
+		var graphElements = dataDriver.getRelatedNodesGraph(stripDomainFromId(nodeId));
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
 	}
 
@@ -10,7 +10,7 @@
 		var newNode = {
 			labels: [labelName]
 		};
-		dataDriver.createNodeInDatabasePopulateAndReturnId(newNode);
+		var nodeId = dataDriver.createNodeInDatabasePopulateAndReturnId(newNode);
 	}
 
 	this.DeleteNode = function (nodeID, _sourceConfig) {
@@ -48,6 +48,10 @@
 		addNodesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
 	}
 
+	function GetNodeById (nodeId, sourceConfigPrefix) {
+		return dataDriver.getNodeFromDatabase(nodeId);
+	}
+
 	this.GetNodesByDetails = function (nodeLabel, properties, _sourceConfig) {
 		//Neo4jGetNodesByDetails(nodeLabel, properties, _sourceConfig);
 	}
@@ -64,19 +68,27 @@
 
 	this.InitAllRelations = function (_sourceConfig) {
 		var labelDatas = dataDriver.getAllLinkLabelsAndLinkIds();
-		console.log('labelDatas', labelDatas);
+
 		var graphElements = labelDatas.map(function (labelData) {
 			labelData.ids.map(function (id) {
 				return dataDriver.getGraphOfLink(id)
 			});
 		});
-		console.log('graphElements', graphElements);
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
 		//Neo4jInitAllRelations(_sourceConfig);
 	}
 
 	this.CreateEntityReturnCallbackWithIds = function (entityName, propList, inputCallback) {
+		var newNode = {
+			labels: [entityName],
+			properties: propList
+		};
+		var nodeId = dataDriver.createNodeInDatabasePopulateAndReturnId(newNode);
+		var node = dataDriver.getNodeFromDatabase(nodeId);
+		addNodesToGraphAndReturnNodes([node], currentTheme.sourceConfig);
+		//inputCallback(nodeId);
 		//Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);
+		refreshLabelSelectors();
 	}
 
 	this.UpdateEntity = function (nodeID, newProperties, callback) {
@@ -89,7 +101,9 @@
 			labels: [relationName],
 			properties: propList
 		}
-		dataDriver.createRelationshipPopulateAndReturnId(nodeID1, nodeID2, link);
+		var relId = dataDriver.createRelationshipPopulateAndReturnId(stripDomainFromId(nodeID1), stripDomainFromId(nodeID2), link);
+		var link = dataDriver.getLinkFromDatabase(relId);
+		addSingleRelationToGraphReturnLink(link);
 	}
 
 	this.DeleteRelationship = function (relationshipID, _sourceConfig) {
@@ -115,6 +129,14 @@
 			addDataLabel(label.label, label.ids.length, _sourceConfig);
 		});
 		refreshLabelSelectors();
+	}
+
+	function stripDomainFromId(nodeId)
+	{
+		if (nodeId.length > 3)
+			if (nodeId.substring(0, 3) == 'LOC')
+				return nodeId.substring(3);
+		return nodeId;
 	}
 
 }

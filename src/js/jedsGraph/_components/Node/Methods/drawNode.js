@@ -35,12 +35,11 @@ function defineNodeDrawing(){
         if (viewOptions.screenDragType == 'depth')
             applyDepthOffset({ x: dx, y: dy })
 
-        var nodeFlyout = document.getElementById('panel.node');
+        consoleService.hideNodeFlyout();
 
-        if (nodeFlyout.classList.contains('fadein'));
-			nodeFlyout.classList.add('fadeout');
     }
 
+	
     function applyDepthOffset(offset)
     {
         GRAPH.forEachNode(function (node, index) {

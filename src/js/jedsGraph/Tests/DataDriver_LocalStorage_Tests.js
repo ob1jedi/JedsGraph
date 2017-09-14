@@ -288,7 +288,7 @@ var LocalStorageDataDriver_Tests = function () {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {
-			labels: ['MyLabel1', 'MyLabel2'],
+			labels: ['WORKFLOW', 'TOOL'],
 			properties: {
 				property1: 'string test',
 				property2: 25,
@@ -448,6 +448,28 @@ var LocalStorageDataDriver_Tests = function () {
 		var node2 = {};
 		node1.labels = ["HELLO"];
 		node2.labels = ["WORLD"];
+		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
+
+		// Act
+		var results = sut.getRelatedNodesGraph(node1Id);
+		addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
+
+		// Assert
+		return true;
+
+	});
+
+
+	//[Test]
+	tests.push(function getRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
+		// Arrange
+		var sut = createDataDriver();
+		var node1 = {};
+		var node2 = {};
+		node1.labels = ["WORKFLOW"];
+		node2.labels = ["TOOL"];
 		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
 		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
 		var linkId = sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
