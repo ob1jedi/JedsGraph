@@ -13,14 +13,23 @@
 	this.ShowFlyout = function (node, x, y) {
 		var nodeFlyout = document.getElementById('panel.node');
 		var newContent = '';
+		newContent += '<span class="header">'
+		newContent += node.data.displayLabel;
+		newContent += '</span>'
+
+		newContent += '<span class="pull-right">'
+		newContent += '		<span class="winbtn">'
+		newContent += '			<i onclick="nodeFlyout_Event_PinClick(\'' + node.id + '\')" class="glyphicon glyphicon-pushpin"></i>'
+		newContent += '		</span>'
+		newContent += '</span>'
+
+		newContent += '<span class="pull-right">'
+		newContent += '		<span class="winbtn">'
+		newContent += '			<i onclick="nodeFlyout_Event_HideClick(\'' + node.id + '\')" class="glyphicon glyphicon-eye-open pull-right"></i>'
+		newContent += '		</span>'
+		newContent += '</span>'
+		
 		newContent += '<div>'
-		newContent += '	<h3> ' + node.data.displayLabel;
-		newContent += '		<small>'
-		newContent += '			<i onclick="nodeFlyout_Event_PinClick(\'' + node.id + '\')" class="btn btn-sm glyphicon glyphicon-pushpin pull-right"></i>'
-		newContent += '			<i onclick="nodeFlyout_Event_HideClick(\'' + node.id + '\')" class="btn btn-sm glyphicon glyphicon-eye-open pull-right"></i>'
-		newContent += '		</small>'
-		newContent += '	</h3>'
-		newContent += '</div>'
 		//console.log('node', node)
 		node.data.config.nodeFlyout.forEach(function (element) {
 			newContent += '<' + element.elementType;
@@ -30,7 +39,7 @@
 			newContent += element.innerHTML;
 			newContent += '</' + element.elementType + '>';
 		});
-
+		newContent += '</div>'
 		//console.log('dialogHtml', newContent);
 		showFlyout(x, y, newContent);
 	}

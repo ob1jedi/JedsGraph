@@ -561,9 +561,7 @@ dialog textarea{
 	position: absolute;
     left: 100px;
     top: 150px;
-	/*width:250px;*/
-	/*height:100px;*/
-	padding:10px;
+	/*padding:10px;*/
 	border-style:solid;
 	border-width:0px;
 	border-color:#0d0d0d;
@@ -576,7 +574,6 @@ dialog textarea{
 	font-size: 12px;
 	letter-spacing: 0px;
 }
-
 
 .nodeFlyout button {
 	/*background-color: #b3b3b3;*/ 
@@ -591,13 +588,27 @@ dialog textarea{
 	-webkit-transition-duration: 0.4s; /* Safari */
 	transition-duration: 0.4s;
 	cursor: pointer;
+	
+	resize: none;
+	border-radius:0px;
+	background-color:#4d4d4d;
+	color:white;
 }
-.nodeFlyout h3{
-	margin:10px;
+.nodeFlyout [class=header]{
+	margin-left:7px;
+	margin-right:5px;
+	margin-bottom:10px;
+	/*color: green;*/
+	font-size:x-large;
 }
-.nodeFlyout btn{
-	margin:0px;
-	color:red;
+
+.nodeFlyout [class=winbtn]{
+	margin-left: 5px;
+	margin-right: 3px;
+	font-size: small;
+	/*color: red;*/
+	cursor: pointer;
+	/*background-color: blue;*/
 }
 .nodeFlyout textarea{
 	resize: none;
@@ -615,12 +626,7 @@ dialog textarea{
 	opacity:0;
 	transition: opacity 0.2s linear;
 }
-.nodeFlyout button{
-	resize: none;
-	border-radius:0px;
-	background-color:#4d4d4d;
-	color:white;
-}
+
 
 hr {
 	border-color:#262626; 

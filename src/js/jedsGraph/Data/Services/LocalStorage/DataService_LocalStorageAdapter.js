@@ -50,7 +50,7 @@
 	}
 
 	function GetNodeById (nodeId, sourceConfigPrefix) {
-		return dataDriver.getNodeFromDatabase(nodeId);
+		return dataDriver.GetNodeFromDatabase(nodeId);
 	}
 
 	this.GetNodesByDetails = function (nodeLabel, properties, _sourceConfig) {
@@ -85,7 +85,7 @@
 			properties: propList
 		};
 		var nodeId = dataDriver.CreateNodeInDatabasePopulateAndReturnId(newNode);
-		var node = dataDriver.getNodeFromDatabase(nodeId);
+		var node = dataDriver.GetNodeFromDatabase(nodeId);
 		addNodesToGraphAndReturnNodes([node], currentTheme.sourceConfig);
 		//inputCallback(nodeId);
 		//Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);

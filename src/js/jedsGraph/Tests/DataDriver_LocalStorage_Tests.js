@@ -290,6 +290,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = {
 			labels: ['WORKFLOW', 'TOOL'],
 			properties: {
+				toolName: "EXCEL",
 				property1: 'string test',
 				property2: 25,
 				property3: true,
@@ -468,8 +469,14 @@ var LocalStorageDataDriver_Tests = function () {
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
-		node1.labels = ["WORKFLOW"];
-		node2.labels = ["TOOL"];
+		node1 = {
+			labels : ["WORKFLOW"], 			
+			properties: { workflowName: "Transform" }
+		};
+		node2 = { 
+			labels: ["TOOL"],
+			properties: { toolName: "WORD" }
+		};
 		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
 		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
