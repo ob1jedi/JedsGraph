@@ -73,11 +73,22 @@ function defineNodes()
 			node_Event("MouseDblClick", node, event.pageX, event.pageY);
 		}),
 
+
+		//$(ui).tap(function (event) { // MOUSE CLICK
+		//	node_Event("Tap", node, event.pageX, event.pageY);
+		//}),
+
+		$(ui).on("tap", function (event) {
+			console.log('TAPPING');
+			node_Event("Tap", node, event.pageX, event.pageY);
+		}),
+
 		$(ui).hover(function (event) { // MOUSE HOVER
 			node_Event("MouseEnter", node, event.pageX, event.pageY);
 
 		}, function () { // MOUSE LEAVE
 			node_Event("MouseLeave", node, event.pageX, event.pageY);
 		});
+
 	}
 }

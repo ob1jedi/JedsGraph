@@ -2,7 +2,8 @@
 	var dataDriver = new LocalStorageDataDriver();
 
 	this.FetchEntitiesForNode = function (nodeId, _sourceConfig) {
-		var graphElements = dataDriver.getRelatedNodesGraph(stripDomainFromId(nodeId));
+		var graphElements = dataDriver.GetRelatedNodesGraph(stripDomainFromId(nodeId));
+		console.log('fetching entities for node:', nodeId);
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
 	}
 
@@ -10,11 +11,11 @@
 		var newNode = {
 			labels: [labelName]
 		};
-		var nodeId = dataDriver.createNodeInDatabasePopulateAndReturnId(newNode);
+		var nodeId = dataDriver.CreateNodeInDatabasePopulateAndReturnId(newNode);
 	}
 
 	this.DeleteNode = function (nodeID, _sourceConfig) {
-		dataDriver.deleteNode(nodeID);
+		dataDriver.DeleteNode(nodeID);
 		//Neo4jDeleteNode(nodeID, _sourceConfig);
 	}
 
@@ -44,7 +45,7 @@
 
 	this.GetNodesByLabel = function (byLabel, sourceConfigPrefix) {
 		//Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
-		var nodes = dataDriver.getNodesByLabel(byLabel);
+		var nodes = dataDriver.GetNodesByLabel(byLabel);
 		addNodesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
 	}
 
@@ -57,9 +58,9 @@
 	}
 
 	this.InitAllNodes = function (_sourceConfig) {
-		var labelData = dataDriver.getAllNodeLabels();
+		var labelData = dataDriver.GetAllNodeLabels();
 		labelData.forEach(function (labelData) {
-			var nodes = dataDriver.getNodesByLabel(labelData);
+			var nodes = dataDriver.GetNodesByLabel(labelData);
 			addNodesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
 		});
 		this.InitAllRelations(_sourceConfig);
@@ -67,11 +68,11 @@
 	}
 
 	this.InitAllRelations = function (_sourceConfig) {
-		var labelDatas = dataDriver.getAllLinkLabelsAndLinkIds();
+		var labelDatas = dataDriver.GetAllLinkLabelsAndLinkIds();
 
 		var graphElements = labelDatas.map(function (labelData) {
 			labelData.ids.map(function (id) {
-				return dataDriver.getGraphOfLink(id)
+				return dataDriver.GetGraphOfLink(id)
 			});
 		});
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
@@ -83,7 +84,7 @@
 			labels: [entityName],
 			properties: propList
 		};
-		var nodeId = dataDriver.createNodeInDatabasePopulateAndReturnId(newNode);
+		var nodeId = dataDriver.CreateNodeInDatabasePopulateAndReturnId(newNode);
 		var node = dataDriver.getNodeFromDatabase(nodeId);
 		addNodesToGraphAndReturnNodes([node], currentTheme.sourceConfig);
 		//inputCallback(nodeId);
@@ -101,8 +102,8 @@
 			labels: [relationName],
 			properties: propList
 		}
-		var relId = dataDriver.createRelationshipPopulateAndReturnId(stripDomainFromId(nodeID1), stripDomainFromId(nodeID2), link);
-		var link = dataDriver.getLinkFromDatabase(relId);
+		var relId = dataDriver.CreateRelationshipPopulateAndReturnId(stripDomainFromId(nodeID1), stripDomainFromId(nodeID2), link);
+		var link = dataDriver.GetLinkFromDatabase(relId);
 		addSingleRelationToGraphReturnLink(link);
 	}
 
@@ -122,9 +123,9 @@
 		//Neo4jAddLabel(_sourceConfig);
 	}
 
-	this.getAllNodeLabels = function (_sourceConfig) {
+	this.GetAllNodeLabels = function (_sourceConfig) {
 		//Neo4jGetAllLabels(_sourceConfig);
-		var labels = dataDriver.getAllNodeLabelsAndNodeIds(_sourceConfig);
+		var labels = dataDriver.GetAllNodeLabelsAndNodeIds(_sourceConfig);
 		labels.forEach(function (label) {
 			addDataLabel(label.label, label.ids.length, _sourceConfig);
 		});

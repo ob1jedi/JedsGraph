@@ -80,7 +80,7 @@
 		Neo4jAddLabel(_sourceConfig);
 	}
 
-	this.getAllNodeLabels = function (_sourceConfig) {
+	this.GetAllNodeLabels = function (_sourceConfig) {
 		Neo4jGetAllLabels(_sourceConfig);
 	}
 

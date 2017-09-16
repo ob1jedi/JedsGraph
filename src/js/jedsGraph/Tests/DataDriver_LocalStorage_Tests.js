@@ -48,7 +48,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var expectedNodeId = 1;
 
 		// Act
-		var newNodeId = sut.getNextNewNodeId();
+		var newNodeId = sut.GetNextNewNodeId();
 
 		// Assert
 		return (newNodeId === expectedNodeId) ? true : expectedNodeId;
@@ -61,69 +61,69 @@ var LocalStorageDataDriver_Tests = function () {
 		var expectedLinkId = 1;
 
 		// Act
-		var newLinkId = sut.getNextNewLinkId();
+		var newLinkId = sut.GetNextNewLinkId();
 
 		// Assert
 		return (newLinkId === expectedLinkId) ? true : expectedLinkId;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenNoNode_ExpectNode() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNoNode_ExpectNode() {
 		// Arrange
 		var sut = createDataDriver();
 
 		// Act
-		var nodeId = sut.createNodeInDatabasePopulateAndReturnId();
+		var nodeId = sut.CreateNodeInDatabasePopulateAndReturnId();
 
 		// Assert
 		return (nodeId !== undefined) ? true : result;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeId() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeId() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 
 		// Act
-		var nodeId = sut.createNodeInDatabasePopulateAndReturnId(node1);
+		var nodeId = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
 		return (nodeId !== undefined) ? true : result;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeWithId() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeWithId() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 
 		// Act
-		var nodeId = sut.createNodeInDatabasePopulateAndReturnId(node1);
+		var nodeId = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(nodeId);
+		var result = sut.GetNodeFromDatabase(nodeId);
 		return (result.id === nodeId) ? true : result;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_Given2NodesWithIdsGetFirstNode_ExpectFirstInputNodeId() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_Given2NodesWithIdsGetFirstNode_ExpectFirstInputNodeId() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
-		sut.createNodeInDatabasePopulateAndReturnId(node2);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node2);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 		return (result.id === node1.id) ? true : result;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenNodeWithIdAndLabel_ExpectInputNodeLabels() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithIdAndLabel_ExpectInputNodeLabels() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {
@@ -131,10 +131,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 		for (var i = 0 ; i < node1.labels.length; i++) {
 			if (node1.labels[i] !== result.labels[i])
 				return result;
@@ -143,7 +143,7 @@ var LocalStorageDataDriver_Tests = function () {
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenNodeWithMultipleLabels_ExpectInputNodeLabels() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithMultipleLabels_ExpectInputNodeLabels() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {
@@ -151,10 +151,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 		for (var i = 0 ; i < node1.labels.length; i++) {
 			if (node1.labels[i] !== result.labels[i])
 				return result;
@@ -163,39 +163,39 @@ var LocalStorageDataDriver_Tests = function () {
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenNodeWithNoLabels_ExpectInputNodeNoLabels() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNoLabels_ExpectInputNodeNoLabels() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 		if (result.labels.length > 0)
 			return result;
 		return true;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenNodeWith0Properties_ExpectInputNodeNoProperties() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith0Properties_ExpectInputNodeNoProperties() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 		if (result.properties.length > 0)
 			return result;
 		return true;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenNodeWith1Property_ExpectInputNodeWith1Property() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith1Property_ExpectInputNodeWith1Property() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {
@@ -205,17 +205,17 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 		if (result.properties.property1 === 'MyPropertyValue')
 			return true;
 		return result;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenNodeWithNumberProperty_ExpectInputNodeWithNumberProperty() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNumberProperty_ExpectInputNodeWithNumberProperty() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {
@@ -226,17 +226,17 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 		if (result.properties.property1 === 23)
 			return true;
 		return result;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenNodeWithBooleanProperty_ExpectInputNodeWithBooleanProperty() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithBooleanProperty_ExpectInputNodeWithBooleanProperty() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {
@@ -247,17 +247,17 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 		if (result.properties.property1 === true)
 			return true;
 		return result;
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenNodeWithArrayOfStringProperty_ExpectInputNodeWithArrayOfStringProperty() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithArrayOfStringProperty_ExpectInputNodeWithArrayOfStringProperty() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {
@@ -268,10 +268,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 
 		if (result.properties.property1 === undefined)
 			return result;
@@ -284,7 +284,7 @@ var LocalStorageDataDriver_Tests = function () {
 	});
 
 	//[Test]
-	tests.push(function createNodeInDatabasePopulateAndReturnId_GivenVerboseNode_ExpectNodeWithAllAttributes() {
+	tests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenVerboseNode_ExpectNodeWithAllAttributes() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {
@@ -298,10 +298,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.getNodeFromDatabase(node1.id);
+		var result = sut.GetNodeFromDatabase(node1.id);
 
 		if (result.properties.property1 === undefined || result.properties.property2 === undefined || result.properties.property3 === undefined || result.properties.property4 === undefined)
 			return result;
@@ -336,11 +336,11 @@ var LocalStorageDataDriver_Tests = function () {
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
 
 		// Act
-		var result = sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var result = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
 
 		// Assert
 		if (result > 0)
@@ -357,13 +357,13 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = {};
 		var node2 = {};
 		var node3 = {};
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
-		var node3Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var node3Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
 
 		// Act
-		sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
-		var result = sut.createRelationshipPopulateAndReturnId(node2Id, node3Id);
+		sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var result = sut.CreateRelationshipPopulateAndReturnId(node2Id, node3Id);
 
 		// Assert
 		if (result === undefined || result <= 0)
@@ -373,17 +373,17 @@ var LocalStorageDataDriver_Tests = function () {
 	});
 
 	//[Test]
-	tests.push(function getRelatedNodes_GivenNode_ExpectRelatedNode() {
+	tests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNode() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
-		sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var result = sut.getRelatedNodes(node1Id);
+		var result = sut.GetRelatedNodes(node1Id);
 
 		// Assert
 		if (result[0] === node2Id)
@@ -392,17 +392,17 @@ var LocalStorageDataDriver_Tests = function () {
 	});
 
 	//[Test]
-	tests.push(function getRelatedNodes_GivenNode_ExpectRelatedNodeAndLink() {
+	tests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNodeAndLink() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var result = sut.getRelatedNodesGraph(node1Id);
+		var result = sut.GetRelatedNodesGraph(node1Id);
 
 		// Assert
 		if (result[0].fromNode.id !== node1Id)
@@ -416,17 +416,17 @@ var LocalStorageDataDriver_Tests = function () {
 	});
 
 	//[Test]
-	tests.push(function getRelatedNodes_Given2RelatedNodes_ExpectRelatedNodeAndLink() {
+	tests.push(function GetRelatedNodes_Given2RelatedNodes_ExpectRelatedNodeAndLink() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var results = sut.getRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedNodesGraph(node1Id);
 
 		// Assert
 		if (results[0].fromNode.id !== node1Id)
@@ -441,19 +441,19 @@ var LocalStorageDataDriver_Tests = function () {
 
 
 	//[Test]
-	tests.push(function getRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
+	tests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
 		node1.labels = ["HELLO"];
 		node2.labels = ["WORLD"];
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var results = sut.getRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedNodesGraph(node1Id);
 		addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
 
 		// Assert
@@ -463,19 +463,19 @@ var LocalStorageDataDriver_Tests = function () {
 
 
 	//[Test]
-	tests.push(function getRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
+	tests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
 		node1.labels = ["WORKFLOW"];
 		node2.labels = ["TOOL"];
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var results = sut.getRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedNodesGraph(node1Id);
 		addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
 
 		// Assert
@@ -484,7 +484,7 @@ var LocalStorageDataDriver_Tests = function () {
 	});
 
 	//[Test]
-	tests.push(function getRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
+	tests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
@@ -498,12 +498,12 @@ var LocalStorageDataDriver_Tests = function () {
 				property3: true,
 				Activities: ['Dancing', 'Hockey']
 		}
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.createRelationshipPopulateAndReturnId(node1Id, node2Id, link);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id, link);
 
 		// Act
-		var results = sut.getRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedNodesGraph(node1Id);
 		addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
 
 		// Assert
@@ -512,19 +512,19 @@ var LocalStorageDataDriver_Tests = function () {
 	});
 
 	//[Test]
-	tests.push(function getRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
+	tests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
 		node1.labels = ["CASE1"];
 		node2.labels = ["CASE2"];
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.createNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.createRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var results = sut.getRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedNodesGraph(node1Id);
 		addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
 
 		// Assert
@@ -537,11 +537,11 @@ var LocalStorageDataDriver_Tests = function () {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
-		var node1Id = sut.createNodeInDatabasePopulateAndReturnId(node1);
-		sut.deleteNode(node1Id);
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.DeleteNode(node1Id);
 
 		// Act
-		var result = sut.nodeExists(node1Id);
+		var result = sut.NodeExists(node1Id);
 
 		// Assert
 		if (result === false)
@@ -1107,11 +1107,32 @@ var LocalStorageDataDriver_Tests = function () {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {labels:['FindMe']};
-		var expectedNodeId = sut.createNodeInDatabasePopulateAndReturnId(node1);
+		var expectedNodeId = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 		// Act
-		var result = sut.getNodesByLabel('FindMe');
+		var result = sut.GetNodesByLabel('FindMe');
 		// Assert
 		return (result[0].id === expectedNodeId) ? true : result;
+	});
+
+	//[Test]
+	tests.push(function getLinkInDatabaseByLabel_Given2NodesAndRelationshipAndLabel_ExpectLink() {
+		// Arrange
+		var sut = createDataDriver();
+		var node1 = { labels: ['ATOM'], properties:{element:"Hydrogen"}};
+		var node2 = { labels: ['ATOM'], properties: { element: "Oxygen" } };
+		var node3 = { labels: ['ATOM'], properties: { element: "Helium" } };
+		link1 = { labels: ["BOND"], properties: { strength: "strong" } };
+		link2 = {labels: ["BOND"], properties:{strength: "strong"}};
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var node3Id = sut.CreateNodeInDatabasePopulateAndReturnId(node3);
+		var expectedLinkId1 = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id, link1);
+		var expectedLinkId2 = sut.CreateRelationshipPopulateAndReturnId(node2Id, node3Id, link2);
+
+		// Act
+		var result = sut.GetLinksByLabel('BOND');
+		// Assert
+		return (result[0].id === expectedLinkId1 && result[1].id === expectedLinkId2) ? true : result;
 	});
 
 	//[Test]
@@ -1121,32 +1142,73 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = { labels: ['ThisTestLabel0'] };
 		var node2 = { labels: ['ThisTestLabel2', 'ThisTestLabel1'] };
 		var node3 = { labels: ['ThisTestLabel3'] };
-		sut.createNodeInDatabasePopulateAndReturnId(node1);
-		sut.createNodeInDatabasePopulateAndReturnId(node2);
-		sut.createNodeInDatabasePopulateAndReturnId(node3);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		sut.CreateNodeInDatabasePopulateAndReturnId(node3);
 		// Act
-		var result = sut.getAllNodeLabels();
+		var result = sut.GetAllNodeLabels();
 		// Assert
 		return (result.indexOf('ThisTestLabel1') > -1 && result.indexOf('ThisTestLabel2') > -1) ? true : result;
 	});
 
+	//[Test]
+	tests.push(function getNodesByPropertyName_GivenNodesWithProperties_ExpectPropertyIndex() {
+		// Arrange
+		var propertyName = "uniqueProp1672";
+		var sut = createDataDriver();
+		var node1 = {
+			labels: ['PropsNodeTest'],
+			properties: {
+				uniqueProp1672: "uniqueProperty",
+				prop2: "value2"
+			}
+		};
+		var expectedNodeId = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
 
-	////[Test]
-	//tests.push(function createNodeInDatabase_GivenNodeWithIdAndLabel_ExpectUpdatedLabelIndex() {
-	//	// Arrange
-	//	var sut = createDataDriver();
-	//	var node1 = {
-	//		labels: ["label1"]
-	//	};
-	//	// Act
-	//	sut.createNodeInDatabasePopulateAndReturnId(node1);
-	//	// Assert
-	//	var result = sut.getNodeFromDatabase(node1.id);
-	//	for (var i = 0 ; i < node1.labels.length; i++) {
-	//		if (node1.labels[i] !== result.labels[i])
-	//			return result;
-	//	}
-	//	return true;
-	//});
+		// Act
+		var result = sut.GetNodesByPropertyName(propertyName);
 
+		// Assert
+		if (result[0].id == expectedNodeId)
+			return true;
+
+		return result;
+	});
+
+	//[Test]
+	tests.push(function getRelationshipByPropertyName_GivenGiven2RelatedNodes_ExpectRelationship() {
+		// Arrange
+		var propertyName = "uniqueProp1673";
+		var sut = createDataDriver();
+		var node1 = {};
+		var node2 = {};
+		var link = {};
+		node1.labels = ["CLIENT"];
+		node2.labels = ["CAR"];
+		node2.properties = {
+			Manufacturer: 'Kia',
+			Model: 'Picanto'
+		};
+		link.labels = ["OWNS"];
+		link.properties = {
+			uniqueProp1673: "ForAlink",
+			Year: 2012,
+			Dealer: 'Autocar',
+			OnLayby: true,
+			AttendedBy: ['Joan Luna', 'Derick Stapler']
+		}
+		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var expectedLinkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id, link);
+
+		// Act
+		var result = sut.GetLinksByPropertyName(propertyName);
+
+		// Assert
+		if (result[0].id == expectedLinkId)
+			return true;
+
+		return resultNodes;
+
+	});
 }

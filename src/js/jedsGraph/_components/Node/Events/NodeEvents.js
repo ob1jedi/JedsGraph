@@ -16,6 +16,10 @@
 		node_OnMouseLeave(node, x, y);
 	else if (eventType == "SubNodePulledOut")
 		node_Event_subNodePulledOut(node, x, y);
+	else if (eventType == "Tap")
+		node_OnTap(node, x, y);
+	else if (eventType == "DoubleTap")
+		node_OnDoubleTap(node, x, y);
 }
 
 //-----------------------------------------------------------------
@@ -27,12 +31,12 @@ function node_Event_subNodePulledOut(node, x, y)
 }
 
 function nodeFlyout_Event_HideClick(nodeId) {
-	console.log('eye click', nodeId);
 	removeNodeFromGraph(nodeId);
 }
 
 function nodeFlyout_Event_PinClick(nodeId) {
-	console.log('pin click', nodeId);
+	var node = GRAPH.getNode(nodeId);
+	unPinNode(node);
 }
 
 function node_OnMouseEnter(node, x, y) {
@@ -42,6 +46,14 @@ function node_OnMouseEnter(node, x, y) {
 		subNode_OnMouseEnter(node, x, y);
 	else if (node.data.nodeType == "planned")
 		plannedNode_OnMouseEnter(node, x, y);
+}
+
+function node_OnTap(node, x, y) {
+	node_OnMouseDown(node, x, y)
+}
+
+function node_DoubleTap(node, x, y) {
+	node_OnMouseDblClick(node, x, y)
 }
 
 function node_OnMouseDown(node, x, y) {

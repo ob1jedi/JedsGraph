@@ -9,7 +9,7 @@ function getEntityNode() {
 	dataService.GetNodesByLabel(newNodeValue);
 }
 
-function deleteNode() {
+function DeleteNode() {
 	dataService.DeleteNode(selectedNodeID);
 }
 

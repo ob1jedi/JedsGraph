@@ -330,10 +330,10 @@
 .forlabelselector {
 	text-align: center;
 	margin: 5px 5px;
-	color: red;
-	height: 15px;
+	color: #383736;
+	height: 20px;
 	min-width: 20px;
-	padding: 2px 2px 2px 2px;
+	padding: 4px 2px 2px 2px;
 	border-radius: 10px;
 	right: 0px;
 	

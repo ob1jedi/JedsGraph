@@ -1,5 +1,6 @@
 ﻿
 function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceConfig) {
+	console.log('graph elements', graphElements);
 	var newNodes = [];
 	graphElements.forEach(function (graphElement) {
 		var datN = new nodeDataType;
@@ -24,6 +25,7 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		var linkdata = new linkDataType(datN.id, datM.id, graphElement.link.id, graphElement.link.labels, _sourceConfig);
 		linkdata.properties = new neoPropertyList(graphElement.link.properties);
 		linkdata.propertiesObject = graphElement.link.properties;
+		console.log('adding data link', linkdata);
 		var link = addDataLink(datN.id, datM.id, linkdata, _sourceConfig);
 	});
 
@@ -41,6 +43,7 @@ function addSingleRelationToGraphReturnLink(link, _sourceConfig) {
 
 function addNodesToGraphAndReturnNodes(nodes, _sourceConfig)
 {
+	console.log('added nodes:', nodes);
 	var newNodes =[];
 	nodes.forEach(function (node) {
 		var datM = new nodeDataType;
@@ -51,6 +54,7 @@ function addNodesToGraphAndReturnNodes(nodes, _sourceConfig)
 		var addedNode = addDataNode(node.id, datM, _sourceConfig)
 		newNodes.push(addedNode);
 	});
+	
 	return newNodes;
 }
 

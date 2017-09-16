@@ -2,20 +2,20 @@
 var LocalStorageDataDriver = function () {
 
 	//----PUBLIC----------------------------------------------------------
-	this.createNodeInDatabasePopulateAndReturnId = function (node) {
+	this.CreateNodeInDatabasePopulateAndReturnId = function (node) {
 		node = sanitizeNode(node);
-		node.id = this.getNextNewNodeId();
+		node.id = this.GetNextNewNodeId();
 		writeNodeToStorage(node);
 		return node.id;
 	}
 
-	this.getRelatedNodes = function (nodeId) {
-		var node = this.getNodeFromDatabase(nodeId);
+	this.GetRelatedNodes = function (nodeId) {
+		var node = this.GetNodeFromDatabase(nodeId);
 		var nodeLinks = node.links;
 		var dataDriver = this;
 		var relatedNodeIds = [];
 		nodeLinks.forEach(function (linkId) {
-			var link = dataDriver.getLinkFromDatabase(linkId);
+			var link = dataDriver.GetLinkFromDatabase(linkId);
 			if (nodeId == link.fromNodeId)
 				relatedNodeIds.push(link.toNodeId);
 			else
@@ -25,37 +25,33 @@ var LocalStorageDataDriver = function () {
 		return relatedNodeIds;
 	}
 
-	this.getRelatedNodesGraph = function (nodeId) {
-		var node = this.getNodeFromDatabase(nodeId);
+	this.GetRelatedNodesGraph = function (nodeId) {
+		var node = this.GetNodeFromDatabase(nodeId);
 		var dataDriver = this;
-		return node.links.map(function (linkId) { return dataDriver.getGraphOfLink(linkId) });
+		return node.links.map(function (linkId) { return dataDriver.GetGraphOfLink(linkId) });
 	}
 
-	this.getGraphOfLink = function (linkId) {
-		var link = this.getLinkFromDatabase(linkId);
+	this.GetGraphOfLink = function (linkId) {
+		var link = this.GetLinkFromDatabase(linkId);
 		var graphElement = new GraphElement();
 		console.log('link', linkId);
-		graphElement.fromNode = this.getNodeFromDatabase(link.fromNodeId);
-		graphElement.toNode = this.getNodeFromDatabase(link.toNodeId);
+		graphElement.fromNode = this.GetNodeFromDatabase(link.fromNodeId);
+		graphElement.toNode = this.GetNodeFromDatabase(link.toNodeId);
 		graphElement.link = link;
 		return graphElement;
 	}
 
-	this.createRelationshipPopulateAndReturnId = function (fromNodeId, toNodeId, link) {
+	this.CreateRelationshipPopulateAndReturnId = function (fromNodeId, toNodeId, link) {
 		link = sanitizeLink(link);
-		link.id = this.getNextNewLinkId();
+		link.id = this.GetNextNewLinkId();
 		link.fromNodeId = fromNodeId;
 		link.toNodeId = toNodeId;
 
-		console.log('fromNodeId', fromNodeId);
-		console.log('toNodeId', toNodeId);
-		console.log('link', link);
-		var fromNode = this.getNodeFromDatabase(fromNodeId);
-		console.log('fromNode', fromNode);
+		var fromNode = this.GetNodeFromDatabase(fromNodeId);
 		fromNode.links.push(link.id);
 		writeNodeToStorage(fromNode);
 
-		var toNode = this.getNodeFromDatabase(toNodeId);
+		var toNode = this.GetNodeFromDatabase(toNodeId);
 		toNode.links.push(link.id);
 		writeNodeToStorage(toNode);
 
@@ -63,35 +59,27 @@ var LocalStorageDataDriver = function () {
 		return link.id;
 	}
 
-	this.getNodeFromDatabase = function (nodeId) {
-		throwIfInvalidNodeId(nodeId);
-		var node = readNodeFromStorage(nodeId);
-		return node;
+	this.GetNodeFromDatabase = function (nodeId) {
+		return getNodeFromDatabase(nodeId);
 	}
 
-	this.getLinkFromDatabase = function (linkId) {
-		throwIfInvalidLinkId(linkId);
-		var link = readLinkFromStorage(linkId);
-		return link;
+	this.GetLinkFromDatabase = function (linkId) {
+		return getLinkFromDatabase(linkId);
 	}
 
-	this.deleteNode = function(nodeId)
+	this.DeleteNode = function(nodeId)
 	{
 		localStorage.removeItem(nodeKeyFromNodeId(nodeId));
 	}
 
-	this.getNodeByLabel = function(label)
-	{
-		throw("not yet implemented");
-	}
 
-	this.nodeExists = function(nodeId)
+	this.NodeExists = function(nodeId)
 	{
 		var node = readNodeFromStorage(nodeId);
 		return node !== null;
 	}
 
-	this.getNextNewNodeId = function () {
+	this.GetNextNewNodeId = function () {
 		var nextId = localStorage.getItem('NEXT_NODE_ID');
 		if (nextId === null) {
 			localStorage.setItem('NEXT_NODE_ID', 1);
@@ -101,7 +89,7 @@ var LocalStorageDataDriver = function () {
 		return nextId;
 	}
 
-	this.getNextNewLinkId = function () {
+	this.GetNextNewLinkId = function () {
 		var nextId = localStorage.getItem('NEXT_LINK_ID');
 		if (nextId === null) {
 			localStorage.setItem('NEXT_LINK_ID', 1);
@@ -111,43 +99,73 @@ var LocalStorageDataDriver = function () {
 		return nextId;
 	}
 
-	this.getNodesByLabel = function(labelName){
-		var indexedData = localStorage.getItem('INDEX_ON_NODE_LABELS');
-		var dataStringHelper = new DataStringHelper();
-		var nodeIdList = dataStringHelper.getDataFromDataString(indexedData, labelName);
-		console.log('nodeIdList', nodeIdList);
-		var nodeIdArray = nodeIdList.split(',');
-		var nodeArray = [];
-		var dataDriver = this;
-		nodeIdArray.forEach(function(nodeId){
-			nodeArray.push(dataDriver.getNodeFromDatabase(nodeId));
-		});
-		return nodeArray;
+	this.GetNodesByLabel = function(labelName){		
+		return getItemsInIndex('INDEX_ON_NODE_LABELS', labelName, 'node');
 	}
 
-	this.getAllNodeLabels = function () {
+	this.GetNodesByPropertyName = function (propertyName) {
+		return getItemsInIndex('INDEX_ON_NODE_PROPS', propertyName, 'node');
+	}
+
+	this.GetLinksByLabel = function (labelName) {
+		return getItemsInIndex('INDEX_ON_LINK_LABELS', labelName, 'link');
+	}
+
+	this.GetLinksByPropertyName = function (propertyName) {
+		return getItemsInIndex('INDEX_ON_LINK_PROPS', propertyName, 'link');
+	}
+
+	this.GetAllNodeLabels = function () {
 		var nodeIndex = localStorage.getItem('INDEX_ON_NODE_LABELS');
 		return getAllLabelsFromIndex(nodeIndex);
 	}
 
-	this.getAllLinkLabels = function () {
+	this.GetAllLinkLabels = function () {
 		var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
 		return getAllLabelsFromIndex(linkIndex);
 	}
 
-	this.getAllLinkLabelInfos = function () {
+	this.GetAllLinkLabelInfos = function () {
 		var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
 		return getAllLabelsFromIndex(linkIndex);
 	}
 
-	this.getAllNodeLabelsAndNodeIds = function () {
+	this.GetAllNodeLabelsAndNodeIds = function () {
 		return getAllLabelsAndIdsForIndex('INDEX_ON_NODE_LABELS');
 	}
 
-	this.getAllLinkLabelsAndLinkIds = function () {
+	this.GetAllLinkLabelsAndLinkIds = function () {
 		return getAllLabelsAndIdsForIndex('INDEX_ON_LINK_LABELS');
 	}
 	//---- PRIVATE ----------------------------------------------------------
+
+	function getNodeFromDatabase(nodeId) {
+		throwIfInvalidNodeId(nodeId);
+		var node = readNodeFromStorage(nodeId);
+		return node;
+	}
+
+	function getLinkFromDatabase(linkId) {
+		throwIfInvalidLinkId(linkId);
+		var link = readLinkFromStorage(linkId);
+		return link;
+	}
+
+	function getItemsInIndex(indexName, elementName, itemType) {
+		var dataStringHelper = new DataStringHelper();
+		var indexedData = dataStringHelper.getDataString(indexName);
+		var itemIdList = dataStringHelper.getDataFromDataString(indexedData, elementName);
+		var itemIdArray = itemIdList.split(',');
+		var itemArray = [];
+		var dataDriver = this;
+		for (var i = 0; i < itemIdArray.length; i++) {
+			if (itemType === 'node')
+				itemArray.push(getNodeFromDatabase(itemIdArray[i]));
+			if (itemType === 'link')
+				itemArray.push(getLinkFromDatabase(itemIdArray[i]));
+		}
+		return itemArray;
+	}
 
 	function getAllLabelsAndIdsForIndex(indexName) {
 		var indexedData = localStorage.getItem(indexName);
@@ -175,13 +193,26 @@ var LocalStorageDataDriver = function () {
 	
 	function writeNodeToStorage(node) {
 		localStorage.setItem(nodeKeyFromNodeId(node.id), serialize(node));
-		updateNodeLabelsIndex(node);
+		updateLabelsIndex("INDEX_ON_NODE_LABELS", node);
+		updatePropertyIndex("INDEX_ON_NODE_PROPS", node);
 	}
 
-	function updateNodeLabelsIndex(node) {
-		node.labels.forEach(function (label) {
-			updateIndex("INDEX_ON_NODE_LABELS", label, node.id);
+	function writeLinkToStorage(link) {
+		localStorage.setItem(linkKeyFromNodeId(link.id), serialize(link));
+		updateLabelsIndex("INDEX_ON_LINK_LABELS", link);
+		updatePropertyIndex("INDEX_ON_LINK_PROPS", link);
+	}
+
+	function updateLabelsIndex(indexName, item) {
+		item.labels.forEach(function (label) {
+			updateIndex(indexName, label, item.id);
 		});
+	}
+
+	function updatePropertyIndex(indexName, item) {
+		for (var propertyKey in item.properties) {
+			updateIndex(indexName, propertyKey, item.id);
+		}
 	}
 
 	function updateIndex(indexName, elementName, data) {
@@ -191,17 +222,6 @@ var LocalStorageDataDriver = function () {
 			index = dataStringHelper.getNewDataString();
 		index = dataStringHelper.ensureDataIntoElement(index, elementName, data)
 		localStorage.setItem(indexName, index);
-	}
-
-	function writeLinkToStorage(link) {
-		localStorage.setItem(linkKeyFromNodeId(link.id), serialize(link));
-		updateLinkLabelsIndex(link);
-	}
-
-	function updateLinkLabelsIndex(link) {
-		link.labels.forEach(function (label) {
-			updateIndex("INDEX_ON_LINK_LABELS", label, link.id);
-		});
 	}
 
 	function sanitizeNode(node) {
@@ -226,6 +246,7 @@ var LocalStorageDataDriver = function () {
 			links = [];
 		return links;
 	}
+
 	function sanitizeLabels(labels) {
 		if (labels === undefined)
 			labels = [];

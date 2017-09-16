@@ -185,6 +185,7 @@ function addDataLink(fromNodeID, toNodeID, linkData, _sourceConfig)
 	var bIsNew = false;
 	var link;
 	var existingLink = getDataLink(linkData.id);
+	console.log('existingLink', existingLink);
 	if (existingLink){
 		var updatedProperties = getUpdatedProperties(linkData.properties, existingLink.data.properties);
 		if (linkData.name != existingLink.data.name || updatedProperties.length > 0){
@@ -415,14 +416,14 @@ function refreshLabelSelectors(){
 	var qbuilderFromEntitySelector = document.getElementById('qbuilder.from.entity');
 	var color = 'gray';
 	var button_onclick = "dataService.GetNodesByLabel(false, '" + currentTheme.sourceConfig.prefix + "')";
-	var fetchButton = '<div id="labelSelector.fetcher.All" class="btn mytooltip forlabelselector" onclick="' + button_onclick + '"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></div>'
+	var fetchButton = '<div id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="' + button_onclick + '"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></div>'
 	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorPanel" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
 	if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML = '<option value=""></option>';}
 			
 	labelsList.forEach(function (nodeLabel, index) {
 		color = nodeLabel.data.sourceConfig.displaySettings.selectorColor;
 		button_onclick = "dataService.GetNodesByLabel('" + nodeLabel.name + "', '" + nodeLabel.data.sourceConfig.prefix + "')";
-		fetchButton = '<button id="labelSelector.fetcher.' + nodeLabel.name + '" class="forlabelselector mytooltip" style="background-color:' + nodeLabel.color + '" onclick="' + button_onclick + '">' + nodeLabel.instanceCount + '<div class="mytooltiptext ttleft ttupper">Fetch from database</div></button>'
+		fetchButton = '<div id="labelSelector.fetcher.' + nodeLabel.name + '" class="forlabelselector mytooltip" style="background-color:' + nodeLabel.color + '" onclick="' + button_onclick + '">' + nodeLabel.instanceCount + '<div class="mytooltiptext ttleft ttupper">Fetch from database</div></button>'
 		labelSelectorHtml += '<tr><td><div onclick="highlightLabel(' + index + ')" class="labelSelectorPanel" style="background-color:' + color + ';">' + nodeLabel.name + '</div></td><td>' + fetchButton + '</td></tr>';
 		if (qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML += '<option value="' + nodeLabel.name + nodeLabel.data.sourceConfig.prefix + '">' + (nodeLabel.name + " (" + nodeLabel.data.sourceConfig.prefix + ")") + '</option>'; }
 	});
@@ -435,44 +436,92 @@ function removeNodeFromStage(nodeID)
 {
 	if (!nodeID) {nodeID = selectedNodeID;}
 	var node = GRAPH.getNode(nodeID);
-			
+
+	var relativeLinks = node.data.toLinks.concat(node.data.fromLinks);
+	relativeLinks.forEach(function (link) {
+		removeLinkFromStage(link.id);
+		//GRAPH.removeLink(link.id);
+	});
+
 	var allNodeLists = nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
 	var i = -1;
-	while (++i < nodeList.length){if (nodeList[i].id == nodeID) {nodeList.splice(i, 1);}}
+	while (++i < nodeList.length) 
+		if (nodeList[i].id == nodeID) 
+			nodeList.splice(i, 1); 
 	var i = -1;
-	while (++i < monitoredNodes.length){if (monitoredNodes[i].id == nodeID) {monitoredNodes.splice(i, 1);}}
+	while (++i < monitoredNodes.length) 
+		if (monitoredNodes[i].id == nodeID) 
+			monitoredNodes.splice(i, 1); 
 	var i = -1;
-	while (++i < checkedNodes.length){if (checkedNodes[i].id == nodeID) {checkedNodes.splice(i, 1);}}
+	while (++i < checkedNodes.length) 
+		if (checkedNodes[i].id == nodeID) 
+			checkedNodes.splice(i, 1); 
+	
 	nodeList.forEach(function(node) {
 		var i = -1;
-		while (++i < node.data.toNodes.length){if (node.data.toNodes[i].id == nodeID) {node.data.toNodes.splice(i, 1);}}
+		while (++i < node.data.toNodes.length) 
+			if (node.data.toNodes[i].id == nodeID) 
+				node.data.toNodes.splice(i, 1); 
 		var i = -1;
-		while (++i < node.data.fromNodes.length){if (node.data.fromNodes[i].id == nodeID) {node.data.fromNodes.splice(i, 1);}}
+		while (++i < node.data.fromNodes.length) 
+			if (node.data.fromNodes[i].id == nodeID) 
+				node.data.fromNodes.splice(i, 1); 
 		var i = -1;
-		while (++i < node.data.toLinks.length){if (node.data.toLinks[i].toNodeID == nodeID) {node.data.toLinks.splice(i, 1);}}
+		while (++i < node.data.toLinks.length) 
+			if (node.data.toLinks[i].toNodeID == nodeID) 
+				node.data.toLinks.splice(i, 1); 
 		var i = -1;
-		while (++i < node.data.fromLinks.length){if (node.data.fromLinks[i].fromNodeID == nodeID) {node.data.fromLinks.splice(i, 1);}}
+		while (++i < node.data.fromLinks.length) 
+			if (node.data.fromLinks[i].fromNodeID == nodeID) 
+				node.data.fromLinks.splice(i, 1); 
 	});
-			
-	var relativeLinks = node.data.toLinks.concat(node.data.fromLinks);
-	relativeLinks.forEach(function (link){
-		GRAPH.removeLink(link.id);
-	});
+
 	GRAPH.removeNode(nodeID);
+
+	consoleService.hideNodeFlyout();
 }
 		
 function removeLinkFromStage(linkID) {
 	if (!linkID) { linkID = selectedLink.data.id; }
+
 	var link = getLinkById(linkID);
 	var i = -1;
-	while (++i < linkList.length) { if (linkList[i].id == linkID) { linkList.splice(i, 1); } }
+	while (++i < linkList.length) 
+		if (linkList[i].id == linkID) 
+			linkList.splice(i, 1);
 	var i = -1;
-	while (++i < monitoredLinks.length) { if (monitoredLinks[i].id == linkID) { monitoredLinks.splice(i, 1); } }
+	while (++i < monitoredLinks.length) 
+		if (monitoredLinks[i].id == linkID)
+			monitoredLinks.splice(i, 1);
+
 	var fromNode = GRAPH.getNode(link.data.fromNodeID);
 	var toNode = GRAPH.getNode(link.data.toNodeID);
+	var i = -1;
+	while (++i < fromNode.data.toNodes.length) 
+		if (fromNode.data.toNodes[i].id == link.data.toNodeID) 
+			fromNode.data.toNodes.splice(i, 1);
+	var i = -1;
+	while (++i < toNode.data.fromNodes.length) 
+		if (toNode.data.fromNodes[i].id == link.data.fromNodeID)
+			toNode.data.fromNodes.splice(i, 1);
 
-	while (++i < fromNode.data.toNodes.length) { if (fromNode.data.toNodes[i].id == link.data.toNodeID) { fromNode.data.toNodes.splice(i, 1); } }
-	while (++i < toNode.data.fromNodes.length) { if (toNode.data.fromNodes[i].id == link.data.fromNodeID) { toNode.data.fromNodes.splice(i, 1); } }
+	var i = -1;
+	while (++i < fromNode.links.length)
+		if (fromNode.links[i].id == link.id)
+			fromNode.links.splice(i, 1);
+	var i = -1;
+	while (++i < toNode.links.length)
+		if (toNode.links[i].id == link.id)
+			toNode.links.splice(i, 1);
+
+	var i = -1;
+	while (++i < fromNode.data.toLinks.length)
+		if (fromNode.data.toLinks[i].id == link.id)
+			fromNode.data.toLinks.splice(i, 1);
+	var i = -1;
+	while (++i < toNode.data.fromLinks.length)
+		if (toNode.data.fromLinks[i].id == link.id)
+			toNode.data.fromLinks.splice(i, 1);
 
 	GRAPH.removeLink(link);
 }

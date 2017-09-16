@@ -98,6 +98,13 @@ var DataStringHelper = function () {
 		return dataString;
 	}
 
+	this.getDataString = function(dataStringName) {
+		var dataString = localStorage.getItem(dataStringName);
+		if (!dataString || dataString == null)
+			dataString = '|';
+		return dataString;
+	}
+
 	this.getDataFromDataString = function (dataString, elementName) {
 		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
 		if (elementExists(dataElementIndex)) {
@@ -105,7 +112,7 @@ var DataStringHelper = function () {
 			var partitions = element.split(':');
 			return (partitions.length > 1) ? partitions[1] : undefined;
 		}
-		return null;
+		return "";
 	}
 
 	this.replaceDataInElement = function (dataString, elementName, newData) {
@@ -200,12 +207,21 @@ var DataStringHelper = function () {
 	function hasNewFlag(dataElementIndex) {
 		return (dataElementIndex % 1) > 0;
 	}
+
+	function handleEmptyString(string, nameOfDataString) {
+
+	}
+
 	function validateInputString(string) {
+		
 		// Validate input data string...
-		if (string[0] !== '|'
+		if (!string
+			|| string === null
+			|| string[0] !== '|'
 			|| string[string.length - 1] !== '|'
 			|| string.length === 0
 			|| string == '||')
+			
 			throw "Invalid data-string";
 	}
 	function character1IsBeforeCharacter2(character1, character2) {
