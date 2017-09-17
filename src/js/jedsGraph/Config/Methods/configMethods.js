@@ -42,7 +42,15 @@ function setConfigSettings(config) {
 		$topBar = document.getElementById('topBar');
 		if (panel.available) {
 			$parentContainer = document.getElementById(panel.parent);
-			$topBar.innerHTML += '<button id="toolbar.' + panel.name + '" onclick="toggleToolPanel(\'' + panel.name + '\')" class="toolPanelIcon mytooltip"><span class="' + panel.icon + '" aria-hidden="true"></span><div class="mytooltiptext ttright ttcenter">' + panel.desc + '</div></button>';
+			var tobarButton = '';
+			tobarButton += '<button id="toolbar.' + panel.name + '" onclick="toggleToolPanel(\'' + panel.name + '\')" class="toolPanelIcon mytooltip">';
+			tobarButton += '  <span class="' + panel.icon + '" aria-hidden="true">';
+			tobarButton += '  </span>';
+			tobarButton += '  <div class="mytooltiptext ttright ttcenter">' + panel.desc; 
+			tobarButton += '  </div>';
+			tobarButton += '</button>';
+
+			$topBar.innerHTML += tobarButton;
 			if ($parentContainer && panel.visible) {
 				toggleToolPanel(panel.name);
 				//$parentContainer.appendChild($elPanel);
