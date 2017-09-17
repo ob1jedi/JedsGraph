@@ -233,14 +233,14 @@ configManager.configs.push( {
 
 		/*effects...*/
 		,
-		haze: true /*...outer node haze*/
+		haze: false /*...outer node haze*/
 		//,textHaze:true /*...node text haze*/
 		,
 		glass: false /*...node text haze*/
 		,
-		highlightHaze: true /*...outer node haze*/
+		highlightHaze: false /*...outer node haze*/
 		,
-		shadow: true /*...outer node shadow*/
+		shadow: false /*...outer node shadow*/
 		,
 		glow: false /*...outer node glow*/
 		,

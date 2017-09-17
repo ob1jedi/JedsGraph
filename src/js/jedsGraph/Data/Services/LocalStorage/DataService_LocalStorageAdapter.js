@@ -16,7 +16,9 @@
 		};
 		var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
 		var entity = dataDriver.GetEntityById(entityId);
-		return addEntitiesToGraphAndReturnNodes([entity])[0];
+		var nodes = addEntitiesToGraphAndReturnNodes([entity])[0];
+		refreshLabelSelectors();
+		return nodes;
 	}
 
 	this.DeleteNode = function (nodeID, _sourceConfig) {

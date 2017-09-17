@@ -2,18 +2,10 @@ function JsonParser() {
     var _graphEntities = [];
     var _graphRelations = [];
 
-    function jsonStringToObject(jsonString) {
-        return JSON.parse(jsonString);
-    }
-
-    function submitJsonForGraph() {
-        var jsonString = document.getElementById('dlg.text.json').value;
-        jsonToGraph(jsonStringToObject(jsonString));
-        closeDialog('json2GraphDlg');
-    }
-
-    this.TranslateJsonToGraph_ReturnGraphElements = function (objectName, jsonObject)
+    this.TranslateToGraph_ReturnGraphElements = function (objectName, jsonString)
     {
+        var jsonObject = JSON.parse(jsonString);
+
         if (isObject(jsonObject))
             createEntity(objectName, jsonObject);
         else if (isArray(jsonObject))
@@ -29,7 +21,6 @@ function JsonParser() {
         var dataService = new DataService();
         for (var e = 0; e < _graphEntities.length; e++)
         {
-            console.log('_graphEntities[e]', _graphEntities[e]);
             var node = dataService.CreateEntity_AddToGraph_ReturnNode(_graphEntities[e].labels, _graphEntities[e].properties);
             _graphEntities[e].id = node.id;
         }

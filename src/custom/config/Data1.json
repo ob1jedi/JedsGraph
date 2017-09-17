@@ -153,7 +153,7 @@ configManager.configs.push( {
 			"max": 200
 		}, /*The 4bit rgb range from which nodeLabel colors can be automatically generated.*/
 		"entityLabelColor": "black",
-		"entityBorderColor": "black", /*null=auto-color*/
+		"entityBorderColor": null, /*null=auto-color*/
 		"entityOpacity": 1,
 
 		"linkColor": "black", /*...html/hex color*/
@@ -167,10 +167,10 @@ configManager.configs.push( {
 
 		/*effects...*/
 
-		"haze": true, /*...outer node haze*/
+		"haze": false, /*...outer node haze*/
 		"highlightHaze": true, /*...outer node haze*/
 		"shadow": false, /*...outer node shadow*/
-		"glow": true, /*...outer node glow*/
+		"glow": false, /*...outer node glow*/
 		"rounded": false, /*...inner node shadow*/
 
 		//node data...

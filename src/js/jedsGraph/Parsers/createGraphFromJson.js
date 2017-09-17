@@ -7,9 +7,8 @@
 		function submitJsonForGraph()
 		{
 			var jsonString = document.getElementById('dlg.text.json').value;
-
-			console.log('CONVERT -string ', jsonString);
-			jsonToGraph(jsonString);
+			var translator = new JsonParser();
+			translator.TranslateToGraph_ReturnGraphElements('root', jsonString);
 			closeDialog('json2GraphDlg');
 		}
 		

@@ -20,7 +20,7 @@ var LocalStorageDataDriver_Tests = function () {
 		//localStorage.clear();
 		localStorage.removeItem('NEXT_NODE_ID');
 		localStorage.removeItem('NEXT_LINK_ID');
-		localStorage.removeItem('INDEX_ON_NODE_LABELS');
+		//localStorage.removeItem('INDEX_ON_NODE_LABELS');
 		console.log('MEMORY', localStorage);
 		var index = 0;
 		tests.forEach(function (test) {
@@ -1247,7 +1247,7 @@ var LocalStorageDataDriver_Tests = function () {
 	    };
 
 	    // Act
-	    var result = sut.TranslateJsonToGraph_ReturnGraphElements('root', inputJSON);
+	    var result = sut.TranslateToGraph_ReturnGraphElements('root', JSON.stringify(inputJSON));
 
 	    // Assert
 	    return (result.length == 3
