@@ -145,7 +145,7 @@ configManager.configs.push( {
 	},
 	displaySettings: {
 		"selectorColor": "gray",
-		"graphBackground": "linear-gradient(#323a39, #323a39)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
+		"graphBackground": "linear-gradient(black, #323a39)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
 
 		"entityShape": "circle",
 		"entityRgbRange": {
@@ -167,10 +167,10 @@ configManager.configs.push( {
 
 		/*effects...*/
 
-		"haze": false, /*...outer node haze*/
+		"haze": true, /*...outer node haze*/
 		"highlightHaze": true, /*...outer node haze*/
 		"shadow": false, /*...outer node shadow*/
-		"glow": false, /*...outer node glow*/
+		"glow": true, /*...outer node glow*/
 		"rounded": false, /*...inner node shadow*/
 
 		//node data...

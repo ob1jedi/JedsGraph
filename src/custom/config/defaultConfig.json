@@ -240,7 +240,7 @@ configManager.configs.push( {
 		,
 		highlightHaze: true /*...outer node haze*/
 		,
-		shadow: false /*...outer node shadow*/
+		shadow: true /*...outer node shadow*/
 		,
 		glow: false /*...outer node glow*/
 		,
