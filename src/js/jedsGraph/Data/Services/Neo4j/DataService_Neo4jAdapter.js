@@ -4,8 +4,8 @@
 		Neo4jFetchEntitiesForNode(nodeId, _sourceConfig);
 	}
 
-	this.CreateNode = function (labelName, _sourceConfig) {
-		Neo4jCreateNode(labelName, _sourceConfig);
+	this.CreateEntity_AddToGraph_ReturnNode = function (labels, properties, _sourceConfig) {
+		Neo4jCreateNode(labelName[0], _sourceConfig);
 	}
 
 	this.DeleteNode = function (nodeID, _sourceConfig) {
@@ -60,8 +60,8 @@
 		Neo4jUpdateEntity(nodeID, newProperties, callback);
 	}
 
-	this.CreateRelation = function (nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly) {
-		Neo4jCreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly)
+	this.CreateRelation_AddToGraph_ReturnLink = function (nodeID1, nodeID2, relationLabels, propList, _sourceConfig, planOnly) {
+	    Neo4jCreateRelation(nodeID1, nodeID2, relationLabels[0], propList, _sourceConfig, planOnly)
 	}
 
 	this.DeleteRelationship = function (relationshipID, _sourceConfig) {

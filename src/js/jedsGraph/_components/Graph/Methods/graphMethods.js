@@ -234,6 +234,8 @@ function addDataLink(fromNodeID, toNodeID, linkData, _sourceConfig)
 	}
 			
 	fixTextWidth4Link(link);
+
+	return link;
 }
 		
 function fixLinkIndexes(fromNodeID, toNodeID){ //Get sibling details...

@@ -10,7 +10,6 @@ var LocalStorageDataDriver_Tests = function () {
 		if (result !== true) {
 			console.log('TEST FAILED. ACTUAL RESULT:', result);
 			throw ('TEST FAILED. ACTUAL RESULT: ' + result);
-
 		}
 		else
 			console.log('TEST PASSED');
@@ -40,6 +39,9 @@ var LocalStorageDataDriver_Tests = function () {
 		return new DataStringHelper();
 	}
 
+	function createJsonParser() {
+	    return new JsonParser();
+	}
 	//[Test]
 	tests.push(function getNextNewNodeId_Given_Expect1() {
 		// Arrange
@@ -73,7 +75,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var sut = createDataDriver();
 
 		// Act
-		var nodeId = sut.CreateNodeInDatabasePopulateAndReturnId();
+		var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId();
 
 		// Assert
 		return (nodeId !== undefined) ? true : result;
@@ -86,7 +88,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = {};
 
 		// Act
-		var nodeId = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
 		return (nodeId !== undefined) ? true : result;
@@ -99,10 +101,10 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = {};
 
 		// Act
-		var nodeId = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(nodeId);
+		var result = sut.GetEntityFromDatabase(nodeId);
 		return (result.id === nodeId) ? true : result;
 	});
 
@@ -114,11 +116,11 @@ var LocalStorageDataDriver_Tests = function () {
 		var node2 = {};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 		return (result.id === node1.id) ? true : result;
 	});
 
@@ -131,10 +133,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 		for (var i = 0 ; i < node1.labels.length; i++) {
 			if (node1.labels[i] !== result.labels[i])
 				return result;
@@ -151,10 +153,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 		for (var i = 0 ; i < node1.labels.length; i++) {
 			if (node1.labels[i] !== result.labels[i])
 				return result;
@@ -169,10 +171,10 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = {};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 		if (result.labels.length > 0)
 			return result;
 		return true;
@@ -185,10 +187,10 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = {};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 		if (result.properties.length > 0)
 			return result;
 		return true;
@@ -205,10 +207,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 		if (result.properties.property1 === 'MyPropertyValue')
 			return true;
 		return result;
@@ -226,10 +228,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 		if (result.properties.property1 === 23)
 			return true;
 		return result;
@@ -247,10 +249,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 		if (result.properties.property1 === true)
 			return true;
 		return result;
@@ -268,10 +270,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 
 		if (result.properties.property1 === undefined)
 			return result;
@@ -299,10 +301,10 @@ var LocalStorageDataDriver_Tests = function () {
 		};
 
 		// Act
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Assert
-		var result = sut.GetNodeFromDatabase(node1.id);
+		var result = sut.GetEntityFromDatabase(node1.id);
 
 		if (result.properties.property1 === undefined || result.properties.property2 === undefined || result.properties.property3 === undefined || result.properties.property4 === undefined)
 			return result;
@@ -337,11 +339,11 @@ var LocalStorageDataDriver_Tests = function () {
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 
 		// Act
-		var result = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var result = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Assert
 		if (result > 0)
@@ -358,13 +360,13 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = {};
 		var node2 = {};
 		var node3 = {};
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		var node3Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		var node3Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 
 		// Act
-		sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
-		var result = sut.CreateRelationshipPopulateAndReturnId(node2Id, node3Id);
+		sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
+		var result = sut.CreateRelationPopulateAndReturnId(node2Id, node3Id);
 
 		// Assert
 		if (result === undefined || result <= 0)
@@ -379,9 +381,9 @@ var LocalStorageDataDriver_Tests = function () {
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
 		var result = sut.GetRelatedNodes(node1Id);
@@ -398,9 +400,9 @@ var LocalStorageDataDriver_Tests = function () {
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
 		var result = sut.GetRelatedNodesGraph(node1Id);
@@ -422,9 +424,9 @@ var LocalStorageDataDriver_Tests = function () {
 		var sut = createDataDriver();
 		var node1 = {};
 		var node2 = {};
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
 		var results = sut.GetRelatedNodesGraph(node1Id);
@@ -449,9 +451,9 @@ var LocalStorageDataDriver_Tests = function () {
 		var node2 = {};
 		node1.labels = ["HELLO"];
 		node2.labels = ["WORLD"];
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
 		var results = sut.GetRelatedNodesGraph(node1Id);
@@ -477,9 +479,9 @@ var LocalStorageDataDriver_Tests = function () {
 			labels: ["TOOL"],
 			properties: { toolName: "WORD" }
 		};
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
 		var results = sut.GetRelatedNodesGraph(node1Id);
@@ -499,15 +501,15 @@ var LocalStorageDataDriver_Tests = function () {
 		var link = {};
 		node1.labels = ["PARENT"];
 		node2.labels = ["CHILD"];
-		link.labels = ["MOTHER_OF"];
-		link.properties =  {
+		var linkLabels = ["MOTHER_OF"];
+		var linkProperties =  {
 				BirthType: 'Natural Born',
 				property3: true,
 				Activities: ['Dancing', 'Hockey']
 		}
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id, link);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, linkLabels, linkProperties);
 
 		// Act
 		var results = sut.GetRelatedNodesGraph(node1Id);
@@ -526,9 +528,9 @@ var LocalStorageDataDriver_Tests = function () {
 		var node2 = {};
 		node1.labels = ["CASE1"];
 		node2.labels = ["CASE2"];
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		var linkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
 		var results = sut.GetRelatedNodesGraph(node1Id);
@@ -544,7 +546,7 @@ var LocalStorageDataDriver_Tests = function () {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {};
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 		sut.DeleteNode(node1Id);
 
 		// Act
@@ -1114,7 +1116,7 @@ var LocalStorageDataDriver_Tests = function () {
 		// Arrange
 		var sut = createDataDriver();
 		var node1 = {labels:['FindMe']};
-		var expectedNodeId = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 		// Act
 		var result = sut.GetNodesByLabel('FindMe');
 		// Assert
@@ -1128,13 +1130,17 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = { labels: ['ATOM'], properties:{element:"Hydrogen"}};
 		var node2 = { labels: ['ATOM'], properties: { element: "Oxygen" } };
 		var node3 = { labels: ['ATOM'], properties: { element: "Helium" } };
-		link1 = { labels: ["BOND"], properties: { strength: "strong" } };
-		link2 = {labels: ["BOND"], properties:{strength: "strong"}};
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		var node3Id = sut.CreateNodeInDatabasePopulateAndReturnId(node3);
-		var expectedLinkId1 = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id, link1);
-		var expectedLinkId2 = sut.CreateRelationshipPopulateAndReturnId(node2Id, node3Id, link2);
+		var link1Labels = ["BOND"];
+		var link1Properties = { strength: "strong" };
+		var link2Labels = ["BOND"];
+		var link2Properties = { strength: "strong" };
+		
+
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		var node3Id = sut.CreateEntityInDatabasePopulateAndReturnId(node3);
+		var expectedLinkId1 = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, link1Labels, link1Properties);
+		var expectedLinkId2 = sut.CreateRelationPopulateAndReturnId(node2Id, node3Id, link2Labels, link2Properties);
 
 		// Act
 		var result = sut.GetLinksByLabel('BOND');
@@ -1149,9 +1155,9 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = { labels: ['ThisTestLabel0'] };
 		var node2 = { labels: ['ThisTestLabel2', 'ThisTestLabel1'] };
 		var node3 = { labels: ['ThisTestLabel3'] };
-		sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		sut.CreateNodeInDatabasePopulateAndReturnId(node3);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		sut.CreateEntityInDatabasePopulateAndReturnId(node3);
 		// Act
 		var result = sut.GetAllNodeLabels();
 		// Assert
@@ -1170,7 +1176,7 @@ var LocalStorageDataDriver_Tests = function () {
 				prop2: "value2"
 			}
 		};
-		var expectedNodeId = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
+		var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Act
 		var result = sut.GetNodesByPropertyName(propertyName);
@@ -1196,17 +1202,17 @@ var LocalStorageDataDriver_Tests = function () {
 			Manufacturer: 'Kia',
 			Model: 'Picanto'
 		};
-		link.labels = ["OWNS"];
-		link.properties = {
+		linkLabels = ["OWNS"];
+		linkProperties = {
 			uniqueProp1673: "ForAlink",
 			Year: 2012,
 			Dealer: 'Autocar',
 			OnLayby: true,
 			AttendedBy: ['Joan Luna', 'Derick Stapler']
 		}
-		var node1Id = sut.CreateNodeInDatabasePopulateAndReturnId(node1);
-		var node2Id = sut.CreateNodeInDatabasePopulateAndReturnId(node2);
-		var expectedLinkId = sut.CreateRelationshipPopulateAndReturnId(node1Id, node2Id, link);
+		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+		var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+		var expectedLinkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, linkLabels, linkProperties);
 
 		// Act
 		var result = sut.GetLinksByPropertyName(propertyName);
@@ -1218,4 +1224,36 @@ var LocalStorageDataDriver_Tests = function () {
 		return resultNodes;
 
 	});
+
+
+    //=== JSON Parser =============================================================================================================================================================
+
+    //[Test]
+	tests.push(function CreateGraphElementsFromJson_GivenJson_ExpectGraphElements() {
+	    // Arrange
+	    var sut = createJsonParser();
+	    var inputJSON = {
+	        Parent: {
+	            Name: "John",
+	            Child: [
+                    {
+                        Name: "Scott",
+                        Age : 10
+                    },
+                    {
+                        Name: "Jane"
+                    }]
+	        }
+	    };
+
+	    // Act
+	    var result = sut.TranslateJsonToGraph_ReturnGraphElements('root', inputJSON);
+
+	    // Assert
+	    return (result.length == 3
+            && result[0].fromNode.data.labels[0] == "Parent") ? true : result;
+	});
+
+
+
 }

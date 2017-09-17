@@ -118,7 +118,7 @@
 					//layout.pinNode(newNode, true);
 					//var parentPosition = layout.getNodePosition(parentNodeId);
 					//layout.setNodePosition(ids[i], parentPosition.x, parentPosition.y);
-					dataService.CreateRelation(parentNodeId, ids[i], relationName, relationProperties);
+					dataService.CreateRelation_AddToGraph_ReturnLink(parentNodeId, ids[i], [relationName], relationProperties);
 				}
 			}
 			dataService.CreateEntityReturnCallbackWithIds(newNodeName, nodeProperties, _callback);

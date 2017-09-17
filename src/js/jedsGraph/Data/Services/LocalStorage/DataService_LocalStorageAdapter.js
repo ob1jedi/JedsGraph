@@ -7,11 +7,16 @@
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
 	}
 
-	this.CreateNode = function (labelName, _sourceConfig) {
+	this.CreateEntity_AddToGraph_ReturnNode = function (labels, properties, _sourceConfig) {
+	    if (!properties)
+	        properties = {};
 		var newNode = {
-			labels: [labelName]
+		    labels: labels,
+		    properties: properties
 		};
-		var nodeId = dataDriver.CreateNodeInDatabasePopulateAndReturnId(newNode);
+		var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
+		var entity = dataDriver.GetEntityById(entityId);
+		return addEntitiesToGraphAndReturnNodes([entity])[0];
 	}
 
 	this.DeleteNode = function (nodeID, _sourceConfig) {
@@ -46,11 +51,11 @@
 	this.GetNodesByLabel = function (byLabel, sourceConfigPrefix) {
 		//Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
 		var nodes = dataDriver.GetNodesByLabel(byLabel);
-		addNodesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
+		addEntitiesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
 	}
 
-	function GetNodeById (nodeId, sourceConfigPrefix) {
-		return dataDriver.GetNodeFromDatabase(nodeId);
+	this.GetNodeById = function(nodeId, sourceConfigPrefix) {
+		return dataDriver.GetEntityFromDatabase(nodeId);
 	}
 
 	this.GetNodesByDetails = function (nodeLabel, properties, _sourceConfig) {
@@ -61,7 +66,7 @@
 		var labelData = dataDriver.GetAllNodeLabels();
 		labelData.forEach(function (labelData) {
 			var nodes = dataDriver.GetNodesByLabel(labelData);
-			addNodesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
+			addEntitiesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
 		});
 		this.InitAllRelations(_sourceConfig);
 		//Neo4jInitAllNodes(_sourceConfig);
@@ -72,7 +77,7 @@
 
 		var graphElements = labelDatas.map(function (labelData) {
 			labelData.ids.map(function (id) {
-				return dataDriver.GetGraphOfLink(id)
+				return dataDriver.GetGraphOfRelation(id)
 			});
 		});
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
@@ -84,9 +89,9 @@
 			labels: [entityName],
 			properties: propList
 		};
-		var nodeId = dataDriver.CreateNodeInDatabasePopulateAndReturnId(newNode);
-		var node = dataDriver.GetNodeFromDatabase(nodeId);
-		addNodesToGraphAndReturnNodes([node], currentTheme.sourceConfig);
+		var nodeId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
+		var node = dataDriver.GetEntityFromDatabase(nodeId);
+		addEntitiesToGraphAndReturnNodes([node], currentTheme.sourceConfig);
 		//inputCallback(nodeId);
 		//Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);
 		refreshLabelSelectors();
@@ -96,15 +101,11 @@
 		//Neo4jUpdateEntity(nodeID, newProperties, callback);
 	}
 
-	this.CreateRelation = function (nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly) {
+	this.CreateRelation_AddToGraph_ReturnLink = function (fromEntityId, toEntityId, relationLabels, propList, _sourceConfig, planOnly) {
 		//Neo4jCreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly)
-		var link = {
-			labels: [relationName],
-			properties: propList
-		}
-		var relId = dataDriver.CreateRelationshipPopulateAndReturnId(stripDomainFromId(nodeID1), stripDomainFromId(nodeID2), link);
+	    var relId = dataDriver.CreateRelationPopulateAndReturnId(stripDomainFromId(fromEntityId), stripDomainFromId(toEntityId), relationLabels, propList);
 		var link = dataDriver.GetLinkFromDatabase(relId);
-		addSingleRelationToGraphReturnLink(link);
+		return addRelationToGraphReturnLink(link);
 	}
 
 	this.DeleteRelationship = function (relationshipID, _sourceConfig) {

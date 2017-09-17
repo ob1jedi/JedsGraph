@@ -2,7 +2,7 @@
 var LocalStorageDataDriver = function () {
 
 	//----PUBLIC----------------------------------------------------------
-	this.CreateNodeInDatabasePopulateAndReturnId = function (node) {
+	this.CreateEntityInDatabasePopulateAndReturnId = function (node) {
 		node = sanitizeNode(node);
 		node.id = this.GetNextNewNodeId();
 		writeNodeToStorage(node);
@@ -10,7 +10,7 @@ var LocalStorageDataDriver = function () {
 	}
 
 	this.GetRelatedNodes = function (nodeId) {
-		var node = this.GetNodeFromDatabase(nodeId);
+		var node = this.GetEntityFromDatabase(nodeId);
 		var nodeLinks = node.links;
 		var dataDriver = this;
 		var relatedNodeIds = [];
@@ -25,41 +25,47 @@ var LocalStorageDataDriver = function () {
 		return relatedNodeIds;
 	}
 
-	this.GetRelatedNodesGraph = function (nodeId) {
-		var node = this.GetNodeFromDatabase(nodeId);
-		var dataDriver = this;
-		return node.links.map(function (linkId) { return dataDriver.GetGraphOfLink(linkId) });
+	this.GetEntityById = function (entityId){
+	    return this.GetEntityFromDatabase(entityId);
 	}
 
-	this.GetGraphOfLink = function (linkId) {
+	this.GetRelatedNodesGraph = function (nodeId) {
+		var node = this.GetEntityFromDatabase(nodeId);
+		var dataDriver = this;
+		return node.links.map(function (linkId) { return dataDriver.GetGraphOfRelation(linkId) });
+	}
+
+	this.GetGraphOfRelation = function (linkId) {
 		var link = this.GetLinkFromDatabase(linkId);
 		var graphElement = new GraphElement();
 		console.log('link', linkId);
-		graphElement.fromNode = this.GetNodeFromDatabase(link.fromNodeId);
-		graphElement.toNode = this.GetNodeFromDatabase(link.toNodeId);
+		graphElement.fromNode = this.GetEntityFromDatabase(link.fromNodeId);
+		graphElement.toNode = this.GetEntityFromDatabase(link.toNodeId);
 		graphElement.link = link;
 		return graphElement;
 	}
 
-	this.CreateRelationshipPopulateAndReturnId = function (fromNodeId, toNodeId, link) {
-		link = sanitizeLink(link);
+	this.CreateRelationPopulateAndReturnId = function (fromEntityId, toEntityId, labels, properties) {
+	    link = {}; //new Relation(); //sanitizeLink(relation);
 		link.id = this.GetNextNewLinkId();
-		link.fromNodeId = fromNodeId;
-		link.toNodeId = toNodeId;
+		link.fromNodeId = fromEntityId;
+		link.toNodeId = toEntityId;
+		link.labels = labels ? labels : [];
+		link.properties = properties ? properties : {};
 
-		var fromNode = this.GetNodeFromDatabase(fromNodeId);
-		fromNode.links.push(link.id);
-		writeNodeToStorage(fromNode);
+		var fromEntity = this.GetEntityFromDatabase(fromEntityId);
+		fromEntity.links.push(link.id);
+		writeNodeToStorage(fromEntity);
 
-		var toNode = this.GetNodeFromDatabase(toNodeId);
-		toNode.links.push(link.id);
-		writeNodeToStorage(toNode);
+		var toEntity = this.GetEntityFromDatabase(toEntityId);
+		toEntity.links.push(link.id);
+		writeNodeToStorage(toEntity);
 
 		writeLinkToStorage(link);
 		return link.id;
 	}
 
-	this.GetNodeFromDatabase = function (nodeId) {
+	this.GetEntityFromDatabase = function (nodeId) {
 		return getNodeFromDatabase(nodeId);
 	}
 
