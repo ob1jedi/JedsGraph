@@ -1,7 +1,7 @@
 
 function createNode() {
 	var newNodeValue = document.getElementById('newNodeData').value;
-	dataService.CreateNode(newNodeValue);
+	dataService.CreateEntity_AddToGraph_ReturnNode([newNodeValue]);
 }
 
 function getEntityNode() {
@@ -68,7 +68,7 @@ function submitCreateRelation(nodeID1, nodeID2, planOnly, _sourceConfig) {
 	}
 	if (propList != '') { propList = '{' + propList + '}'; }
 
-	dataService.CreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly);
+	dataService.CreateRelation_AddToGraph_ReturnLink(nodeID1, nodeID2, [relationName], propList, _sourceConfig, planOnly);
 }
 
 function submitUpdateEntity() {

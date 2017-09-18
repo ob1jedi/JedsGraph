@@ -1,6 +1,5 @@
 ﻿
 function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceConfig) {
-	console.log('graph elements', graphElements);
 	var newNodes = [];
 	graphElements.forEach(function (graphElement) {
 		var datN = new nodeDataType;
@@ -25,7 +24,6 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		var linkdata = new linkDataType(datN.id, datM.id, graphElement.link.id, graphElement.link.labels, _sourceConfig);
 		linkdata.properties = new neoPropertyList(graphElement.link.properties);
 		linkdata.propertiesObject = graphElement.link.properties;
-		console.log('adding data link', linkdata);
 		var link = addDataLink(datN.id, datM.id, linkdata, _sourceConfig);
 	});
 
@@ -33,25 +31,24 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 	return newNodes;
 }
 
-function addSingleRelationToGraphReturnLink(link, _sourceConfig) {
-	var dat = new linkDataType(link.fromNodeId, link.toNodeId, link.id, link.labels, _sourceConfig);
-	if (link.properties) { dat.properties = new neoPropertyList(link.properties); }
-	if (link.properties) { dat.propertiesObject = link.properties }
-	var link = addDataLink(dat.fromNodeID, dat.toNodeID, dat, _sourceConfig);
-	return link;
+function addRelationToGraphReturnLink(relation, _sourceConfig) {
+    var dat = new linkDataType(relation.fromNodeId, relation.toNodeId, relation.id, relation.labels, _sourceConfig);
+    if (relation.properties) { dat.properties = new neoPropertyList(relation.properties); }
+    if (relation.properties) { dat.propertiesObject = relation.properties }
+    var relation = addDataLink(dat.fromNodeID, dat.toNodeID, dat, _sourceConfig);
+    return relation;
 }
 
-function addNodesToGraphAndReturnNodes(nodes, _sourceConfig)
+function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 {
-	console.log('added nodes:', nodes);
 	var newNodes =[];
-	nodes.forEach(function (node) {
+	entities.forEach(function (entitiy) {
 		var datM = new nodeDataType;
-		datM.id = node.id;
-		datM.labels = node.labels;
-		datM.properties = new neoPropertyList(node.properties);
-		datM.propertiesObject = node.properties;
-		var addedNode = addDataNode(node.id, datM, _sourceConfig)
+		datM.id = entitiy.id;
+		datM.labels = entitiy.labels;
+		datM.properties = new neoPropertyList(entitiy.properties);
+		datM.propertiesObject = entitiy.properties;
+		var addedNode = addDataNode(entitiy.id, datM, _sourceConfig)
 		newNodes.push(addedNode);
 	});
 	

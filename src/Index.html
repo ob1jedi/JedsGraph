@@ -29,8 +29,9 @@
 		<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/toolPanelMangement.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/uiUpdates.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/_functions/citizenMethods.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/_functions/createGraphFromJson.js"></script>
-		<script type="text/javascript" src="js/jedsGraph/_functions/createJsonFromGraph.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Parsers/createGraphFromJson.js"></script>
+		<script type="text/javascript" src="js/jedsGraph/Parsers/createJsonFromGraph.js"></script>
+        <script type="text/javascript" src="js/jedsGraph/Parsers/JsonParser.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/_functions/generalMethods.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/_components/Graph/Methods/graphMethods.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/_components/Link/Methods/linkMethods.js"></script>
@@ -50,7 +51,10 @@
 		<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/dataMonitoring.js"></script>
 
 		<!-- Procedural scripts -->
-
+        <script type="text/javascript" src="js/jedsGraph/Models/Entity.js"></script>
+        <script type="text/javascript" src="js/jedsGraph/Models/Relationship.js"></script>
+        <script type="text/javascript" src="js/jedsGraph/Models/DataEntity.js"></script>
+        <script type="text/javascript" src="js/jedsGraph/Models/DataRelationship.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/Models/interactionOptionsType.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/Models/linkDataType.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/Models/linkUiElementsType.js"></script>
@@ -102,7 +106,7 @@
 		<div id='topBar'>
 		</div>
 
-		<div id='leftColumn'>
+		<div id='leftColumn' class="flexcroll">
 		</div>
 	
 	
@@ -150,7 +154,7 @@
 
 	<div id='noColumn'>
 	
-		<div class="labelSelectorDisplay toolPanel" id='panel.labelselectors'>
+		<div class="labelSelectorDisplay toolPanel flexcroll" id='panel.labelselectors'>
 			<table id="selectorLabels" class="label">
 			</table>
 		</div>

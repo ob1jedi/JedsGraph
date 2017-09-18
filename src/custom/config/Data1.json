@@ -145,7 +145,7 @@ configManager.configs.push( {
 	},
 	displaySettings: {
 		"selectorColor": "gray",
-		"graphBackground": "linear-gradient(#323a39, #323a39)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
+		"graphBackground": "linear-gradient(black, #323a39)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
 
 		"entityShape": "circle",
 		"entityRgbRange": {
@@ -153,7 +153,7 @@ configManager.configs.push( {
 			"max": 200
 		}, /*The 4bit rgb range from which nodeLabel colors can be automatically generated.*/
 		"entityLabelColor": "black",
-		"entityBorderColor": "black", /*null=auto-color*/
+		"entityBorderColor": null, /*null=auto-color*/
 		"entityOpacity": 1,
 
 		"linkColor": "black", /*...html/hex color*/

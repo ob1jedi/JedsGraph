@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/ob1jedi/JedsGraph#readme",
   "devDependencies": {
+    "browser-sync": "^2.18.13",
     "gulp": "^3.9.1",
     "gulp-webserver": "^0.9.1"
   }
