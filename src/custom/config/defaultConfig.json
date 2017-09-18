@@ -89,8 +89,8 @@ configManager.configs.push( {
 			{
 				"name": "panel.config",
 				"parent": "leftColumn",
-				"available": false,
-				"visible": false,
+				"available": true,
+				"visible": true,
 				"icon": "glyphicon glyphicon-adjust",
 				"desc": "config"
 			},
@@ -198,66 +198,67 @@ configManager.configs.push( {
 		pollInterval: 1 /*in seconds*/
 	},
 	displaySettings: {
-		selectorColor: "gray",
-		backgroundImage: null /*URL or, set to null for nothing*/
+		"selectorColor": "gray",
+		"backgroundImage": null /*URL or, set to null for nothing*/
 		,
-		graphBackground: "linear-gradient(#002533, #00384d, #002533)" //"linear-gradient(#002533, #00384d)", //"#0e1a25",
+		"graphBackground": "linear-gradient(#002533, #00384d, #002533)" //"linear-gradient(#002533, #00384d)", //"#0e1a25",
 		,
-		highlightColor: "#99ff33",
-		focusColor: "red",
-		entityShape: "circle",
-		entityRgbRange: {
-			min: 40,
-			max: 140
+		"highlightColor": "#99ff33",
+		"focusColor": "red",
+		"entityShape": "circle",
+		"entityRgbRange": {
+			"min": 40,
+			"max": 140
 		} /*The 4bit rgb range from which nodeLabel colors can be automatically generated.*/
 		,
-		entityLabelColor: "white",
-		entityBorderColor: null /*null=auto-color*/
-		,
-		entityOpacity: 1,
-		entityPopoutTextColor: "#0077b3",
-		entityPopoutBoxColor: "#bfbfbf",
-		entityFont: {
-			family: "Arial, Helvetica, sans-serif",
-			weight: "normal"
+		"entityLabelColor": "white",
+		"entityBorderColor": null, /*null=auto-color*/
+		"entityCircleTextColor": "beige",
+
+		"entityOpacity": 1,
+		"entityPopoutTextColor": "#0077b3",
+		"entityPopoutBoxColor": "#bfbfbf",
+		"entityFont": {
+			"family": "Arial, Helvetica, sans-serif",
+			"weight": "normal"
 		},
-		linkColor: "#ffe6cc" /*...html/hex color*/
+		"linkColor": "#ffe6cc" /*...html/hex color*/
 		,
-		linkMainTextColor: "#d9d9d9",
-		linkSubTextColor: "#ffa64d",
-		linkThickness: 3,
-		linkOpacity: 1,
-		linkHighlightColor: "red",
-		opaque: false,
-		labelSizing: "fontsize" /*choices: "hyphenate" (make labels shorter) "fontsize" (make the font size smaller) "" (no sizing, labels may extend past the boundaries of the node)*/
+		"linkMainTextColor": "#d9d9d9",
+		"linkSubTextColor": "#ffa64d",
+		"linkThickness": 3,
+		"linkOpacity": 1,
+		"linkHighlightColor": "red",
+		"opaque": false,
+		"labelSizing": "fontsize" /*choices: "hyphenate" (make labels shorter) "fontsize" (make the font size smaller) "" (no sizing, labels may extend past the boundaries of the node)*/
 
 		/*effects...*/
 		,
-		haze: true /*...outer node haze*/
+		"haze": true /*...outer node haze*/
 		//,textHaze:true /*...node text haze*/
 		,
-		glass: false /*...node text haze*/
+		"glass": false /*...node text haze*/
 		,
-		highlightHaze: true /*...outer node haze*/
+		"highlightHaze": true /*...outer node haze*/
 		,
-		shadow: false /*...outer node shadow*/
+		"shadow": false /*...outer node shadow*/
 		,
-		glow: false /*...outer node glow*/
+		"glow": false /*...outer node glow*/
 		,
-		rounded: false /*...inner node shadow*/
+		"rounded": false /*...inner node shadow*/
 
 		//node data...
 		,
-		showLabels: true,
-		loadNodePopouts: true,
-		showCircleText: true
+		"showLabels": true,
+		"loadNodePopouts": true,
+		"showCircleText": true
 
 		//link data
 		,
-		showRelationships: "on-highlight" /*showRelationships: "all/on-highlight/none" */
+		"showRelationships": "on-highlight" /*showRelationships: "all/on-highlight/none" */
 		,
-		loadRelationPopouts: false,
-		showRelationProperties: true
+		"loadRelationPopouts": false,
+		"showRelationProperties": false
 
 	}
 })

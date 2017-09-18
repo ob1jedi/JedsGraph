@@ -90,8 +90,8 @@
 			.attr('id', 'npath_' + this.node.data.id)
 			.attr('d', 'M' + (-this.node.data.nodeSize - 3) + ',' + (-1.5) + ' a1,1 0 1,1 ' + (this.node.data.nodeSize * 2 + 6) + ',0')
 			.attr('fill', 'transparent')
-			.attr('stroke-width', 0)
-			.attr('stroke', 'black')
+			//.attr('stroke-width', 5)
+			//.attr('stroke', 'black')
 		this.node.data.UI.circleTextPath = circleTextPath;
 		this.nodeGraphics.push(circleTextPath);
 		return circleTextPath;
@@ -103,9 +103,8 @@
 		var circleText = Viva.Graph.svg('text')
 			.attr('y', 0)
 			.attr('x', 0)
-			.attr('fill', 'black')
-			.attr('stroke-width', '0')
-			.attr('font-size', '10')
+			.attr('fill', this.config.entityCircleTextColor)
+			.attr('font-size', '10')			
 		circleText.innerHTML += '<textPath xlink:href="#npath_' + this.node.data.id + '">' + this.node.data.circleText + '</textPath>';
 		this.node.data.UI.circleText = circleText;
 		this.nodeGraphics.push(circleText);

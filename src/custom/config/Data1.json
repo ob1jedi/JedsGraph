@@ -178,9 +178,9 @@ configManager.configs.push( {
 		"loadNodePopouts": false,
 
 		//link data
-		"showRelationships": "all", /*showRelationships: "all/on-highlight/none" */
+		"showRelationships": "on-highlight", /*showRelationships: "all/on-highlight/none" */
 		"loadRelationPopouts": false,
-		"showRelationProperties": true
+		"showRelationProperties": false
 
 	}
 })

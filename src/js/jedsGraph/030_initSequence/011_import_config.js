@@ -17,6 +17,9 @@ function Configuration(callback)
 		//Merge configs, so that all configs are equal, except for their differences...
 		configManager.configs.map(function (cnf){masterConfigs.push($.extend(true, {}, DefaultConfig, cnf));} )
 		
+
+		//var dynamicConfig = getDynamicConfig();
+
 		//Update the config selector on the UI...
 		var selectorElement = document.getElementById("configSelector");
 		masterConfigs.forEach(function (cnf){

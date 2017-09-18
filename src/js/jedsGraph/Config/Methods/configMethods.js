@@ -1,5 +1,6 @@
 ﻿//Set default config 
 function setConfigSettings(config) {
+
 	currentTheme.sourceConfig = config;
 	currentTheme.backgroundImage = config.displaySettings.backgroundImage;
 	currentTheme.loadNodePopouts = config.displaySettings.loadNodePopouts;
@@ -9,6 +10,7 @@ function setConfigSettings(config) {
 	currentTheme.entityRgbRange = config.displaySettings.entityRgbRange;
 	currentTheme.graphBackground = config.displaySettings.graphBackground;
 	currentTheme.entityLabelColor = config.displaySettings.entityLabelColor;
+	currentTheme.entityCircleTextColor = config.displaySettings.entityCircleTextColor;
 	//currentTheme.entityShape = config.displaySettings.entityShape;
 	currentTheme.opaque = config.displaySettings.opaque;
 	currentTheme.labelSizing = config.displaySettings.labelSizing;
