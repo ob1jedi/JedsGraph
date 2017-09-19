@@ -1,5 +1,6 @@
-function main () {
-	Configuration(setConfigSettings); //get config, setup common UI
+function main() {
+	var configHelper = new ConfigHelper();
+	Configuration(configHelper.setConfigSettings); //get config, setup common UI
 	prepareGraph();
 	defineNodes();
 	defineNodeDrawing();

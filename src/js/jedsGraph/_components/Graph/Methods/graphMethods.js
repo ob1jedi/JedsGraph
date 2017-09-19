@@ -278,7 +278,9 @@ function fixLinkIndexes(fromNodeID, toNodeID){ //Get sibling details...
 function addDataNode(nodeId, nodeData, _sourceConfig)
 {
 	if (!_sourceConfig) _sourceConfig = config_ext;
-	nodeData.sourceConfig = getConfig(_sourceConfig);
+	var configHelper = new ConfigHelper();
+	nodeData.sourceConfig = configHelper.getConfig(_sourceConfig);
+
 	var dataNode = getDataNode(nodeId);
 	var nodeUI;
 	var isNewNode = false;

@@ -56,27 +56,27 @@ function defineNodes()
 
 		$(ui).mousedown(function (event) { // MOUSE CLICK
 			//console.log('EVENT', $(ui));
-			debuggingText.innerHTML += ",MD";
+			debuggingText.innerHTML += "\nMD";
 			node_Event("MouseDown", node, event.pageX, event.pageY);
 		}),
 
 		$(ui).contextmenu(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += ",MCnt";
+			debuggingText.innerHTML += "\nMCnt";
 			node_Event("MouseContextMenu", node, event.pageX, event.pageY);
 		}),
 
 		$(ui).mouseup(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += ",MU";
+			debuggingText.innerHTML += "\nMU";
 			node_Event("MouseUp", node, event.pageX, event.pageY);
 		}),
 
 		$(ui).mouseover(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += ",MO";
+			debuggingText.innerHTML += "\nMO";
 			node_Event("MouseOver", node, event.pageX, event.pageY);
 		}),
 
 		$(ui).click(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += ",CLICK";
+			debuggingText.innerHTML += "\nCLICK";
 			node_Event("Click", node, event.pageX, event.pageY);
 		}),
 
@@ -85,7 +85,7 @@ function defineNodes()
 		}),
 
 		$(ui).focus(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += ",FOCUS";
+			debuggingText.innerHTML += "\nFOCUS";
 			node_Event("Focus", node, event.pageX, event.pageY);
 		}),
 		//$(ui).tap(function (event) { // MOUSE CLICK

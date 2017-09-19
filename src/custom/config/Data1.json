@@ -156,9 +156,9 @@ configManager.configs.push( {
 		"entityBorderColor": null, /*null=auto-color*/
 		"entityOpacity": 1,
 
-		"linkColor": "black", /*...html/hex color*/
-		"linkMainTextColor": "black",
-		"linkSubTextColor": "black",
+		"linkColor": "grey", /*...html/hex color*/
+		"linkMainTextColor": "grey",
+		"linkSubTextColor": "grey",
 		"linkThickness": 2,
 		"linkOpacity": 1,
 

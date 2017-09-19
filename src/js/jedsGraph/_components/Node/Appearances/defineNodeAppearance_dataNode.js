@@ -136,7 +136,12 @@
 
 function defineNodeAppearance_dataNode(node, ui) {
 	var cnf = node.data.sourceConfig.displaySettings;
+
 	var nodeConfig = node.data.config.nodeDisplayBody;
+	//var configHelper = new ConfigHelper();
+	//nodeConfig = configHelper.getNodeConfig();
+
+
 	if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }
 	ui.attr('class', 'datanode')
 	node.data.UI = {
@@ -148,7 +153,6 @@ function defineNodeAppearance_dataNode(node, ui) {
 		circleText: undefined
 	}
 
-	
 	//Circle elements NODE-CIRCLE
 	var nodeAppearance = new nodeAppearanceHelper(node, cnf);
 
@@ -157,9 +161,6 @@ function defineNodeAppearance_dataNode(node, ui) {
 	nodeAppearance.addNodeText();
 	nodeAppearance.addNodeCircleTextPath();
 	nodeAppearance.addNodeCircleText();
-
-	//nodeAppearance.addNodeOption(10, 10);
-	//nodeAppearance.addNodeOption(10, 50);
 
 	nodeAppearance.addEffect("hazeEffect",
 		'<filter id="hazeEffect" x="-1" y="-1" width="300%" height="300%"><feOffset result="offOut" in="FillPaint" dx="0" dy="0" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>'

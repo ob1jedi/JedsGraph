@@ -1,4 +1,4 @@
 var configManager = {
-configs:[],/*...will be populated by the HTML loads*/
-defaultConfig:"DT2" /*prefix of the default config*/
+	configs:[],/*...will be populated by the HTML loads*/
+	defaultConfig:"DT2" /*prefix of the default config*/
 } 
