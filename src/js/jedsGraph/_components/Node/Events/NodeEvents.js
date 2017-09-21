@@ -29,6 +29,8 @@
 	else if (eventType == "tap")
 		node_OnTap(node, x, y);
 
+	else if (eventType == "touchend")
+		node_OnTouchEnd(node, x, y);
 	//else if (eventType == "taphold")
 	//	node_OnTapHold(node, x, y);
 
@@ -74,6 +76,11 @@ function node_OnTap(node, x, y) {
 function node_OnTouchStart(node, x, y) {
 	node_OnMouseDown(node, x, y)
 }
+
+function node_OnTouchEnd(node, x, y) {
+	node_OnMouseUp(node, x, y)
+}
+
 
 function node_OnMouseDown(node, x, y) {
 	node.data.dragging = 'true';

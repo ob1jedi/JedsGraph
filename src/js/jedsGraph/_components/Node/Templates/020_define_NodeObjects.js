@@ -59,18 +59,14 @@ function defineNodes() {
 		}),
 
 		$(ui).touchstart(function (event) { // MOUSE CLICK
-			console.log('touchstart', event);
 			node_Event("touchstart", node, event.originalEvent.touches[0].pageX, event.originalEvent.touches[0].pageY);
 		}),
 		$(ui).touchmove(function (event) { // MOUSE CLICK
-			console.log('touchmove', event);
-			node_Event("touchmove", node, event.pageX, event.pageY);
+			node_Event("touchmove", node, event.originalEvent.changedTouches[0].pageX, event.originalEvent.changedTouches[0].pageY);
 		}),
 		$(ui).touchend(function (event) { // MOUSE CLICK
-			console.log('touchend', event);
-			node_Event("touchend", node, event.pageX, event.pageY);
+			node_Event("touchend", node, event.originalEvent.changedTouches[0].pageX, event.originalEvent.changedTouches[0].pageY);
 		}),
-		
 
 		$(ui).mousedown(function (event) { // MOUSE CLICK
 			node_Event("mousedown", node, event.pageX, event.pageY);
