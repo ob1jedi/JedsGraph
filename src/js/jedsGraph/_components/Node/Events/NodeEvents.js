@@ -4,22 +4,40 @@
 
 	if (eventType == "MouseEnter")
 		node_OnMouseEnter(node, x, y);
-	else if (eventType == "MouseDown")
+
+	else if (eventType == "mousedown")
 		node_OnMouseDown(node, x, y);
-	else if (eventType == "MouseUp")
+
+	else if (eventType == "mouseup")
 		node_OnMouseUp(node, x, y);
-	else if (eventType == "MouseDblClick")
+
+	else if (eventType == "dblclick")
 		node_OnMouseDblClick(node, x, y);
+
 	else if (eventType == "MouseLeave")
 		node_OnMouseLeave(node, x, y);
+
 	else if (eventType == "MouseDragging")
 		node_OnMouseLeave(node, x, y);
+
 	else if (eventType == "SubNodePulledOut")
 		node_Event_subNodePulledOut(node, x, y);
-	else if (eventType == "Tap")
+
+	else if (eventType == "touchstart")
+		node_OnTouchStart(node, x, y);
+
+	else if (eventType == "tap")
 		node_OnTap(node, x, y);
-	else if (eventType == "DoubleTap")
-		node_OnDoubleTap(node, x, y);
+
+	//else if (eventType == "taphold")
+	//	node_OnTapHold(node, x, y);
+
+	//else if (eventType == "touchmove")
+	//	node_OnTouchMove(node, x, y);
+
+	//else if (eventType == "touchend")
+	//	node_OnTouchEnd(node, x, y);
+
 }
 
 //-----------------------------------------------------------------
@@ -53,8 +71,8 @@ function node_OnTap(node, x, y) {
 	node_OnMouseDown(node, x, y)
 }
 
-function node_DoubleTap(node, x, y) {
-	node_OnMouseDblClick(node, x, y)
+function node_OnTouchStart(node, x, y) {
+	node_OnMouseDown(node, x, y)
 }
 
 function node_OnMouseDown(node, x, y) {
@@ -123,7 +141,7 @@ function dataNode_OnMouseEnter(node, x, y) {
 function dataNode_OnMouseDown(node,x, y) {
 	highlightSelectedNode(node.id);
 	nodeFunctions = NodeFunctionsFactory.createNew(node);
-	console.log('nodeFunctions', nodeFunctions);
+	//console.log('nodeFunctions', nodeFunctions);
 	layout.pinNode(node, true);
 	node.data.isPinned = true;
 

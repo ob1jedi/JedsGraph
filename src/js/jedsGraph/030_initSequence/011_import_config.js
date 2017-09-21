@@ -1,7 +1,7 @@
 ///Input: the function to be called when configuration has been loaded
 
 //Get config file...
-function Configuration(callback)
+function Configuration(setupConfigCallback, setupGraphCallback)
 {
 	$(document).ready(function(e) {
 		configManager = configManager; //config manager from file
@@ -27,7 +27,7 @@ function Configuration(callback)
 			selectorElement.innerHTML += '<option value="'+cnf.configName+'">' + cnf.configName + '</option>';
 		});
 		
-		callback(DefaultConfig);	
-		
+		setupConfigCallback(DefaultConfig);	
+		setupGraphCallback();
 	});
 }

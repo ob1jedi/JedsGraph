@@ -1,29 +1,28 @@
 //====== NODE VISUAL DEFINITIONS ========================================================================================================
 
-function defineNodes()
-{
+function defineNodes() {
 	//Node elements...
-	graphics.node(function(node) {		
+	graphics.node(function (node) {
 
 		nodeOuterLayer = Viva.Graph.svg('g');
-	    nodeLayer = Viva.Graph.svg('g');
+		nodeLayer = Viva.Graph.svg('g');
 
-	    if (isShadowEffectTurnedOnInConfig(node.data.sourceConfig)) {
-	    	addShadowTo(nodeLayer);
-	    }
-	    if (node.data.nodeType == 'data') {
-	    	defineNodeAppearance_dataNode(node, nodeLayer);
-	    }
-	    else if (node.data.nodeType == 'subnode') {
-	    	defineNodeAppearance_subNode(node, nodeLayer);
-	    	if (node.data.superNodes[0])
-	    		nodeLayer.attr('parentnodeid', node.data.superNodes[0].id);
-	    }
-	    else if (node.data.nodeType == 'planned')
-	    	defineNodeAppearance_plannedNode(node, nodeLayer);
+		if (isShadowEffectTurnedOnInConfig(node.data.sourceConfig)) {
+			addShadowTo(nodeLayer);
+		}
+		if (node.data.nodeType == 'data') {
+			defineNodeAppearance_dataNode(node, nodeLayer);
+		}
+		else if (node.data.nodeType == 'subnode') {
+			defineNodeAppearance_subNode(node, nodeLayer);
+			if (node.data.superNodes[0])
+				nodeLayer.attr('parentnodeid', node.data.superNodes[0].id);
+		}
+		else if (node.data.nodeType == 'planned')
+			defineNodeAppearance_plannedNode(node, nodeLayer);
 
-	    attachMouseEventsToNode(node, nodeLayer);
-	    attachMetaData(node, nodeLayer);
+		attachMouseEventsToNode(node, nodeLayer);
+		attachMetaData(node, nodeLayer);
 		nodeOuterLayer.append(nodeLayer);
 		node.data.UI.outerUI = nodeOuterLayer;
 		return nodeOuterLayer;
@@ -34,7 +33,7 @@ function defineNodes()
 		return config.displaySettings.shadow;
 	}
 
-	function addShadowTo(nodeLayer){
+	function addShadowTo(nodeLayer) {
 		nodeLayer.attr('filter', 'url(#shadowEffect)');
 	}
 
@@ -52,57 +51,55 @@ function defineNodes()
 		// events (http://www.w3.org/TR/SVG/interact.html#SVGEvents ),
 		// including mouse events:
 
-		var debuggingText = document.getElementById("DebuggingText");
+		$(ui).tap(function (event) { // MOUSE CLICK
+			node_Event("tap", node, event.pageX, event.pageY);
+		}),
+		$(ui).taphold(function (event) { // MOUSE CLICK
+			node_Event("taphold", node, event.pageX, event.pageY);
+		}),
+
+		$(ui).touchstart(function (event) { // MOUSE CLICK
+			console.log('touchstart', event);
+			node_Event("touchstart", node, event.originalEvent.touches[0].pageX, event.originalEvent.touches[0].pageY);
+		}),
+		$(ui).touchmove(function (event) { // MOUSE CLICK
+			console.log('touchmove', event);
+			node_Event("touchmove", node, event.pageX, event.pageY);
+		}),
+		$(ui).touchend(function (event) { // MOUSE CLICK
+			console.log('touchend', event);
+			node_Event("touchend", node, event.pageX, event.pageY);
+		}),
+		
 
 		$(ui).mousedown(function (event) { // MOUSE CLICK
-			//console.log('EVENT', $(ui));
-			debuggingText.innerHTML += "\nMD";
-			node_Event("MouseDown", node, event.pageX, event.pageY);
+			node_Event("mousedown", node, event.pageX, event.pageY);
 		}),
 
 		$(ui).contextmenu(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += "\nMCnt";
-			node_Event("MouseContextMenu", node, event.pageX, event.pageY);
+			node_Event("contextmenu", node, event.pageX, event.pageY);
 		}),
 
 		$(ui).mouseup(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += "\nMU";
-			node_Event("MouseUp", node, event.pageX, event.pageY);
+			node_Event("mouseup", node, event.pageX, event.pageY);
 		}),
 
 		$(ui).mouseover(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += "\nMO";
-			node_Event("MouseOver", node, event.pageX, event.pageY);
+			node_Event("mouseover", node, event.pageX, event.pageY);
 		}),
 
 		$(ui).click(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += "\nCLICK";
-			node_Event("Click", node, event.pageX, event.pageY);
+			node_Event("click", node, event.pageX, event.pageY);
 		}),
 
 		$(ui).dblclick(function (event) { // MOUSE CLICK
-			node_Event("MouseDblClick", node, event.pageX, event.pageY);
+			node_Event("dblclick", node, event.pageX, event.pageY);
 		}),
-
-		$(ui).focus(function (event) { // MOUSE CLICK
-			debuggingText.innerHTML += "\nFOCUS";
-			node_Event("Focus", node, event.pageX, event.pageY);
-		}),
-		//$(ui).tap(function (event) { // MOUSE CLICK
-		//	node_Event("Tap", node, event.pageX, event.pageY);
-		//}),
-
-		//$(ui).on("click", function (event) {
-		//	console.log('TAPPING');
-		//	node_Event("Tap", node, event.pageX, event.pageY);
-		//}),
 
 		$(ui).hover(function (event) { // MOUSE HOVER
-			debuggingText.innerHTML += ",ME";
 			node_Event("MouseEnter", node, event.pageX, event.pageY);
 
 		}, function () { // MOUSE LEAVE
-			debuggingText.innerHTML += ",ML";
 			node_Event("MouseLeave", node, event.pageX, event.pageY);
 		});
 

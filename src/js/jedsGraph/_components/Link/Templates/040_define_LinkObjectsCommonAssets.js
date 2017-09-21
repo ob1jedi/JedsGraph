@@ -9,6 +9,7 @@ function defineLinkObjectsCommonAssets()
 {
 	//** COMMON REFERENCES ************************************************		
 	//MARKER: TRAINGLE
+	console.log('currentTheme', currentTheme);
 	var markerTraingle = Viva.Graph.svg('marker')
 					   .attr('id', 'Triangle')
 					   .attr('viewBox', "0 0 10 10")
