@@ -1,5 +1,42 @@
 ﻿function ConfigHelper() {
 
+	///Input: the function to be called when configuration has been loaded
+
+	//Get config file...
+
+
+	this.GetConfigForNode = function(node){
+		var nodeConfigs = [];
+		masterConfigs.forEach(function (config) {
+			if (isConfigForNode(node, config))
+				nodeConfigs.push(config);
+		});
+
+		var finalConfig = nodeConfigs[0];
+		nodeConfigs.map(function (cnf) {
+			finalConfig = $.extend(true, {}, finalConfig, cnf);
+		});
+
+		return finalConfig;
+	}
+
+	function isConfigForNode(node, config)
+	{
+		if (config.configType != "node")
+			return false;
+
+		if (config.match != null) {
+			for (var key in config.match)
+			{
+				if (config.match[key] != node[key])
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	//Set default config 
 	this.setConfigSettings = function(config) {
 
@@ -7,7 +44,6 @@
 		currentTheme.backgroundImage = config.displaySettings.backgroundImage;
 		currentTheme.loadNodePopouts = config.displaySettings.loadNodePopouts;
 		currentTheme.loadRelationPopouts = config.displaySettings.loadRelationPopouts;
-		currentTheme.entityRgbRange = config.displaySettings.entityRgbRange;
 		currentTheme.linkThickness = config.displaySettings.linkThickness;
 		currentTheme.entityRgbRange = config.displaySettings.entityRgbRange;
 		currentTheme.graphBackground = config.displaySettings.graphBackground;
@@ -36,53 +72,16 @@
 		$topBar.addEventListener('dragover', handleDragOver, false);
 		$topBar.addEventListener('dragleave', handleDragLeave, false);
 		$topBar.addEventListener('drop', handleDrop, false);
-		//$topBar.addEventListener('dragend', handleDragEnd, false);
 
-		config.viewOptions.panels.forEach(function (panel) {
-			//$elParent = document.getElementById(panel.parent)	
-			$elPanel = document.getElementById(panel.name);
-			//elParent.innerHtml += elPanel;
-			//$elPanel.style.visibility = (panel.visible)?'visible':'hidden';
-			$topBar = document.getElementById('topBar');
-			if (panel.available) {
-				$parentContainer = document.getElementById(panel.parent);
-				var tobarButton = '';
-				tobarButton += '<button id="toolbar.' + panel.name + '" onclick="toggleToolPanel(\'' + panel.name + '\')" class="toolPanelIcon mytooltip">';
-				tobarButton += '  <span class="' + panel.icon + '" aria-hidden="true">';
-				tobarButton += '  </span>';
-				tobarButton += '  <div class="mytooltiptext ttright ttcenter">' + panel.desc;
-				tobarButton += '  </div>';
-				tobarButton += '</button>';
-
-				$topBar.innerHTML += tobarButton;
-				if ($parentContainer && panel.visible) {
-					toggleToolPanel(panel.name);
-					//$parentContainer.appendChild($elPanel);
-				}
-
-				$elPanel.setAttribute('draggable', true);
-				$elPanel.addEventListener('dragstart', handleDragStart, false);
-				//$elPanel.addEventListener('dragenter', handleDragEnter, false);
-				//$elPanel.addEventListener('dragover', handleDragOver, false);
-				//$elPanel.addEventListener('dragleave', handleDragLeave, false);
-				//$elPanel.addEventListener('drop', handleDrop, false);
-				$elPanel.addEventListener('dragend', handleDragEnd, false);
-				toolPanels.push($elPanel);
-			}
-			else {
-				$elPanel.remove();
-				//var isOpen = $elPanel.classList.contains('slide-in');
-				//$elPanel.setAttribute('class', isOpen ? 'toolPanel slide-out' : 'toolPanel slide-in');
-			}
-
-			////{"panels":[{"name":"panelSelectionOptions", "parent":"leftColumn", "visibility":true}]}
+		config.viewOptions.panels.forEach(function (panelConfig) {
+			setupUiPanelAndTopbar(panelConfig)
 		});
 
 		//Set global variable
 		config_ext = config;
+	}
 
-		setupCommonUI();
-
+	this.runStartupProcedures = function () {
 		//GET ALL LABELS>>
 		masterConfigs.forEach(function (cnf) {
 
@@ -103,6 +102,42 @@
 
 	}
 
+	function setupUiPanelAndTopbar(panelConfig)
+	{
+
+		$elPanel = document.getElementById(panelConfig.name);
+		if (panelConfig.available) {
+			addTopBarButton(panelConfig.name, panelConfig.desc, panelConfig.icon)
+			$parentContainer = document.getElementById(panelConfig.parent);
+			if ($parentContainer && panelConfig.visible) {
+				toggleToolPanel(panelConfig.name);
+			}
+			$elPanel.setAttribute('draggable', true);
+			$elPanel.addEventListener('dragstart', handleDragStart, false);
+			$elPanel.addEventListener('dragend', handleDragEnd, false);
+			toolPanels.push($elPanel);
+
+			
+		}
+		else {
+			$elPanel.remove();
+		}
+	}
+
+	function addTopBarButton(name, description, icon){
+		$topBar = document.getElementById('topBar');
+		var tobarButton = '';
+		tobarButton += '<button id="toolbar.' + name + '" onclick="toggleToolPanel(\'' + name + '\')" class="toolPanelIcon mytooltip">';
+		tobarButton += '  <span class="' + icon + '" aria-hidden="true">';
+		tobarButton += '  </span>';
+		tobarButton += '  <div class="mytooltiptext ttright ttcenter">' + description;
+		tobarButton += '  </div>';
+		tobarButton += '</button>';
+		$topBar.innerHTML += tobarButton;
+	}
+
+
+
 	this.getEntityTypeConfig = function(){
 
 	}
@@ -111,5 +146,7 @@
 	this.getConfig = function(apparentConfig) {
 		return apparentConfig ? apparentConfig : currentTheme.sourceConfig;
 	}
+
+
 
 }

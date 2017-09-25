@@ -1,0 +1,12 @@
+﻿startupOptions: {
+	//defaultConnection:"local", //used unless source is otherwise specified.
+		startupSearch: [
+			/*{nodeLabel:"SOME_LABEL", source:"NEO4J_CONNECTION, properties:[{key:"KEYNAME", value:"VALUE"}]"*/
+			/*{nodeLabel:"Person", properties:[{key:"name", value:"Amy"}] }*/
+			{ "nodeLabel": "WORKFLOW" },
+			{ "nodeLabel": "STREAM" }
+		],
+		startupQueries: [
+			//{fromEntity:"service", whereProperty:"serviceName", equalsValue:"vanguard2"},
+			//{fromEntity:"version", whereProperty:"versionName", equalsValue:"V23"}
+		],

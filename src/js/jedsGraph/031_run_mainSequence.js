@@ -1,8 +1,12 @@
 function main() {
-	var configHelper = new ConfigHelper();
-	Configuration(configHelper.setConfigSettings, setupGraph); //get config, setup common UI
+	
+	initializeConfiguration(setupGraph); //get config, setup common UI
 
-	function setupGraph() {
+	function setupGraph(DefaultConfig) {
+		var configHelper = new ConfigHelper();
+		configHelper.setConfigSettings(DefaultConfig);
+		configHelper.runStartupProcedures();
+		setupCommonUI();
 		prepareGraph();
 		defineNodes();
 		defineNodeDrawing();
@@ -16,6 +20,11 @@ function main() {
 		//setup UI
 		checkTimeoutElements() //start monitoring timeout elements
 
+		// DECLARE UNIT TESTS...
+		var unitTests = [];
+		unitTests.push(new LocalStorageDataDriver_Tests);
+		unitTests.push(new Config_Tests);
+		var unitTestFramework = new UnitTestFramework();
 		// RUN UNIT TESTS...
 		unitTestFramework.runAllTests(unitTests);
 
