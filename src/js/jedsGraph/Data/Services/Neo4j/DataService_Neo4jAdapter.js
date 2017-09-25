@@ -1,6 +1,6 @@
 ﻿var DataService = function () {
 
-	this.FetchEntitiesForNode = function (nodeId, _sourceConfig) {
+	this.FetchEntitiesForNodeId = function (nodeId, _sourceConfig) {
 		Neo4jFetchEntitiesForNode(nodeId, _sourceConfig);
 	}
 
@@ -8,7 +8,7 @@
 		Neo4jCreateNode(labelName[0], _sourceConfig);
 	}
 
-	this.DeleteNode = function (nodeID, _sourceConfig) {
+	this.GetRelatedEntityGraph = function (nodeID, _sourceConfig) {
 		Neo4jDeleteNode(nodeID, _sourceConfig);
 	}
 
@@ -36,7 +36,7 @@
 		Neo4jGetRelationCounts(nodeId, callback, _sourceConfig);
 	}
 
-	this.GetNodesByLabel = function (byLabel, sourceConfigPrefix) {
+	this.GetEntitiesByType = function (byLabel, sourceConfigPrefix) {
 		Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
 	}
 
@@ -80,7 +80,7 @@
 		Neo4jAddLabel(_sourceConfig);
 	}
 
-	this.GetAllNodeLabels = function (_sourceConfig) {
+	this.GetAllEntityTypes = function (_sourceConfig) {
 		Neo4jGetAllLabels(_sourceConfig);
 	}
 

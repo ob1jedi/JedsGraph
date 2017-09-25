@@ -181,7 +181,7 @@ function dataNode_OnMouseUp(node, x, y) {
 }
 
 function dataNode_OnMouseDblClick(node, x, y) {
-	dataService.FetchEntitiesForNode(node.id, node.data.sourceConfig);
+	dataService.FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
 }
 
 function dataNode_OnMouseLeave(node, x, y) {
@@ -355,7 +355,7 @@ NodeFunctionsFactory.update_workflow = function () {
 }
 
 NodeFunctionsFactory.remove_workflow = function () {
-	dataService.DeleteNode(this.node.id);
+	dataService.GetRelatedEntityGraph(this.node.id);
 	modal.close();
 }
 // Tool functions
@@ -384,7 +384,7 @@ NodeFunctionsFactory.update_tool = function () {
 
 // Common functions ...
 NodeFunctionsFactory.remove_entity = function () {
-	dataService.DeleteNode(this.node.id);
+	dataService.GetRelatedEntityGraph(this.node.id);
 	modal.close();
 }
 //nodeFunctions.createContentSubsetNode = function () { }

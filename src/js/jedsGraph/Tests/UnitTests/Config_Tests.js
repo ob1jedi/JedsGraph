@@ -6,7 +6,7 @@
 		var index = 0;
 		tests.forEach(function (test) {
 			console.log('-------------------------------------------------------------------');
-			console.log('Test ' + (++index) + '/' + tests.length + ', "' + test.name + '"')
+			console.log('Configs, Test ' + (++index) + '/' + tests.length + ', "' + test.name + '"')
 			runAndReport(test);
 		});
 	}
@@ -31,16 +31,25 @@
 	tests.push(function getNextNewNodeId_Given_Expect1() {
 		// Arrange
 		var sut = createConfigHelper();
-		var node1 = {
-
-		}
-
+	    // Arrange
+		var dataSvc = new DataService();
+		var entity = {
+		    labels: ['ConfigMatch'],
+		    properties: {
+		        id: "MyId121",
+		        prop2: "value2"
+		    }
+		};
+        
+		var entityId = dataSvc.CreateEntityReturnId(entity.labels, entity.properties);
+		var testConfig = {"configName":"TestConfig2","configType":"node","match":{},"config":{"attributes":[{"color":"#f2b3ab","circleTextColor":"beige"}]}};
+		sut.AddDynamicConfig("MyConfig", testConfig);
 		// Act
-		var nodeConfig = sut.GetConfigForNode()
+		var nodeConfig = sut.GetConfigForEntity(entityId);
 
-		// Assert
+	    // Assert
+
 		//return (newNodeId === expectedNodeId) ? true : expectedNodeId;
 	});
-
 
 }

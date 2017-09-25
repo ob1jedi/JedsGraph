@@ -17,9 +17,10 @@ var LocalStorageDataDriver_Tests = function () {
 
 	// Public...
 	this.runAllTests = function () {
-		//localStorage.clear();
+		localStorage.clear();
 		localStorage.removeItem('NEXT_NODE_ID');
 		localStorage.removeItem('NEXT_LINK_ID');
+		localStorage.removeItem('NEXT_CONFIG_ID');
 		//localStorage.removeItem('INDEX_ON_NODE_LABELS');
 		console.log('MEMORY', localStorage);
 		var index = 0;
@@ -50,7 +51,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var expectedNodeId = 1;
 
 		// Act
-		var newNodeId = sut.GetNextNewNodeId();
+		var newNodeId = sut.GetNextNewEntityId();
 
 		// Assert
 		return (newNodeId === expectedNodeId) ? true : expectedNodeId;
@@ -63,7 +64,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var expectedLinkId = 1;
 
 		// Act
-		var newLinkId = sut.GetNextNewLinkId();
+		var newLinkId = sut.GetNextNewRelationId();
 
 		// Assert
 		return (newLinkId === expectedLinkId) ? true : expectedLinkId;
@@ -405,7 +406,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var result = sut.GetRelatedNodesGraph(node1Id);
+		var result = sut.GetRelatedEntityGraph(node1Id);
 
 		// Assert
 		if (result[0].fromNode.id !== node1Id)
@@ -429,7 +430,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var results = sut.GetRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedEntityGraph(node1Id);
 
 		// Assert
 		if (results[0].fromNode.id !== node1Id)
@@ -456,7 +457,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var results = sut.GetRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedEntityGraph(node1Id);
 		addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
 
 		// Assert
@@ -484,7 +485,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var results = sut.GetRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedEntityGraph(node1Id);
 		addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
 
 		// Assert
@@ -512,7 +513,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, linkLabels, linkProperties);
 
 		// Act
-		var results = sut.GetRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedEntityGraph(node1Id);
 		addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
 
 		// Assert
@@ -533,7 +534,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 		// Act
-		var results = sut.GetRelatedNodesGraph(node1Id);
+		var results = sut.GetRelatedEntityGraph(node1Id);
 		addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
 
 		// Assert
@@ -547,10 +548,10 @@ var LocalStorageDataDriver_Tests = function () {
 		var sut = createDataDriver();
 		var node1 = {};
 		var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-		sut.DeleteNode(node1Id);
+		sut.DeleteEntity(node1Id);
 
 		// Act
-		var result = sut.NodeExists(node1Id);
+		var result = sut.EntityExists(node1Id);
 
 		// Assert
 		if (result === false)
@@ -1118,7 +1119,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var node1 = {labels:['FindMe']};
 		var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 		// Act
-		var result = sut.GetNodesByLabel('FindMe');
+		var result = sut.GetEntitiesByType('FindMe');
 		// Assert
 		return (result[0].id === expectedNodeId) ? true : result;
 	});
@@ -1143,7 +1144,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var expectedLinkId2 = sut.CreateRelationPopulateAndReturnId(node2Id, node3Id, link2Labels, link2Properties);
 
 		// Act
-		var result = sut.GetLinksByLabel('BOND');
+		var result = sut.GetRelationsByLabel('BOND');
 		// Assert
 		return (result[0].id === expectedLinkId1 && result[1].id === expectedLinkId2) ? true : result;
 	});
@@ -1159,7 +1160,7 @@ var LocalStorageDataDriver_Tests = function () {
 		sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 		sut.CreateEntityInDatabasePopulateAndReturnId(node3);
 		// Act
-		var result = sut.GetAllNodeLabels();
+		var result = sut.GetAllEntityTypes();
 		// Assert
 		return (result.indexOf('ThisTestLabel1') > -1 && result.indexOf('ThisTestLabel2') > -1) ? true : result;
 	});
@@ -1179,7 +1180,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 
 		// Act
-		var result = sut.GetNodesByPropertyName(propertyName);
+		var result = sut.GetEntitiesByPropertyName(propertyName);
 
 		// Assert
 		if (result[0].id == expectedNodeId)
@@ -1215,7 +1216,7 @@ var LocalStorageDataDriver_Tests = function () {
 		var expectedLinkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, linkLabels, linkProperties);
 
 		// Act
-		var result = sut.GetLinksByPropertyName(propertyName);
+		var result = sut.GetRelationsByPropertyName(propertyName);
 
 		// Assert
 		if (result[0].id == expectedLinkId)
@@ -1225,6 +1226,21 @@ var LocalStorageDataDriver_Tests = function () {
 
 	});
 
+    //[Test]
+	tests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
+	    // Arrange
+	    var sut = new DataService();
+	    var configName = "TestConfig";
+	    var testConfig = {"configName":"TestConfig","configType":"node","match":null,"config":{"attributes":[{"color":"#f2b3ab","circleTextColor":"beige"}]}};
+	    var baseNodeConfig = masterConfigs.forEach(function (config) { if (config.prefix == "BNC") return config; });
+
+	    // Act
+	    sut.CreateConfigReturnId(configName, testConfig);
+	    var result = sut.GetConfigByName(configName);
+
+	    // Assert
+	    return (result.config.attributes["0"].circleTextColor == "beige") ? true : result;
+	});
 
     //=== JSON Parser =============================================================================================================================================================
 

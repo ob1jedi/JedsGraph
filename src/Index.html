@@ -39,6 +39,7 @@
 		<script type="text/javascript" src="js/jedsGraph/_components/Node/Methods/nodeMethods.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/_components/Console/consoleService.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/_services/common.js"></script>
+        <script type="text/javascript" src="js/jedsGraph/Services/JsonHelper.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/data2Graph.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/neo4j.js"></script>
 		<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/graph2Data.js"></script>
@@ -118,7 +119,7 @@
 	
 		<!--div id="nodeOptions">
 			<button onclick='relateSelectedToNode()'>Relate entity</button>
-			<button onclick='DeleteNode()'>Delete entity</button>
+			<button onclick='GetRelatedEntityGraph()'>Delete entity</button>
 		</div-->
 
 		<div class="nodeFlyout" id='panel.node'>
@@ -268,7 +269,7 @@
 			<hr>
 			<button onclick='submitNewEntity()'>Create New Entity</button>
 			<button onclick='submitUpdateEntity()'>Update Selected</button>
-			<button onclick='DeleteNode()'>Delete Selected</button>
+			<button onclick='GetRelatedEntityGraph()'>Delete Selected</button>
 		</div>
 
 		

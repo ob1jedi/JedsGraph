@@ -419,14 +419,14 @@ function refreshLabelSelectors(){
 	//Add selector to HTML...
 	var qbuilderFromEntitySelector = document.getElementById('qbuilder.from.entity');
 	var color = 'gray';
-	var button_onclick = "dataService.GetNodesByLabel(false, '" + currentTheme.sourceConfig.prefix + "')";
+	var button_onclick = "dataService.GetEntitiesByType(false, '" + currentTheme.sourceConfig.prefix + "')";
 	var fetchButton = '<div id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="' + button_onclick + '"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></div>'
 	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorPanel" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
 	if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML = '<option value=""></option>';}
 			
 	labelsList.forEach(function (nodeLabel, index) {
 		color = nodeLabel.data.sourceConfig.displaySettings.selectorColor;
-		button_onclick = "dataService.GetNodesByLabel('" + nodeLabel.name + "', '" + nodeLabel.data.sourceConfig.prefix + "')";
+		button_onclick = "dataService.GetEntitiesByType('" + nodeLabel.name + "', '" + nodeLabel.data.sourceConfig.prefix + "')";
 		fetchButton = '<div id="labelSelector.fetcher.' + nodeLabel.name + '" class="forlabelselector mytooltip" style="background-color:' + nodeLabel.color + '" onclick="' + button_onclick + '">' + nodeLabel.instanceCount + '<div class="mytooltiptext ttleft ttupper">Fetch from database</div></button>'
 		labelSelectorHtml += '<tr><td><div onclick="highlightLabel(' + index + ')" class="labelSelectorPanel" style="background-color:' + color + ';">' + nodeLabel.name + '</div></td><td>' + fetchButton + '</td></tr>';
 		if (qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML += '<option value="' + nodeLabel.name + nodeLabel.data.sourceConfig.prefix + '">' + (nodeLabel.name + " (" + nodeLabel.data.sourceConfig.prefix + ")") + '</option>'; }

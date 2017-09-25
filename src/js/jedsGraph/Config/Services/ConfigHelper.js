@@ -1,41 +1,49 @@
 ﻿function ConfigHelper() {
-
 	///Input: the function to be called when configuration has been loaded
 
+    this.AddDynamicConfig = function (name, jsonConfig)
+    {
+        dataSvc = new DataService();
+        jsonConfig.id = dataSvc.CreateConfigReturnId(name, jsonConfig);
+        masterConfigs.push(jsonConfig);
+    }
+
 	//Get config file...
-
-
-	this.GetConfigForNode = function(node){
-		var nodeConfigs = [];
+    this.GetConfigForEntity = function (entityId) {
+        console.log('CONFIGS: entityid', entityId);
+        var dataSvc = new DataService();
+        var entity = dataSvc.GetEntityById(entityId);
+        console.log('CONFIGS: entity', entity);
+        var entityConfigs = [];
 		masterConfigs.forEach(function (config) {
-			if (isConfigForNode(node, config))
-				nodeConfigs.push(config);
+		    console.log('   CONFIGS: master config', config);
+		    if (isConfigForEntity(entity, config)) {
+		        console.log('       CONFIGS: entity config', config);
+		        entityConfigs.push(config);
+		    }
 		});
 
-		var finalConfig = nodeConfigs[0];
-		nodeConfigs.map(function (cnf) {
+		var finalConfig = entityConfigs[0];
+		entityConfigs.map(function (cnf) {
 			finalConfig = $.extend(true, {}, finalConfig, cnf);
 		});
 
 		return finalConfig;
 	}
 
-	function isConfigForNode(node, config)
+    function isConfigForEntity(entity, config)
 	{
 		if (config.configType != "node")
 			return false;
 
+		var jsonHelper = new JsonHelper();
 		if (config.match != null) {
-			for (var key in config.match)
-			{
-				if (config.match[key] != node[key])
-				{
-					return false;
-				}
-			}
+		    return jsonHelper.Contains(config.match, entity)
 		}
 		return true;
 	}
+
+
 
 	//Set default config 
 	this.setConfigSettings = function(config) {
@@ -86,7 +94,7 @@
 		masterConfigs.forEach(function (cnf) {
 
 			if (cnf.viewOptions.prefetchLabelSelectors) {
-				dataService.GetAllNodeLabels(cnf); //..get all entity names from the DB
+				dataService.GetAllEntityTypes(cnf); //..get all entity names from the DB
 			}
 
 			//GET STARTUP NODES>>

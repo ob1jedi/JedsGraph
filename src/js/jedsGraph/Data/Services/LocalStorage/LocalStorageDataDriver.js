@@ -1,10 +1,19 @@
 ﻿
 var LocalStorageDataDriver = function () {
 
-	//----PUBLIC----------------------------------------------------------
+
+
+    //----PUBLIC----------------------------------------------------------
+
+    this.CreateConfigInDbAndReturnId = function (name, configJson) {
+        configJson.id = this.GetNextNewConfigId();
+        writeConfigToStorage(name, configJson);
+        return configJson.id;
+    }
+
 	this.CreateEntityInDatabasePopulateAndReturnId = function (node) {
 		node = sanitizeNode(node);
-		node.id = this.GetNextNewNodeId();
+		node.id = this.GetNextNewEntityId();
 		writeNodeToStorage(node);
 		return node.id;
 	}
@@ -29,7 +38,11 @@ var LocalStorageDataDriver = function () {
 	    return this.GetEntityFromDatabase(entityId);
 	}
 
-	this.GetRelatedNodesGraph = function (nodeId) {
+	this.GetConfigById = function (configId) {
+	    return this.GetConfigFromDatabase(configId);
+	}
+
+	this.GetRelatedEntityGraph = function (nodeId) {
 		var node = this.GetEntityFromDatabase(nodeId);
 		var dataDriver = this;
 		return node.links.map(function (linkId) { return dataDriver.GetGraphOfRelation(linkId) });
@@ -38,7 +51,6 @@ var LocalStorageDataDriver = function () {
 	this.GetGraphOfRelation = function (linkId) {
 		var link = this.GetLinkFromDatabase(linkId);
 		var graphElement = new GraphElement();
-		console.log('link', linkId);
 		graphElement.fromNode = this.GetEntityFromDatabase(link.fromNodeId);
 		graphElement.toNode = this.GetEntityFromDatabase(link.toNodeId);
 		graphElement.link = link;
@@ -47,7 +59,7 @@ var LocalStorageDataDriver = function () {
 
 	this.CreateRelationPopulateAndReturnId = function (fromEntityId, toEntityId, labels, properties) {
 	    link = {}; //new Relation(); //sanitizeLink(relation);
-		link.id = this.GetNextNewLinkId();
+		link.id = this.GetNextNewRelationId();
 		link.fromNodeId = fromEntityId;
 		link.toNodeId = toEntityId;
 		link.labels = labels ? labels : [];
@@ -65,27 +77,41 @@ var LocalStorageDataDriver = function () {
 		return link.id;
 	}
 
+	this.GetConfigFromDatabase = function (configId) {
+	    return getConfigFromDatabase(configId);
+	}
+
 	this.GetEntityFromDatabase = function (nodeId) {
-		return getNodeFromDatabase(nodeId);
+		return getEntityFromDatabase(nodeId);
 	}
 
 	this.GetLinkFromDatabase = function (linkId) {
-		return getLinkFromDatabase(linkId);
+		return getRelationFromDatabase(linkId);
 	}
 
-	this.DeleteNode = function(nodeId)
+	this.DeleteEntity = function(nodeId)
 	{
 		localStorage.removeItem(nodeKeyFromNodeId(nodeId));
 	}
 
 
-	this.NodeExists = function(nodeId)
+	this.EntityExists = function(nodeId)
 	{
 		var node = readNodeFromStorage(nodeId);
 		return node !== null;
 	}
 
-	this.GetNextNewNodeId = function () {
+	this.GetNextNewConfigId = function () {
+	    var nextId = localStorage.getItem('NEXT_CONFIG_ID');
+	    if (nextId === null) {
+	        localStorage.setItem('NEXT_CONFIG_ID', 1);
+	        return 1;
+	    }
+	    localStorage.setItem('NEXT_CONFIG_ID', Number(nextId) + 1);
+	    return nextId;
+
+	}
+	this.GetNextNewEntityId = function () {
 		var nextId = localStorage.getItem('NEXT_NODE_ID');
 		if (nextId === null) {
 			localStorage.setItem('NEXT_NODE_ID', 1);
@@ -95,7 +121,7 @@ var LocalStorageDataDriver = function () {
 		return nextId;
 	}
 
-	this.GetNextNewLinkId = function () {
+	this.GetNextNewRelationId = function () {
 		var nextId = localStorage.getItem('NEXT_LINK_ID');
 		if (nextId === null) {
 			localStorage.setItem('NEXT_LINK_ID', 1);
@@ -105,53 +131,69 @@ var LocalStorageDataDriver = function () {
 		return nextId;
 	}
 
-	this.GetNodesByLabel = function(labelName){		
+	this.ConfigExists = function (configName) {
+	    var configs = getItemsInIndex('INDEX_ON_CONFIG_NAMES', configName, 'config');
+	    console.log('configs',configs);
+	    return (configs.length > 0);
+	}
+
+	this.GetConfigsByName = function (configName) {
+	    return getItemsInIndex('INDEX_ON_CONFIG_NAMES', configName, 'config');
+	}
+
+	this.GetEntitiesByType = function(labelName){		
 		return getItemsInIndex('INDEX_ON_NODE_LABELS', labelName, 'node');
 	}
 
-	this.GetNodesByPropertyName = function (propertyName) {
+	this.GetEntitiesByPropertyName = function (propertyName) {
 		return getItemsInIndex('INDEX_ON_NODE_PROPS', propertyName, 'node');
 	}
 
-	this.GetLinksByLabel = function (labelName) {
+	this.GetRelationsByLabel = function (labelName) {
 		return getItemsInIndex('INDEX_ON_LINK_LABELS', labelName, 'link');
 	}
 
-	this.GetLinksByPropertyName = function (propertyName) {
+	this.GetRelationsByPropertyName = function (propertyName) {
 		return getItemsInIndex('INDEX_ON_LINK_PROPS', propertyName, 'link');
 	}
 
-	this.GetAllNodeLabels = function () {
+	this.GetAllEntityTypes = function () {
 		var nodeIndex = localStorage.getItem('INDEX_ON_NODE_LABELS');
 		return getAllLabelsFromIndex(nodeIndex);
 	}
 
-	this.GetAllLinkLabels = function () {
+	this.GetAllRelationTypes = function () {
 		var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
 		return getAllLabelsFromIndex(linkIndex);
 	}
 
-	this.GetAllLinkLabelInfos = function () {
+	this.GetAllRelationTypeInfos = function () {
 		var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
 		return getAllLabelsFromIndex(linkIndex);
 	}
 
-	this.GetAllNodeLabelsAndNodeIds = function () {
+	this.GetAllEntityTypesAndEntityIds = function () {
 		return getAllLabelsAndIdsForIndex('INDEX_ON_NODE_LABELS');
 	}
 
-	this.GetAllLinkLabelsAndLinkIds = function () {
+	this.GetAllRelationTypesAndRelationIds = function () {
 		return getAllLabelsAndIdsForIndex('INDEX_ON_LINK_LABELS');
 	}
 	//---- PRIVATE ----------------------------------------------------------
 
-	function getNodeFromDatabase(nodeId) {
+	function getConfigFromDatabase(configId) {
+	    throwIfInvalidConfigId(configId);
+	    var config = readConfigFromStorage(configId);
+	    return config;
+	}
+
+	function getEntityFromDatabase(nodeId) {
 		throwIfInvalidNodeId(nodeId);
 		var node = readNodeFromStorage(nodeId);
 		return node;
 	}
 
-	function getLinkFromDatabase(linkId) {
+	function getRelationFromDatabase(linkId) {
 		throwIfInvalidLinkId(linkId);
 		var link = readLinkFromStorage(linkId);
 		return link;
@@ -160,15 +202,23 @@ var LocalStorageDataDriver = function () {
 	function getItemsInIndex(indexName, elementName, itemType) {
 		var dataStringHelper = new DataStringHelper();
 		var indexedData = dataStringHelper.getDataString(indexName);
+		if (indexedData == "|")
+		    return [];
 		var itemIdList = dataStringHelper.getDataFromDataString(indexedData, elementName);
+		if (itemIdList.length == 0)
+		    return [];
 		var itemIdArray = itemIdList.split(',');
+		if (itemIdArray.length == 0)
+		    return [];
 		var itemArray = [];
 		var dataDriver = this;
 		for (var i = 0; i < itemIdArray.length; i++) {
 			if (itemType === 'node')
-				itemArray.push(getNodeFromDatabase(itemIdArray[i]));
+				itemArray.push(getEntityFromDatabase(itemIdArray[i]));
 			if (itemType === 'link')
-				itemArray.push(getLinkFromDatabase(itemIdArray[i]));
+			    itemArray.push(getRelationFromDatabase(itemIdArray[i]));
+			if (itemType === 'config')
+			    itemArray.push(getConfigFromDatabase(itemIdArray[i]));
 		}
 		return itemArray;
 	}
@@ -197,6 +247,11 @@ var LocalStorageDataDriver = function () {
 		return { label: elementParts[0], ids: [] }
 	}
 	
+	function writeConfigToStorage(name, config) {
+	    localStorage.setItem(configKeyFromConfigId(config.id), serialize(config));
+	    updateIndex("INDEX_ON_CONFIG_NAMES", name, config.id);
+	}
+
 	function writeNodeToStorage(node) {
 		localStorage.setItem(nodeKeyFromNodeId(node.id), serialize(node));
 		updateLabelsIndex("INDEX_ON_NODE_LABELS", node);
@@ -265,12 +320,22 @@ var LocalStorageDataDriver = function () {
 		return properties;
 	}
 
+	function readConfigFromStorage(configId) {
+	    return deserialize(localStorage.getItem(configKeyFromConfigId(configId)));
+	}
+
 	function readNodeFromStorage(nodeId) {
 		return deserialize(localStorage.getItem(nodeKeyFromNodeId(nodeId)));
 	}
 
 	function readLinkFromStorage(linkId) {
 		return deserialize(localStorage.getItem(linkKeyFromNodeId(linkId)));
+	}
+
+
+	function throwIfInvalidConfigId(configId) {
+	    if (configId === undefined || configId === null || configId === 0)
+	        throw "Invalid config id";
 	}
 
 	function throwIfInvalidNodeId(nodeId) {
@@ -281,6 +346,10 @@ var LocalStorageDataDriver = function () {
 	function throwIfInvalidLinkId(linkId) {
 		if (linkId === undefined || linkId === null || linkId === 0)
 			throw "Invalid link id";
+	}
+
+	function configKeyFromConfigId(configId) {
+	    return 'C_' + configId;
 	}
 
 	function nodeKeyFromNodeId(nodeId) {

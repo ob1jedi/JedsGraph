@@ -6,11 +6,11 @@ function createNode() {
 
 function getEntityNode() {
 	var newNodeValue = document.getElementById('nodeLabel').value;
-	dataService.GetNodesByLabel(newNodeValue);
+	dataService.GetEntitiesByType(newNodeValue);
 }
 
-function DeleteNode() {
-	dataService.DeleteNode(selectedNodeID);
+function GetRelatedEntityGraph() {
+	dataService.GetRelatedEntityGraph(selectedNodeID);
 }
 
 function deleteLink() {

@@ -1,28 +1,51 @@
 ﻿var DataService = function () {
 	var dataDriver = new LocalStorageDataDriver();
 
-	this.FetchEntitiesForNode = function (nodeId, _sourceConfig) {
-		var graphElements = dataDriver.GetRelatedNodesGraph(stripDomainFromId(nodeId));
-		console.log('fetching entities for node:', nodeId);
+	this.CreateConfigReturnId = function (configName, jsonConfig) {
+	    if (dataDriver.ConfigExists(configName))
+	        throw "A config by that name already exists";
+	    return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
+	}
+
+	this.GetConfigByName = function (configName) {
+	    var configs = dataDriver.GetConfigsByName(configName);
+	    if (configs.length == 0)
+	        return null;
+	    return configs[0];
+	}
+
+	this.FetchEntitiesForNodeId = function (nodeId, _sourceConfig) {
+		var graphElements = dataDriver.GetRelatedEntityGraph(stripDomainFromId(nodeId));
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
 	}
 
 	this.CreateEntity_AddToGraph_ReturnNode = function (labels, properties, _sourceConfig) {
 	    if (!properties)
 	        properties = {};
-		var newNode = {
+	    var newEntity = {
 		    labels: labels,
 		    properties: properties
 		};
-		var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
+	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
 		var entity = dataDriver.GetEntityById(entityId);
 		var nodes = addEntitiesToGraphAndReturnNodes([entity])[0];
 		refreshLabelSelectors();
 		return nodes;
 	}
 
-	this.DeleteNode = function (nodeID, _sourceConfig) {
-		dataDriver.DeleteNode(nodeID);
+	this.CreateEntityReturnId = function (labels, properties) {
+	    if (!properties)
+	        properties = {};
+	    var newEntity = {
+	        labels: labels,
+	        properties: properties
+	    };
+	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
+	    return entityId;
+	}
+
+	this.DeleteEntity = function (nodeID, _sourceConfig) {
+		dataDriver.DeleteEntity(nodeID);
 		//Neo4jDeleteNode(nodeID, _sourceConfig);
 	}
 
@@ -50,14 +73,14 @@
 		//Neo4jGetRelationCounts(nodeId, callback, _sourceConfig);
 	}
 
-	this.GetNodesByLabel = function (byLabel, sourceConfigPrefix) {
+	this.GetEntitiesByType = function (byLabel, sourceConfigPrefix) {
 		//Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
-		var nodes = dataDriver.GetNodesByLabel(byLabel);
-		addEntitiesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
+		var nodes = dataDriver.GetEntitiesByType(byLabel);
+		return addEntitiesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
 	}
 
-	this.GetNodeById = function(nodeId, sourceConfigPrefix) {
-		return dataDriver.GetEntityFromDatabase(nodeId);
+	this.GetEntityById = function(entityId, sourceConfigPrefix) {
+	    return dataDriver.GetEntityFromDatabase(entityId);
 	}
 
 	this.GetNodesByDetails = function (nodeLabel, properties, _sourceConfig) {
@@ -65,9 +88,9 @@
 	}
 
 	this.InitAllNodes = function (_sourceConfig) {
-		var labelData = dataDriver.GetAllNodeLabels();
+		var labelData = dataDriver.GetAllEntityTypes();
 		labelData.forEach(function (labelData) {
-			var nodes = dataDriver.GetNodesByLabel(labelData);
+			var nodes = dataDriver.GetEntitiesByType(labelData);
 			addEntitiesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
 		});
 		this.InitAllRelations(_sourceConfig);
@@ -75,7 +98,7 @@
 	}
 
 	this.InitAllRelations = function (_sourceConfig) {
-		var labelDatas = dataDriver.GetAllLinkLabelsAndLinkIds();
+		var labelDatas = dataDriver.GetAllRelationTypesAndRelationIds();
 
 		var graphElements = labelDatas.map(function (labelData) {
 			labelData.ids.map(function (id) {
@@ -126,9 +149,9 @@
 		//Neo4jAddLabel(_sourceConfig);
 	}
 
-	this.GetAllNodeLabels = function (_sourceConfig) {
+	this.GetAllEntityTypes = function (_sourceConfig) {
 		//Neo4jGetAllLabels(_sourceConfig);
-		var labels = dataDriver.GetAllNodeLabelsAndNodeIds(_sourceConfig);
+		var labels = dataDriver.GetAllEntityTypesAndEntityIds(_sourceConfig);
 		labels.forEach(function (label) {
 			addDataLabel(label.label, label.ids.length, _sourceConfig);
 		});
