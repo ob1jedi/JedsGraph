@@ -1,125 +1,136 @@
 ﻿configManager.configs.push( {
-	"configName": "BaseNodeconfig", /*mandatory field, must be unique among other configs*/
-	"prefix": "BNC", /*mandatory field, must be unique among other configs*/
+  "configName": "BaseNodeconfig", /*mandatory field, must be unique among other configs*/
+  "prefix": "BNC", /*mandatory field, must be unique among other configs*/
 
-	/*mandatory field, value can be "node"/"graph"/"link" */
-	"configType": "node",
+  /*mandatory field, value can be "node"/"graph"/"link" */
+  "configType": "node",
 
-	/*will apply to all nodes. Options are: null */
-	"matchEntity": null,
-	"config": {
-		"attributes": [
-			{
-				"shape": "circle",
-				/* Options: null (auto-size)*/
-				"size": 50,
-				/* Options: null (auto-color)*/
-				"color": "#f2b3ab",
-				"rgbRange": {
-					"min": 40,
-					"max": 140
-				},
-				"highlightColor": "#99ff33",
-				"focusRingColor": "red",
-				/* Options: |circle|rect| */
+  /*will apply to all nodes. Options are: null */
+  "matchEntity": null,
+  "config": {
+    "attributes": [
+      {
+        "shape": "circle",
+        /* Options: null (auto-size)*/
+        "radius": 50,
+        /* Options: null (auto-color)*/
+        "border-color": null,
+        /* Options: null (auto-color from RGB range)*/
+        "background-color": "#f2b3ab",
+        "rgbRange": {
+          "min": 40,
+          "max": 140
+        },
 
-				"labelColor": "white",
-				/* Options: null (auto-color)*/
-				"borderColor": null,
-				"circleTextColor": "beige",
-				"opacity": 1,
+        "highlightRing": {
+          "border-color": "#99ff33"
+        },
+
+        "focusRing": {
+          "border-color": "red"
+        },
+        /* Options: |circle|rect| */
+
+        "labelText": {
+          "color": "white"
+        },
+
+        "circleText": {
+          "color": "beige",
+          "opacity": 1,
+          "font-family": "Arial, Helvetica, sans-serif",
+          "font-weight": "normal"
+        },
+
+        "selector": {
+          "background-color": "gray"
+        }
+      }
+    ],
+
+    "relatedThings": [
+      {
+        "thingName": "popoutBox",
+        "TextColor": "#0077b3",
+        "BoxColor": "#bfbfbf"
+      },
+      {
+        "thingName": "flyout",
+        "show": true
+      },
+      {
+        "thingName": "flyoutButton",
+        "elementType": "button",
+        "innerHTML": "New Workflow",
+        "onclick": "nodeFunctions.show_addWorkflowModal()",
+        "tooltip": "Create new workflow"
+      }
+    ],
+    "behaviours": [
+      {
+        "labelSizing": "fontsize",
+        "showLabels": true,
+        "loadNodePopouts": true,
+        "showCircleText": true
+      }
+    ],
+
+    "effects": {
+      "haze": true,
+      "glass": false,
+      "highlightHaze": true,
+      "shadow": false,
+      "glow": false,
+      "rounded": false
+    },
 
 
-				"font": {
-					"family": "Arial, Helvetica, sans-serif",
-					"weight": "normal"
-				},
-				"selectorColor": "gray"
-			}
-		],
+    "functions": [
+      /*available event: onDisplay, onClick, onDrag, onHide */
+      /*available functionName: getRelationCount, getOutboundRelationCount, getInboundRelationCount, getTallestTree, getDeepestRoot, getAncestorCount, getDescendantCount */
+      {
+        "onEvent": "onDisplay",
+        "executeFunction": "getRelationCounts",
+        "withParams": { },
+        "intoVariable": "Relations"
+      }
+    ],
 
-		"relatedThings": [
-			{
-				"thingName": "popoutBox",
-				"TextColor": "#0077b3",
-				"BoxColor": "#bfbfbf"
-			},
-			{
-				"thingName": "flyout",
-				"show": true
-			},
-			{
-				"thingName": "flyoutButton",
-				"elementType": "button",
-				"innerHTML": "New Workflow",
-				"onclick": "nodeFunctions.show_addWorkflowModal()",
-				"tooltip": "Create new workflow"
-			}
-		],
-		"behaviours": [
-			{
-				"labelSizing": "fontsize",
-				"showLabels": true,
-				"loadNodePopouts": true,
-				"showCircleText": true
-			}
-		],
+    "plugins": [
+      {
+        "name": "Petalize",
+        "params": {
+          "propertyName": "Relations",
+          "petalImageUrl": "custom/svg/Leaves/black-willow.svg",
+          "startAtRadius": 25,
+          "petalSize": 30
+        }
+      },
+      {
+        "name": "Ringulate",
+        "params": {
+          "propertyName": "Relations",
+          "petalImageUrl": "custom/svg/Leaves/black-willow.svg"
+        }
+      }
+    ],
+    "appearanceRules": [
+      {
+        "ifProperty": "categoryID",
+        "isValue": 5,
+        "thenNodeDisplayBody": {
+          "color": "gray",
+          "size": 50,
+          "image": "custom/svg/placeholder.svg"
+        }
+      }
+    ],
 
-		"effects": {
-			"haze": true,
-			"glass": false,
-			"highlightHaze": true,
-			"shadow": false,
-			"glow": false,
-			"rounded": false
-		},
+    "dynamicSizingOptions": {
+      "propertyName": "Relations",
+      "acceleration": -1, /* if -1 then increases less the greater the value */
+      "velocity": 1 /* if 1 then size increases by 1 as value increases by 1 */
+    } /*relationCount/outRelationCount/inRelationCount(increase node size based on relationships)*/
 
-
-		"functions": [
-			/*available event: onDisplay, onClick, onDrag, onHide */
-			/*available functionName: getRelationCount, getOutboundRelationCount, getInboundRelationCount, getTallestTree, getDeepestRoot, getAncestorCount, getDescendantCount */
-			{
-				"onEvent": "onDisplay",
-				"executeFunction": "getRelationCounts",
-				"withParams": {},
-				"intoVariable": "Relations"
-			}
-		],
-
-		"plugins": [
-			{
-				"name": "Petalize",
-				"params": {
-					"propertyName": "Relations",
-					"petalImageUrl": "custom/svg/Leaves/black-willow.svg",
-					"startAtRadius": 25,
-					"petalSize": 30
-				}
-			},
-			{
-				"name": "Ringulate",
-				"params": {
-					"propertyName": "Relations",
-					"petalImageUrl": "custom/svg/Leaves/black-willow.svg"
-				}
-			}
-		],
-		"appearanceRules": [
-			{
-				"ifProperty": "categoryID",
-				"isValue": 5,
-				"thenNodeDisplayBody": {
-					"color": "gray",
-					"size": 50,
-					"image": "custom/svg/placeholder.svg"
-				}
-			}
-		],
-
-		"dynamicSizingOptions": {
-			"propertyName": "Relations",
-			"acceleration": -1, /* if -1 then increases less the greater the value */
-			"velocity": 1 /* if 1 then size increases by 1 as value increases by 1 */
-		} /*relationCount/outRelationCount/inRelationCount(increase node size based on relationships)*/
-
-	}
+  }
+});

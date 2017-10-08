@@ -20,14 +20,14 @@ function main() {
 		checkTimeoutElements() 
 
 		// DECLARE UNIT TESTS...
-		if (localStorage.getItem('testMode') === "true") {
+		//if (localStorage.getItem('testMode') === "true") {
 			var unitTests = [];
 			unitTests.push(new LocalStorageDataDriver_Tests);
 			unitTests.push(new Config_Tests);
 			var unitTestFramework = new UnitTestFramework();
 			// RUN UNIT TESTS...
 			unitTestFramework.runAllTests(unitTests);
-		}
+		//}
 
 	}
 	

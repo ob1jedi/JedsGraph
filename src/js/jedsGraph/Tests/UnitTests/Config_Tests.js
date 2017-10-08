@@ -81,6 +81,10 @@
 		sut.AddDynamicConfig("MyConfig", testConfig);
 
 		var entity = dataSvc.GetEntityById(entityId);
+
+		console.log('ENTITY', entity);
+		var nodes = addEntitiesToGraphAndReturnNodes([entity]);
+		console.log('NODE', nodes);
 		// Act
 		var result = sut.GetConfigForEntity(entityId);
 	    // Assert

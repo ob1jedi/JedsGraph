@@ -1,5 +1,7 @@
 ﻿function nodeAppearanceHelper(node, config) {
-	this.node = node;
+
+    console.log('NODE APPEARANCE: ', node);
+    this.node = node;
 	this.config = config;
 	this.nodeGraphics = [];
 	this.nodeEffects = [];
