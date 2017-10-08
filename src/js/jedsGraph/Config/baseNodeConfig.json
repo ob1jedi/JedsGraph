@@ -6,7 +6,7 @@
 	"configType": "node",
 
 	/*will apply to all nodes. Options are: null */
-	"match": null,
+	"matchEntity": null,
 	"config": {
 		"attributes": [
 			{
@@ -38,24 +38,24 @@
 			}
 		],
 
-			"relatedThings": [
-				{
-					"thingName": "popoutBox",
-					"TextColor": "#0077b3",
-					"BoxColor": "#bfbfbf"
-				},
-				{
-					"thingName": "flyout",
-					"show":  true
-				},
-				{
-					"thingName": "flyoutButton",
-					"elementType": "button",
-					"innerHTML": "New Workflow",
-					"onclick": "nodeFunctions.show_addWorkflowModal()",
-					"tooltip": "Create new workflow"
-				}
-			],
+		"relatedThings": [
+			{
+				"thingName": "popoutBox",
+				"TextColor": "#0077b3",
+				"BoxColor": "#bfbfbf"
+			},
+			{
+				"thingName": "flyout",
+				"show": true
+			},
+			{
+				"thingName": "flyoutButton",
+				"elementType": "button",
+				"innerHTML": "New Workflow",
+				"onclick": "nodeFunctions.show_addWorkflowModal()",
+				"tooltip": "Create new workflow"
+			}
+		],
 		"behaviours": [
 			{
 				"labelSizing": "fontsize",
@@ -104,17 +104,17 @@
 				}
 			}
 		],
-			"appearanceRules": [
-				{
-					"ifProperty": "categoryID",
-					"isValue": 5,
-					"thenNodeDisplayBody": {
-						"color": "gray",
-						"size": 50,
-						"image": "custom/svg/placeholder.svg"
-					}
+		"appearanceRules": [
+			{
+				"ifProperty": "categoryID",
+				"isValue": 5,
+				"thenNodeDisplayBody": {
+					"color": "gray",
+					"size": 50,
+					"image": "custom/svg/placeholder.svg"
 				}
-			],
+			}
+		],
 
 		"dynamicSizingOptions": {
 			"propertyName": "Relations",

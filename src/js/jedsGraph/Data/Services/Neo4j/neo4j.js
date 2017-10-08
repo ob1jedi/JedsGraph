@@ -304,7 +304,6 @@ function Neo4jAddLabel(_sourceConfig) {
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jGetAllLabels(_sourceConfig) {
-	//var command = "match (n) return distinct labels(n)";
 	var callback = function (data, sourceConfig) {
 	    data.results[0].data.forEach(function (dataobject) {
 	        addDataLabel(dataobject.row[0][0], dataobject.row[1], sourceConfig);

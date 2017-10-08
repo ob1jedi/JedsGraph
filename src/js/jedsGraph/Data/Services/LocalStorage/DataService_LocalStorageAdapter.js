@@ -40,12 +40,12 @@
 	        labels: labels,
 	        properties: properties
 	    };
-	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
+	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
 	    return entityId;
 	}
 
-	this.DeleteEntity = function (nodeID, _sourceConfig) {
-		dataDriver.DeleteEntity(nodeID);
+	this.DeleteEntity = function (entityID, _sourceConfig) {
+		dataDriver.DeleteEntity(entityID);
 		//Neo4jDeleteNode(nodeID, _sourceConfig);
 	}
 

@@ -10,15 +10,11 @@
 
 	//Get config file...
     this.GetConfigForEntity = function (entityId) {
-        console.log('CONFIGS: entityid', entityId);
         var dataSvc = new DataService();
         var entity = dataSvc.GetEntityById(entityId);
-        console.log('CONFIGS: entity', entity);
         var entityConfigs = [];
 		masterConfigs.forEach(function (config) {
-		    console.log('   CONFIGS: master config', config);
 		    if (isConfigForEntity(entity, config)) {
-		        console.log('       CONFIGS: entity config', config);
 		        entityConfigs.push(config);
 		    }
 		});
@@ -37,8 +33,8 @@
 			return false;
 
 		var jsonHelper = new JsonHelper();
-		if (config.match != null) {
-		    return jsonHelper.Contains(config.match, entity)
+		if (config.matchEntity != null) {
+			return jsonHelper.Contains(config.matchEntity, entity)
 		}
 		return true;
 	}

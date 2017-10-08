@@ -21,8 +21,8 @@
 		{
 			var processingElement = document.getElementById('selectedLink');
 			var labellist = ''
-			var html = '<a class="panelheader">Selected Link:</a> <a class="dataNameLabel">' + link.data.id + '</a>';
-			html += '<br/><a class="panelheader">Link type</a>: <a class="dataNameLabel">'+link.data.name+'</a>' 	
+			var html = '<p class="panelheader">Selected Link:</a> <p class="dataNameLabel">' + link.data.id + '</p>';
+			html += '<br/><p class="panelheader">Link type</a>: <p class="dataNameLabel">'+link.data.name+'</p>' 	
 			processingElement.innerHTML = html;
 			
 			html = '<a class="panelheader">Properties<a>:';
@@ -31,7 +31,7 @@
 			link.data.properties.forEach(function(property, index){
 				html += '<tr>'
 				var button_onclick = 'showOnNode(' + link.data.id + ', \'' + property.value + '\')';
-				html += '<td> <a class="dataNameLabel">' + property.key + '</a></td><td><a class="dataValueLabel"> ' + property.value + '</a></td>';
+				html += '<td> <p class="dataNameLabel">' + property.key + '</p></td><td><p class="dataValueLabel"> ' + property.value + '</p></td>';
 				html += '</tr>'
 			});
 			html += '</table>'

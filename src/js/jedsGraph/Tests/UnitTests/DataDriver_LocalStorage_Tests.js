@@ -1226,21 +1226,7 @@ var LocalStorageDataDriver_Tests = function () {
 
 	});
 
-    //[Test]
-	tests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
-	    // Arrange
-	    var sut = new DataService();
-	    var configName = "TestConfig";
-	    var testConfig = {"configName":"TestConfig","configType":"node","match":null,"config":{"attributes":[{"color":"#f2b3ab","circleTextColor":"beige"}]}};
-	    var baseNodeConfig = masterConfigs.forEach(function (config) { if (config.prefix == "BNC") return config; });
 
-	    // Act
-	    sut.CreateConfigReturnId(configName, testConfig);
-	    var result = sut.GetConfigByName(configName);
-
-	    // Assert
-	    return (result.config.attributes["0"].circleTextColor == "beige") ? true : result;
-	});
 
     //=== JSON Parser =============================================================================================================================================================
 

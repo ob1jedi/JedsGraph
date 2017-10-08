@@ -7,10 +7,10 @@
         switch (typeof subsetJson) {
             case "object":
                 for (var key in subsetJson)
-                    return recursivelyMatchJson(subsetJson[key], supersetJson[key])
+                	return this.Contains(subsetJson[key], supersetJson[key])
             case "array":
                 for (var i = 0; i < subsetJson; i++)
-                    return recursivelyMatchJson(subsetJson[i], supersetJson[i])
+                	return this.Contains(subsetJson[i], supersetJson[i])
             default:
                 return subsetJson === supersetJson;
         }

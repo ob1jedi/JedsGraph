@@ -183,16 +183,16 @@ function panelAddKeyValue(panelId, panelScope, _sKey, _sValue, _sDatatype) {
 	var getTypeHtml = function (type) {
 		switch (type) {
 			case 'string':
-				typehtml = 'abc';
+				typehtml = 'a';
 				break;
 			case 'number':
-				typehtml = '123';
+				typehtml = '1';
 				break;
 			case 'array':
-				typehtml = '[A]';
+				typehtml = '[]';
 				break;
 			case 'other': //boolean
-				typehtml = 'T/F';
+				typehtml = '/';
 				break;
 		}
 		return typehtml;
@@ -227,19 +227,19 @@ function panelCyclePropertyType(panelId) {
 
 	var elementButton = document.getElementById(panelId); //"new.entity.property.type." + propertyIndex);
 	if (elementButton.value == 'string') {
-		elementButton.innerHTML = '123';
+		elementButton.innerHTML = '1';
 		elementButton.value = 'number';
 	}
 	else if (elementButton.value == 'number') {
-		elementButton.innerHTML = '[A]';
+		elementButton.innerHTML = '[]';
 		elementButton.value = 'array';
 	}
 	else if (elementButton.value == 'array') {
-		elementButton.innerHTML = 'T/F';
+		elementButton.innerHTML = '/';
 		elementButton.value = 'other';
 	}
 	else if (elementButton.value == 'other') {
-		elementButton.innerHTML = 'abc';
+		elementButton.innerHTML = 'a';
 		elementButton.value = 'string';
 	}
 

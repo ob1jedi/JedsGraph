@@ -329,28 +329,61 @@ function showNodeDetailsInToolPanel(node)
 {
 	var processingElement = document.getElementById('selectedNode');
 	var labellist = ''
-	var html = '<a class="panelheader">Selected Entity:</a> <a class="dataNameLabel">' + selectedNodeID + '</a>';
+	var html = '<div class="panelHead"><p>Selected Entity:</p></div>';
 	//html += '<br/><a class="panelheader">Entity type</a>:<br/>' //+ labellist;
 	html += '<table>'
 	node.data.labels.forEach(function (nodeLabel, index) {
 		if (index!=0){labellist += ', ';}
-		var button_onclick = 'dataService.DeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
-		html += '<tr>'
-		html += '<td><button class="paneloption mytooltip" onclick="' + button_onclick + '" >X<div class="mytooltiptext">delete label</div></button></td><td><a class="dataNameLabel">' + nodeLabel + '</a></td>'
-		html += '</tr>'
+		//var button_onclick = 'dataService.DeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
+		html += '<tr>';
+		html += '  <td>';
+		html += '    <p class="dataNameLabel">Entity Number:</p>';
+		html += '  </td>';
+		html += '  <td>';
+		html += '    <p class="dataValueLabel">' + selectedNodeID + '</p>';
+		html += '  </td>';
+		html += '</tr>';
+
+		html += '<tr>';
+		//html += '  <td>';
+		//html += '    <button class="paneloption mytooltip" onclick="' + button_onclick + '" >X';
+		//html += '		<div class="mytooltiptext">delete label</div>';
+		//html += '    </button>';
+		//html += '  </td>';
+		html += '  <td>';
+		html += '    <p class="dataNameLabel">Entity Type:</p>';
+		html += '  </td>';
+		html += '  <td>';
+		html += '    <p class="dataValueLabel">' + nodeLabel + '</p>';
+		html += '  </td>';
+		html += '</tr>';
+
+
+
 	});
 	html += '</table>'
 			
 			
 	processingElement.innerHTML = html;
 			
-	html = '<a class="panelheader">Properties<a>:';
+	html = '<div class="panelHead"><p>Properties:</p></div>';
 	html += '<table>'
 	var processingElement = document.getElementById('nodeDetails');
 	node.data.properties.forEach(function(property, index){
 		html += '<tr>'
 		var button_onclick = 'showOnNode(\'' + node.id + '\', \'' + property.value + '\')';
-		html += '<td><button class="paneloption mytooltip" onclick="'+button_onclick+'">O<div class="mytooltiptext ttupper">display in node</div></button></td><td> <a class="dataNameLabel">' + property.key + '</a></td><td><a class="dataValueLabel"> ' + property.value + '</a></td>';
+		html += '  <td>';
+		html += '    <button class="paneloption mytooltip" onclick="' + button_onclick + '">';
+		html += '      <i class="glyphicon glyphicon-eye-open sm"></i>';
+		html += '      <div class="mytooltiptext ttupper">display in node</div>';
+		html += '    </button>';
+		html += '  </td>';
+		html += '  <td> ';
+		html += '    <p class="dataNameLabel">' + property.key + '</p>';
+		html += '  </td>';
+		html += '  <td>';
+		html += '    <p class="dataValueLabel"> ' + property.value + '</p>';
+		html += '  </td>';
 		html += '</tr>'
 	});
 	html += '</table>'
