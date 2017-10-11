@@ -144,11 +144,10 @@ function arrangeBy2(rootNode, processedNodeIds, posLeft, posTop, level)
 	return posTop;
 }
 	
-function addNodeToGraph(nodeId, nodeData, entityConfig)
+function addNodeToGraph(nodeId, nodeData)
 {
 	var node = GRAPH.getNode(nodeId);
 	node = GRAPH.addNode(nodeId, nodeData);
-	node.entityConfig = entityConfig;
 	fixTextWidth4Node(node);
 	return node;
 }
@@ -276,7 +275,7 @@ function fixLinkIndexes(fromNodeID, toNodeID){ //Get sibling details...
 	});
 }
 
-function addDataNode(nodeId, nodeData, _sourceConfig, entityConfig)
+function addDataNode(nodeId, nodeData, _sourceConfig)
 {
 	if (!_sourceConfig) _sourceConfig = config_ext;
 	var configHelper = new ConfigHelper();
@@ -378,7 +377,7 @@ function addDataNode(nodeId, nodeData, _sourceConfig, entityConfig)
 	}
 			
 	if (thisIsNewNode) {
-		dataNode = addNodeToGraph(thisNodeData.id, thisNodeData, entityConfig);	
+		dataNode = addNodeToGraph(thisNodeData.id, thisNodeData);	
 		nodeList.push(dataNode);
 		PerformNodeStatFunctions(dataNode);
 		return dataNode; //RETURN ONLY IF NODE IS NEW

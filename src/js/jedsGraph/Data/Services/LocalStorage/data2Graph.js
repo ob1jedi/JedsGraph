@@ -7,7 +7,8 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		datN.labels = graphElement.fromNode.labels;
 		datN.properties = new neoPropertyList(graphElement.fromNode.properties);
 		datN.propertiesObject = graphElement.fromNode.properties;
-		var fromNode = addDataNode(datN.id, datN, _sourceConfig, getConfigForEntity(datN.id));
+		datN.entityConfig = getConfigForEntity(datN.id);
+		var fromNode = addDataNode(datN.id, datN, _sourceConfig);
 		if (fromNode)
 		    newNodes.push(fromNode);
 
@@ -16,7 +17,8 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		datM.labels = graphElement.toNode.labels;
 		datM.properties = new neoPropertyList(graphElement.toNode.properties);
 		datM.propertiesObject = graphElement.toNode.properties;
-		var toNode = addDataNode(datM.id, datM, _sourceConfig, getConfigForEntity(datM.id));
+		datM.entityConfig = getConfigForEntity(datM.id);
+		var toNode = addDataNode(datM.id, datM, _sourceConfig);
 		if (toNode)
 			newNodes.push(toNode);
 
@@ -48,7 +50,8 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 		datM.labels = entity.labels;
 		datM.properties = new neoPropertyList(entity.properties);
 		datM.propertiesObject = entity.properties;
-		var addedNode = addDataNode(entity.id, datM, _sourceConfig, getConfigForEntity(entity.id))
+		datM.entityConfig = getConfigForEntity(entity.id);
+		var addedNode = addDataNode(entity.id, datM, _sourceConfig)
 		newNodes.push(addedNode);
 	});
 	

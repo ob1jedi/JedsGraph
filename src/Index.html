@@ -5,15 +5,17 @@
 
 	<!--DEPENDENCIES-->
 	<!--Bootstrap-->
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<!--JQuery-->
-	<!--<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>-->
-	<!--Mobile JQuery-->
-	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+	<link href="deps/bootstrap.min.css" rel="stylesheet">
 
-	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>-->
-	<script src="https://unpkg.com/vue"></script>
+	<!--JQuery-->
+	<!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>-->
+	<script src="deps/jquery-1.11.1.min.js"></script>
+	<!--<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>-->
+	<script src="deps/jquery.mobile-1.4.5.min.js"></script>
+
+	<!--<script src="https://unpkg.com/vue"></script>-->
+	<script src="deps/vue.js"></script>
 
 	<!--CUSTOM-->
 	<link href="css/jedsGraph.css" rel="stylesheet">
@@ -23,8 +25,9 @@
 
 	<!-- Developer custom configuration -->
 	<script type="text/javascript" src="custom/config/Data1.json"></script>
-
-
+	<script type="text/javascript" src="js/jedsGraph/Config/baseGraphConfig.json"></script>
+	<script type="text/javascript" src="js/jedsGraph/Config/baseLinkConfig.json"></script>
+	<script type="text/javascript" src="js/jedsGraph/Config/baseNodeConfig.json"></script>
 
 	<script type="text/javascript" src="js/jedsGraph/_factoryClasses/NodeFunctions.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Config/Services/ConfigHelper.js"></script>

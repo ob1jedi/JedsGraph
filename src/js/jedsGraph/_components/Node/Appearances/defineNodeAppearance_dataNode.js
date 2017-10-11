@@ -1,96 +1,99 @@
-﻿function nodeAppearanceHelper(node, config) {
+﻿function nodeAppearanceHelper(node) {
+	console.log('NODE APPEARANCE: ', node);
+	var _cnf = node.data.entityConfig.config;
 
-    console.log('NODE APPEARANCE: ', node);
     this.node = node;
-	this.config = config;
 	this.nodeGraphics = [];
 	this.nodeEffects = [];
 
 	this.addNodeBody = function () {
-		var nodeBody = Viva.Graph.svg(this.config.entityShape)
+		var nodeBody = Viva.Graph.svg(_cnf.attributes["shape"])
 			.attr('cx', 0)//...for circle
 			.attr('cy', 0)//...for circle
-			.attr('r', this.node.data.nodeSize) //...for circle
-			.attr('fill', this.node.data.nodeColor)//node.data.nodeColor)//'#4dffc3')
+			.attr('r', _cnf.attributes["radius"]) //...for circle
+			.attr('fill', _cnf.attributes["background-color"])//node.data.nodeColor)//'#4dffc3')
 			.attr('stroke-width', 3)
-			.attr('stroke', this.config.entityBorderColor == null ? this.node.data.nodeBorderColor : currentTheme.entityBorderColor)
-		if (this.config.entityShape == "rect") {
-			nodeBody.attr('width', this.node.data.nodeSize * 3);
-			nodeBody.attr('height', this.node.data.nodeSize * 2);
-			nodeBody.attr('rx', this.node.data.nodeSize / 4);
-			nodeBody.attr('x', -(this.node.data.nodeSize * 3 / 2));
-			nodeBody.attr('y', -(this.node.data.nodeSize * 2 / 2));
+			.attr('stroke', _cnf.attributes["border-color"] == null ? currentTheme.entityBorderColor : _cnf.attributes["border-color"])
+		if (_cnf.attributes["shape"] == "rect") {
+			nodeBody.attr('width', _cnf.attributes["radius"] * 3);
+			nodeBody.attr('height', _cnf.attributes["radius"] * 2);
+			nodeBody.attr('rx', _cnf.attributes["radius"] / 4);
+			nodeBody.attr('x', -(_cnf.attributes["radius"] * 3 / 2));
+			nodeBody.attr('y', -(_cnf.attributes["radius"] * 2 / 2));
 		}
-		if (this.config.haze == true)
+		if (_cnf.effects["haze"] == true)
 			nodeBody.attr('filter', 'url(#hazeEffect)'); //haze
-		if (this.config.glass == true)
+		if (_cnf.effects["glass"] == true)
 			nodeBody.attr('fill', 'url(#gradGlass)');
-		if (this.config.rounded == true)
+		if (_cnf.effects["rounded"] == true)
 			nodeBody.attr('fill', 'url(#gradRound)');
-		if (!this.config.opaque == true)
-			nodeBody.attr('fill-opacity', this.config.entityOpacity);
+		if (!_cnf.effects["opaque"] == true)
+			nodeBody.attr('fill-opacity', _cnf.attributes["opacity"]);
 		node.data.UI.bodyUI = nodeBody;
 		this.nodeGraphics.push(nodeBody);
 		return nodeBody
 	}
 
-	this.addNodeImage = function (nodeConfig) {
-		if (!this.config.image)
+	this.addNodeImage = function () {
+		if (!_cnf.attributes.img["url"] == null)
 			return;
 		var nodeBodyImage = Viva.Graph.svg('image')
-		.attr('x', -this.node.data.nodeSize)
-		.attr('y', -this.node.data.nodeSize)
-		.attr('rx', this.node.data.nodeSize)
-		.attr('width', this.node.data.nodeSize * 2)
-		.attr('height', this.node.data.nodeSize * 2)
-		.link(nodeConfig.image ? nodeConfig.image : '');
-		if (this.config.rounded == true)
+		.attr('x', -_cnf.attributes["radius"])
+		.attr('y', -_cnf.attributes["radius"])
+		.attr('rx', _cnf.attributes["radius"])
+		.attr('width', _cnf.attributes["radius"] * 2)
+		.attr('height', _cnf.attributes["radius"] * 2)
+		.link(_cnf.attributes.img["url"] ? _cnf.attributes.img["url"] : '');
+		if (_cnf.effects["rounded"] == true)
 			nodeBodyImage.attr('fill', 'url(#gradRound)');
-		if (!this.config.opaque == true)
-			nodeBodyImage.attr('fill-opacity', this.node.data.nodeOpacity);
+		if (!_cnf.effects["opaque"] == true)
+			nodeBodyImage.attr('fill-opacity', _cnf.attributes.img["opacity"]);
 		this.node.data.UI.imageUI = nodeBodyImage;
 		this.nodeGraphics.push(nodeBodyImage);
 		return nodeBodyImage;
 	}
 
+	this.addNodeOption = function (thingConfig) {
+		nodeOption = Viva.Graph.svg('image')
+			.attr('x', thingConfig["x"])
+			.attr('y', thingConfig["y"])
+			.attr('width', thingConfig["size"])
+			.attr('height', thingConfig["size"])
+			.attr('fill', thingConfig["color"])
+			.link(thingConfig["url"])
+		this.node.data.UI.options.push(nodeOption);
+		this.nodeGraphics.push(nodeOption);
+		return nodeOption;
+	}
+
 	this.addNodeText = function () {
-		if (!this.config.showLabels)
+		if (!_cnf.attributes.labelText["show"])
 			return;
 		//Text elements...
 		var displayText = Viva.Graph.svg('text')
 			.attr('y', 0)
 			.attr('x', 0)
-			.attr('fill', this.config.entityLabelColor)
+			.attr('fill', _cnf.attributes.labelText["color"])
 			.attr('stroke-width', '0')
-			.attr('font-family', this.config.entityFont.family)
-			.attr('font-weight', this.config.entityFont.weight)
+			.attr('font-family', _cnf.attributes.labelText["font-family"])
+			.attr('font-weight', _cnf.attributes.labelText["font-weight"])
 			.attr('font-size', '20')
 			.text(this.node.data.displayLabel);
-		if (this.config.textHaze == true)
+		if (_cnf.attributes.labelText.effects["haze"] == true)
 			displayText.attr('filter', 'url(#darkHazeEffect)'); //haze
 		this.node.data.UI.displayTextUI = displayText;
 		this.nodeGraphics.push(displayText);
 		return displayText;
 	}
 
-	this.addNodeOption= function (x, y) {
-		nodeOption = Viva.Graph.svg('rect')
-			.attr('x', x)
-			.attr('y', y)
-			.attr('width', 100)
-			.attr('fill', 'green')
-			.attr('height', 20)
-		this.node.data.UI.options.push(nodeOption);
-		this.nodeGraphics.push(nodeOption);
-		return nodeOption;
-	}
+
 
 	this.addNodeCircleTextPath = function () {
-		if (!this.config.showCircleText)
+		if (!_cnf.attributes.circleText["show"])
 			return;
 		var circleTextPath = Viva.Graph.svg('path')
 			.attr('id', 'npath_' + this.node.data.id)
-			.attr('d', 'M' + (-this.node.data.nodeSize - 3) + ',' + (-1.5) + ' a1,1 0 1,1 ' + (this.node.data.nodeSize * 2 + 6) + ',0')
+			.attr('d', 'M' + (-_cnf.attributes["radius"] - 3) + ',' + (-1.5) + ' a1,1 0 1,1 ' + (_cnf.attributes["radius"] * 2 + 6) + ',0')
 			.attr('fill', 'transparent')
 			//.attr('stroke-width', 5)
 			//.attr('stroke', 'black')
@@ -100,12 +103,12 @@
 	}
 
 	this.addNodeCircleText = function () {
-		if (!this.config.showCircleText)
+		if (!_cnf.attributes.circleText["show"])
 			return;
 		var circleText = Viva.Graph.svg('text')
 			.attr('y', 0)
 			.attr('x', 0)
-			.attr('fill', this.config.entityCircleTextColor)
+			.attr('fill', _cnf.attributes.circleText["color"])
 			.attr('font-size', '10')			
 		circleText.innerHTML += '<textPath xlink:href="#npath_' + this.node.data.id + '">' + this.node.data.circleText + '</textPath>';
 		this.node.data.UI.circleText = circleText;
@@ -137,14 +140,15 @@
 
 
 function defineNodeAppearance_dataNode(node, ui) {
-	var cnf = node.data.sourceConfig.displaySettings;
+	var _cnf = node.data.entityConfig.config;
+	//var cnf = node.data.sourceConfig.displaySettings;
 
-	var nodeConfig = node.data.config.nodeDisplayBody;
+	//var nodeConfig = node.data.config.nodeDisplayBody;
 	//var configHelper = new ConfigHelper();
 	//nodeConfig = configHelper.getNodeConfig();
 
 
-	if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }
+	//if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }
 	ui.attr('class', 'datanode')
 	node.data.UI = {
 		bodyUI: undefined,
@@ -156,13 +160,18 @@ function defineNodeAppearance_dataNode(node, ui) {
 	}
 
 	//Circle elements NODE-CIRCLE
-	var nodeAppearance = new nodeAppearanceHelper(node, cnf);
+	var nodeAppearance = new nodeAppearanceHelper(node);
 
+	
 	nodeAppearance.addNodeBody();
-	nodeAppearance.addNodeImage(nodeConfig);
+	nodeAppearance.addNodeImage();
 	nodeAppearance.addNodeText();
 	nodeAppearance.addNodeCircleTextPath();
 	nodeAppearance.addNodeCircleText();
+	_cnf["relatedThings"].forEach(function (thingConfig) {
+		if (thingConfig.thingName === "option")
+			nodeAppearance.addNodeOption(thingConfig);
+	});
 
 	nodeAppearance.addEffect("hazeEffect",
 		'<filter id="hazeEffect" x="-1" y="-1" width="300%" height="300%"><feOffset result="offOut" in="FillPaint" dx="0" dy="0" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>'

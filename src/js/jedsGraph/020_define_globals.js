@@ -13,7 +13,6 @@
 		var checkedLinks = []; //list of "node" objects
 		var linkList = []; //list of "link" objects
 		var timeoutElements = []; //list of "timeoutElement" objects
-		var masterConfigs = [];
 		var selectedNodeID = '';
 		var selectedNodeData = '';
 		var selectedNode = '';
@@ -47,12 +46,13 @@
 		var renderer = '';
 		var graphContainer;
 		
-		
+		var masterConfigs = [];
+		var masterEntityConfigs = [];
 		var config_ext; //...default config for whenever there isn't a specific config available
 
 		//DATA PROVIDERS
 		var dataService = new DataService();
 
-
+		
 		
 		

@@ -1,11 +1,13 @@
 ﻿function ConfigHelper() {
 	///Input: the function to be called when configuration has been loaded
 
-    this.AddDynamicConfig = function (name, jsonConfig)
+	this.AddDynamicEntityConfigReturnId = function (name, jsonConfig)
     {
         dataSvc = new DataService();
-        jsonConfig.id = dataSvc.CreateConfigReturnId(name, jsonConfig);
-        masterConfigs.push(jsonConfig);
+        var confId = dataSvc.CreateConfigReturnId(name, jsonConfig);
+        jsonConfig.id = confId;
+        masterEntityConfigs.push(jsonConfig);
+        return confId;
     }
 
 	//Get config file...
@@ -13,14 +15,17 @@
         var dataSvc = new DataService();
         var entity = dataSvc.GetEntityById(entityId);
         var entityConfigs = [];
-		masterConfigs.forEach(function (config) {
+
+        entityConfigs.push(masterEntityConfigs[0]);
+        masterEntityConfigs.forEach(function (config) {
 		    if (isConfigForEntity(entity, config)) {
 		        entityConfigs.push(config);
 		    }
 		});
 
-		var finalConfig = entityConfigs[0];
-		entityConfigs.map(function (cnf) {
+        //debugger;
+        var finalConfig = {};
+        entityConfigs.map(function (cnf) {
 			finalConfig = $.extend(true, {}, finalConfig, cnf);
 		});
 
@@ -139,13 +144,6 @@
 		tobarButton += '</button>';
 		$topBar.innerHTML += tobarButton;
 	}
-
-
-
-	this.getEntityTypeConfig = function(){
-
-	}
-
 
 	this.getConfig = function(apparentConfig) {
 		return apparentConfig ? apparentConfig : currentTheme.sourceConfig;

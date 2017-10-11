@@ -6,7 +6,7 @@ var LocalStorageDataDriver = function () {
     //----PUBLIC----------------------------------------------------------
 
     this.CreateConfigInDbAndReturnId = function (name, configJson) {
-        configJson.id = this.GetNextNewConfigId();
+    	configJson.id = this.GetNextNewConfigId();
         writeConfigToStorage(name, configJson);
         return configJson.id;
     }
@@ -102,38 +102,32 @@ var LocalStorageDataDriver = function () {
 	}
 
 	this.GetNextNewConfigId = function () {
-	    var nextId = localStorage.getItem('NEXT_CONFIG_ID');
-	    if (nextId === null) {
-	        localStorage.setItem('NEXT_CONFIG_ID', 1);
-	        return 1;
-	    }
-	    localStorage.setItem('NEXT_CONFIG_ID', Number(nextId) + 1);
-	    return nextId;
-
+		var nextIndex = GetNextIndexForCounter('NEXT_CONFIG_ID');
+		return nextIndex;
 	}
+
 	this.GetNextNewEntityId = function () {
-		var nextId = localStorage.getItem('NEXT_NODE_ID');
-		if (nextId === null) {
-			localStorage.setItem('NEXT_NODE_ID', 1);
-			return 1;
-		}
-		localStorage.setItem('NEXT_NODE_ID', Number(nextId) + 1);
-		return nextId;
+		return GetNextIndexForCounter('NEXT_NODE_ID');
 	}
 
 	this.GetNextNewRelationId = function () {
-		var nextId = localStorage.getItem('NEXT_LINK_ID');
+		return GetNextIndexForCounter('NEXT_LINK_ID');
+	}
+
+	function GetNextIndexForCounter(CounterName) {
+		
+		var nextId = localStorage.getItem(CounterName);
 		if (nextId === null) {
-			localStorage.setItem('NEXT_LINK_ID', 1);
+			localStorage.setItem(CounterName, 1);
 			return 1;
 		}
-		localStorage.setItem('NEXT_LINK_ID', Number(nextId) + 1);
+		nextId = Number(nextId) + 1;
+		localStorage.setItem(CounterName, nextId);
 		return nextId;
 	}
 
 	this.ConfigExists = function (configName) {
 	    var configs = getItemsInIndex('INDEX_ON_CONFIG_NAMES', configName, 'config');
-	    console.log('configs',configs);
 	    return (configs.length > 0);
 	}
 
@@ -167,10 +161,15 @@ var LocalStorageDataDriver = function () {
 		return getAllLabelsFromIndex(linkIndex);
 	}
 
-	this.GetAllRelationTypeInfos = function () {
-		var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
+	this.GetAllConfigNames = function () {
+		var linkIndex = localStorage.getItem('INDEX_ON_CONFIG_NAMES');
 		return getAllLabelsFromIndex(linkIndex);
 	}
+
+	//this.GetAllRelationTypeInfos = function () {
+	//	var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
+	//	return getAllLabelsFromIndex(linkIndex);
+	//}
 
 	this.GetAllEntityTypesAndEntityIds = function () {
 		return getAllLabelsAndIdsForIndex('INDEX_ON_NODE_LABELS');

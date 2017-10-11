@@ -7,6 +7,11 @@
 	    return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
 	}
 
+	this.GetAllConfigs = function () {
+		var allConfigNames = dataDriver.GetAllConfigNames();
+		return allConfigNames.map(function (cnfName) { return dataDriver.GetConfigsByName(cnfName)[0]})
+	}
+
 	this.GetConfigByName = function (configName) {
 	    var configs = dataDriver.GetConfigsByName(configName);
 	    if (configs.length == 0)

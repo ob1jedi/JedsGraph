@@ -20,6 +20,7 @@ function main() {
 		checkTimeoutElements() 
 
 		// DECLARE UNIT TESTS...
+		if (window.location.href.startsWith("http://localhost:9090/")){
 		//if (localStorage.getItem('testMode') === "true") {
 			var unitTests = [];
 			unitTests.push(new LocalStorageDataDriver_Tests);
@@ -27,7 +28,7 @@ function main() {
 			var unitTestFramework = new UnitTestFramework();
 			// RUN UNIT TESTS...
 			unitTestFramework.runAllTests(unitTests);
-		//}
+		}
 
 	}
 	
