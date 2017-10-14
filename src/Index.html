@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-108035161-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'UA-108035161-1');
+	</script>
+
+
 	<title>Graph Engine</title>
 
 	<!--DEPENDENCIES-->
@@ -103,9 +113,6 @@
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/070_render_GraphObject(starts_up_Cycles).js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/080_set_UiStartupSettings.js"></script>
 
-
-
-
 </head>
 
 <body onload='main()'>
@@ -119,6 +126,7 @@
 		<vw-topbar></vw-topbar>
 		<vw-left-sidebar></vw-left-sidebar>
 		<vw-right-sidebar></vw-right-sidebar>
+		<vw-mode-indicator></vw-mode-indicator>
 	</div>
 
 	<!--div id="nodeOptions">
@@ -148,18 +156,10 @@
 	</dialog>
 
 	<!--VUE Scrips-->
-	<script src="js/VueComponents/Modal/ModalX.js"></script>
+	<script src="js/VueComponents/Modal/ConsoleElements.js"></script>
 </body>
 
-
-
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------->
-
-
-
-
-
-
 
 
 <div id='noColumn'>
