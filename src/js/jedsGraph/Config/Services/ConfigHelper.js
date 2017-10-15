@@ -125,8 +125,6 @@
 			$elPanel.addEventListener('dragstart', handleDragStart, false);
 			$elPanel.addEventListener('dragend', handleDragEnd, false);
 			toolPanels.push($elPanel);
-
-			
 		}
 		else {
 			$elPanel.remove();

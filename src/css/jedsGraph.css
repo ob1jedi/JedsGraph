@@ -177,7 +177,7 @@ svg, #graphContainer, #schemaContainer {
 
 
 .labelSelectorPanel {
-	width: 130px;
+	width: 125px;
 	/*margin-top:5px;*/
 	padding: 5px;
 	border-style: solid;
@@ -220,6 +220,8 @@ svg, #graphContainer, #schemaContainer {
 	transform: scaleY(0);
 	-webkit-transform: scaleY(0);
 }
+
+
 
 .panelHead {
 	background-color: rgb(208, 69, 69);
@@ -268,6 +270,9 @@ svg, #graphContainer, #schemaContainer {
 			text-decoration: underline;
 			letter-spacing: 1px;
 		}*/
+
+
+
 .dataNameLabel {
 	margin-left: 3px;
 	color: #ff6600;
@@ -287,8 +292,8 @@ svg, #graphContainer, #schemaContainer {
 #leftColumn {
 	background-color: #1a1a1a;
 	/*left:10px;*/
-	top: 55px;
-	width: 230px;
+	top: 50px;
+	width: 200px;
 	margin: 0px;
 	padding: 0px;
 	border-radius: 2px;
@@ -301,9 +306,9 @@ svg, #graphContainer, #schemaContainer {
 
 #rightColumn {
 	background-color: #1a1a1a;
-	top: 55px;
+	top: 50px;
 	right: 0px;
-	width: 230px;
+	width: 200px;
 	margin: 0px;
 	padding: 0px;
 	border-width: 0px;
@@ -311,24 +316,36 @@ svg, #graphContainer, #schemaContainer {
 	max-height: 92%;
 	position: fixed;
 }
+
 #modeIndicator {
-	right: 0px;
-	top: 55px;
+	text-align: center;
+    align-content: center;
+    right: 0px;
+	top: 5px;
 	position: fixed;
-	height: 50px;
-	width: 50px;
-	margin-right: 20px;
+	height: 35px;
+	width: 35px;
+	margin-right: 10px;
 	border-style: solid;
 	border-width: 2px;
 	border-radius: 60px;
 	border-color: #8c8c8c;
 	background-color: #737373;
-	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-	font-size: 12px;
-	letter-spacing: 0px;
-	opacity: 0.5;
-	background-image: url("../custom/assets/binoculars.svg");
+	/*background-image: url("../custom/assets/binoculars.svg");*/
 	background-repeat:no-repeat;
+    padding: 5px,5px,5px,5px;
+}
+.modeIndicatorImage
+{
+    height: 20px;
+    margin: 0px,0px,0px,0px;
+    padding: 0px,0px,0px,0px;
+}
+.modeIndicatorLabel
+{
+    font-size: 10px;
+    margin-top: 0px;
+    color: yellowgreen;
 }
 
 #noColumn {
@@ -336,11 +353,11 @@ svg, #graphContainer, #schemaContainer {
 }
 
 #topBar {
-	margin-top: 10px;
-	right: 100px;
-	height: 36px;
-	margin-right: 20px;
-	margin-left: 10px;
+	margin-top: 0px;
+	/*right: 100px;*/
+	height: 50px;
+	/*margin-right: 20px;
+	margin-left: 10px;*/
 	padding-left: 5px;
 	padding-top: 4px;
 	border-style: solid;
@@ -348,13 +365,75 @@ svg, #graphContainer, #schemaContainer {
 	border-color: #8c8c8c;
 	color: deepskyblue;
 	background-color: #737373;
-	border-radius: 2px;
+	/*border-radius: 2px;*/
 	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 	font-size: 12px;
 	letter-spacing: 0px;
 	opacity: 0.9;
 }
+/*.topbar-shadow:after {
+    content:"";
+    position:absolute;
+    width:100%;
+    bottom:1px;
+    z-index:-1;
+    transform:scale(.9);
+    box-shadow: 0px 0px 8px 2px #000000;
+}*/
 
+
+#secondBar {
+	margin-top: 0px;
+    margin-left: 200px;
+    margin-right: 200px;
+	height: 30px;
+	padding-left: 5px;
+	padding-top: 4px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #8c8c8c;
+	color: deepskyblue;
+	background-color: #737373;
+	opacity: 0.9;
+}
+
+
+#formulaBox {
+	margin-top: 0px;
+    margin-left: 200px;
+    margin-right: 200px;
+	height: 34px;
+	padding-left: 5px;
+	padding-top: 2px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #8c8c8c;
+	background-color: #737373;
+	opacity: 0.9;
+}
+ #formulaBox input{
+	/*width: 80px;*/
+	height: 20px;
+	margin: 2px;
+	border-radius: 3px;
+	border-color: transparent;
+	font-size: 12px;
+}
+ #formulaBox button{
+    background-color: #4d4d4d;
+	color: oldlace;
+	height: 20px;
+	border: none;
+	text-align: top;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 10px;
+	margin: 3px 1px;
+	letter-spacing: 1px;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
+	cursor: pointer;
+}
 
 
 .over {
@@ -422,8 +501,9 @@ svg, #graphContainer, #schemaContainer {
 	color: #f2f2f2;
 	margin: 0px 3px;
 	margin-left: 10px;
-	height: 25px;
-	width: 25px;
+	height: 37px;
+	width: 37px;
+    font-size: large;
 	padding: 2px 2px 2px 2px;
 	border-radius: 5px;
 	border-style: none;
@@ -561,19 +641,18 @@ button:hover {
 	color: white;
 }
 
-input {
+.check {
+	width: 10px;
+}
+
+.textbox {
 	width: 100px;
 	height: 20px;
 	margin: 2px;
 	border-radius: 3px;
-	background-color: #b3ffff;
 	border-color: transparent;
 	color: black;
 	font-size: 12px;
-}
-
-.check {
-	width: 10px;
 }
 
 .dynamic {
@@ -592,6 +671,16 @@ input {
 	margin: 2px;
 	border-radius: 3px;
 	background-color: #b3ffff;
+	border-color: transparent;
+	font-size: 12px;
+}
+
+.dynamic3 {
+	/*width: 80px;*/
+	height: 20px;
+	margin: 2px;
+	border-radius: 3px;
+	/*background-color: darkred;*/
 	border-color: transparent;
 	font-size: 12px;
 }

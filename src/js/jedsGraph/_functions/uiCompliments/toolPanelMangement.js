@@ -14,7 +14,8 @@
 					$elButton.classList.remove('showicon');
 					$elPanel.classList.remove('slide-out');
 					$elPanel.classList.add('slide-in');
-					timeoutElements.push(new timeoutElementType({panel:$elPanel, button:$elButton}, 1, hideToolPanel));
+					//$parentContainer.removeChild($elPanel);
+				    timeoutElements.push(new timeoutElementType({panel:$elPanel, button:$elButton}, 1, hideToolPanel));
 				}
 				else{//show...
 					$parentContainer.appendChild($elPanel);

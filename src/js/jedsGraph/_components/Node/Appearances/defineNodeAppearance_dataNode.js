@@ -1,5 +1,4 @@
 ﻿function nodeAppearanceHelper(node) {
-	console.log('NODE APPEARANCE: ', node);
 	var _cnf = node.data.entityConfig.config;
 
     this.node = node;
