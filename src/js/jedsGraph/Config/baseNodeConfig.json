@@ -8,77 +8,77 @@
 	/*will apply to all nodes. Options are: null */
 	"matchEntity": null,
 	"config": {
-			"attributes": {
-				"shape": "circle",
-				/* Options: null (auto-size)*/
-				"radius": 25,
-				/* Options: null (auto-color)*/
-				"border-color": "#444444",
-				/* Options: null (auto-color from RGB range)*/
-				"background-color": "grey",
-				"opacity": 1,
-				"rgbRange": {
-					"min": 40,
-					"max": 140
-				},
-
-				"highlightRing": {
-					"border-color": "#99ff33"
-				},
-
-				"focusRing": {
-					"border-color": "red"
-				},
-				/* Options: |circle|rect| */
-				"labelText": {
-					"show": true,
-					"color": "white",
-					"font-family": "Arial, Helvetica, sans-serif",
-					"font-weight": "normal",
-					"effects": {
-						"haze": true
-					}
-				},
-				"circleText": {
-					"show": true,
-					"color": "beige",
-					"opacity": 1,
-					"font-family": "Arial, Helvetica, sans-serif",
-					"font-weight": "normal"
-				},
-				"selector": {
-					"background-color": "gray"
-				},
-				"img": {
-					"url": null,
-					"opacity": 1
-				}
+		"attributes": {
+			/* Options: |circle|rect| */
+			"shape": "circle",
+			/* Options: null (auto-size)*/
+			"radius": 25,
+			/* Options: null (auto-color)*/
+			"border-color": null,
+			/* Options: null (auto-color from RGB range)*/
+			"background-color": null,
+			"opacity": 1,
+			"rgbRange": {
+				"min": 40,
+				"max": 140
 			},
 
-			"relatedThings": [
-				/* example of "option" thing: {"thingName": "option","url": "custom/assets/64.png","x": 10,"y": 0,"size": 50}, */
-				{
-					"thingName": "popoutBox",
-					"TextColor": "#0077b3",
-					"BoxColor": "#bfbfbf"
-				},
-				{
-					"thingName": "flyout",
-					"show": true
-				},
-				{
-					"thingName": "flyoutButton",
-					"elementType": "button",
-					"innerHTML": "New Workflow",
-					"onclick": "nodeFunctions.show_addWorkflowModal()",
-					"tooltip": "Create new workflow"
-				}
-			],
+			"highlightRing": {
+				"border-color": "#99ff33"
+			},
+
+			"focusRing": {
+				"border-color": "red"
+			},
+
+					"labelText": {
+						/* Options: hyphenate|fontsize*/
+						"labelSizing": "fontsize",
+						"show": true,
+						"color": "#323332",
+						"font-family": "Arial, Helvetica, sans-serif",
+						"font-weight": "normal",
+						"effects": {
+							"haze": false
+						}
+					},
+			"circleText": {
+				"show": true,
+				"color": "#d9dce0",
+				"opacity": 1,
+				"font-family": "Arial, Helvetica, sans-serif",
+				"font-weight": "normal"
+			},
+			"selector": {
+				"background-color": "gray"
+			},
+			"img": {
+				"url": null,
+				"opacity": 1
+			}
+		},
+
+		"relatedThings": [
+			/* example of "option" thing: {"thingName": "option","url": "custom/assets/64.png","x": 10,"y": 0,"size": 50}, */
+			{
+				"thingName": "popoutBox",
+				"TextColor": "#0077b3",
+				"BoxColor": "#bfbfbf"
+			},
+			{
+				"thingName": "flyout",
+				"show": true
+			},
+			{
+				"thingName": "flyoutButton",
+				"elementType": "button",
+				"innerHTML": "New Workflow",
+				"onclick": "nodeFunctions.show_addWorkflowModal()",
+				"tooltip": "Create new workflow"
+			}
+		],
 		"behaviours": {
-			"labelSizing": "fontsize",
-			"showLabels": true,
-			"loadNodePopouts": true,
-			"showCircleText": true
+			"loadNodePopouts": false
 		},
 
 		"effects": {

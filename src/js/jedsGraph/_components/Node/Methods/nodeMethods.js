@@ -52,17 +52,18 @@ function fixTextWidth4Node(node)
 		else{
 				
 			var failer = 0;
+			var sizingConfigValue = node.data.entityConfig.config.attributes.labelText["labelSizing"];
 			if (widthOfText > minWidth)
 			{
 				while (widthOfText >= minWidth)
 				{
 					failer++;
-					if (node.data.sourceConfig.displaySettings.labelSizing == 'hyphenate')
+					if (sizingConfigValue == 'hyphenate')
 					{
-						text = (text).substring(0, text.length-2) + "'";
+						text = (text).substring(0, text.length - 2) + "'";
 						node.data.UI.displayTextUI.text(text);
 					}
-					else if (node.data.sourceConfig.displaySettings.labelSizing == 'fontsize')
+					else if (sizingConfigValue == 'fontsize')
 					{
 						var fontsize = Number(node.data.UI.displayTextUI.attr('font-size'));
 						node.data.UI.displayTextUI.attr('font-size', fontsize*0.9);
@@ -72,10 +73,10 @@ function fixTextWidth4Node(node)
 					if (failer > 1000) return;
 				}
 			}
-			else if (node.data.sourceConfig.displaySettings.labelSizing == 'fontsize')
+			else if (sizingConfigValue == 'fontsize')
 			{	failer = 0;		
 						
-				while (widthOfText < minWidth - (widthOfText *0.2))
+				while (widthOfText < minWidth - widthOfText)
 				{
 					failer++;
 					var fontsize = Number(node.data.UI.displayTextUI.attr('font-size'));

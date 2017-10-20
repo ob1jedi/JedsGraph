@@ -10,9 +10,9 @@
 			.attr('cx', 0)//...for circle
 			.attr('cy', 0)//...for circle
 			.attr('r', _cnf.attributes["radius"]) //...for circle
-			.attr('fill', _cnf.attributes["background-color"])//node.data.nodeColor)//'#4dffc3')
+			.attr('fill', _cnf.attributes["background-color"] == null ? 'grey':_cnf.attributes["background-color"])
 			.attr('stroke-width', 3)
-			.attr('stroke', _cnf.attributes["border-color"] == null ? currentTheme.entityBorderColor : _cnf.attributes["border-color"])
+			.attr('stroke', _cnf.attributes["border-color"] == null ? 'black': _cnf.attributes["border-color"])
 		if (_cnf.attributes["shape"] == "rect") {
 			nodeBody.attr('width', _cnf.attributes["radius"] * 3);
 			nodeBody.attr('height', _cnf.attributes["radius"] * 2);
@@ -73,19 +73,16 @@
 			.attr('y', 0)
 			.attr('x', 0)
 			.attr('fill', _cnf.attributes.labelText["color"])
-			.attr('stroke-width', '0')
 			.attr('font-family', _cnf.attributes.labelText["font-family"])
 			.attr('font-weight', _cnf.attributes.labelText["font-weight"])
 			.attr('font-size', '20')
 			.text(this.node.data.displayLabel);
-		if (_cnf.attributes.labelText.effects["haze"] == true)
-			displayText.attr('filter', 'url(#darkHazeEffect)'); //haze
+		//if (_cnf.attributes.labelText.effects["haze"] == true)
+		//	displayText.attr('filter', 'url(#darkHazeEffect)'); //haze
 		this.node.data.UI.displayTextUI = displayText;
 		this.nodeGraphics.push(displayText);
 		return displayText;
 	}
-
-
 
 	this.addNodeCircleTextPath = function () {
 		if (!_cnf.attributes.circleText["show"])
@@ -108,7 +105,7 @@
 			.attr('y', 0)
 			.attr('x', 0)
 			.attr('fill', _cnf.attributes.circleText["color"])
-			.attr('font-size', '10')			
+			.attr('font-size', '10')
 		circleText.innerHTML += '<textPath xlink:href="#npath_' + this.node.data.id + '">' + this.node.data.circleText + '</textPath>';
 		this.node.data.UI.circleText = circleText;
 		this.nodeGraphics.push(circleText);

@@ -357,8 +357,11 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 	}
 
 	//set circle text...
+	//thisNodeData.entityConfig.config.attributes.circleText["show"] == true
 	if (thisNodeData.config.nodeDisplayValues.circleText) {
-		if (thisNodeData.circleText != "") { thisNodeData.circleText + '\n'; }
+		if (thisNodeData.circleText != "") { 
+			thisNodeData.circleText + '\n';
+		}
 		var propertyValue = getNodePropertyValue(thisNodeData.properties, thisNodeData.config.nodeDisplayValues.displayField);
 		thisNodeData.circleText += propertyValue ? propertyValue : ' ';
 	}
@@ -371,9 +374,20 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 	//thisNodeData.displayLabel;
 	var aNeoLabel = getNeoLabel(thisNodeData.labels[0], this_sourceConfig.prefix);
 	if (aNeoLabel) {
-		thisNodeData.nodeColor = aNeoLabel.color; 
+
+		if (!thisNodeData.entityConfig.config.attributes["background-color"]) {
+			thisNodeData.entityConfig.config.attributes["background-color"] = aNeoLabel.color;
+		}
+
 		thisNodeData.nodeColorRGB = aNeoLabel.colorRGB;
-		thisNodeData.nodeBorderColor = rgb2hex(thisNodeData.nodeColorRGB.r-20, thisNodeData.nodeColorRGB.g-20, thisNodeData.nodeColorRGB.b-20);
+
+		if (!thisNodeData.entityConfig.config.attributes["border-color"]) {
+			thisNodeData.entityConfig.config.attributes["border-color"] =
+				rgb2hex(thisNodeData.nodeColorRGB.r - 50, thisNodeData.nodeColorRGB.g - 50, thisNodeData.nodeColorRGB.b - 50);
+		}
+
+		//thisNodeData.nodeColor = aNeoLabel.color;
+		//thisNodeData.nodeBorderColor = rgb2hex(thisNodeData.nodeColorRGB.r-20, thisNodeData.nodeColorRGB.g-20, thisNodeData.nodeColorRGB.b-20);
 	}
 			
 	if (thisIsNewNode) {
@@ -391,7 +405,7 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 		
 function addDataLabel(labelName, _addInstanceCount, _sourceConfig)
 {	
-	var existingLabelSelector = getNeoLabel(labelName, _sourceConfig.prefix);
+	var existingLabelSelector = getNeoLabel(labelName);
 	if(existingLabelSelector) 
 	{
 		if(_addInstanceCount){existingLabelSelector.instanceCount += _addInstanceCount};
@@ -578,11 +592,11 @@ function getNodesByMatchingProperties(nodesList, properties){
 	return returnNodeList;
 }
 		
-function getNeoLabel(byName, sourcePrefix)
+function getNeoLabel(byName)
 {
 	var x;
 		labelsList.forEach(function(labelobj, index){
-		if (labelobj.name == byName &&  labelobj.data.sourceConfig.prefix == sourcePrefix){
+		if (labelobj.name == byName){ // &&  labelobj.data.sourceConfig.prefix == sourcePrefix){
 			x = labelobj;
 			return labelobj;
 		}

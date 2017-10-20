@@ -22,9 +22,11 @@
 	this.FetchEntitiesForNodeId = function (nodeId, _sourceConfig) {
 		var graphElements = dataDriver.GetRelatedEntityGraph(stripDomainFromId(nodeId));
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
+
 	}
 
 	this.CreateEntity_AddToGraph_ReturnNode = function (labels, properties, _sourceConfig) {
+		if (!_sourceConfig) { _sourceConfig = currentTheme.sourceConfig;}
 	    if (!properties)
 	        properties = {};
 	    var newEntity = {
@@ -34,7 +36,7 @@
 	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
 		var entity = dataDriver.GetEntityById(entityId);
 		var nodes = addEntitiesToGraphAndReturnNodes([entity])[0];
-		refreshLabelSelectors();
+		updateUiComponents(labels[0], 1, _sourceConfig);
 		return nodes;
 	}
 
@@ -124,16 +126,16 @@
 		addEntitiesToGraphAndReturnNodes([node], currentTheme.sourceConfig);
 		//inputCallback(nodeId);
 		//Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);
-		refreshLabelSelectors();
+		updateUiComponents(entityName, 1, currentTheme.sourceConfig);
 	}
 
 	this.UpdateEntity = function (nodeID, newProperties, callback) {
 		//Neo4jUpdateEntity(nodeID, newProperties, callback);
 	}
 
-	this.CreateRelation_AddToGraph_ReturnLink = function (fromEntityId, toEntityId, relationLabels, propList, _sourceConfig, planOnly) {
+	this.CreateRelation_AddToGraph_ReturnLink = function (fromEntityId, toEntityId, labels, properties, _sourceConfig, planOnly) {
 		//Neo4jCreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly)
-	    var relId = dataDriver.CreateRelationPopulateAndReturnId(stripDomainFromId(fromEntityId), stripDomainFromId(toEntityId), relationLabels, propList);
+		var relId = dataDriver.CreateRelationPopulateAndReturnId(stripDomainFromId(fromEntityId), stripDomainFromId(toEntityId), labels, properties);
 		var link = dataDriver.GetLinkFromDatabase(relId);
 		return addRelationToGraphReturnLink(link);
 	}
@@ -158,8 +160,13 @@
 		//Neo4jGetAllLabels(_sourceConfig);
 		var labels = dataDriver.GetAllEntityTypesAndEntityIds(_sourceConfig);
 		labels.forEach(function (label) {
-			addDataLabel(label.label, label.ids.length, _sourceConfig);
+			updateUiComponents(label.label, label.ids.length, _sourceConfig);
 		});
+	}
+
+	function updateUiComponents(label, entityCount, _sourceConfig)
+	{
+		addDataLabel(label, entityCount, _sourceConfig);
 		refreshLabelSelectors();
 	}
 

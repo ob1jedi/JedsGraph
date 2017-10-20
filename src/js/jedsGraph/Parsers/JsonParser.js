@@ -2,7 +2,7 @@ function JsonParser() {
     var _graphEntities = [];
     var _graphRelations = [];
 
-    this.TranslateToGraph_ReturnGraphElements = function (objectName, jsonString)
+    this.TranslateToGraph_ReturnGraphElements = function (objectName, jsonString, _sourceConfig)
     {
         var jsonObject = JSON.parse(jsonString);
 
@@ -45,8 +45,9 @@ function JsonParser() {
         newEntity.properties = {};
         var newLinks = [];
         for (var propertyKey in obj) {
-            if (isPrimitive(obj[propertyKey])) 
-                newEntity.properties[propertyKey] = obj[propertyKey];
+        	if (isPrimitive(obj[propertyKey])) {
+        		newEntity.properties[propertyKey] = obj[propertyKey];
+        	}
             if (isObject(obj[propertyKey])) {
                 var newChildEntity = createEntity(propertyKey, obj[propertyKey]);
                 newLinks.push(createRelation('', [], newEntity, newChildEntity));
@@ -59,6 +60,7 @@ function JsonParser() {
                     }
                 }
             }
+
         }
         newEntity.links = newLinks;
         _graphEntities.push(newEntity);
@@ -84,7 +86,7 @@ function JsonParser() {
     }
 
     function isPrimitive(obj) {
-        return getType(obj) != 'object' && !getType(obj) != 'array'
+        return getType(obj) != 'object' && getType(obj) != 'array'
     }
 
 }

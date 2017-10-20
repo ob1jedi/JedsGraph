@@ -271,7 +271,15 @@ svg, #graphContainer, #schemaContainer {
 			letter-spacing: 1px;
 		}*/
 
-
+.toolPanel input{
+	/*width: 80px;*/
+	height: 20px;
+	margin: 2px;
+	border-radius: 3px;
+	border-color: transparent;
+	font-size: 12px;
+	width: 100px
+}
 
 .dataNameLabel {
 	margin-left: 3px;
@@ -402,22 +410,46 @@ svg, #graphContainer, #schemaContainer {
 	margin-top: 0px;
     margin-left: 200px;
     margin-right: 200px;
-	height: 34px;
+	/*height: 34px;*/
+	height: 50px;
 	padding-left: 5px;
-	padding-top: 2px;
+	padding-top: 4px;
 	border-style: solid;
-	border-width: 2px;
-	border-color: #8c8c8c;
-	background-color: #737373;
-	opacity: 0.9;
+	border-width: 0px;
+	/*border-color: #8c8c8c;*/
+	background-color: #0d0d0d;
+	opacity: 0.8;
 }
- #formulaBox input{
+#formulaBox input{
 	/*width: 80px;*/
 	height: 20px;
 	margin: 2px;
 	border-radius: 3px;
 	border-color: transparent;
 	font-size: 12px;
+}
+#formulaBox select{
+	max-width:200px;
+}
+#formulaBox table{
+	font-size:small;
+	line-height:normal;
+}
+
+#formulaBox table tr td{
+	padding-left:5px;
+	height:5px;
+}
+
+#formulaBox label{
+	margin: 1px;
+	padding: 1px;
+	color:slategrey;
+	vertical-align: top;
+	font-size: 10px;
+}
+#formulaBox span{
+	font-size: 0px;
 }
  #formulaBox button{
     background-color: #4d4d4d;
@@ -435,6 +467,13 @@ svg, #graphContainer, #schemaContainer {
 	cursor: pointer;
 }
 
+#formulaBox select {
+	height: 20px;
+	margin: 2px;
+	border-radius: 3px;
+	border-color: transparent;
+	font-size: 12px;
+}
 
 .over {
 	background-color: red;
@@ -685,20 +724,11 @@ button:hover {
 	font-size: 12px;
 }
 
-select {
-	width: 100px;
-	height: 20px;
-	padding: 0px;
-	margin: 2px;
-	border-radius: 3px;
-	background-color: #b3ffff;
-	border-color: transparent;
-	font-size: 12px;
-	color: black;
-}
+
 
 #hovertext:hover {
-	font-size: 15px;
+	/*font-size: 15px;*/
+	cursor: pointer;
 	text-decoration: underline;
 }
 

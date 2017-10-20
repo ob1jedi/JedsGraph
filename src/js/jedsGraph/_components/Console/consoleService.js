@@ -25,10 +25,23 @@
 
 		newContent += '<span class="pull-right">'
 		newContent += '		<span class="winbtn">'
-		newContent += '			<i onclick="nodeFlyout_Event_HideClick(\'' + node.id + '\')" class="glyphicon glyphicon-eye-open pull-right"></i>'
+		newContent += '			<i onclick="nodeFlyout_Event_HideClick(\'' + node.id + '\')" class="glyphicon glyphicon-eye-close pull-right"></i>'
 		newContent += '		</span>'
 		newContent += '</span>'
-		
+
+		newContent += '<table>'
+		node.data.properties.forEach(function (prop) { 
+			newContent += '  <tr>'
+			newContent += '    <td>'
+			newContent += '      <b>&nbsp' + prop.key + ':&nbsp</b>';
+			newContent += '    <td>'
+			newContent += '    <td>'
+			newContent += prop.value;
+			newContent += '    <td>'
+			newContent += '  <tr>'
+		});
+		newContent += '</table>'
+
 		newContent += '<div>'
 		//console.log('node', node)
 		node.data.config.nodeFlyout.forEach(function (element) {

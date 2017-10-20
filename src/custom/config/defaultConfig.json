@@ -89,8 +89,8 @@ configManager.configs.push( {
 			{
 				"name": "panel.config",
 				"parent": "leftColumn",
-				"available": true,
-				"visible": true,
+				"available": false,
+				"visible": false,
 				"icon": "glyphicon glyphicon-adjust",
 				"desc": "config"
 			},
@@ -98,7 +98,7 @@ configManager.configs.push( {
 				"name": "panel.selection",
 				"parent": "leftColumn",
 				"available": true,
-				"visible": true,
+				"visible": false,
 				"icon": "glyphicon glyphicon-ok-sign",
 				"desc": "select options"
 			},
@@ -106,7 +106,7 @@ configManager.configs.push( {
 				"name": "panel.nodedetails",
 				"parent": "leftColumn",
 				"available": true,
-				"visible": true,
+				"visible": false,
 				"icon": "glyphicon glyphicon-dashboard",
 				"desc": "entity details"
 			},
@@ -114,14 +114,14 @@ configManager.configs.push( {
 				"name": "panel.linkdetails",
 				"parent": "leftColumn",
 				"available": true,
-				"visible": true,
+				"visible": false,
 				"icon": "glyphicon glyphicon-sort-by-order",
 				"desc": "relationship details"
 			},
 			{
 				"name": "panel.simplequery",
 				"parent": "leftColumn",
-				"available": true,
+				"available": false,
 				"visible": false,
 				"icon": "glyphicon glyphicon-search",
 				"desc": "query"
@@ -145,14 +145,14 @@ configManager.configs.push( {
 			{
 				"name": "panel.monitoring",
 				"parent": "leftColumn",
-				"available": true,
+				"available": false,
 				"visible": false,
 				"icon": "glyphicon glyphicon-asterisk",
 				"desc": "monitoring"
 			},
 			{
 				"name": "panel.entity.create",
-				"parent": "rightColumn",
+				"parent": "leftColumn",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-plus-sign",
@@ -160,7 +160,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.relationship.create",
-				"parent": "rightColumn",
+				"parent": "leftColumn",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-registration-mark",
@@ -168,7 +168,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.appearance",
-				"parent": "rightColumn",
+				"parent": "leftColumn",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-certificate",
@@ -176,7 +176,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.highlight",
-				"parent": "rightColumn",
+				"parent": "leftColumn",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-eye-open",
@@ -184,7 +184,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.navigation",
-				"parent": "rightColumn",
+				"parent": "leftColumn",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-hand-up",
@@ -211,9 +211,9 @@ configManager.configs.push( {
 			"max": 140
 		} /*The 4bit rgb range from which nodeLabel colors can be automatically generated.*/
 		,
-		"entityLabelColor": "white",
+		"entityLabelColor": "black",
 		"entityBorderColor": null, /*null=auto-color*/
-		"entityCircleTextColor": "beige",
+		//"entityCircleTextColor": "red",
 
 		"entityOpacity": 1,
 		"entityPopoutTextColor": "#0077b3",
@@ -222,7 +222,7 @@ configManager.configs.push( {
 			"family": "Arial, Helvetica, sans-serif",
 			"weight": "normal"
 		},
-		"linkColor": "#ffe6cc" /*...html/hex color*/
+		"linkColor": "grey" /*...html/hex color*/
 		,
 		"linkMainTextColor": "#d9d9d9",
 		"linkSubTextColor": "#ffa64d",
@@ -250,7 +250,7 @@ configManager.configs.push( {
 		//node data...
 		,
 		"showLabels": true,
-		"loadNodePopouts": true,
+		"loadNodePopouts": false,
 		"showCircleText": true
 
 		//link data

@@ -178,7 +178,7 @@ var DataStringHelper = function () {
 	// ===== PRIVATE ===== //
 	function removeDataFromString(dataString, excludeData) {
 		var dataArray = dataString.split(',');
-		var index = dataArray.indexOf(excludeData);
+		var index = dataArray.indexOf(excludeData.toString());
 		if (index == -1)
 			return dataString;
 		dataArray = dataArray.splice(index - 1, 1);
@@ -187,7 +187,7 @@ var DataStringHelper = function () {
 
 	function ensureDataIntoString(dataString, newData) {
 		var dataArray = dataString.split(',');
-		if (dataExistsInArray(dataArray, newData))
+		if (dataExistsInArray(dataArray, newData.toString()))
 			return dataString;
 		// TODO: add sorting to this.
 		dataArray.push(newData);

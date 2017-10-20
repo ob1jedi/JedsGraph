@@ -52,6 +52,20 @@ Vue.component('vw-right-sidebar',{
 		`
 })
 
+Vue.component('vw-info-modal', {
+	props: ['formulaprop'],
+	template:
+	`
+	<dialog class ="inputModal" id="InfoModal">
+		<form class ="form-group">
+			<h2>{{ formulaprop.modalHeader }}</h2>
+			{{ formulaprop.modalContent }}
+		</form>
+		<button v-on:click="formulaprop.closeInfoModal" class ="btn btn-default pull-right">Save</button>
+	</dialog>
+	`
+})
+
 Vue.component('vw-mode-indicator',{
     props: ['indicatorprop'],
     template: `
@@ -62,57 +76,137 @@ Vue.component('vw-mode-indicator',{
 		`
 })
 
-Vue.component('vw-formula-box',{
-    props: ['formulaprop'],
-    template: `
+Vue.component('vw-formula-box', {
+	props: ['formulaprop'],
+	template: `
         <div id='formulaBox'>
             <table>
                 <tr>
                     <td>
-                        <input class="dynamic3" v-model='formulaprop.formulaValue' v-bind:placeholder="formulaprop.formulaDefault"></input>
+						<label for="txtFormulaInput">Formula</label>
+                        <input class="dynamic3" id="txtFormulaInput"
+							v-on:keyup.enter="formulaprop.formulaFunction(formulaprop.formulaValue)"
+							v-model='formulaprop.formulaValue'
+							v-bind:placeholder="formulaprop.formulaDefault">
+						</input>
                     </td>
                     <td>
-                        <button class ="mybutton" v-on:click="formulaprop.formulaFunction(formulaprop.formulaValue)">generate</button>
+						<label for="cmdFormulaGenerate">&nbsp</label>
+						<div>
+							<button class ="mybutton" id="cmdFormulaGenerate"
+								v-on:click="formulaprop.formulaFunction(formulaprop.formulaValue)">
+								generate
+							</button>
+						</div>
                     </td>
+					<td>
+						<label for="cboFormulaTranslator">Translator</label>
+                        <select id="cboFormulaTranslator"
+							v-model="formulaprop.selectedTranslator"
+							><option
+								v-for="item in formulaprop.translators"
+								v-bind:value="item.desc"
+								v-bind:key="item.id"
+							>{{item.desc}}</option>
+						</select>
+                    </td>
+					<td>
+						<label for="cboFormulaExamples">Examples</label>
+						<select id="cboFormulaExamples" name="formulaExample"
+							v-model="formulaprop.selectedExample"
+							v-on:change="formulaprop.useExample(formulaprop.selectedExample)"
+							><option
+								v-for="item in formulaprop.examples"
+								v-bind:value="item"
+							>{{item}}</option>
+						</select>
+					</td>
+
+					<td>
+						<label for="cmdInfo">&nbsp</label>
+						<div>
+							<button id="cmdInfo"
+								v-on:click="formulaprop.showInfoModal(formulaprop.selectedTranslator, formulaprop.reference)"
+							><i class ="glyphicon glyphicon-question-sign"></i></button>
+						</div>
+                    </td>
+
                 </tr>
             </table>
-        </div> `
+        </div>
+		`
 })
 
 var consoleApp=new Vue({
     el: '#vue-app',
     data: {
+    	infoModal:{
+    		showModal:false
+    	},
         indicator: {
             title: "view",
             image: "../custom/assets/binoculars.svg"
         },
         formulaToolbar: {
-            formulaDefault: "example: x->y",
-            formulaValue: "",
+        	modalHeader: "HELLO",
+        	modalContent: "THERE",
+
+        	formulaDefault: "example: x->y",
+        	formulaValue: "",
+        	appendValue: true,
+        	translators: [
+				{ id: 1, desc: "simple X->Y" }
+        	],
+        	selectedTranslator: { id: 1, desc: "simple X->Y" },
+        	examples: [
+				"x->y",
+				"Sam->John->Bob",
+				"-->Product->3",
+				"Diana-MotherOf->William",
+				"Fe(name: Iron)",
+				"C(name: Carbon, weight: 12.011)"
+        	],
+			selectedExample:"",
+			reference: `
+				<p> 'John' type any word to create a node<p>
+				<p> 'John(age: 30, sex: male)' create a node with some attributes<p>
+				<p> 'node1->node2' use the '->' syntax to create a relationship between two nodes<p>
+				<p> '-->' alternative relationship syntax<p>
+				<p> '-name->' create relationship with a name<p>
+				<p> '-owns(since: 2010)->' create relationship with a name and some attributes<p>
+				<p> 'node1->node2^' use a caret '^' to select the node<p>
+				`,
+			useExample: function(example){
+				var translator = new XYTranslator();
+				translator.TranslateV3(this.selectedExample);
+			},
             formulaFunction: function(expression) {
                 var translator = new XYTranslator();
-                translator.Translate(this.formulaValue);
+                translator.TranslateV3(this.formulaValue);
+                this.formulaValue = "";
+            },
+            showInfoModal: function (header, content) {
+            	//console.log('MODAL', this.isInfoModalVisible);
+            	ShowInfoModal(header, content);
+            	//this.isInfoModalVisible = true;
+            },
+            closeInfoModal: function () {
+            	//console.log('MODAL', this.isInfoModalVisible);
+            	CloseInfoModal();
+            	//this.isInfoModalVisible = true;
             },
             formulaParams: []
         }
     }
 })
 
-var XYTranslator=function() {
-    this.Translate=function(expression) {
-        var dataSvc=new DataService();
-        var nodes=expression.split("->");
-        var newNodes = [];
-        nodes.forEach(function(nodeLabel) {
-            var newNode = dataSvc.CreateEntity_AddToGraph_ReturnNode([nodeLabel.trim()]); 
-            newNodes.push(newNode);
-        });
-        if (newNodes.length > 1){
-            for (var i = 0; i < newNodes.length-1; i++)
-                var newlink = dataSvc.CreateRelation_AddToGraph_ReturnLink(newNodes[i].id, newNodes[i+1].id, "");
-        }
-    }
+function ShowInfoModal(header, content, button) {
+	var nodeFlyout = document.getElementById('InfoModal');
+	nodeFlyout.showModal();
 }
-
+function CloseInfoModal() {
+	var nodeFlyout = document.getElementById('InfoModal');
+	nodeFlyout.close();
+}
 
 

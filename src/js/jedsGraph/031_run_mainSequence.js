@@ -19,15 +19,16 @@ function main() {
 		// Start monitoring timeout elements
 		checkTimeoutElements() 
 
-		// DECLARE UNIT TESTS...
+		// UNIT TESTS...
 		if (window.location.href.startsWith("http://localhost:9090/")){
 		//if (localStorage.getItem('testMode') === "true") {
-			var unitTests = [];
-			unitTests.push(new LocalStorageDataDriver_Tests);
-			unitTests.push(new Config_Tests);
+			//var unitTestSets = [];
+			//unitTestSets.push(new LocalStorageDataDriver_Tests);
+			//unitTestSets.push(new Config_Tests);
+
 			var unitTestFramework = new UnitTestFramework();
 			// RUN UNIT TESTS...
-			unitTestFramework.runAllTests(unitTests);
+			unitTestFramework.runAllUnitTests(allUnitTests);
 		}
 
 	}

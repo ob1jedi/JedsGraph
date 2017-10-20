@@ -1,163 +1,177 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-108035161-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'UA-108035161-1');
-    </script>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-108035161-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+		gtag('config', 'UA-108035161-1');
+	</script>
 
 
-    <title>Graph Engine</title>
+	<title>Graph Engine</title>
+	<!--DEPENDENCIES-->
+	<!--Bootstrap-->
+	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+	<link href="deps/bootstrap.min.css" rel="stylesheet">
 
-    <!--DEPENDENCIES-->
-    <!--Bootstrap-->
-    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
-    <link href="deps/bootstrap.min.css" rel="stylesheet">
+	<!--JQuery-->
+	<!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>-->
+	<script src="deps/jquery-1.11.1.min.js"></script>
 
-    <!--JQuery-->
-    <!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>-->
-    <script src="deps/jquery-1.11.1.min.js"></script>
-    <!--<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>-->
-    <script src="deps/jquery.mobile-1.4.5.min.js"></script>
+	<!--<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>-->
+	<script src="deps/jquery.mobile-1.4.5.min.js"></script>
 
-    <!--<script src="https://unpkg.com/vue"></script>-->
-    <script src="deps/vue.js"></script>
+	<!--<script src="https://unpkg.com/vue"></script>-->
+	<script src="deps/vue.js"></script>
 
-    <!--CUSTOM-->
-    <link href="css/jedsGraph.css" rel="stylesheet">
-    <script type="text/javascript" src="deps/vivagraph.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Config/configloader.json"></script>
-    <script type="text/javascript" src="custom/config/defaultConfig.json"></script>
+	<!--CUSTOM-->
+	<link href="css/jedsGraph.css" rel="stylesheet">
+	<script type="text/javascript" src="deps/vivagraph.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Config/configloader.json"></script>
+	<script type="text/javascript" src="custom/config/defaultConfig.json"></script>
 
-    <!-- Developer custom configuration -->
-    <script type="text/javascript" src="custom/config/Data1.json"></script>
-    <script type="text/javascript" src="js/jedsGraph/Config/baseGraphConfig.json"></script>
-    <script type="text/javascript" src="js/jedsGraph/Config/baseLinkConfig.json"></script>
-    <script type="text/javascript" src="js/jedsGraph/Config/baseNodeConfig.json"></script>
+	<!-- Developer custom configuration -->
+	<script type="text/javascript" src="custom/config/Data1.json"></script>
+	<script type="text/javascript" src="js/jedsGraph/Config/baseGraphConfig.json"></script>
+	<script type="text/javascript" src="js/jedsGraph/Config/baseLinkConfig.json"></script>
+	<script type="text/javascript" src="js/jedsGraph/Config/baseNodeConfig.json"></script>
 
-    <script type="text/javascript" src="js/jedsGraph/_factoryClasses/NodeFunctions.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Config/Services/ConfigHelper.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Tests/UnitTestFramework.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/DataDriver_LocalStorage_Tests.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/Config_Tests.js"></script>
-    <!-- Declarative scripts -->
-    <script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/panelCalls.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/toolPanelMangement.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/uiUpdates.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_functions/citizenMethods.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Parsers/createGraphFromJson.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Parsers/createJsonFromGraph.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Parsers/JsonParser.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_functions/generalMethods.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Graph/Methods/graphMethods.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Link/Methods/linkMethods.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Node/Methods/nodeMethods.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Console/consoleService.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_services/common.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Services/JsonHelper.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/data2Graph.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/neo4j.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/graph2Data.js"></script>
-    <!--<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/DataService_Neo4jAdapter.js"></script>-->
-    <script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/DataService_LocalStorageAdapter.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/data2Graph.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/LocalStorageDataDriver.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/DataStringHelper.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_factoryClasses/NodeFunctions.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Config/Services/ConfigHelper.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTestFramework.js"></script>
+	<!-- Declarative scripts -->
+	<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/panelCalls.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/toolPanelMangement.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/uiUpdates.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_functions/citizenMethods.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Parsers/createGraphFromJson.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Parsers/createJsonFromGraph.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Parsers/JsonParser.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_functions/generalMethods.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Graph/Methods/graphMethods.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Link/Methods/linkMethods.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Methods/nodeMethods.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Console/consoleService.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_services/common.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Services/JsonHelper.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/data2Graph.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/neo4j.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/graph2Data.js"></script>
+	<!--<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/DataService_Neo4jAdapter.js"></script>-->
+	<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/DataService_LocalStorageAdapter.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/data2Graph.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/LocalStorageDataDriver.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/DataStringHelper.js"></script>
 
-    <script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/animations.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/dataMonitoring.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/animations.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/dataMonitoring.js"></script>
 
-    <!-- Procedural scripts -->
-    <script type="text/javascript" src="js/jedsGraph/Models/Entity.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/Relationship.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/DataEntity.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/DataRelationship.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/interactionOptionsType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/linkDataType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/linkUiElementsType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/neo_APIcall.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/neo_Statement.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/neo4jConnectionType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/neoLabelType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/nodeDataType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/nodeUiElementsType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Node/Events/nodeEvents.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Node/Appearances/defineNodeAppearance_dataNode.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Node/Appearances/defineNodeAppearance_plannedNode.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Node/Appearances/defineNodeAppearance_subNode.js"></script>
+	<!-- Procedural scripts -->
+	<script type="text/javascript" src="js/jedsGraph/Models/Entity.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/Relationship.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/DataEntity.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/DataRelationship.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/interactionOptionsType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/linkDataType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/linkUiElementsType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/neo_APIcall.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/neo_Statement.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/neo4jConnectionType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/neoLabelType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/nodeDataType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/nodeUiElementsType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Events/nodeEvents.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Appearances/defineNodeAppearance_dataNode.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Appearances/defineNodeAppearance_plannedNode.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Appearances/defineNodeAppearance_subNode.js"></script>
 
-    <script type="text/javascript" src="js/jedsGraph/Models/propertyType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/themeType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/timeoutElementType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/viewOptionsType.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Models/GraphElement.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/propertyType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/themeType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/timeoutElementType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/viewOptionsType.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/GraphElement.js"></script>
 
+	<!--INITIALIZATION-->
+	<script type="text/javascript" src="js/jedsGraph/020_define_globals.js"></script>
 
+	<!--UNIT TESTS-->
+	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/DataDriver_LocalStorage_Tests.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/Config_Tests.js"></script>
 
-    <!--MAIN SEQUENCE-->
-    <script type="text/javascript" src="js/jedsGraph/020_define_globals.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/030_run_initSequence.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/Config/initializeConfiguration.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/030_initSequence/012.setup_UI.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/031_run_mainSequence.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/031_mainSequence/010_prepare_GraphObject.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Node/Templates/020_define_NodeObjects.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Node/Methods/drawNode.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Link/Templates/040_define_LinkObjectsCommonAssets.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Link/Templates/050_define_LinkObjects.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/_components/Link/Methods/drawLink.js"></script>
-    <script type="text/javascript" src="js/jedsGraph/031_mainSequence/070_render_GraphObject(starts_up_Cycles).js"></script>
-    <script type="text/javascript" src="js/jedsGraph/031_mainSequence/080_set_UiStartupSettings.js"></script>
+	<!--MAIN SEQUENCE-->
+	<script type="text/javascript" src="js/jedsGraph/Config/initializeConfiguration.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/030_initSequence/012.setup_UI.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/031_run_mainSequence.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/010_prepare_GraphObject.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Templates/020_define_NodeObjects.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Node/Methods/drawNode.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Link/Templates/040_define_LinkObjectsCommonAssets.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Link/Templates/050_define_LinkObjects.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/_components/Link/Methods/drawLink.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/070_render_GraphObject(starts_up_Cycles).js"></script>
+	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/080_set_UiStartupSettings.js"></script>
+
+	<script type="text/javascript" src="js/VueComponents/Modal/Translators.js"></script>
 
 </head>
 
 <body onload='main()'>
 
+	<div id="vue-app">
+		<vw-graph></vw-graph>
+		<vw-topbar></vw-topbar>
+
+		<vw-formula-box v-bind:formulaprop="formulaToolbar"></vw-formula-box>
+		<vw-info-modal v-bind:formulaprop="formulaToolbar"></vw-info-modal>
+
+		<vw-left-sidebar></vw-left-sidebar>
+		<vw-right-sidebar></vw-right-sidebar>
+		<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>
+
+		<vw-info-modal v-if="formulaToolbar.isInfoModalVisible" @close="formulaToolbar.isInfoModalVisible = false">
+			<!--
+		  you can use custom content here to overwrite
+		  default content
+		-->
+			<h3 slot="header">custom header</h3>
+		</vw-info-modal>
+
+	</div>
 
 
 
 
-    <div id="vue-app">
-        <vw-graph></vw-graph>
-        <vw-topbar></vw-topbar>
-        <vw-formula-box v-bind:formulaprop="formulaToolbar"></vw-formula-box>
-        <vw-left-sidebar></vw-left-sidebar>
-        <vw-right-sidebar></vw-right-sidebar>
-        <vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>
-    </div>
+	<!--div id="nodeOptions">
+		<button onclick='relateSelectedToNode()'>Relate entity</button>
+		<button onclick='GetRelatedEntityGraph()'>Delete entity</button>
+	</div-->
 
-    <!--div id="nodeOptions">
-        <button onclick='relateSelectedToNode()'>Relate entity</button>
-        <button onclick='GetRelatedEntityGraph()'>Delete entity</button>
-    </div-->
+	<div class="nodeFlyout" id='panel.node'>
+		<ul>
+			<li>Option 1</li>
+			<li>Option 2</li>
+			<li>Option 3</li>
+		</ul>
+		<button onclick="closeDialog('myDialog')">Close</button>
+	</div>
 
-    <div class="nodeFlyout" id='panel.node'>
-        <ul>
-            <li>Option 1</li>
-            <li>Option 2</li>
-            <li>Option 3</li>
-        </ul>
-        <button onclick="closeDialog('myDialog')">Close</button>
-    </div>
+	<dialog class='dialog' id="myDialog">
+		<textarea id="myDialogText"></textarea>
+		<button onclick="closeDialog('myDialog')">Close</button>
 
-    <dialog class='dialog' id="myDialog">
-        <textarea id="myDialogText"></textarea>
-        <button onclick="closeDialog('myDialog')">Close</button>
+	</dialog>
 
-    </dialog>
+	<dialog class='dialog' id="json2GraphDlg">
+		<textarea id="dlg.text.json"></textarea>
+		<button onclick="submitJsonForGraph()">Submit</button>
+		<button onclick="closeDialog('json2GraphDlg')">Cancel</button>
+	</dialog>
 
-    <dialog class='dialog' id="json2GraphDlg">
-        <textarea id="dlg.text.json"></textarea>
-        <button onclick="submitJsonForGraph()">Submit</button>
-        <button onclick="closeDialog('json2GraphDlg')">Cancel</button>
-    </dialog>
-
-    <!--VUE Scrips-->
-    <script src="js/VueComponents/Modal/ConsoleElements.js"></script>
+	<!--VUE Scrips-->
+	<script src="js/VueComponents/Modal/ConsoleElements.js"></script>
 </body>
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------->
@@ -165,253 +179,253 @@
 
 <div id='noColumn'>
 
-    <div class="labelSelectorDisplay toolPanel flexcroll" id='panel.labelselectors'>
-        <div class="panelHead">Node Types</div>
-        <table id="selectorLabels" class="label"></table>
-    </div>
+	<div class="labelSelectorDisplay toolPanel flexcroll" id='panel.labelselectors'>
+		<div class="panelHead">Node Types</div>
+		<table id="selectorLabels" class="label"></table>
+	</div>
 
-    <div class='toolPanel' id='panel.config'>
-        <div class="panelHead">Configuration:</div>
-        Configuration: <select onchange="changeConfig()" id="configSelector"></select>
+	<div class='toolPanel' id='panel.config'>
+		<div class="panelHead">Configuration:</div>
+		Configuration: <select onchange="changeConfig()" id="configSelector"></select>
 
-        <ol>
-            <!-- Create an instance of the todo-item component -->
-            <todo-item></todo-item>
-        </ol>
-    </div>
+		<ol>
+			<!-- Create an instance of the todo-item component -->
+			<todo-item></todo-item>
+		</ol>
+	</div>
 
-    <div class='panel toolPanel' id='panel.nodedetails'>
-        <div id='selectedNode'></div>
-        <hr>
-        <div id='nodeDetails'>
-        </div>
-    </div>
+	<div class='panel toolPanel' id='panel.nodedetails'>
+		<div id='selectedNode'></div>
+		<hr>
+		<div id='nodeDetails'>
+		</div>
+	</div>
 
-    <div class='panel toolPanel' id='panel.linkdetails'>
-        <div id='selectedLink'></div>
-        <hr>
-        <div id='linkDetails'>
-        </div>
-    </div>
+	<div class='panel toolPanel' id='panel.linkdetails'>
+		<div id='selectedLink'></div>
+		<hr>
+		<div id='linkDetails'>
+		</div>
+	</div>
 
-    <div class='toolPanel' id='panel.simplequery'>
-        <div class="panelHead">Build Query:</div>
-        <table>
-            <tr>
-                <td>from entity:</td>
-                <td>
-                    <select onchange="dataService.Qbuilder('qbuilder.from.entity')" id="qbuilder.from.entity"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>where:</td>
-                <td>
-                    <input class="dynamic2" onfocus="dataService.Qbuilder('qbuilder.from.property')" onchange="dataService.Qbuilder('qbuilder.from.property')" id="qbuilder.from.property" type="text" name="" list="qbuilder.from.selectproperty">
-                    <datalist id="qbuilder.from.selectproperty"></datalist>
+	<div class='toolPanel' id='panel.simplequery'>
+		<div class="panelHead">Build Query:</div>
+		<table>
+			<tr>
+				<td>from entity:</td>
+				<td>
+					<select onchange="dataService.Qbuilder('qbuilder.from.entity')" id="qbuilder.from.entity"></select>
+				</td>
+			</tr>
+			<tr>
+				<td>where:</td>
+				<td>
+					<input class="dynamic2" onfocus="dataService.Qbuilder('qbuilder.from.property')" onchange="dataService.Qbuilder('qbuilder.from.property')" id="qbuilder.from.property" type="text" name="" list="qbuilder.from.selectproperty">
+					<datalist id="qbuilder.from.selectproperty"></datalist>
 
-                </td>
-            </tr>
-            <tr>
-                <td>is:</td>
-                <td>
-                    <!--select onchange="qbuilder('qbuilder.from.value')" id="qbuilder.from.value"></select-->
-                    <input class="dynamic2" onfocus="dataService.Qbuilder_ClearValue('qbuilder.from.value')" onchange="dataService.Qbuilder('qbuilder.from.value')" id="qbuilder.from.value" type="text" name="" list="qbuilder.from.selectvalue">
-                    <datalist id="qbuilder.from.selectvalue"></datalist>
+				</td>
+			</tr>
+			<tr>
+				<td>is:</td>
+				<td>
+					<!--select onchange="qbuilder('qbuilder.from.value')" id="qbuilder.from.value"></select-->
+					<input class="dynamic2" onfocus="dataService.Qbuilder_ClearValue('qbuilder.from.value')" onchange="dataService.Qbuilder('qbuilder.from.value')" id="qbuilder.from.value" type="text" name="" list="qbuilder.from.selectvalue">
+					<datalist id="qbuilder.from.selectvalue"></datalist>
 
-                </td>
-            </tr>
-        </table>
-        <button onclick='ButtonSimpleSearch()'>Search</button>
-        <!--button onclick='Neo4jQueryRecursiveSearch()'>Tree Search</button-->
-    </div>
+				</td>
+			</tr>
+		</table>
+		<button onclick='ButtonSimpleSearch()'>Search</button>
+		<!--button onclick='Neo4jQueryRecursiveSearch()'>Tree Search</button-->
+	</div>
 
-    <div class='toolPanel' id='panel.functions'>
-        <div class="panelHead">Functions:</div>
-        <button onclick='createJsonFromSelectedNodes()'>Create Json</button>
-        <button class="popup">
-            Monitor
-            <div class="popuptext">
-                <div id="hovertext" onclick="monitorCheckedItems()">Monitor checked</div>
-                <div id="hovertext" onclick="clearAllMonitored()">Clear all</div>
-            </div>
-        </button>
-        <button onclick='animateTest()'>Add Indicator</button>
-        <button onclick='json2GraphDlg.showModal()'>Create from json</button>
-        <button onclick='increaseNodeDepth()'>IncNodeDepth</button>
-        <!--button onclick='testFunction()'>Test2</button-->
+	<div class='toolPanel' id='panel.functions'>
+		<div class="panelHead">Functions:</div>
+		<button onclick='createJsonFromSelectedNodes()'>Create Json</button>
+		<!--<button class="popup">
+			Monitor
+			<div class="popuptext">
+				<div id="hovertext" onclick="monitorCheckedItems()">Monitor checked</div>
+				<div id="hovertext" onclick="clearAllMonitored()">Clear all</div>
+			</div>
+		</button>-->
+		<button onclick='animateTest()'>Add Indicator</button>
+		<button onclick='json2GraphDlg.showModal()'>Create from json</button>
+		<button onclick='increaseNodeDepth()'>IncNodeDepth</button>
+		<!--button onclick='testFunction()'>Test2</button-->
 
-    </div>
+	</div>
 
-    <!--div id="slider" draggable="true" class="toolPanel slide-in">
-        <ul>
-            <li>Lorem</li>
-            <li>Ipsum</li>
-            <li>Dolor</li>
-        </ul>
-    </div-->
-    <!--button id="toggle" style="position:absolute; top: 120px;">Toggle</button-->
+	<!--div id="slider" draggable="true" class="toolPanel slide-in">
+		<ul>
+			<li>Lorem</li>
+			<li>Ipsum</li>
+			<li>Dolor</li>
+		</ul>
+	</div-->
+	<!--button id="toggle" style="position:absolute; top: 120px;">Toggle</button-->
 
-    <div class='toolPanel labelSelectorDisplay' id='panel.monitoring'>
-        <div id='newNode'>
-            <div class="panelHead">Monitored Nodes</div>
-            <table id='nodelist.monitored'></table>
-        </div>
-    </div>
+	<div class='toolPanel labelSelectorDisplay' id='panel.monitoring'>
+		<div id='newNode'>
+			<div class="panelHead">Monitored Nodes</div>
+			<table id='nodelist.monitored'></table>
+		</div>
+	</div>
 
-    <div class='toolPanel' id='panel.entity.create'>
-        <div class="panelHead">Entity Management</div>
-        <table>
-            <tr>
-                <td>entity name:</td>
-                <td> <input id='new.entity.name' value=''></input></td>
-            </tr>
-        </table>
-        <hr>
-        <table>
-            <tr>
-                <td><button class="paneloption mytooltip" onclick="panelAddKeyValue('panel.entity.props', 'new.entity')">V<div class="mytooltiptext ttright ttupper">Add property</div></button></td>
-                <td><button class="paneloption mytooltip" onclick="panelRemoveKeyValue('panel.entity.props', 'new.entity')">X<div class="mytooltiptext ttright ttupper">Remove property</div></button></td>
-            </tr>
-        </table>
-        <hr>
-        <table id='panel.entity.props'>
-            <tbody></tbody>
-        </table>
-        <hr>
-        <button onclick='submitNewEntity()'>Create New Entity</button>
-        <button onclick='submitUpdateEntity()'>Update Selected</button>
-        <button onclick='GetRelatedEntityGraph()'>Delete Selected</button>
-    </div>
-
-
-    <div class='toolPanel' id='panel.relationship.create'>
-        <div class="panelHead">Create Relationship</div>
-        <table>
-            <tr>
-                <td>relation name:</td>
-                <td> <input id='new.relation.name' value=''></input></td>
-            </tr>
-        </table>
-        <hr style="border-color:#262626;">
-        <table>
-            <tr>
-                <td><button class="paneloption mytooltip" onclick="panelAddKeyValue('panel.relation.props', 'new.relation')">V<div class="mytooltiptext ttright ttupper">Add property</div></button></td>
-                <td><button class="paneloption mytooltip" onclick="panelRemoveKeyValue('panel.relation.props', 'new.relation')">X<div class="mytooltiptext ttright ttupper">Remove property</div></button></td>
-            </tr>
-        </table>
-        <hr style="border-color:#262626;">
-        <table id='panel.relation.props'>
-            <tbody></tbody>
-        </table>
-        <hr style="border-color:#262626;">
-        <button onclick='relateSelectedToNode()'>Create Relation To...</button>
-        <button onclick='planRelateSelectedToNode()'>Plan Relation To...</button>
-        <button onclick='deleteLink()'>Delete selected</button>
-    </div>
-
-    <div class='toolPanel' id='panel.bulkactions'>
-        <div>
-            <div class="panelHead">Apply to ALL</div>
-            <button class="popup">
-                Check
-                <div class="popuptext">
-                    <div id="hovertext" onclick='uncheckAll()'>Uncheck all</div>
-                    <div id="hovertext" onclick='checkAll()'>Check all</div>
-                </div>
-            </button>
-            <button onclick='dataService.InitAllNodes()'>Fetch</button>
-            <button onclick='unPinAllNodes()'>Unpin</button>
-            <button onclick='arrangeBy2()'>Arrange</button>
-        </div>
-    </div>
+	<div class='toolPanel' id='panel.entity.create'>
+		<div class="panelHead">Entity Management</div>
+		<table>
+			<tr>
+				<td>entity name:</td>
+				<td> <input id='new.entity.name' value=''></input></td>
+			</tr>
+		</table>
+		<hr>
+		<table>
+			<tr>
+				<td><button class="paneloption mytooltip" onclick="panelAddKeyValue('panel.entity.props', 'new.entity')">V<div class="mytooltiptext ttright ttupper">Add property</div></button></td>
+				<td><button class="paneloption mytooltip" onclick="panelRemoveKeyValue('panel.entity.props', 'new.entity')">X<div class="mytooltiptext ttright ttupper">Remove property</div></button></td>
+			</tr>
+		</table>
+		<hr>
+		<table id='panel.entity.props'>
+			<tbody></tbody>
+		</table>
+		<hr>
+		<button onclick='submitNewEntity()'>Create New Entity</button>
+		<button onclick='submitUpdateEntity()'>Update Selected</button>
+		<button onclick='GetRelatedEntityGraph()'>Delete Selected</button>
+	</div>
 
 
+	<div class='toolPanel' id='panel.relationship.create'>
+		<div class="panelHead">Create Relationship</div>
+		<table>
+			<tr>
+				<td>relation name:</td>
+				<td> <input id='new.relation.name' value=''></input></td>
+			</tr>
+		</table>
+		<hr style="border-color:#262626;">
+		<table>
+			<tr>
+				<td><button class="paneloption mytooltip" onclick="panelAddKeyValue('panel.relation.props', 'new.relation')">V<div class="mytooltiptext ttright ttupper">Add property</div></button></td>
+				<td><button class="paneloption mytooltip" onclick="panelRemoveKeyValue('panel.relation.props', 'new.relation')">X<div class="mytooltiptext ttright ttupper">Remove property</div></button></td>
+			</tr>
+		</table>
+		<hr style="border-color:#262626;">
+		<table id='panel.relation.props'>
+			<tbody></tbody>
+		</table>
+		<hr style="border-color:#262626;">
+		<button onclick='relateSelectedToNode()'>Create Relation To...</button>
+		<button onclick='planRelateSelectedToNode()'>Plan Relation To...</button>
+		<button onclick='deleteLink()'>Delete selected</button>
+	</div>
 
-    <div class='toolPanel' id='panel.appearance'>
-        <div class="panelHead">Appearance</div>
-        <button class="popup">
-            Node
-            <div class="popuptext">
-                <div id="hovertext" onclick='unPinSelectedNode()'>Unpin</div>
-                <div id="hovertext" onclick='refreshNodeAppearance()'>Refresh Visual</div>
-                <div id="hovertext" onclick='increaseNodeSize()'>Increase Size</div>
-                <div id="hovertext" onclick='decreaseNodeSize()'>Decrease Size</div>
-                <div id="hovertext" onclick='increaseNodeMass()'>Increase Mass</div>
-                <div id="hovertext" onclick='decreaseNodeMass()'>Decrease Mass</div>
-                <div id="hovertext" onclick='increaseNodeSprings()'>Increase Spring</div>
-                <div id="hovertext" onclick='decreaseNodeSprings()'>Decrease Spring</div>
-                <div id="hovertext" onclick='increaseNodeDepth()'>Increase Depth</div>
-                <div id="hovertext" onclick='decreaseNodeDepth()'>Decrease Depth</div>
-            </div>
-        </button>
+	<div class='toolPanel' id='panel.bulkactions'>
+		<div>
+			<div class="panelHead">Apply to ALL</div>
+			<button class="popup">
+				Check
+				<div class="popuptext">
+					<div id="hovertext" onclick='uncheckAll()'>Uncheck all</div>
+					<div id="hovertext" onclick='checkAll()'>Check all</div>
+				</div>
+			</button>
+			<button onclick='dataService.InitAllNodes()'>Fetch</button>
+			<button onclick='unPinAllNodes()'>Unpin</button>
+			<button onclick='arrangeBy2()'>Arrange</button>
+		</div>
+	</div>
 
-        <button class="popup">
-            Font
-            <div class="popuptext">
-                <div id="hovertext" onclick='fontGrow()'>Increase font size</div>
-                <div id="hovertext" onclick='fontShrink()'>Decrease font size</div>
-                <div id="hovertext" onclick='fontUp()'>Move text up</div>
-                <div id="hovertext" onclick='fontDown()'>Move text down</div>
-            </div>
-        </button>
-        <button onclick='removeNodeFromStage()'>Hide Entity</button>
-    </div>
-    <!--div class='toolPanel' id='panelData'>
-        <div class="panelHead">Data</div>
-        <input id="nodeLabel" type="text" name="lname">
-        <button onclick='getEntityNode()'>Get Entity</button>
-    </div-->
-    <!--div class='toolPanel'>
-        <div>
-            <div class="panelHead">Planning</div>
-            <button onclick='planEntity()'>create entity</button>
-            <button onclick='unPinAllNodes()'>create relation</button>
-            <button onclick='arrangeBy()'>Arrange</button>
-        </div>
-    </div-->
 
-    <div class='toolPanel' id='panel.selection'>
-        <div id='newNode'>
-            <div class="panelHead">Selection Options:</div>
-            <input class="check" id="vo.ch" onclick="updateInteractionOptions()" type="checkbox" name="descendants" value=""> Multi Select<br>
-            <form action="">
-                <input class="check" id="vo.dd" onclick="setScreenDragType('flat')" type="radio" name="related" value="" checked="true"> Flat<br>
-                <input class="check" id="vo.df" onclick="setScreenDragType('depth')" type="radio" name="related" value=""> Depth<br>
-            </form>
-        </div>
-    </div>
 
-    <div class='toolPanel' id='panel.highlight'>
-        <div id='newNode'>
-            <div class="panelHead">View Options: (on entity hover)</div>
-            <form action="">
-                <input class="check" id="vo.hr" onclick="updateViewOptions()" type="radio" name="related" value="" checked="true"> Highlight Related<br>
-                <input class="check" id="vo.ha" onclick="updateViewOptions()" type="radio" name="related" value=""> Highlight Ancestors<br>
-                <input class="check" id="vo.hd" onclick="updateViewOptions()" type="radio" name="related" value=""> Highlight Descendants<br>
-            </form>
-        </div>
-    </div>
+	<div class='toolPanel' id='panel.appearance'>
+		<div class="panelHead">Appearance</div>
+		<button class="popup">
+			Node
+			<div class="popuptext">
+				<div id="hovertext" onclick='unPinSelectedNode()'>Unpin</div>
+				<div id="hovertext" onclick='refreshNodeAppearance()'>Refresh Visual</div>
+				<div id="hovertext" onclick='increaseNodeSize()'>Increase Size</div>
+				<div id="hovertext" onclick='decreaseNodeSize()'>Decrease Size</div>
+				<div id="hovertext" onclick='increaseNodeMass()'>Increase Mass</div>
+				<div id="hovertext" onclick='decreaseNodeMass()'>Decrease Mass</div>
+				<div id="hovertext" onclick='increaseNodeSprings()'>Increase Spring</div>
+				<div id="hovertext" onclick='decreaseNodeSprings()'>Decrease Spring</div>
+				<div id="hovertext" onclick='increaseNodeDepth()'>Increase Depth</div>
+				<div id="hovertext" onclick='decreaseNodeDepth()'>Decrease Depth</div>
+			</div>
+		</button>
 
-    <div class='toolPanel' id='panel.dragOption'>
-        <div id='newNode'>
-            <div class="panelHead">Drag Options:</div>
-            <form action="">
-                <input class="check" id="do.flat" onclick="updateDragOptions()" type="radio" name="related" value="" checked="true"> Flat<br>
-                <input class="check" id="do.depth" onclick="updateDragOptions()" type="radio" name="related" value=""> Depth<br>
-            </form>
-        </div>
-    </div>
+		<button class="popup">
+			Font
+			<div class="popuptext">
+				<div id="hovertext" onclick='fontGrow()'>Increase font size</div>
+				<div id="hovertext" onclick='fontShrink()'>Decrease font size</div>
+				<div id="hovertext" onclick='fontUp()'>Move text up</div>
+				<div id="hovertext" onclick='fontDown()'>Move text down</div>
+			</div>
+		</button>
+		<button onclick='removeNodeFromStage()'>Hide Entity</button>
+	</div>
+	<!--div class='toolPanel' id='panelData'>
+		<div class="panelHead">Data</div>
+		<input id="nodeLabel" type="text" name="lname">
+		<button onclick='getEntityNode()'>Get Entity</button>
+	</div-->
+	<!--div class='toolPanel'>
+		<div>
+			<div class="panelHead">Planning</div>
+			<button onclick='planEntity()'>create entity</button>
+			<button onclick='unPinAllNodes()'>create relation</button>
+			<button onclick='arrangeBy()'>Arrange</button>
+		</div>
+	</div-->
 
-    <div class='toolPanel' id='panel.navigation'>
-        <div id='newNode'>
-            <div class="panelHead">Navigation: (on entity double-click)</div>
-            <form action="">
-                <input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('parent')" type="radio" name="related" value=""> fetch parents<br>
-                <input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('child')" type="radio" name="related" value=""> fetch children<br>
-                <input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('both')" type="radio" name="related" value="" checked> fetch both<br>
-            </form>
-        </div>
-    </div>
+	<div class='toolPanel' id='panel.selection'>
+		<div id='newNode'>
+			<div class="panelHead">Selection Options:</div>
+			<input class="check" id="vo.ch" onclick="updateInteractionOptions()" type="checkbox" name="descendants" value=""> Multi Select<br>
+			<form action="">
+				<input class="check" id="vo.dd" onclick="setScreenDragType('flat')" type="radio" name="related" value="" checked="true"> Flat<br>
+				<input class="check" id="vo.df" onclick="setScreenDragType('depth')" type="radio" name="related" value=""> Depth<br>
+			</form>
+		</div>
+	</div>
+
+	<div class='toolPanel' id='panel.highlight'>
+		<div id='newNode'>
+			<div class="panelHead">View Options: (on entity hover)</div>
+			<form action="">
+				<input class="check" id="vo.hr" onclick="updateViewOptions()" type="radio" name="related" value="" checked="true"> Highlight Related<br>
+				<input class="check" id="vo.ha" onclick="updateViewOptions()" type="radio" name="related" value=""> Highlight Ancestors<br>
+				<input class="check" id="vo.hd" onclick="updateViewOptions()" type="radio" name="related" value=""> Highlight Descendants<br>
+			</form>
+		</div>
+	</div>
+
+	<div class='toolPanel' id='panel.dragOption'>
+		<div id='newNode'>
+			<div class="panelHead">Drag Options:</div>
+			<form action="">
+				<input class="check" id="do.flat" onclick="updateDragOptions()" type="radio" name="related" value="" checked="true"> Flat<br>
+				<input class="check" id="do.depth" onclick="updateDragOptions()" type="radio" name="related" value=""> Depth<br>
+			</form>
+		</div>
+	</div>
+
+	<div class='toolPanel' id='panel.navigation'>
+		<div id='newNode'>
+			<div class="panelHead">Navigation: (on entity double-click)</div>
+			<form action="">
+				<input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('parent')" type="radio" name="related" value=""> fetch parents<br>
+				<input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('child')" type="radio" name="related" value=""> fetch children<br>
+				<input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('both')" type="radio" name="related" value="" checked> fetch both<br>
+			</form>
+		</div>
+	</div>
 
 
 
@@ -420,158 +434,158 @@
 
 
 <div id="developerCustomForms">
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="newWorkflowModel">
-        <form class="form-group">
-            <h2>Create Workflow</h2>
-            <br />
-            <label class="label" for="txtName">Name</label>
-            <input class="form-control" if="txtName" type="text" placeholder="Enter name">
-        </form>
-        <button onclick="nodeFunctions.add_workflow()" class="btn btn-default pull-right">Submit</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="updateWorkflowModel">
-        <form class="form-group">
-            <h2>Update Workflow</h2>
-            <br />
-            <label class="label" for="txtName">Name</label>
-            <input class="form-control" if="txtName" type="text" placeholder="Enter name">
-        </form>
-        <button onclick="nodeFunctions.update_workflow()" class="btn btn-default pull-right">Save</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="removeWorkflowModel">
-        <form class="form-group">
-            <h2>Remove Workflow</h2>
-            Are you sure you want to remove this workflow?
-        </form>
-        <button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
-    </dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="newWorkflowModel">
+		<form class="form-group">
+			<h2>Create Workflow</h2>
+			<br />
+			<label class="label" for="txtName">Name</label>
+			<input class="form-control" if="txtName" type="text" placeholder="Enter name">
+		</form>
+		<button onclick="nodeFunctions.add_workflow()" class="btn btn-default pull-right">Submit</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="updateWorkflowModel">
+		<form class="form-group">
+			<h2>Update Workflow</h2>
+			<br />
+			<label class="label" for="txtName">Name</label>
+			<input class="form-control" if="txtName" type="text" placeholder="Enter name">
+		</form>
+		<button onclick="nodeFunctions.update_workflow()" class="btn btn-default pull-right">Save</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="removeWorkflowModel">
+		<form class="form-group">
+			<h2>Remove Workflow</h2>
+			Are you sure you want to remove this workflow?
+		</form>
+		<button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+	</dialog>
 
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="addContentModal">
-        <form class="form-group">
-            <h2>Add content fetcher</h2>
-            <br />
-            <label class="label" for="selector">Fetch from: </label>
-            <select class="form-control" id="selector">
-                <option value="Local">By Request</option>
-                <option value="Local">Local Path</option>
-                <option value="Repo">Repository</option>
-                <option value="URI">URI</option>
-            </select>
-        </form>
-        <button onclick="nodeFunctions.add_content()" class="btn btn-default pull-right">Submit</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="updateContentModel">
-        <form class="form-group">
-            <h2>Send to content</h2>
-            <br />
-            <label class="label" for="selector">Content</label>
-            <select class="form-control" id="selector">
-                <option value="Echo">Echo</option>
-                <option value="Gamma">Gamma</option>
-                <option value="Texture Packer">Texture Packer</option>
-                <option value="Sparta">Sparta</option>
-            </select>
-        </form>
-        <button onclick="nodeFunctions.update_content()" class="btn btn-default pull-right">Submit</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="removeContent">
-        <form class="form-group">
-            <h2>Remove Workflow</h2>
-            Are you sure you want to remove this content?
-        </form>
-        <button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="addToolModal">
-        <form class="form-group">
-            <h2>Send to tool</h2>
-            <br />
-            <label class="label" for="selector">Tool</label>
-            <select class="form-control" id="selector">
-                <option value="Echo">Echo</option>
-                <option value="Gamma">Gamma</option>
-                <option value="Texture Packer">Texture Packer</option>
-                <option value="Sparta">Sparta</option>
-            </select>
-        </form>
-        <button onclick="nodeFunctions.add_tool()" class="btn btn-default pull-right">Submit</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="updateToolModel">
-        <form class="form-group">
-            <h2>Send to tool</h2>
-            <br />
-            <label class="label" for="selector">Tool</label>
-            <select class="form-control" id="selector">
-                <option value="Echo">Echo</option>
-                <option value="Gamma">Gamma</option>
-                <option value="Texture Packer">Texture Packer</option>
-                <option value="Sparta">Sparta</option>
-            </select>
-        </form>
-        <button onclick="nodeFunctions.update_tool()" class="btn btn-default pull-right">Submit</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="removeTool">
-        <form class="form-group">
-            <h2>Remove Workflow</h2>
-            Are you sure you want to remove this tool?
-        </form>
-        <button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="addCollectorModal">
-        <form class="form-group">
-            <h2>Send to collector</h2>
-            <br />
-            <label class="label" for="selector">Collector</label>
-            <select class="form-control" id="selector">
-                <option value="Echo">Echo</option>
-                <option value="Gamma">Gamma</option>
-                <option value="Texture Packer">Texture Packer</option>
-                <option value="Sparta">Sparta</option>
-            </select>
-        </form>
-        <button onclick="nodeFunctions.add_collector()" class="btn btn-default pull-right">Submit</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="updateCollectorModel">
-        <form class="form-group">
-            <h2>Send to collector</h2>
-            <br />
-            <label class="label" for="selector">Collector</label>
-            <select class="form-control" id="selector">
-                <option value="Echo">Echo</option>
-                <option value="Gamma">Gamma</option>
-                <option value="Texture Packer">Texture Packer</option>
-                <option value="Sparta">Sparta</option>
-            </select>
-        </form>
-        <button onclick="nodeFunctions.update_collector()" class="btn btn-default pull-right">Submit</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
-    <dialog class="inputModal" id="removeCollector">
-        <form class="form-group">
-            <h2>Remove Workflow</h2>
-            Are you sure you want to remove this collector?
-        </form>
-        <button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
-    </dialog>
-    <!-------------------------------------------------------------------->
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="addContentModal">
+		<form class="form-group">
+			<h2>Add content fetcher</h2>
+			<br />
+			<label class="label" for="selector">Fetch from: </label>
+			<select class="form-control" id="selector">
+				<option value="Local">By Request</option>
+				<option value="Local">Local Path</option>
+				<option value="Repo">Repository</option>
+				<option value="URI">URI</option>
+			</select>
+		</form>
+		<button onclick="nodeFunctions.add_content()" class="btn btn-default pull-right">Submit</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="updateContentModel">
+		<form class="form-group">
+			<h2>Send to content</h2>
+			<br />
+			<label class="label" for="selector">Content</label>
+			<select class="form-control" id="selector">
+				<option value="Echo">Echo</option>
+				<option value="Gamma">Gamma</option>
+				<option value="Texture Packer">Texture Packer</option>
+				<option value="Sparta">Sparta</option>
+			</select>
+		</form>
+		<button onclick="nodeFunctions.update_content()" class="btn btn-default pull-right">Submit</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="removeContent">
+		<form class="form-group">
+			<h2>Remove Workflow</h2>
+			Are you sure you want to remove this content?
+		</form>
+		<button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="addToolModal">
+		<form class="form-group">
+			<h2>Send to tool</h2>
+			<br />
+			<label class="label" for="selector">Tool</label>
+			<select class="form-control" id="selector">
+				<option value="Echo">Echo</option>
+				<option value="Gamma">Gamma</option>
+				<option value="Texture Packer">Texture Packer</option>
+				<option value="Sparta">Sparta</option>
+			</select>
+		</form>
+		<button onclick="nodeFunctions.add_tool()" class="btn btn-default pull-right">Submit</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="updateToolModel">
+		<form class="form-group">
+			<h2>Send to tool</h2>
+			<br />
+			<label class="label" for="selector">Tool</label>
+			<select class="form-control" id="selector">
+				<option value="Echo">Echo</option>
+				<option value="Gamma">Gamma</option>
+				<option value="Texture Packer">Texture Packer</option>
+				<option value="Sparta">Sparta</option>
+			</select>
+		</form>
+		<button onclick="nodeFunctions.update_tool()" class="btn btn-default pull-right">Submit</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="removeTool">
+		<form class="form-group">
+			<h2>Remove Workflow</h2>
+			Are you sure you want to remove this tool?
+		</form>
+		<button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="addCollectorModal">
+		<form class="form-group">
+			<h2>Send to collector</h2>
+			<br />
+			<label class="label" for="selector">Collector</label>
+			<select class="form-control" id="selector">
+				<option value="Echo">Echo</option>
+				<option value="Gamma">Gamma</option>
+				<option value="Texture Packer">Texture Packer</option>
+				<option value="Sparta">Sparta</option>
+			</select>
+		</form>
+		<button onclick="nodeFunctions.add_collector()" class="btn btn-default pull-right">Submit</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="updateCollectorModel">
+		<form class="form-group">
+			<h2>Send to collector</h2>
+			<br />
+			<label class="label" for="selector">Collector</label>
+			<select class="form-control" id="selector">
+				<option value="Echo">Echo</option>
+				<option value="Gamma">Gamma</option>
+				<option value="Texture Packer">Texture Packer</option>
+				<option value="Sparta">Sparta</option>
+			</select>
+		</form>
+		<button onclick="nodeFunctions.update_collector()" class="btn btn-default pull-right">Submit</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
+	<dialog class="inputModal" id="removeCollector">
+		<form class="form-group">
+			<h2>Remove Workflow</h2>
+			Are you sure you want to remove this collector?
+		</form>
+		<button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+	</dialog>
+	<!-------------------------------------------------------------------->
 </div>
 
 
 
 
 <!--<dialog class='nodeFlyout' id="panel.node">
-    <textarea id="myDialogText"></textarea>
-    <button onclick="closeDialog('myDialog')">Close</button>
+	<textarea id="myDialogText"></textarea>
+	<button onclick="closeDialog('myDialog')">Close</button>
 </dialog>-->
 
 

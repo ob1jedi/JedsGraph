@@ -19,9 +19,10 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		datM.propertiesObject = graphElement.toNode.properties;
 		datM.entityConfig = getConfigForEntity(datM.id);
 		var toNode = addDataNode(datM.id, datM, _sourceConfig);
-		if (toNode)
+		if (toNode) {
 			newNodes.push(toNode);
-
+			applyPopoutEffectToNode(toNode, datN.id)
+		}
 		//link R...
 		var linkdata = new linkDataType(datN.id, datM.id, graphElement.link.id, graphElement.link.labels, _sourceConfig);
 		linkdata.properties = new neoPropertyList(graphElement.link.properties);
