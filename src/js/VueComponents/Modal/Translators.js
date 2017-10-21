@@ -46,14 +46,17 @@ var XYTranslator = function () {
 		}
 		else {
 			currentNode = dataSvc.CreateEntity_AddToGraph_ReturnNode(currentEntity.labels, currentEntity.properties);
+			if (mustSelectNode(currentElement))
+				highlightSelectedNode(currentNode.id);
 		}
 
 		for (var i = 1 ; i < elements.length; i++) {
 			var nextElement = elements[i];
-			var subElements = nextElement.split('+');
+			var subElements = nextElement.split('&');
 			var relation = getRelationDetails(currentElement);
 			for (s = 0; s < subElements.length; s++) {
-				var nextEntity = getEntityDetails(subElements[s]);
+				var subElement = subElements[s];
+				var nextEntity = getEntityDetails(subElement);
 				var nextNode = null;
 				if (nextEntity === null) {
 					//...we're attaching to the currently selected node on the stage
@@ -68,6 +71,8 @@ var XYTranslator = function () {
 						//TODO: perform search...
 					//}
 					nextNode = dataSvc.CreateEntity_AddToGraph_ReturnNode(nextEntity.labels, nextEntity.properties);
+					if (mustSelectNode(subElement))
+						highlightSelectedNode(nextNode.id)
 					applyPopoutEffectToNode(nextNode, currentNode.id)
 				}
 				var link = dataSvc.CreateRelation_AddToGraph_ReturnLink(
@@ -81,6 +86,10 @@ var XYTranslator = function () {
 			currentNode = nextNode;
 		}
 	}
+	function mustSelectNode(element)
+	{
+		return element.includes('^');
+	}
 	function IsNodeSelected() {
 		//debugger;
 		if (!selectedNode) {
@@ -90,6 +99,7 @@ var XYTranslator = function () {
 		return true;
 	}
 	function getEntityDetails(element) {
+		element = element.replace('^', '');
 		var nodePart = getNodePart(element);
 		if (nodePart === '')
 			return null;

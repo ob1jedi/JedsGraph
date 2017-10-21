@@ -59,9 +59,9 @@ Vue.component('vw-info-modal', {
 	<dialog class ="inputModal" id="InfoModal">
 		<form class ="form-group">
 			<h2>{{ formulaprop.modalHeader }}</h2>
-			{{ formulaprop.modalContent }}
+			<div class ="inputModal modalContent flexcroll" v-html=formulaprop.referenceContent></div>
 		</form>
-		<button v-on:click="formulaprop.closeInfoModal" class ="btn btn-default pull-right">Save</button>
+		<button v-on:click="formulaprop.closeInfoModal" class ="btn btn-default pull-right">{{ formulaprop.modalButtonCaption }}</button>
 	</dialog>
 	`
 })
@@ -126,7 +126,7 @@ Vue.component('vw-formula-box', {
 						<label for="cmdInfo">&nbsp</label>
 						<div>
 							<button id="cmdInfo"
-								v-on:click="formulaprop.showInfoModal(formulaprop.selectedTranslator, formulaprop.reference)"
+								v-on:click="formulaprop.showInfoModal()"
 							><i class ="glyphicon glyphicon-question-sign"></i></button>
 						</div>
                     </td>
@@ -148,8 +148,9 @@ var consoleApp=new Vue({
             image: "../custom/assets/binoculars.svg"
         },
         formulaToolbar: {
-        	modalHeader: "HELLO",
-        	modalContent: "THERE",
+        	modalHeader: "",
+        	modalContent: "",
+        	modalButtonCaption: "Close",
 
         	formulaDefault: "example: x->y",
         	formulaValue: "",
@@ -167,15 +168,26 @@ var consoleApp=new Vue({
 				"C(name: Carbon, weight: 12.011)"
         	],
 			selectedExample:"",
-			reference: `
-				<p> 'John' type any word to create a node<p>
-				<p> 'John(age: 30, sex: male)' create a node with some attributes<p>
-				<p> 'node1->node2' use the '->' syntax to create a relationship between two nodes<p>
-				<p> '-->' alternative relationship syntax<p>
-				<p> '-name->' create relationship with a name<p>
-				<p> '-owns(since: 2010)->' create relationship with a name and some attributes<p>
-				<p> 'node1->node2^' use a caret '^' to select the node<p>
-				`,
+			referenceContent: `
+				Type any word to create a node, eg. <span class ="inputModal code">John</span>
+				<hr>
+				Create a node with some attributes, eg.
+					</br><span class ="inputModal code">John(age: 30, sex: male)</span>
+				<hr>
+				Create a relationship between two nodes:
+					</br><span class ="inputModal code">node1->node2</span>
+				<hr>
+				Alternative relationship syntax: <span class ="inputModal code">--></span>
+				<hr>
+				Create relationship with a name: <span class ="inputModal code">-name-></span>
+				<hr>
+				Create relationship with a name and some attributes:
+				<span class ="inputModal code">-owns(since: 2010) -></span>
+				<hr>
+				Select the node using the caret symbol:
+					</br><span class ="inputModal code">node1->node2^</span>
+				<hr>
+			`,
 			useExample: function(example){
 				var translator = new XYTranslator();
 				translator.TranslateV3(this.selectedExample);
@@ -185,9 +197,12 @@ var consoleApp=new Vue({
                 translator.TranslateV3(this.formulaValue);
                 this.formulaValue = "";
             },
-            showInfoModal: function (header, content) {
+            showInfoModal: function () {
             	//console.log('MODAL', this.isInfoModalVisible);
-            	ShowInfoModal(header, content);
+            	this.modalHeader = this.selectedTranslator.desc;
+            	this.modalContent = this.reference;
+            	this.modalButtonCaption = "Close";
+            	ShowInfoModal();
             	//this.isInfoModalVisible = true;
             },
             closeInfoModal: function () {
@@ -200,7 +215,7 @@ var consoleApp=new Vue({
     }
 })
 
-function ShowInfoModal(header, content, button) {
+function ShowInfoModal() {
 	var nodeFlyout = document.getElementById('InfoModal');
 	nodeFlyout.showModal();
 }

@@ -271,14 +271,14 @@ svg, #graphContainer, #schemaContainer {
 			letter-spacing: 1px;
 		}*/
 
-.toolPanel input{
+.toolPanel input {
 	/*width: 80px;*/
 	height: 20px;
 	margin: 2px;
 	border-radius: 3px;
 	border-color: transparent;
 	font-size: 12px;
-	width: 100px
+	width: 100px;
 }
 
 .dataNameLabel {
@@ -327,8 +327,8 @@ svg, #graphContainer, #schemaContainer {
 
 #modeIndicator {
 	text-align: center;
-    align-content: center;
-    right: 0px;
+	align-content: center;
+	right: 0px;
 	top: 5px;
 	position: fixed;
 	height: 35px;
@@ -340,20 +340,20 @@ svg, #graphContainer, #schemaContainer {
 	border-color: #8c8c8c;
 	background-color: #737373;
 	/*background-image: url("../custom/assets/binoculars.svg");*/
-	background-repeat:no-repeat;
-    padding: 5px,5px,5px,5px;
+	background-repeat: no-repeat;
+	padding: 5px,5px,5px,5px;
 }
-.modeIndicatorImage
-{
-    height: 20px;
-    margin: 0px,0px,0px,0px;
-    padding: 0px,0px,0px,0px;
+
+.modeIndicatorImage {
+	height: 20px;
+	margin: 0px,0px,0px,0px;
+	padding: 0px,0px,0px,0px;
 }
-.modeIndicatorLabel
-{
-    font-size: 10px;
-    margin-top: 0px;
-    color: yellowgreen;
+
+.modeIndicatorLabel {
+	font-size: 10px;
+	margin-top: 0px;
+	color: yellowgreen;
 }
 
 #noColumn {
@@ -392,8 +392,8 @@ svg, #graphContainer, #schemaContainer {
 
 #secondBar {
 	margin-top: 0px;
-    margin-left: 200px;
-    margin-right: 200px;
+	margin-left: 200px;
+	margin-right: 200px;
 	height: 30px;
 	padding-left: 5px;
 	padding-top: 4px;
@@ -408,8 +408,8 @@ svg, #graphContainer, #schemaContainer {
 
 #formulaBox {
 	margin-top: 0px;
-    margin-left: 200px;
-    margin-right: 200px;
+	margin-left: 200px;
+	margin-right: 200px;
 	/*height: 34px;*/
 	height: 50px;
 	padding-left: 5px;
@@ -420,60 +420,65 @@ svg, #graphContainer, #schemaContainer {
 	background-color: #0d0d0d;
 	opacity: 0.8;
 }
-#formulaBox input{
-	/*width: 80px;*/
-	height: 20px;
-	margin: 2px;
-	border-radius: 3px;
-	border-color: transparent;
-	font-size: 12px;
-}
-#formulaBox select{
-	max-width:200px;
-}
-#formulaBox table{
-	font-size:small;
-	line-height:normal;
-}
 
-#formulaBox table tr td{
-	padding-left:5px;
-	height:5px;
-}
+	#formulaBox input {
+		/*width: 80px;*/
+		height: 20px;
+		margin: 2px;
+		border-radius: 3px;
+		border-color: transparent;
+		font-size: 12px;
+	}
 
-#formulaBox label{
-	margin: 1px;
-	padding: 1px;
-	color:slategrey;
-	vertical-align: top;
-	font-size: 10px;
-}
-#formulaBox span{
-	font-size: 0px;
-}
- #formulaBox button{
-    background-color: #4d4d4d;
-	color: oldlace;
-	height: 20px;
-	border: none;
-	text-align: top;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 10px;
-	margin: 3px 1px;
-	letter-spacing: 1px;
-	-webkit-transition-duration: 0.4s; /* Safari */
-	transition-duration: 0.4s;
-	cursor: pointer;
-}
+	#formulaBox select {
+		max-width: 200px;
+	}
 
-#formulaBox select {
-	height: 20px;
-	margin: 2px;
-	border-radius: 3px;
-	border-color: transparent;
-	font-size: 12px;
-}
+	#formulaBox table {
+		font-size: small;
+		line-height: normal;
+	}
+
+		#formulaBox table tr td {
+			padding-left: 5px;
+			height: 5px;
+		}
+
+	#formulaBox label {
+		margin: 1px;
+		padding: 1px;
+		color: slategrey;
+		vertical-align: top;
+		font-size: 10px;
+	}
+
+	#formulaBox span {
+		font-size: 0px;
+	}
+
+	#formulaBox button {
+		background-color: #4d4d4d;
+		color: oldlace;
+		height: 20px;
+		border: none;
+		text-align: top;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 10px;
+		margin: 3px 1px;
+		letter-spacing: 1px;
+		-webkit-transition-duration: 0.4s; /* Safari */
+		transition-duration: 0.4s;
+		cursor: pointer;
+	}
+
+	#formulaBox select {
+		height: 20px;
+		margin: 2px;
+		border-radius: 3px;
+		border-color: transparent;
+		font-size: 12px;
+	}
 
 .over {
 	background-color: red;
@@ -542,7 +547,7 @@ svg, #graphContainer, #schemaContainer {
 	margin-left: 10px;
 	height: 37px;
 	width: 37px;
-    font-size: large;
+	font-size: large;
 	padding: 2px 2px 2px 2px;
 	border-radius: 5px;
 	border-style: none;
@@ -777,6 +782,24 @@ dialog {
 
 	.inputModal h2 {
 		margin: 0px;
+	}
+
+	.inputModal.modalContent {
+		padding: 10px;
+		width: 350px;
+		max-height: 400px;
+		color: #FFFFFF;
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 12px;
+		overflow-y:scroll;
+	}
+
+	.inputModal.code {
+		background-color: #000;
+		color: #b3ffff;
+		border: 1px solid #999;
+		font-family: monospace;
+		padding: 1px;
 	}
 
 	.inputModal button {
