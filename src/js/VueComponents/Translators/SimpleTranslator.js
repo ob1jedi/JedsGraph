@@ -1,5 +1,5 @@
 ﻿
-var XYTranslator = function () {
+var SimpleTranslator = function () {
 
 	this.TranslateV1 = function (expression) {
 		var dataSvc = new DataService();
@@ -31,7 +31,7 @@ var XYTranslator = function () {
 		return myArray;
 	}
 
-	this.TranslateV3 = function (expression) {
+	this.Translate = function (expression) {
 		var dataSvc = new DataService();
 		var elements = expression.split('->');
 		var graph = [];

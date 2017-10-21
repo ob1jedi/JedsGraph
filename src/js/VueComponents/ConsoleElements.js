@@ -189,12 +189,12 @@ var consoleApp=new Vue({
 				<hr>
 			`,
 			useExample: function(example){
-				var translator = new XYTranslator();
-				translator.TranslateV3(this.selectedExample);
+				var translator = new SimpleTranslator();
+				translator.Translate(this.selectedExample);
 			},
             formulaFunction: function(expression) {
-                var translator = new XYTranslator();
-                translator.TranslateV3(this.formulaValue);
+                var translator = new SimpleTranslator();
+                translator.Translate(this.formulaValue);
                 this.formulaValue = "";
             },
             showInfoModal: function () {
