@@ -28,7 +28,7 @@ function main() {
 
 			var unitTestFramework = new UnitTestFramework();
 			// RUN UNIT TESTS...
-			unitTestFramework.runAllUnitTests(allUnitTests);
+			unitTestFramework.runAllUnitTests(globals.allUnitTests);
 		}
 
 	}

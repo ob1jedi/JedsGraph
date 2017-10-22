@@ -13,7 +13,7 @@ function createJsonParser() {
 	return new JsonParser();
 }
 //[Test]
-allUnitTests.push(function getNextNewNodeId_Given_Expect1() {
+globals.allUnitTests.push(function getNextNewNodeId_Given_Expect1() {
 	// Arrange
 	var sut = createDataDriver();
 	localStorage.removeItem('NEXT_NODE_ID');
@@ -26,7 +26,7 @@ allUnitTests.push(function getNextNewNodeId_Given_Expect1() {
 	return (newNodeId === expectedNodeId) ? true : expectedNodeId;
 });
 
-allUnitTests.push(function getNextNewLinkId_Given_Expect1() {
+globals.allUnitTests.push(function getNextNewLinkId_Given_Expect1() {
 	// Arrange
 	var sut = createDataDriver();
 	localStorage.removeItem('NEXT_LINK_ID');
@@ -40,7 +40,7 @@ allUnitTests.push(function getNextNewLinkId_Given_Expect1() {
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNoNode_ExpectNode() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNoNode_ExpectNode() {
 	// Arrange
 	var sut = createDataDriver();
 
@@ -52,7 +52,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNoNode_E
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeId() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeId() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -65,7 +65,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNod
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeWithId() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeWithId() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -79,7 +79,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNod
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given2NodesWithIdsGetFirstNode_ExpectFirstInputNodeId() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given2NodesWithIdsGetFirstNode_ExpectFirstInputNodeId() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -95,7 +95,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given2NodesWi
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithIdAndLabel_ExpectInputNodeLabels() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithIdAndLabel_ExpectInputNodeLabels() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {
@@ -115,7 +115,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithMultipleLabels_ExpectInputNodeLabels() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithMultipleLabels_ExpectInputNodeLabels() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {
@@ -135,7 +135,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNoLabels_ExpectInputNodeNoLabels() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNoLabels_ExpectInputNodeNoLabels() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -151,7 +151,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith0Properties_ExpectInputNodeNoProperties() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith0Properties_ExpectInputNodeNoProperties() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -167,7 +167,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith1Property_ExpectInputNodeWith1Property() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith1Property_ExpectInputNodeWith1Property() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {
@@ -187,7 +187,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNumberProperty_ExpectInputNodeWithNumberProperty() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNumberProperty_ExpectInputNodeWithNumberProperty() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {
@@ -208,7 +208,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithBooleanProperty_ExpectInputNodeWithBooleanProperty() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithBooleanProperty_ExpectInputNodeWithBooleanProperty() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {
@@ -229,7 +229,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithArrayOfStringProperty_ExpectInputNodeWithArrayOfStringProperty() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithArrayOfStringProperty_ExpectInputNodeWithArrayOfStringProperty() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {
@@ -256,7 +256,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith
 });
 
 //[Test]
-allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenVerboseNode_ExpectNodeWithAllAttributes() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenVerboseNode_ExpectNodeWithAllAttributes() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {
@@ -304,7 +304,7 @@ allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenVerboseN
 });
 
 //[Test]
-allUnitTests.push(function createRelationshipPopulateAndReturnId_Given2NodeIds_ExpectLinkId0() {
+globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given2NodeIds_ExpectLinkId0() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -324,7 +324,7 @@ allUnitTests.push(function createRelationshipPopulateAndReturnId_Given2NodeIds_E
 });
 
 //[Test]
-allUnitTests.push(function createRelationshipPopulateAndReturnId_Given3NodeIds_ExpectLinkIdGreaterThan0() {
+globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given3NodeIds_ExpectLinkIdGreaterThan0() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -346,7 +346,7 @@ allUnitTests.push(function createRelationshipPopulateAndReturnId_Given3NodeIds_E
 });
 
 //[Test]
-allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNode() {
+globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNode() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -365,7 +365,7 @@ allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNode() {
 });
 
 //[Test]
-allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNodeAndLink() {
+globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNodeAndLink() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -389,7 +389,7 @@ allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNodeAndLink() 
 });
 
 //[Test]
-allUnitTests.push(function GetRelatedNodes_Given2RelatedNodes_ExpectRelatedNodeAndLink() {
+globals.allUnitTests.push(function GetRelatedNodes_Given2RelatedNodes_ExpectRelatedNodeAndLink() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -415,7 +415,7 @@ allUnitTests.push(function GetRelatedNodes_Given2RelatedNodes_ExpectRelatedNodeA
 
 
 //[Test]
-allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
+globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -428,7 +428,7 @@ allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualG
 
 	// Act
 	var results = sut.GetRelatedEntityGraph(node1Id);
-	addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
+	addNodesToGraphFromGraphElementsAndReturnNodes(results, globals.currentTheme.sourceConfig);
 
 	// Assert
 	return true;
@@ -437,7 +437,7 @@ allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualG
 
 
 //[Test]
-allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
+globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -456,7 +456,7 @@ allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualG
 
 	// Act
 	var results = sut.GetRelatedEntityGraph(node1Id);
-	addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
+	addNodesToGraphFromGraphElementsAndReturnNodes(results, globals.currentTheme.sourceConfig);
 
 	// Assert
 	return true;
@@ -464,7 +464,7 @@ allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualG
 });
 
 //[Test]
-allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
+globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -484,7 +484,7 @@ allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualG
 
 	// Act
 	var results = sut.GetRelatedEntityGraph(node1Id);
-	addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
+	addNodesToGraphFromGraphElementsAndReturnNodes(results, globals.currentTheme.sourceConfig);
 
 	// Assert
 	return true;
@@ -492,7 +492,7 @@ allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualG
 });
 
 //[Test]
-allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
+globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -505,7 +505,7 @@ allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualG
 
 	// Act
 	var results = sut.GetRelatedEntityGraph(node1Id);
-	addNodesToGraphFromGraphElementsAndReturnNodes(results, currentTheme.sourceConfig);
+	addNodesToGraphFromGraphElementsAndReturnNodes(results, globals.currentTheme.sourceConfig);
 
 	// Assert
 	return true;
@@ -513,7 +513,7 @@ allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualG
 
 
 //[Test]
-allUnitTests.push(function deleteNode_Given1DeletedNode_ExpectNodeNotFound() {
+globals.allUnitTests.push(function deleteNode_Given1DeletedNode_ExpectNodeNotFound() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
@@ -535,7 +535,7 @@ allUnitTests.push(function deleteNode_Given1DeletedNode_ExpectNodeNotFound() {
 
 //=========== DataStringHelper Tests =========================================================================================================
 //[Test]
-allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria33_ExpectIndex33() {
+globals.allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria33_ExpectIndex33() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var expected = '|';
@@ -550,7 +550,7 @@ allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria33_ExpectIndex
 });
 
 //[Test]
-allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria33_ExpectIndex33() {
+globals.allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria33_ExpectIndex33() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var arrayOfNumbers = [];
@@ -569,7 +569,7 @@ allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria33_ExpectIndex
 });
 
 //[Test]
-allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria34_ExpectIndex34() {
+globals.allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria34_ExpectIndex34() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var arrayOfNumbers = [];
@@ -588,7 +588,7 @@ allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria34_ExpectIndex
 });
 
 //[Test]
-allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria35_ExpectIndex35() {
+globals.allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria35_ExpectIndex35() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var arrayOfNumbers = [];
@@ -609,7 +609,7 @@ allUnitTests.push(function binarySearch_GivenArrayOf100AndCriteria35_ExpectIndex
 
 
 //[Test]
-allUnitTests.push(function binarySearch_GivenArrayOf1AndCriteria1_ExpectIndex1() {
+globals.allUnitTests.push(function binarySearch_GivenArrayOf1AndCriteria1_ExpectIndex1() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var arrayOfNumbers = [];
@@ -628,7 +628,7 @@ allUnitTests.push(function binarySearch_GivenArrayOf1AndCriteria1_ExpectIndex1()
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenDataStringAndCriteriaPQR_ExpectIndexPQR() {
+globals.allUnitTests.push(function stringBinarySearch_GivenDataStringAndCriteriaPQR_ExpectIndexPQR() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var arrayOfNumbers = [];
@@ -646,7 +646,7 @@ allUnitTests.push(function stringBinarySearch_GivenDataStringAndCriteriaPQR_Expe
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenEmptyDataStringAnd1Element_ExpectElementInDataString() {
+globals.allUnitTests.push(function stringBinarySearch_GivenEmptyDataStringAnd1Element_ExpectElementInDataString() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|A|";
@@ -665,7 +665,7 @@ allUnitTests.push(function stringBinarySearch_GivenEmptyDataStringAnd1Element_Ex
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenEmptyDataStringAnd1Element_ExpectElementInDataString() {
+globals.allUnitTests.push(function stringBinarySearch_GivenEmptyDataStringAnd1Element_ExpectElementInDataString() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|";
@@ -684,7 +684,7 @@ allUnitTests.push(function stringBinarySearch_GivenEmptyDataStringAnd1Element_Ex
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenDataStringAndValueOfPQC_ExpectValuePQC() {
+globals.allUnitTests.push(function stringBinarySearch_GivenDataStringAndValueOfPQC_ExpectValuePQC() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|ABC:12,|DEF|GHIJKL|MNO|PQA|PQB|PQC|PQD|PQE|PQR|STU|VWX|YZ|";
@@ -702,7 +702,7 @@ allUnitTests.push(function stringBinarySearch_GivenDataStringAndValueOfPQC_Expec
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenDataStringAndValueOfDoesntExist_ExpectIndex() {
+globals.allUnitTests.push(function stringBinarySearch_GivenDataStringAndValueOfDoesntExist_ExpectIndex() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|ABC:12,32|DEF:12|GHIJKL|MNO:1|PQA:2|PQE:2234345|PQR:2|STU:12|VWX:0|YZ:3|";
@@ -721,7 +721,7 @@ allUnitTests.push(function stringBinarySearch_GivenDataStringAndValueOfDoesntExi
 
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenDataStringAndLongerValueOfExisting_ExpectIndexNegative1() {
+globals.allUnitTests.push(function stringBinarySearch_GivenDataStringAndLongerValueOfExisting_ExpectIndexNegative1() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|ABC:12,32|DEF:12|GHIJKL|MNO:1|PQA:2|PQE:23|PQR:2|STU:12|VWX:0|YZ:3|";
@@ -736,7 +736,7 @@ allUnitTests.push(function stringBinarySearch_GivenDataStringAndLongerValueOfExi
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenStringCollection_ExpectAllPass() {
+globals.allUnitTests.push(function stringBinarySearch_GivenStringCollection_ExpectAllPass() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|ABC:12,32|DEF:12|GHIJKL|MNO:1|PQA:2|PQE:23|PQR:2|STU:12|VWX:0|YZ:3|";
@@ -763,7 +763,7 @@ allUnitTests.push(function stringBinarySearch_GivenStringCollection_ExpectAllPas
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenStringCollectionButLongerLabels_ExpectAllPass() {
+globals.allUnitTests.push(function stringBinarySearch_GivenStringCollectionButLongerLabels_ExpectAllPass() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|ABC:12,32|DEF:12|GHIJKL|MNO:1|PQA:2|PQE:23|PQR:2|STU:12|VWX:0|YZ:3|";
@@ -788,7 +788,7 @@ allUnitTests.push(function stringBinarySearch_GivenStringCollectionButLongerLabe
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenStringCollectionButShorterLabels_ExpectAllPass() {
+globals.allUnitTests.push(function stringBinarySearch_GivenStringCollectionButShorterLabels_ExpectAllPass() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|ABC:12,32|DEF:12|GHIJKL|MNO:1|PQA:2|STU:12|VWX:0|YZ:3|";
@@ -812,7 +812,7 @@ allUnitTests.push(function stringBinarySearch_GivenStringCollectionButShorterLab
 });
 
 //[Test]
-allUnitTests.push(function insertElementIntoDataString_GivenEmptyStringAndDataElement_ExpectDataElement() {
+globals.allUnitTests.push(function insertElementIntoDataString_GivenEmptyStringAndDataElement_ExpectDataElement() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|";
@@ -826,7 +826,7 @@ allUnitTests.push(function insertElementIntoDataString_GivenEmptyStringAndDataEl
 });
 
 //[Test]
-allUnitTests.push(function insertElementIntoDataString_GivenEmptyStringAndDataElement_ExpectDataElement() {
+globals.allUnitTests.push(function insertElementIntoDataString_GivenEmptyStringAndDataElement_ExpectDataElement() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -842,7 +842,7 @@ allUnitTests.push(function insertElementIntoDataString_GivenEmptyStringAndDataEl
 });
 
 //[Test]
-allUnitTests.push(function deleteElementFromDataString_GivenStorageStringAndDataElement_ExpectDataElementRemoved() {
+globals.allUnitTests.push(function deleteElementFromDataString_GivenStorageStringAndDataElement_ExpectDataElementRemoved() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -862,7 +862,7 @@ allUnitTests.push(function deleteElementFromDataString_GivenStorageStringAndData
 });
 
 //[Test]
-allUnitTests.push(function deleteElementFromDataString_GivenStorageStringAndNonExistingDataElement_ExpectNoChange() {
+globals.allUnitTests.push(function deleteElementFromDataString_GivenStorageStringAndNonExistingDataElement_ExpectNoChange() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -880,7 +880,7 @@ allUnitTests.push(function deleteElementFromDataString_GivenStorageStringAndNonE
 });
 
 //[Test]
-allUnitTests.push(function deleteElementFromDataString_GivenEmptyStorageStringAndNonExistingDataElement_ExpectNoChange() {
+globals.allUnitTests.push(function deleteElementFromDataString_GivenEmptyStorageStringAndNonExistingDataElement_ExpectNoChange() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -898,7 +898,7 @@ allUnitTests.push(function deleteElementFromDataString_GivenEmptyStorageStringAn
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenStringCollection_ExpectAllLabelParts() {
+globals.allUnitTests.push(function stringBinarySearch_GivenStringCollection_ExpectAllLabelParts() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|ABC:12,32|DEF:12|GHIJKL|MNO:1|PQA:2|STU:12|VWX:0|YZ:3|";
@@ -924,7 +924,7 @@ allUnitTests.push(function stringBinarySearch_GivenStringCollection_ExpectAllLab
 
 
 //[Test]
-allUnitTests.push(function getDataFromStorageString_GivenElement_ExpectData() {
+globals.allUnitTests.push(function getDataFromStorageString_GivenElement_ExpectData() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -940,7 +940,7 @@ allUnitTests.push(function getDataFromStorageString_GivenElement_ExpectData() {
 });
 
 //[Test]
-allUnitTests.push(function stringBinarySearch_GivenStringCollection_ExpectAllDataParts() {
+globals.allUnitTests.push(function stringBinarySearch_GivenStringCollection_ExpectAllDataParts() {
 	// Arrange
 	var sut = createDataStringHelper();
 	var input = "|ABC:12,32|DEF:12|GHIJKL|MNO:1|PQA:2|STU:12|VWX:0|YZ:3|";
@@ -964,7 +964,7 @@ allUnitTests.push(function stringBinarySearch_GivenStringCollection_ExpectAllDat
 });
 
 //[Test]
-allUnitTests.push(function replaceDataInElement_GivenElementLabel_ExpectDataUpdated() {
+globals.allUnitTests.push(function replaceDataInElement_GivenElementLabel_ExpectDataUpdated() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -981,7 +981,7 @@ allUnitTests.push(function replaceDataInElement_GivenElementLabel_ExpectDataUpda
 });
 
 //[Test]
-allUnitTests.push(function replaceDataInElement_GivenNonExistingElement_ExpectElementAndDataAdded() {
+globals.allUnitTests.push(function replaceDataInElement_GivenNonExistingElement_ExpectElementAndDataAdded() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -998,7 +998,7 @@ allUnitTests.push(function replaceDataInElement_GivenNonExistingElement_ExpectEl
 });
 
 //[Test]
-allUnitTests.push(function replaceDataInElement_GivenEmptyDataStringNonExistingElement_ExpectElementAndDataAdded() {
+globals.allUnitTests.push(function replaceDataInElement_GivenEmptyDataStringNonExistingElement_ExpectElementAndDataAdded() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -1015,7 +1015,7 @@ allUnitTests.push(function replaceDataInElement_GivenEmptyDataStringNonExistingE
 });
 
 //[Test]
-allUnitTests.push(function ensureDataIntoElement_GivenDataStringAndElement_ExpectDataAdded() {
+globals.allUnitTests.push(function ensureDataIntoElement_GivenDataStringAndElement_ExpectDataAdded() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -1032,7 +1032,7 @@ allUnitTests.push(function ensureDataIntoElement_GivenDataStringAndElement_Expec
 });
 
 //[Test]
-allUnitTests.push(function ensureDataNotInElement_GivenDataStringAndElement_ExpectDataAdded() {
+globals.allUnitTests.push(function ensureDataNotInElement_GivenDataStringAndElement_ExpectDataAdded() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -1049,7 +1049,7 @@ allUnitTests.push(function ensureDataNotInElement_GivenDataStringAndElement_Expe
 });
 
 //[Test]
-allUnitTests.push(function clearElementData_GivenElement_ExpectElementDataRemoved() {
+globals.allUnitTests.push(function clearElementData_GivenElement_ExpectElementDataRemoved() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -1065,7 +1065,7 @@ allUnitTests.push(function clearElementData_GivenElement_ExpectElementDataRemove
 });
 
 //[Test]
-allUnitTests.push(function getAllElements_GivenDataString_ExpectCorrectAmountOfElements() {
+globals.allUnitTests.push(function getAllElements_GivenDataString_ExpectCorrectAmountOfElements() {
 
 	// Arrange
 	var sut = createDataStringHelper();
@@ -1082,7 +1082,7 @@ allUnitTests.push(function getAllElements_GivenDataString_ExpectCorrectAmountOfE
 //================================================================================================================================================================
 
 //[Test]
-allUnitTests.push(function getNodeInDatabaseByLabel_Given1NodesWithLabelAndLabel_ExpectNode() {
+globals.allUnitTests.push(function getNodeInDatabaseByLabel_Given1NodesWithLabelAndLabel_ExpectNode() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = { labels: ['FindMe'] };
@@ -1094,7 +1094,7 @@ allUnitTests.push(function getNodeInDatabaseByLabel_Given1NodesWithLabelAndLabel
 });
 
 //[Test]
-allUnitTests.push(function getLinkInDatabaseByLabel_Given2NodesAndRelationshipAndLabel_ExpectLink() {
+globals.allUnitTests.push(function getLinkInDatabaseByLabel_Given2NodesAndRelationshipAndLabel_ExpectLink() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = { labels: ['ATOM'], properties: { element: "Hydrogen" } };
@@ -1119,7 +1119,7 @@ allUnitTests.push(function getLinkInDatabaseByLabel_Given2NodesAndRelationshipAn
 });
 
 //[Test]
-allUnitTests.push(function getAllNodeLabels_GivenNodesWithLabels_ExpectLabels() {
+globals.allUnitTests.push(function getAllNodeLabels_GivenNodesWithLabels_ExpectLabels() {
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = { labels: ['ThisTestLabel0'] };
@@ -1135,7 +1135,7 @@ allUnitTests.push(function getAllNodeLabels_GivenNodesWithLabels_ExpectLabels() 
 });
 
 //[Test]
-allUnitTests.push(function getNodesByPropertyName_GivenNodesWithProperties_ExpectPropertyIndex() {
+globals.allUnitTests.push(function getNodesByPropertyName_GivenNodesWithProperties_ExpectPropertyIndex() {
 	// Arrange
 	var propertyName = "uniqueProp1672";
 	var sut = createDataDriver();
@@ -1159,7 +1159,7 @@ allUnitTests.push(function getNodesByPropertyName_GivenNodesWithProperties_Expec
 });
 
 //[Test]
-allUnitTests.push(function getRelationshipByPropertyName_GivenGiven2RelatedNodes_ExpectRelationship() {
+globals.allUnitTests.push(function getRelationshipByPropertyName_GivenGiven2RelatedNodes_ExpectRelationship() {
 	// Arrange
 	var propertyName = "uniqueProp1673";
 	var sut = createDataDriver();
@@ -1200,7 +1200,7 @@ allUnitTests.push(function getRelationshipByPropertyName_GivenGiven2RelatedNodes
 //=== JSON Parser =============================================================================================================================================================
 
 //[Test]
-allUnitTests.push(function CreateGraphElementsFromJson_GivenJson_ExpectGraphElements() {
+globals.allUnitTests.push(function CreateGraphElementsFromJson_GivenJson_ExpectGraphElements() {
 	// Arrange
 	var sut = createJsonParser();
 	var inputJSON = {
@@ -1218,7 +1218,7 @@ allUnitTests.push(function CreateGraphElementsFromJson_GivenJson_ExpectGraphElem
 	};
 
 	// Act
-	var result = sut.TranslateToGraph_ReturnGraphElements('root', JSON.stringify(inputJSON), currentTheme.sourceConfig);
+	var result = sut.TranslateToGraph_ReturnGraphElements('root', JSON.stringify(inputJSON), globals.currentTheme.sourceConfig);
 
 	// Assert
 	return (result.length == 3

@@ -54,9 +54,9 @@ function Neo4jQuerySimpleSearch(fromEntity, whereProperty, equalsValue, _sourceC
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jFetchEntitiesForNode(nodeId, _sourceConfig)
 {
-	if (!nodeId) {nodeId = selectedNodeID;}
+	if (!nodeId) {nodeId = globals.selectedNodeID;}
 	var command = '';
-	switch(viewOptions.navigateDirection){
+	switch(globals.viewOptions.navigateDirection){
 	case 'child':
 		command = 'MATCH (n)-[r]->(m) WHERE ID(n) = ' + getNeoId(nodeId) + ' RETURN id(startnode(r)), labels(startnode(r)), startnode(r) , id(r), type(r), r, id(endnode(r)), labels(endnode(r)), endnode(r) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 		break;
@@ -147,7 +147,7 @@ function Neo4jInitAllNodes(_sourceConfig)
 {
 	var callback = function (nodesResult, sourceConfig) {
 		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
-		dataService.InitAllRelations(_sourceConfig);
+		globals.dataService.InitAllRelations(_sourceConfig);
 	}
 	var command = 'MATCH (n) RETURN id(n), labels(n), (n) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 	Neo4j_Command([command], callback, _sourceConfig);
@@ -176,11 +176,11 @@ function Neo4jFetchRelation(fromNodeID, toNodeID, _sourceConfig)
 
 
 function Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback) {
-	var _sourceConfig = currentTheme.sourceConfig;
-	//console.log('currentTheme', currentTheme);
+	var _sourceConfig = globals.currentTheme.sourceConfig;
+	//console.log('globals.currentTheme', globals.currentTheme);
 	var callback = function (nodesResult, sourceConfig) {
 		var ids = addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
-		//layout.setNodePosition(ids[0], 0, 0);
+		//globals.layout.setNodePosition(ids[0], 0, 0);
 		if (inputCallback)
 			inputCallback(ids);
 	};
@@ -208,7 +208,7 @@ function _convertPropertyListToNeo4jString(propList)
 
 function Neo4jUpdateEntity(nodeID, newProperties, callback) {
 	
-	var _sourceConfig = currentTheme.sourceConfig;
+	var _sourceConfig = globals.currentTheme.sourceConfig;
 	var callback = function (nodesResult, sourceConfig) {
 		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
 		if (inputCallback)
@@ -269,13 +269,13 @@ function Neo4jDeleteRelationship(relationshipID, _sourceConfig) {
 function Neo4jDeleteLabel(nodeId, labelName, _sourceConfig) {
 	var command = "MATCH (n) where ID(n) = " + getNeoId(nodeId) + " REMOVE n:" + labelName;
 	var callback = function (results, sourceConfig) {
-	    Neo4jGetNodeById(selectedNodeID, sourceConfig)
+	    Neo4jGetNodeById(globals.selectedNodeID, sourceConfig)
 	};
 	Neo4j_Command([command], callback, _sourceConfig, callback);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jAddProperty(nodeId, _sourceConfig) {
-	if (!nodeId) { nodeId = selectedNodeID }
+	if (!nodeId) { nodeId = globals.selectedNodeID }
 	var elePropKey = document.getElementById('add.property.key').value;
 	var elePropVal = document.getElementById('add.property.value').value;
 	var elePropType = document.getElementById('add.property.type').value;
@@ -284,7 +284,7 @@ function Neo4jAddProperty(nodeId, _sourceConfig) {
 	var command = "MATCH (n) where ID(n) = " + getNeoId(nodeId) + " SET n +={" + elePropKey + ":" + elePropVal + "}";
 
 	var callback = function (results, sourceConfig) {
-	    Neo4jGetNodeById(selectedNodeID, sourceConfig);
+	    Neo4jGetNodeById(globals.selectedNodeID, sourceConfig);
 	};
 	Neo4j_Command([command], callback, _sourceConfig, callback);
 }
@@ -296,10 +296,10 @@ function Neo4jAddLabel(_sourceConfig) {
 	if (!processingElement.value) return;
 
 	var callback = function (results, sourceConfig) {
-	    Neo4jGetNodeById(selectedNodeID, sourceConfig);
+	    Neo4jGetNodeById(globals.selectedNodeID, sourceConfig);
 	};
 
-	var command = "MATCH (n) where ID(n) = " + getNeoId(selectedNodeID) + " SET n:" + processingElement.value;
+	var command = "MATCH (n) where ID(n) = " + getNeoId(globals.selectedNodeID) + " SET n:" + processingElement.value;
 	Neo4j_Command([command], callback, _sourceConfig, callback);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -55,7 +55,7 @@ function nodeFlyout_Event_HideClick(nodeId) {
 }
 
 function nodeFlyout_Event_PinClick(nodeId) {
-	var node = GRAPH.getNode(nodeId);
+	var node = globals.GRAPH.getNode(nodeId);
 	unPinNode(node);
 }
 
@@ -136,20 +136,20 @@ function node_OnDrag(node, x, y) {
 //---- Node Specific: Data Nodes -------------------------------------------------------------
 
 function dataNode_OnMouseEnter(node, x, y) {
-	if (viewOptions.highlightRelated) 
+	if (globals.viewOptions.highlightRelated) 
 		highlightRelatedNodes(node.id, true);
-	if (viewOptions.highlightdescendants) 
+	if (globals.viewOptions.highlightdescendants) 
 		highlightDescendantNodes(node.id, true);
-	if (viewOptions.highlightAncestors) 
+	if (globals.viewOptions.highlightAncestors) 
 		highlightAncestorNodes(node.id, true);
 
 }
 
 function dataNode_OnMouseDown(node,x, y) {
 	highlightSelectedNode(node.id);
-	nodeFunctions = NodeFunctionsFactory.createNew(node);
-	//console.log('nodeFunctions', nodeFunctions);
-	layout.pinNode(node, true);
+	globals.nodeFunctions = NodeFunctionsFactory.createNew(node);
+	//console.log('globals.nodeFunctions', globals.nodeFunctions);
+	globals.layout.pinNode(node, true);
 	node.data.isPinned = true;
 
 
@@ -162,8 +162,8 @@ function dataNode_OnMouseDown(node,x, y) {
 	//addSubNode(node, 'Create_X', 'blue', 'X');
 	//addSubNode(node, 'Create_Y', 'red', 'Y');
 	//addSubNode(node, 'Create_Z', 'green', 'Z');
-	//var svgContainer = graphics.getGraphicsRoot().children[0];
-	//var canvas = document.getElementById('graphContainer');
+	//var svgContainer = globals.graphics.getGraphicsRoot().children[0];
+	//var canvas = document.getElementById('globals.graphContainer');
 	//var context = svgContainer.getContext('2d');
 	//context.beginPath();
 	//context.rect(x, y, x+200, y+100);
@@ -176,20 +176,20 @@ function dataNode_OnMouseDown(node,x, y) {
 }
 
 function dataNode_OnMouseUp(node, x, y) {
-	consoleService.ShowFlyout(node, x, y);
+	globals.consoleService.ShowFlyout(node, x, y);
 	// Not yet implemented.
 }
 
 function dataNode_OnMouseDblClick(node, x, y) {
-	dataService.FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
+	globals.dataService.FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
 }
 
 function dataNode_OnMouseLeave(node, x, y) {
-	if (viewOptions.highlightRelated) 
+	if (globals.viewOptions.highlightRelated) 
 		highlightRelatedNodes(node.id, false);
-	if (viewOptions.highlightdescendants) 
+	if (globals.viewOptions.highlightdescendants) 
 		highlightDescendantNodes(node.id, false);
-	if (viewOptions) 
+	if (globals.viewOptions) 
 		highlightAncestorNodes(node.id, false);
 }
 
@@ -223,8 +223,8 @@ function subNode_OnMouseUp(node, x, y) {
 function subNode_OnDrag(node, x, y) {
 	var nodeUI = node.data.UI.fullUI;
 	var parentNodeId = nodeUI.attr('parentnodeid')
-	var parentPos = layout.getNodePosition(parentNodeId);
-	var thisPos = layout.getNodePosition(nodeid);
+	var parentPos = globals.layout.getNodePosition(parentNodeId);
+	var thisPos = globals.layout.getNodePosition(nodeid);
 	var distance = calculateDistance(parentPos, thisPos);
 	var eventsHelper = new EventsHelper(node);
 	if (eventsHelper.distancePassedThreshold(distance))
@@ -232,7 +232,7 @@ function subNode_OnDrag(node, x, y) {
 
 	nodeUI.children[0].attr('r', distance / 5);
 	//nodeUI.children[1].text(Math.ceil(distance/5)+'%');
-	fixTextWidth4Node(GRAPH.getNode(nodeid));
+	fixTextWidth4Node(globals.GRAPH.getNode(nodeid));
 }
 
 //---- Node Specific: Planned Nodes -------------------------------------------------------------
@@ -350,12 +350,12 @@ NodeFunctionsFactory.update_workflow = function () {
 	var callback = function () {
 		Alert("Update applied");
 	}
-	dataService.UpdateEntity(this.node.id, this.node.data.properties, callback);
+	globals.dataService.UpdateEntity(this.node.id, this.node.data.properties, callback);
 	modal.close();
 }
 
 NodeFunctionsFactory.remove_workflow = function () {
-	dataService.GetRelatedEntityGraph(this.node.id);
+	globals.dataService.GetRelatedEntityGraph(this.node.id);
 	modal.close();
 }
 // Tool functions
@@ -378,15 +378,15 @@ NodeFunctionsFactory.update_tool = function () {
 	var callback = function () {
 		Alert("Update applied");
 	}
-	dataService.UpdateEntity(this.node.id, this.node.data.properties, callback);
+	globals.dataService.UpdateEntity(this.node.id, this.node.data.properties, callback);
 	modal.close();
 }
 
 // Common functions ...
 NodeFunctionsFactory.remove_entity = function () {
-	dataService.GetRelatedEntityGraph(this.node.id);
+	globals.dataService.GetRelatedEntityGraph(this.node.id);
 	modal.close();
 }
-//nodeFunctions.createContentSubsetNode = function () { }
-//nodeFunctions.createToolNode = function () { }
-//nodeFunctions.createCollectorNode = function () { }
+//globals.nodeFunctions.createContentSubsetNode = function () { }
+//globals.nodeFunctions.createToolNode = function () { }
+//globals.nodeFunctions.createCollectorNode = function () { }

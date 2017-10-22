@@ -57,7 +57,7 @@
 	if (!cnf.opaque == true) { popoutBodyUI.attr('fill-opacity', 0.3); }
 
 
-	//var defs = graphics.getSvgRoot().append('defs');
+	//var defs = globals.graphics.getSvgRoot().append('defs');
 	//defs.append(midMarker);
 
 	var visDefs = '<defs>';

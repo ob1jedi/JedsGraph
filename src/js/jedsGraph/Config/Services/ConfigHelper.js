@@ -6,7 +6,7 @@
         dataSvc = new DataService();
         var confId = dataSvc.CreateConfigReturnId(name, jsonConfig);
         jsonConfig.id = confId;
-        masterEntityConfigs.push(jsonConfig);
+        globals.masterEntityConfigs.push(jsonConfig);
         return confId;
     }
 
@@ -16,8 +16,8 @@
         var entity = dataSvc.GetEntityById(entityId);
         var entityConfigs = [];
 
-        entityConfigs.push(masterEntityConfigs[0]);
-        masterEntityConfigs.forEach(function (config) {
+        entityConfigs.push(globals.masterEntityConfigs[0]);
+        globals.masterEntityConfigs.forEach(function (config) {
 		    if (isConfigForEntity(entity, config)) {
 		        entityConfigs.push(config);
 		    }
@@ -49,30 +49,30 @@
 	//Set default config 
 	this.setConfigSettings = function(config) {
 
-		currentTheme.sourceConfig = config;
-		currentTheme.backgroundImage = config.displaySettings.backgroundImage;
-		currentTheme.loadNodePopouts = config.displaySettings.loadNodePopouts;
-		currentTheme.loadRelationPopouts = config.displaySettings.loadRelationPopouts;
-		currentTheme.linkThickness = config.displaySettings.linkThickness;
-		currentTheme.entityRgbRange = config.displaySettings.entityRgbRange;
-		currentTheme.graphBackground = config.displaySettings.graphBackground;
-		currentTheme.entityLabelColor = config.displaySettings.entityLabelColor;
-		currentTheme.entityCircleTextColor = config.displaySettings.entityCircleTextColor;
-		//currentTheme.entityShape = config.displaySettings.entityShape;
-		currentTheme.opaque = config.displaySettings.opaque;
-		currentTheme.labelSizing = config.displaySettings.labelSizing;
-		currentTheme.shadow = config.displaySettings.shadow;
-		currentTheme.entityBorderColor = config.displaySettings.entityBorderColor;
-		currentTheme.glow = config.displaySettings.glow;
-		currentTheme.linkColor = config.displaySettings.linkColor;
-		currentTheme.rounded = config.displaySettings.rounded;
-		currentTheme.showLabels = config.displaySettings.showLabels;
-		currentTheme.showRelationships = config.displaySettings.showRelationships;
-		currentTheme.showRelationProperties = config.displaySettings.showRelationProperties;
-		currentTheme.haze = config.displaySettings.haze;
-		currentTheme.highlightHaze = config.displaySettings.highlightHaze;
-		currentTheme.linkMainTextColor = config.displaySettings.linkMainTextColor;
-		currentTheme.linkSubTextColor = config.displaySettings.linkSubTextColor;
+		globals.currentTheme.sourceConfig = config;
+		globals.currentTheme.backgroundImage = config.displaySettings.backgroundImage;
+		globals.currentTheme.loadNodePopouts = config.displaySettings.loadNodePopouts;
+		globals.currentTheme.loadRelationPopouts = config.displaySettings.loadRelationPopouts;
+		globals.currentTheme.linkThickness = config.displaySettings.linkThickness;
+		globals.currentTheme.entityRgbRange = config.displaySettings.entityRgbRange;
+		globals.currentTheme.graphBackground = config.displaySettings.graphBackground;
+		globals.currentTheme.entityLabelColor = config.displaySettings.entityLabelColor;
+		globals.currentTheme.entityCircleTextColor = config.displaySettings.entityCircleTextColor;
+		//globals.currentTheme.entityShape = config.displaySettings.entityShape;
+		globals.currentTheme.opaque = config.displaySettings.opaque;
+		globals.currentTheme.labelSizing = config.displaySettings.labelSizing;
+		globals.currentTheme.shadow = config.displaySettings.shadow;
+		globals.currentTheme.entityBorderColor = config.displaySettings.entityBorderColor;
+		globals.currentTheme.glow = config.displaySettings.glow;
+		globals.currentTheme.linkColor = config.displaySettings.linkColor;
+		globals.currentTheme.rounded = config.displaySettings.rounded;
+		globals.currentTheme.showLabels = config.displaySettings.showLabels;
+		globals.currentTheme.showRelationships = config.displaySettings.showRelationships;
+		globals.currentTheme.showRelationProperties = config.displaySettings.showRelationProperties;
+		globals.currentTheme.haze = config.displaySettings.haze;
+		globals.currentTheme.highlightHaze = config.displaySettings.highlightHaze;
+		globals.currentTheme.linkMainTextColor = config.displaySettings.linkMainTextColor;
+		globals.currentTheme.linkSubTextColor = config.displaySettings.linkSubTextColor;
 
 
 		//setting up panels...
@@ -87,25 +87,25 @@
 		});
 
 		//Set global variable
-		config_ext = config;
+		globals.config_ext = config;
 	}
 
 	this.runStartupProcedures = function () {
 		//GET ALL LABELS>>
-		masterConfigs.forEach(function (cnf) {
+		globals.masterConfigs.forEach(function (cnf) {
 
 			if (cnf.viewOptions.prefetchLabelSelectors) {
-				dataService.GetAllEntityTypes(cnf); //..get all entity names from the DB
+				globals.dataService.GetAllEntityTypes(cnf); //..get all entity names from the DB
 			}
 
 			//GET STARTUP NODES>>
 			cnf.startupOptions.startupSearch.forEach(function (search, index) {
-				dataService.GetNodesByDetails(search.nodeLabel, search.properties, cnf)
+				globals.dataService.GetNodesByDetails(search.nodeLabel, search.properties, cnf)
 			});
 
 			//RUN STARTUP QUERIES>>
 			cnf.startupOptions.startupQueries.forEach(function (search, index) {
-				dataService.QuerySimpleSearch(search.fromEntity, search.whereProperty, search.equalsValue, cnf);
+				globals.dataService.QuerySimpleSearch(search.fromEntity, search.whereProperty, search.equalsValue, cnf);
 			});
 		});
 
@@ -124,7 +124,7 @@
 			$elPanel.setAttribute('draggable', true);
 			$elPanel.addEventListener('dragstart', handleDragStart, false);
 			$elPanel.addEventListener('dragend', handleDragEnd, false);
-			toolPanels.push($elPanel);
+			globals.toolPanels.push($elPanel);
 		}
 		else {
 			$elPanel.remove();
@@ -144,7 +144,7 @@
 	}
 
 	this.getConfig = function(apparentConfig) {
-		return apparentConfig ? apparentConfig : currentTheme.sourceConfig;
+		return apparentConfig ? apparentConfig : globals.currentTheme.sourceConfig;
 	}
 
 

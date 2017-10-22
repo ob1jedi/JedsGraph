@@ -1,10 +1,10 @@
 //Node methods
 
 function applyPopoutEffectToNode(newNode, parentNodeId) {
-	layout.pinNode(newNode, true);
-	var pos = layout.getNodePosition(parentNodeId);
-	layout.setNodePosition(newNode.id, getRandomArbitrary(pos.x - newNode.data.nodeSize / 2, pos.x + newNode.data.nodeSize / 2), getRandomArbitrary(pos.y - newNode.data.nodeSize / 2, pos.y + newNode.data.nodeSize / 2));
-	layout.pinNode(newNode, false);
+	globals.layout.pinNode(newNode, true);
+	var pos = globals.layout.getNodePosition(parentNodeId);
+	globals.layout.setNodePosition(newNode.id, getRandomArbitrary(pos.x - newNode.data.nodeSize / 2, pos.x + newNode.data.nodeSize / 2), getRandomArbitrary(pos.y - newNode.data.nodeSize / 2, pos.y + newNode.data.nodeSize / 2));
+	globals.layout.pinNode(newNode, false);
 }
 
 function applyWaitingAffectToNode(nodeId) {
@@ -120,15 +120,15 @@ function showOnNode(nodeId, text)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function increaseNodeSprings(nodeid)
 {
-	if (!nodeid){nodeid=selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNodeID;}
 	var node = getDataNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
-		var nodespring = layout.getSpring(nodeid, toNode.id);
+		var nodespring = globals.layout.getSpring(nodeid, toNode.id);
 		nodespring.length += 10;
 	});
 	node.data.fromNodes.forEach(function(toNode){
-		var nodespring = layout.getSpring(toNode.id, nodeid);
+		var nodespring = globals.layout.getSpring(toNode.id, nodeid);
 		nodespring.length += 10;
 	});
 }
@@ -137,7 +137,7 @@ function increaseNodeSprings(nodeid)
 function increaseNodeDepth(node, addDepthValue)
 {
     //set defaults...
-	if (!node){node=selectedNode;}
+	if (!node){node=globals.selectedNode;}
 	if (!addDepthValue){addDepthValue = 0.5;}
                       
     //perform transformations...
@@ -148,38 +148,38 @@ function increaseNodeDepth(node, addDepthValue)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function decreaseNodeDepth(node)
 {
-	if (!node){node=selectedNode;}
-	//nodeUI = graphics.getNodeUI(nodeid);
+	if (!node){node=globals.selectedNode;}
+	//nodeUI = globals.graphics.getNodeUI(nodeid);
 	//nodeUI.attr('depth', Number(nodeUI.attr('depth')) - 0.1);
 
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function decreaseNodeSprings(nodeid)
 {
-	if (!nodeid){nodeid=selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNodeID;}
 	var node = getDataNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
-		var nodespring = layout.getSpring(nodeid, toNode.id);
+		var nodespring = globals.layout.getSpring(nodeid, toNode.id);
 		nodespring.length -= 10;
 	});
 	node.data.fromNodes.forEach(function(toNode){
-		var nodespring = layout.getSpring(toNode.id, nodeid);
+		var nodespring = globals.layout.getSpring(toNode.id, nodeid);
 		nodespring.length -= 10;
 	});
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function increaseNodeMass(nodeid)
 {
-	if (!nodeid){nodeid=selectedNodeID;}
-	var nodebod = layout.getBody(nodeid);
+	if (!nodeid){nodeid=globals.selectedNodeID;}
+	var nodebod = globals.layout.getBody(nodeid);
 	nodebod.mass++;
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function decreaseNodeMass(nodeid)
 {
-	if (!nodeid){nodeid=selectedNodeID;}
-	var nodebod = layout.getBody(nodeid);
+	if (!nodeid){nodeid=globals.selectedNodeID;}
+	var nodebod = globals.layout.getBody(nodeid);
 	nodebod.mass--;
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -189,7 +189,7 @@ function uncheckNode(node){
 		node.data.UI.checkUI.remove();
 		node.data.UI.checkUI = undefined;
 	}
-	if (currentTheme.sourceConfig.displaySettings.loadNodePopouts){
+	if (globals.currentTheme.sourceConfig.displaySettings.loadNodePopouts){
 		if(node.data.UI.popoutTextUI){node.data.UI.popoutTextUI.attr('class','slidetext');}
 	}
 }
@@ -197,55 +197,55 @@ function uncheckNode(node){
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function highlightSelectedNode(nodeId) {
 		   
-	if (selectedNodeID != ''){
-		if (nodeId == selectedNodeID) {return;} //...we've re-clicked the same node
+	if (globals.selectedNodeID != ''){
+		if (nodeId == globals.selectedNodeID) {return;} //...we've re-clicked the same node
 		//DISPOSE PREVIOUS SELECTION
 		//remove all sub nodes...
-		if (config_ext.viewOptions.subnodes.relations=="ifany"){
-			while (selectedNode.data.subNodes.length > 0){
-				removeSubNode(selectedNode.data.subNodes[0], false);
-				selectedNode.data.subNodes.splice(0,1);
+		if (globals.config_ext.viewOptions.subnodes.relations=="ifany"){
+			while (globals.selectedNode.data.subNodes.length > 0){
+				removeSubNode(globals.selectedNode.data.subNodes[0], false);
+				globals.selectedNode.data.subNodes.splice(0,1);
 			}
 		};
-		if (currentTheme.sourceConfig.displaySettings.showRelationships == "on-highlight" && !interactionOptions.checkNodes){
+		if (globals.currentTheme.sourceConfig.displaySettings.showRelationships == "on-highlight" && !globals.interactionOptions.checkNodes){
 			//Remove previous selections visuals
-			var relevantLinks = selectedNode.data.toLinks.concat(selectedNode.data.fromLinks);
+			var relevantLinks = globals.selectedNode.data.toLinks.concat(globals.selectedNode.data.fromLinks);
 			relevantLinks.forEach(function(link){
 				unHighlightLink(link,false);
 			});
 		}
    
-		if (bRelate == true)
+		if (globals.bRelate == true)
 		{
-			if (nodeId != selectedNodeID){
-				submitCreateRelation(selectedNodeID, nodeId)
+			if (nodeId != globals.selectedNodeID){
+				submitCreateRelation(globals.selectedNodeID, nodeId)
 			}
-			bRelate=false;
+			globals.bRelate=false;
 		}
 			   
-		if (bPlanRelate==true)
+		if (globals.bPlanRelate==true)
 		{
-			if (nodeId != selectedNodeID){
-				submitCreateRelation(selectedNodeID, nodeId, true)
+			if (nodeId != globals.selectedNodeID){
+				submitCreateRelation(globals.selectedNodeID, nodeId, true)
 			}
-			bPlanRelate=false;
+			globals.bPlanRelate=false;
 		}
 			   
 	}
 
-	var node = GRAPH.getNode(nodeId);
-	selectedNodeID = nodeId;
-	selectedNodeData = node.data;
-	selectedNode = node;
+	var node = globals.GRAPH.getNode(nodeId);
+	globals.selectedNodeID = nodeId;
+	globals.selectedNodeData = node.data;
+	globals.selectedNode = node;
 
-	if (interactionOptions.checkNodes){
+	if (globals.interactionOptions.checkNodes){
 		checkNode(node);
 	}
 	else{ //...not checking nodes...
-		checkedNodes.forEach(function(nodex){
+		globals.checkedNodes.forEach(function(nodex){
 			uncheckNode(nodex);
 		});
-		checkedNodes = [];
+		globals.checkedNodes = [];
 	}
 		   
 	//Display relationship details...
@@ -259,7 +259,7 @@ function highlightSelectedNode(nodeId) {
 	showNodeDetailsInToolPanel(node);	
 
 	//show sub nodes...
-	if (config_ext.viewOptions.subnodes.relations=="ifany"){
+	if (globals.config_ext.viewOptions.subnodes.relations=="ifany"){
 		var diffCount = node.data.stats.toEntityCount - node.data.toLinks.length;
 		if (diffCount > 0) {
 			addSubNode(node, 'subto' + node.id, '#80ffe5', diffCount);
@@ -272,8 +272,8 @@ function highlightSelectedNode(nodeId) {
 }
 
 function addSelectionGraphic(node){
-	node.data.UI.fullUI.insertBefore(CommonUI.focusUI, node.data.UI.bodyUI);
-	node.data.UI.focusUI = CommonUI.focusUI
+	node.data.UI.fullUI.insertBefore(globals.CommonUI.focusUI, node.data.UI.bodyUI);
+	node.data.UI.focusUI = globals.CommonUI.focusUI
 		.attr('r', node.data.nodeSize + node.data.nodeSize / 3)//...for circle
 		.attr('stroke-width', node.data.nodeSize / 5);
 
@@ -287,17 +287,17 @@ function addSelectionGraphic(node){
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function checkNode(node)
 {
-	checkedNodes.push(node);
+	globals.checkedNodes.push(node);
 		//if(node.data.UI.fullUI){node.data.UI.fullUI.attr('stroke','#99ff33');}
 		if(!node.data.UI.checkUI){
-			CommonUI.checkUI
+			globals.CommonUI.checkUI
 				.attr('r', node.data.nodeSize + node.data.nodeSize/4)//...for circle
 				.attr('stroke-width',node.data.nodeSize/5);
-			node.data.UI.checkUI = CommonUI.checkUI.cloneNode();
+			node.data.UI.checkUI = globals.CommonUI.checkUI.cloneNode();
 			node.data.UI.fullUI.insertBefore(node.data.UI.checkUI, node.data.UI.bodyUI);
 		}
 
-		if (currentTheme.sourceConfig.displaySettings.loadNodePopouts){
+		if (globals.currentTheme.sourceConfig.displaySettings.loadNodePopouts){
 			if (!node.data.UI.popoutBodyUI){loadNodePopout(node);}
 			if(node.data.UI.popoutTextUI){
 				node.data.UI.popoutTextUI.attr('class','showtext');
@@ -312,12 +312,12 @@ function loadNodePopout(node, config)
 	if (config.displaySettings.loadNodePopouts == false)
 		return;
 
-	CommonUI.popoutTextUI.innerHTML = propertyListToSvgList(node.data.properties, '<tspan x="'+(node.data.nodeSize + 15)+'" dy="1.2em">', '</tspan>');
+	globals.CommonUI.popoutTextUI.innerHTML = propertyListToSvgList(node.data.properties, '<tspan x="'+(node.data.nodeSize + 15)+'" dy="1.2em">', '</tspan>');
 			
-	node.data.UI.popoutBodyUI = CommonUI.popoutBodyUI.cloneNode(true);
+	node.data.UI.popoutBodyUI = globals.CommonUI.popoutBodyUI.cloneNode(true);
 	node.data.UI.fullUI.append(node.data.UI.popoutBodyUI);
 			
-	node.data.UI.popoutTextUI = CommonUI.popoutTextUI.cloneNode(true);
+	node.data.UI.popoutTextUI = globals.CommonUI.popoutTextUI.cloneNode(true);
 	node.data.UI.fullUI.append(node.data.UI.popoutTextUI);
 
 	fixTextWidth4Node(node);
@@ -335,13 +335,13 @@ function showNodeDetailsInToolPanel(node)
 	html += '<table>'
 	node.data.labels.forEach(function (nodeLabel, index) {
 		if (index!=0){labellist += ', ';}
-		//var button_onclick = 'dataService.DeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
+		//var button_onclick = 'globals.dataService.DeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
 		html += '<tr>';
 		html += '  <td>';
 		html += '    <p class="dataNameLabel">Entity Number:</p>';
 		html += '  </td>';
 		html += '  <td>';
-		html += '    <p class="dataValueLabel">' + selectedNodeID + '</p>';
+		html += '    <p class="dataValueLabel">' + globals.selectedNodeID + '</p>';
 		html += '  </td>';
 		html += '</tr>';
 
@@ -415,7 +415,7 @@ function UiShow_EditEntity(node){
 }
 
 function refreshNodeAppearance(nodeId){
-	var node = GRAPH.getNode(nodeId?nodeId:selectedNodeID);
+	var node = globals.GRAPH.getNode(nodeId?nodeId:globals.selectedNodeID);
 	addNodeToGraph(node.id, node.data);
 	node.data.UI.fullUI.attr('transform', 'scale(' + node.data.depth + ')');
 
@@ -429,24 +429,24 @@ function refreshNodeAppearance(nodeId){
 		
 function refreshNodesDepths() {
 	var nodeZOrder = [];
-	for (var n = 0; n < nodeList.length; n++) {
+	for (var n = 0; n < globals.nodeList.length; n++) {
 		var inserted = false;
 		for (var z = 0; z < nodeZOrder.length; z++) {
-		    if (nodeList[n].data.depth < nodeZOrder[z].data.depth) {
-		        nodeZOrder.splice(z, 0, nodeList[n]);
+		    if (globals.nodeList[n].data.depth < nodeZOrder[z].data.depth) {
+		        nodeZOrder.splice(z, 0, globals.nodeList[n]);
 		        inserted = true;
 		        break;
 		    }
 		}
-		if (!inserted) { nodeZOrder.push(nodeList[n]); }
+		if (!inserted) { nodeZOrder.push(globals.nodeList[n]); }
 	}
 	nodeZOrder.forEach(function (znode) { refreshNodeAppearance(znode.id) });
 }
 			
 function increaseNodeSize(nodeId)
 {
-	if (!nodeId){nodeId = selectedNodeID;}
-	var node = GRAPH.getNode(nodeId);
+	if (!nodeId){nodeId = globals.selectedNodeID;}
+	var node = globals.GRAPH.getNode(nodeId);
 	node.data.nodeSize = node.data.nodeSize + 50/node.data.nodeSize;
 	//node.data.UI.popoutBodyUI.attr('x', node.data.nodeSize/2)
     //            .attr('y', -node.data.nodeSize)
@@ -474,8 +474,8 @@ function increaseNodeSize(nodeId)
 		
 function decreaseNodeSize(nodeId)
 {
-	if (!nodeId){nodeId = selectedNodeID;}
-	var node = GRAPH.getNode(nodeId);
+	if (!nodeId){nodeId = globals.selectedNodeID;}
+	var node = globals.GRAPH.getNode(nodeId);
 	node.data.nodeSize = node.data.nodeSize / 1.1;
 	addNodeToGraph(node.id,node.data);
 	decreaseNodeSprings(node.id);
@@ -483,7 +483,7 @@ function decreaseNodeSize(nodeId)
 		
 function unPinNode(node)
 {
-	layout.pinNode(node, false);
+	globals.layout.pinNode(node, false);
 	node.data.isPinned = false;
 }
 		
@@ -585,7 +585,7 @@ function evaluateAugmentsAndUpdateNodeDisplay(config, nodeData)
 //**********Generators**********
 function addPetals()
 {
-	petalize(selectedNode, 15, 0, 20, '#002533');
+	petalize(globals.selectedNode, 15, 0, 20, '#002533');
 }
 		
 function getCircumferenceCoordinates(itemCount, radius)
@@ -693,7 +693,7 @@ function getRelationCounts(nodeData, callback)
 		//petalize_image(dataNode, dataNode.data.toEntityCount, 'custom/server.svg', 10, '#0099ff');
 		//petalize_image(dataNode, dataNode.data.fromEntityCount, 'custom/placeholder.svg', 30, '#0099ff');
 	}
-	dataService.GetRelationCounts(nodeData.id, updateIndicatorNode);
+	globals.dataService.GetRelationCounts(nodeData.id, updateIndicatorNode);
 }
 		
 function removeSubNode(subNode, updateSuperNode)
@@ -710,15 +710,15 @@ function removeSubNode(subNode, updateSuperNode)
 		})
 	}
 			
-	subNode.data.fromLinks.forEach(function(link){GRAPH.removeLink(link.id)});
-	subNode.data.toLinks.forEach(function(link){GRAPH.removeLink(link.id)});
-	GRAPH.removeNode(subNode.id);			
+	subNode.data.fromLinks.forEach(function(link){globals.GRAPH.removeLink(link.id)});
+	subNode.data.toLinks.forEach(function(link){globals.GRAPH.removeLink(link.id)});
+	globals.GRAPH.removeNode(subNode.id);			
 }
 		
 function addSubNode(parentNode, id, color, displayLabel)
 {
-	//console.log('Node', GRAPH.getNode(id));
-	var existingNode = GRAPH.getNode(id);
+	//console.log('Node', globals.GRAPH.getNode(id));
+	var existingNode = globals.GRAPH.getNode(id);
 	if (existingNode)
 		return;
 	var subNodeData = new nodeDataType();
@@ -735,12 +735,12 @@ function addSubNode(parentNode, id, color, displayLabel)
 	parentNode.data.subNodes.push(subNode)
 			
 	//popout effect
-	layout.pinNode(subNode, true);
-	var pos = layout.getNodePosition(parentNode.id);
-	binaryToggle = !binaryToggle;
-	//layout.setNodePosition(subNode.id, pos.x + 10 * (binaryToggle)?-1:1, pos.y + 10* (binaryToggle)?-1:1);
-	layout.setNodePosition(subNode.id, pos.x + 10 * ((binaryToggle)?-1:1), pos.y + 10* ((binaryToggle)?-1:1));
-	layout.pinNode(subNode, false);
+	globals.layout.pinNode(subNode, true);
+	var pos = globals.layout.getNodePosition(parentNode.id);
+	globals.binaryToggle = !globals.binaryToggle;
+	//globals.layout.setNodePosition(subNode.id, pos.x + 10 * (globals.binaryToggle)?-1:1, pos.y + 10* (globals.binaryToggle)?-1:1);
+	globals.layout.setNodePosition(subNode.id, pos.x + 10 * ((globals.binaryToggle)?-1:1), pos.y + 10* ((globals.binaryToggle)?-1:1));
+	globals.layout.pinNode(subNode, false);
 
 			
 			
@@ -749,16 +749,16 @@ function addSubNode(parentNode, id, color, displayLabel)
 	linkData.color = 'transparent';
 	//linkData.fromNodeID = parent.id;
 	//linkData.toNodeID = subNodeData.id;
-	var toRelLink = GRAPH.addLink(parentNode.id, subNodeData.id, linkData);
+	var toRelLink = globals.GRAPH.addLink(parentNode.id, subNodeData.id, linkData);
 	subNode.data.fromLinks.push(toRelLink);
 	
 	//Adjust length of link...
-	var nodespring = layout.getSpring(parentNode.id, subNodeData.id);
+	var nodespring = globals.layout.getSpring(parentNode.id, subNodeData.id);
 	console.log('parentNode',parentNode);
 	nodespring.length = parentNode.data.nodeSize; //30;
 
 	//Adjust link bounciness...
-	//var nodebody = layout.getBody(id);
+	//var nodebody = globals.layout.getBody(id);
 	//nodebody.mass = 1;
 
 }
@@ -791,8 +791,8 @@ function addSatelliteToNode(node)
 		gSattelite.append(circletiny);
 		gSattelite.attr('dx',100);
 		gSattelite.attr('dy',100);
-		timeoutElements.push(new timeoutElementType(rippleCircle, 5, removeAnimatedElement));
-		timeoutElements.push(new timeoutElementType(gSattelite, 60, removeAnimatedElement));
+		globals.timeoutElements.push(new timeoutElementType(rippleCircle, 5, removeAnimatedElement));
+		globals.timeoutElements.push(new timeoutElementType(gSattelite, 60, removeAnimatedElement));
 		node.data.UI.fullUI.insertBefore(rippleCircle, node.data.UI.bodyUI);
 		node.data.UI.fullUI.insertBefore(gSattelite, node.data.UI.bodyUI);
 		gSattelite.attr('class','rotatee');

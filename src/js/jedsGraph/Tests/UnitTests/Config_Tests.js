@@ -5,7 +5,7 @@ function createConfigHelper() {
 }
 
 //[Test]
-allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
+globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 	// Arrange
 	var sut = new DataService();
 	var testEntityName = 'HELLO';
@@ -16,7 +16,7 @@ allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 		]
 	}
 	var testConfig = { "configName": configName, "configType": "node", "matchEntity": matchEntity, "config": { "attributes": { "background-color": "#33c11d", "color": "blue", "circleText": { "color": "yellow" } } } };
-	var baseNodeConfig = masterConfigs.forEach(function (config) { if (config.prefix == "BNC") return config; });
+	var baseNodeConfig = globals.masterConfigs.forEach(function (config) { if (config.prefix == "BNC") return config; });
 
 	// Act
 	var confId = sut.CreateConfigReturnId(configName, testConfig);
@@ -26,8 +26,8 @@ allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 	return (result.config.attributes.circleText.color === "yellow") ? true : result;
 });
 
-//[Test]allUnitTests
-allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndNode() {
+//[Test]globals.allUnitTests
+globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndNode() {
 	// Arrange
 	var testEntityName = 'EntityForConfig';
 	var testConfigName = 'TestConfig2';
@@ -84,7 +84,7 @@ allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndNode() {
 	var result = sut.GetConfigForEntity(entityId);
 	console.log('entityConfig', result);
 
-	console.log('masterEntityConfigs', masterEntityConfigs);
+	console.log('globals.masterEntityConfigs', globals.masterEntityConfigs);
 	// Assert
 	return (result.config.attributes.circleText.color == "green") ? true : result;
 });

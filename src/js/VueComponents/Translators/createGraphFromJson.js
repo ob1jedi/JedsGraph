@@ -53,7 +53,7 @@
 			//create a node (will only be applied if this is actually an object (not a primitive or array))
 			var nodeData = new nodeDataType();
 			nodeData.labels = [name];
-			nodeData.id = 'newnode_'+ (++processUniqueId);
+			nodeData.id = 'newnode_'+ (++globals.processUniqueId);
 			nodeData.temp = {};
 			nodeData.temp.stillRoot = stillRoot;
 			nodeData.temp.matchedNodes = []; //if '$matchon' is specified then this list will be existing matching nodes
@@ -81,10 +81,10 @@
 							}
 						});
 						
-						var eligibleNodesList = nodeList; //...Search all nodes by default
+						var eligibleNodesList = globals.nodeList; //...Search all nodes by default
 						if (onPath==true){
 							//Only search nodes on the existing path (child nodes of the parent node)...
-							eligibleNodesList = getNodesByMatchingLabels((stillRoot)? nodeList : parentNodeData.toNodes , nodeData.labels);
+							eligibleNodesList = getNodesByMatchingLabels((stillRoot)? globals.nodeList : parentNodeData.toNodes , nodeData.labels);
 						}
 						
 						nodeData.temp.matchedNodes = getNodesByMatchingProperties(eligibleNodesList, matchPropertyList);				
@@ -99,7 +99,7 @@
 					
 					else if (propName == '$rel'){//...meta data (relationship)...
 						obj[propName].forEach(function (relation){ //...iterate throguh relationships
-							var newLinkData = new linkDataType(fromNodeId, newNode.id, ++processUniqueId, relation['$name']);
+							var newLinkData = new linkDataType(fromNodeId, newNode.id, ++globals.processUniqueId, relation['$name']);
 							newLinkData.properties = [];
 							//iterate through relationship properties...
 							for (var relPropName in relation){//.forEach(function(prop){
@@ -147,7 +147,7 @@
 						{
 
 							//link this node to the parent node (will only be applied if this is actually an object (not a primitive or array))
-							var defaultLink = new linkDataType(fromNodeId, newNode.id, 'newlink_'+ (++processUniqueId), 'DEFAULT')						
+							var defaultLink = new linkDataType(fromNodeId, newNode.id, 'newlink_'+ (++globals.processUniqueId), 'DEFAULT')						
 							graphData.links.push(defaultLink);
 						}
 					}

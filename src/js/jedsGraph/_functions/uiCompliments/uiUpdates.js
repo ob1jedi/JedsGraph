@@ -6,10 +6,10 @@
 		
 		function applyConfigUpdates(_sourceConfig)
 		{
-			graphContainer = document.getElementById('graphContainer');
-			graphContainer.style.background=_sourceConfig.displaySettings.graphBackground;
+			globals.graphContainer = document.getElementById('graphContainer');
+			globals.graphContainer.style.background=_sourceConfig.displaySettings.graphBackground;
 			if (_sourceConfig.displaySettings.backgroundImage!=null){
-				graphContainer.style['background-image'] =  'url('+_sourceConfig.displaySettings.backgroundImage+')'
+				globals.graphContainer.style['background-image'] =  'url('+_sourceConfig.displaySettings.backgroundImage+')'
 			};
 		}
 		

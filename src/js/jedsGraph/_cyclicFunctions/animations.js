@@ -6,14 +6,14 @@
 			setTimeout(function(){ 
 				
 				var i = 0;
-				while(i < timeoutElements.length)
+				while(i < globals.timeoutElements.length)
 				{
-					var tele = timeoutElements[i];
+					var tele = globals.timeoutElements[i];
 					var currenttime = +new Date();
 					if (currenttime > tele.activationPoint + (tele.duration *1000))
 					{	//remove element...
 						tele.fnRemove(tele.element);
-						timeoutElements.splice(i, 1);
+						globals.timeoutElements.splice(i, 1);
 						
 					}
 					else (i++);
@@ -26,13 +26,13 @@
 		function performAnimations()
 		{	
 			//Node Update-Animations...
-			animUpdateNodes.forEach(function (node) {
+			globals.animUpdateNodes.forEach(function (node) {
 				addSatelliteToNode(node);
 			});
-			animUpdateNodes = [];
+			globals.animUpdateNodes = [];
 			
 			//Link Update-Animations...
-			animUpdateLinks.forEach(function (link) {				
+			globals.animUpdateLinks.forEach(function (link) {				
 				var circletiny2 = Viva.Graph.svg('circle')
 						.attr('cx', 1)
 						.attr('cy', 1)
@@ -43,11 +43,11 @@
 						.attr('stroke-width',0)
 				var gSattelite2 = Viva.Graph.svg('g')
 				gSattelite2.append(circletiny2);
-				timeoutElements.push(new timeoutElementType(gSattelite2, 60, removeAnimatedElement));
+				globals.timeoutElements.push(new timeoutElementType(gSattelite2, 60, removeAnimatedElement));
 				link.data.UI.midMarkerUI.append(gSattelite2);
 				gSattelite2.attr('class','rotatee');
 			});
-			animUpdateLinks = [];
+			globals.animUpdateLinks = [];
 			
 		}
 		
@@ -59,10 +59,10 @@
 		
 		function animateTest(node)
 		{	
-			if(!node){node = selectedNode;}
-			//animUpdateNodes.forEach(function (node) {
-				//var node = selectedNode;
-				var nodeUI = graphics.getNodeUI(node.id);
+			if(!node){node = globals.selectedNode;}
+			//globals.animUpdateNodes.forEach(function (node) {
+				//var node = globals.selectedNode;
+				var nodeUI = globals.graphics.getNodeUI(node.id);
 				circlex = Viva.Graph.svg('circle')
 						.attr('cx', 0)
 						.attr('cy', 0)

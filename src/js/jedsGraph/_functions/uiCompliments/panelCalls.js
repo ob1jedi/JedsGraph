@@ -1,21 +1,21 @@
 
 function createNode() {
 	var newNodeValue = document.getElementById('newNodeData').value;
-	dataService.CreateEntity_AddToGraph_ReturnNode([newNodeValue]);
+	globals.dataService.CreateEntity_AddToGraph_ReturnNode([newNodeValue]);
 }
 
 function getEntityNode() {
 	var newNodeValue = document.getElementById('nodeLabel').value;
-	dataService.GetEntitiesByType(newNodeValue);
+	globals.dataService.GetEntitiesByType(newNodeValue);
 }
 
 function GetRelatedEntityGraph() {
-	dataService.GetRelatedEntityGraph(selectedNodeID);
+	globals.dataService.GetRelatedEntityGraph(globals.selectedNodeID);
 }
 
 function deleteLink() {
-	if (!selectedLink) { return; }
-	dataService.DeleteRelationship(selectedLink.data.id);
+	if (!globals.selectedLink) { return; }
+	globals.dataService.DeleteRelationship(globals.selectedLink.data.id);
 }
 
 function submitNewEntity() {
@@ -39,12 +39,12 @@ function submitNewEntity() {
 		propIndex++;
 		propertyElement = document.getElementById('new.entity.property.key.' + propIndex);
 	}
-	dataService.CreateEntityReturnCallbackWithIds(entityName, properties);
+	globals.dataService.CreateEntityReturnCallbackWithIds(entityName, properties);
 }
 
 function submitCreateRelation(nodeID1, nodeID2, planOnly, _sourceConfig) {
-	var node1 = GRAPH.getNode(nodeID1);
-	var node2 = GRAPH.getNode(nodeID2);
+	var node1 = globals.GRAPH.getNode(nodeID1);
+	var node2 = globals.GRAPH.getNode(nodeID2);
 	if (node1.data.sourceConfig.prefix != node2.data.sourceConfig.prefix) {
 		alert('Save failed!\nYou cannot relate nodes from different sources.'); return;
 	}
@@ -68,14 +68,14 @@ function submitCreateRelation(nodeID1, nodeID2, planOnly, _sourceConfig) {
 	}
 	if (propList != '') { propList = '{' + propList + '}'; }
 
-	dataService.CreateRelation_AddToGraph_ReturnLink(nodeID1, nodeID2, [relationName], propList, _sourceConfig, planOnly);
+	globals.dataService.CreateRelation_AddToGraph_ReturnLink(nodeID1, nodeID2, [relationName], propList, _sourceConfig, planOnly);
 }
 
 function submitUpdateEntity() {
 	if (!nodeID) {
-		nodeID = selectedNodeID;
+		nodeID = globals.selectedNodeID;
 	}
-	var node = GRAPH.getNode(nodeID);
+	var node = globals.GRAPH.getNode(nodeID);
 	var _sourceConfig = node.data.sourceConfig;
 	var entityName = document.getElementById('new.entity.name').value;
 	if (!entityName || entityName == '') { alert('Save failed!\nNo entity name specified.'); return; }
@@ -102,61 +102,61 @@ function submitUpdateEntity() {
 	var callback = function() {
 		UiShow_EditEntity(node);
 	}
-	dataService.UpdateEntity(nodeID, propList, callback);
+	globals.dataService.UpdateEntity(nodeID, propList, callback);
 
 
 }
 
 function relateSelectedToNode() {
-	bRelate = true;
+	globals.bRelate = true;
 }
 
 function planRelateSelectedToNode() {
-	bPlanRelate = true;
+	globals.bPlanRelate = true;
 }
 
 function fontGrow() {
-	if (!selectedNode.data.UI.displayTextUI) { return; }
-	var fontsize = Number(selectedNode.data.UI.displayTextUI.attr('font-size'));
-	selectedNode.data.UI.displayTextUI.attr('font-size', fontsize + 1);
+	if (!globals.selectedNode.data.UI.displayTextUI) { return; }
+	var fontsize = Number(globals.selectedNode.data.UI.displayTextUI.attr('font-size'));
+	globals.selectedNode.data.UI.displayTextUI.attr('font-size', fontsize + 1);
 }
 function fontShrink() {
-	if (!selectedNode.data.UI.displayTextUI) { return; }
-	var fontsize = Number(selectedNode.data.UI.displayTextUI.attr('font-size'));
-	selectedNode.data.UI.displayTextUI.attr('font-size', fontsize - 1);
+	if (!globals.selectedNode.data.UI.displayTextUI) { return; }
+	var fontsize = Number(globals.selectedNode.data.UI.displayTextUI.attr('font-size'));
+	globals.selectedNode.data.UI.displayTextUI.attr('font-size', fontsize - 1);
 }
 function fontDown() {
-	if (!selectedNode.data.UI.displayTextUI) { return; }
-	var fontsize = Number(selectedNode.data.UI.displayTextUI.attr('y'));
-	selectedNode.data.UI.displayTextUI.attr('y', fontsize + 1);
+	if (!globals.selectedNode.data.UI.displayTextUI) { return; }
+	var fontsize = Number(globals.selectedNode.data.UI.displayTextUI.attr('y'));
+	globals.selectedNode.data.UI.displayTextUI.attr('y', fontsize + 1);
 }
 function fontUp() {
-	if (!selectedNode.data.UI.displayTextUI) { return; }
-	var fontsize = Number(selectedNode.data.UI.displayTextUI.attr('y'));
-	selectedNode.data.UI.displayTextUI.attr('y', fontsize - 1);
+	if (!globals.selectedNode.data.UI.displayTextUI) { return; }
+	var fontsize = Number(globals.selectedNode.data.UI.displayTextUI.attr('y'));
+	globals.selectedNode.data.UI.displayTextUI.attr('y', fontsize - 1);
 }
 
 
 function updateViewOptions() {
-	viewOptions.highlightRelated = document.getElementById('vo.hr').checked;
-	viewOptions.highlightAncestors = document.getElementById('vo.ha').checked;
-	viewOptions.highlightdescendants = document.getElementById('vo.hd').checked;
+	globals.viewOptions.highlightRelated = document.getElementById('vo.hr').checked;
+	globals.viewOptions.highlightAncestors = document.getElementById('vo.ha').checked;
+	globals.viewOptions.highlightdescendants = document.getElementById('vo.hd').checked;
 }
 
 function updateDragOptions() {
-	if (document.getElementById('do.flat').checked) { viewOptions.screenDragType = 'flat' };
-	if (document.getElementById('do.depth').checked) { viewOptions.screenDragType = 'depth' };
+	if (document.getElementById('do.flat').checked) { globals.viewOptions.screenDragType = 'flat' };
+	if (document.getElementById('do.depth').checked) { globals.viewOptions.screenDragType = 'depth' };
 }
 function updateViewOptions_Nav(navoption) {
-	viewOptions.navigateDirection = navoption;
+	globals.viewOptions.navigateDirection = navoption;
 }
 
 function updateInteractionOptions() {
-	interactionOptions.checkNodes = document.getElementById('vo.ch').checked;
+	globals.interactionOptions.checkNodes = document.getElementById('vo.ch').checked;
 }
 
 function unPinSelectedNode() {
-	unPinNode(selectedNode);
+	unPinNode(globals.selectedNode);
 }
 
 function ButtonSimpleSearch() {
@@ -167,7 +167,7 @@ function ButtonSimpleSearch() {
 
 	var fromProperty = document.getElementById('qbuilder.from.property').value;
 	var fromValue = document.getElementById('qbuilder.from.value').value;
-	dataService.QuerySimpleSearch(entityName, fromProperty, fromValue, getConfigByPrefix(sourcePrefix));
+	globals.dataService.QuerySimpleSearch(entityName, fromProperty, fromValue, getConfigByPrefix(sourcePrefix));
 }
 
 
@@ -252,7 +252,7 @@ function panelRemoveKeyValue(panelId) {
 }
 
 function removeLastElement() {
-	var ui = selectedNodeUI.children[selectedNodeUI.children.length - 1];
-	selectedNode.data.UI.focusUI.remove();
+	var ui = globals.selectedNodeUI.children[globals.selectedNodeUI.children.length - 1];
+	globals.selectedNode.data.UI.focusUI.remove();
 }
 

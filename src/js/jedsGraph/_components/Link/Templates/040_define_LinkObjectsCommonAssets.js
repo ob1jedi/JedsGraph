@@ -9,7 +9,7 @@ function defineLinkObjectsCommonAssets()
 {
 	//** COMMON REFERENCES ************************************************		
 	//MARKER: TRAINGLE
-	console.log('currentTheme', currentTheme);
+	console.log('globals.currentTheme', globals.currentTheme);
 	var markerTraingle = Viva.Graph.svg('marker')
 					   .attr('id', 'Triangle')
 					   .attr('viewBox', "0 0 10 10")
@@ -23,7 +23,7 @@ function defineLinkObjectsCommonAssets()
 					   
 	var markerArrow =  Viva.Graph.svg('path')
 		.attr('d', 'M 0 0 L 12 5 L 0 10 z')
-		.attr('fill',currentTheme.sourceConfig.displaySettings.linkColor);
+		.attr('fill',globals.currentTheme.sourceConfig.displaySettings.linkColor);
 	markerTraingle.append(markerArrow)
 
 					   
@@ -42,18 +42,18 @@ function defineLinkObjectsCommonAssets()
 			.attr('y', '-5')
 			.attr('width', '2')
 			.attr('height', '10')
-			.attr('fill',currentTheme.sourceConfig.displaySettings.linkColor);
+			.attr('fill',globals.currentTheme.sourceConfig.displaySettings.linkColor);
 	var markerrect2 = Viva.Graph.svg('rect')
 			.attr('x', '1')
 			.attr('y', '-5')
 			.attr('width', '2')
 			.attr('height', '10')
-			.attr('fill',currentTheme.sourceConfig.displaySettings.linkColor);
+			.attr('fill',globals.currentTheme.sourceConfig.displaySettings.linkColor);
 	markerDoubleDash.append(markerrect1);
 	markerDoubleDash.append(markerrect2);
 
 	// Marker should be defined only once in <defs> child element of root <svg> element:
-	var defs = graphics.getSvgRoot().append('defs');
+	var defs = globals.graphics.getSvgRoot().append('defs');
 	defs.append(markerTraingle);
 	defs.append(markerDoubleDash);
 }

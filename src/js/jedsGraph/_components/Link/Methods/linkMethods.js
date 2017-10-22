@@ -40,11 +40,11 @@
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		function highlightRelatedNodes(nodeId, isOn) {				   
 		   // just enumerate all realted nodes and update link color:
-		   GRAPH.forEachLinkedNode(nodeId, function(node, link){
-			   var linkUI = graphics.getLinkUI(link.id);
+		   globals.GRAPH.forEachLinkedNode(nodeId, function(node, link){
+			   var linkUI = globals.graphics.getLinkUI(link.id);
 			   if (linkUI) {
 				   if (!link.data.checked) {
-						link.data.UI.pathUI.attr('stroke', isOn ? currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)
+						link.data.UI.pathUI.attr('stroke', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)
 					}
 			   }
 		   });
@@ -59,9 +59,9 @@
 		   {
 				var descendantNode = getDataNode(descendantNodes[i]);
 				descendantNode.data.toLinks.forEach(function(link){
-					var linkUI = graphics.getLinkUI(link.id);
+					var linkUI = globals.graphics.getLinkUI(link.id);
 					if (linkUI) {
-						if (!link.data.checked) {link.data.UI.pathUI.attr('stroke', isOn ? currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)}
+						if (!link.data.checked) {link.data.UI.pathUI.attr('stroke', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)}
 					}
 				});
 				
@@ -81,9 +81,9 @@
 		   {
 				var ancestorNode = getDataNode(ancestorNodes[i]);
 				ancestorNode.data.fromLinks.forEach(function(link){
-					var linkUI = graphics.getLinkUI(link.id);
+					var linkUI = globals.graphics.getLinkUI(link.id);
 					if (linkUI) {
-						if (!link.data.checked) {link.data.UI.pathUI.attr('stroke', isOn ? currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)}
+						if (!link.data.checked) {link.data.UI.pathUI.attr('stroke', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)}
 					}
 				});
 				ancestorNode.data.fromNodes.forEach(function (node){
@@ -98,7 +98,7 @@
 				link.data.UI.pathUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness * 2);
 				link.data.UI.pathUI.attr('stroke', '#99ff33');
 				link.data.checked = true;
-				checkedLinks.push(link);
+				globals.checkedLinks.push(link);
 		}
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		function uncheckLink(link){
@@ -106,7 +106,7 @@
 				link.data.UI.pathUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness);
 				link.data.UI.pathUI.attr('stroke', link.data.color);
 				link.data.checked = false;
-				checkedLinks.map(function(l,index){if (l.data.id == link.data.id){checkedLinks.splice(index,1);}})
+				globals.checkedLinks.map(function(l,index){if (l.data.id == link.data.id){globals.checkedLinks.splice(index,1);}})
 		}
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		function toggleLink(link, bvalue) {
@@ -152,10 +152,10 @@
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		function getLinkById(linkId)
 		{
-			for (var i = 0; i < linkList.length; i++)
-				if (linkList[i].id == linkId)
-					return linkList[i];
-			//return linkList.find(function (l) { return l.data.id === linkId });
+			for (var i = 0; i < globals.linkList.length; i++)
+				if (globals.linkList[i].id == linkId)
+					return globals.linkList[i];
+			//return globals.linkList.find(function (l) { return l.data.id === linkId });
 		}
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		function showLinkData(link)
@@ -163,12 +163,12 @@
 			link.data.UI.fullUI.attr('labelVisible','true');
 			if (link.data.displayingData) {return;}
 			link.data.displayingData = true;
-			link.data.UI.nameTextUI = CommonUI.linkName.cloneNode();
+			link.data.UI.nameTextUI = globals.CommonUI.linkName.cloneNode();
 			link.data.UI.nameTextUI.innerHTML = link.data.displayLabel;
 			if(link.data.UI.midMarkerUI) {link.data.UI.midMarkerUI.append(link.data.UI.nameTextUI);}
 			
-			if(currentTheme.sourceConfig.displaySettings.showRelationProperties){			
-				link.data.UI.subTextUI = CommonUI.linkProps.cloneNode();
+			if(globals.currentTheme.sourceConfig.displaySettings.showRelationProperties){			
+				link.data.UI.subTextUI = globals.CommonUI.linkProps.cloneNode();
 				link.data.UI.subTextUI.innerHTML = propertyListToSvgList(link.data.properties, '<tspan x="0" dy="1.2em">', '</tspan>');
 				if(link.data.UI.midMarkerUI) {link.data.UI.midMarkerUI.append(link.data.UI.subTextUI);}
 			}

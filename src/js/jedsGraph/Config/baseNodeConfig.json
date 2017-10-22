@@ -73,7 +73,7 @@
 				"thingName": "flyoutButton",
 				"elementType": "button",
 				"innerHTML": "New Workflow",
-				"onclick": "nodeFunctions.show_addWorkflowModal()",
+				"onclick": "globals.nodeFunctions.show_addWorkflowModal()",
 				"tooltip": "Create new workflow"
 			}
 		],

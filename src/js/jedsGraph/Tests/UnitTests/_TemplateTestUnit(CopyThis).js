@@ -34,7 +34,7 @@ var [Template_Tests] = function () {
 	}
 
 	//[Test]
-	allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
+	globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 		// Arrange
 		//var sut = new MyService();
 		

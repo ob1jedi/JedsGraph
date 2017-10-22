@@ -1,7 +1,7 @@
 function defineNodeDrawing(){
 
 	//====== NODE DRAWING/RENDERING ...occurs continuously ========================================================================================================
-	graphics.placeNode(function (nodeUI, pos) {
+	globals.graphics.placeNode(function (nodeUI, pos) {
 		//console.log('draw-UI', nodeUI.node);
 		nodeUI.attr('transform', 'translate(' + (pos.x) + ',' + (pos.y) + ')');
 
@@ -11,9 +11,9 @@ function defineNodeDrawing(){
 	});
 
     //OVERRIDE drag drawing...
-    graphics.translateRel = function (dx, dy) {
-        var svgRoot = graphics.getSvgRoot();
-        var svgContainer = graphics.getGraphicsRoot().children[0];
+    globals.graphics.translateRel = function (dx, dy) {
+        var svgRoot = globals.graphics.getSvgRoot();
+        var svgContainer = globals.graphics.getGraphicsRoot().children[0];
 
         var p = svgRoot.createSVGPoint(),
             t = svgContainer.getCTM(),
@@ -32,27 +32,27 @@ function defineNodeDrawing(){
         var transform = "matrix(" + t.a + ", 0, 0," + t.d + "," + t.e + "," + t.f + ")";
         svgContainer.attr("transform", transform);
 
-        if (viewOptions.screenDragType == 'depth')
+        if (globals.viewOptions.screenDragType == 'depth')
             applyDepthOffset({ x: dx, y: dy })
 
-        consoleService.hideNodeFlyout();
+        globals.consoleService.hideNodeFlyout();
 
     }
 
 	
     function applyDepthOffset(offset)
     {
-        GRAPH.forEachNode(function (node, index) {
-            layout.pinNode(node, true);
-            var pos = layout.getNodePosition(node.id);
+        globals.GRAPH.forEachNode(function (node, index) {
+            globals.layout.pinNode(node, true);
+            var pos = globals.layout.getNodePosition(node.id);
             pos.x = pos.x + (offset.x * node.data.depth);
             pos.y = pos.y + (offset.y * node.data.depth);
-            layout.setNodePosition(node.id, pos.x, pos.y);
+            globals.layout.setNodePosition(node.id, pos.x, pos.y);
         });
     }
 
 
-    //graphics.getNodeUI = function (nodeId) {
+    //globals.graphics.getNodeUI = function (nodeId) {
     //    return .allNodes[nodeId];
     //}
 }

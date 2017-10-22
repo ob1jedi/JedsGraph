@@ -1,6 +1,6 @@
 ﻿
 	//[Test]
-	allUnitTests.push(function method_given_expected() {
+	globals.allUnitTests.push(function method_given_expected() {
 		// Arrange
 		var sut = new XYTranslator();
 		var expression = "x->y";

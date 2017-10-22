@@ -21,12 +21,12 @@
 
 	this.FetchEntitiesForNodeId = function (nodeId, _sourceConfig) {
 		var graphElements = dataDriver.GetRelatedEntityGraph(stripDomainFromId(nodeId));
-		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
+		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
 
 	}
 
 	this.CreateEntity_AddToGraph_ReturnNode = function (labels, properties, _sourceConfig) {
-		if (!_sourceConfig) { _sourceConfig = currentTheme.sourceConfig;}
+		if (!_sourceConfig) { _sourceConfig = globals.currentTheme.sourceConfig;}
 	    if (!properties)
 	        properties = {};
 	    var newEntity = {
@@ -83,7 +83,7 @@
 	this.GetEntitiesByType = function (byLabel, sourceConfigPrefix) {
 		//Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
 		var nodes = dataDriver.GetEntitiesByType(byLabel);
-		return addEntitiesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
+		return addEntitiesToGraphAndReturnNodes(nodes, globals.currentTheme.sourceConfig);
 	}
 
 	this.GetEntityById = function(entityId, sourceConfigPrefix) {
@@ -98,7 +98,7 @@
 		var labelData = dataDriver.GetAllEntityTypes();
 		labelData.forEach(function (labelData) {
 			var nodes = dataDriver.GetEntitiesByType(labelData);
-			addEntitiesToGraphAndReturnNodes(nodes, currentTheme.sourceConfig);
+			addEntitiesToGraphAndReturnNodes(nodes, globals.currentTheme.sourceConfig);
 		});
 		this.InitAllRelations(_sourceConfig);
 		//Neo4jInitAllNodes(_sourceConfig);
@@ -112,7 +112,7 @@
 				return dataDriver.GetGraphOfRelation(id)
 			});
 		});
-		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, currentTheme.sourceConfig);
+		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
 		//Neo4jInitAllRelations(_sourceConfig);
 	}
 
@@ -123,10 +123,10 @@
 		};
 		var nodeId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
 		var node = dataDriver.GetEntityFromDatabase(nodeId);
-		addEntitiesToGraphAndReturnNodes([node], currentTheme.sourceConfig);
+		addEntitiesToGraphAndReturnNodes([node], globals.currentTheme.sourceConfig);
 		//inputCallback(nodeId);
 		//Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);
-		updateUiComponents(entityName, 1, currentTheme.sourceConfig);
+		updateUiComponents(entityName, 1, globals.currentTheme.sourceConfig);
 	}
 
 	this.UpdateEntity = function (nodeID, newProperties, callback) {

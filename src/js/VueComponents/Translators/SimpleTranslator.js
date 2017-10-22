@@ -42,7 +42,7 @@ var SimpleTranslator = function () {
 			//...we're attaching to the currently selected node on the stage
 			//debugger;
 			if (!IsNodeSelected) return;
-			currentNode = selectedNode;
+			currentNode = globals.selectedNode;
 		}
 		else {
 			currentNode = dataSvc.CreateEntity_AddToGraph_ReturnNode(currentEntity.labels, currentEntity.properties);
@@ -63,7 +63,7 @@ var SimpleTranslator = function () {
 					if (!IsNodeSelected) {
 						return;
 					}
-					nextNode = selectedNode;
+					nextNode = globals.selectedNode;
 				}
 				else {
 					//...we need to create a new entity.
@@ -92,7 +92,7 @@ var SimpleTranslator = function () {
 	}
 	function IsNodeSelected() {
 		//debugger;
-		if (!selectedNode) {
+		if (!globals.selectedNode) {
 			alert("You must select an existing node first.");
 			return false;
 		}

@@ -4,9 +4,9 @@ function prepareGraph()
 {
 	var graph = Viva.Graph.graph();
 
-	// Custom physics... (include/exclude in the 'renderer' at the bottom of the script)
+	// Custom physics... (include/exclude in the 'globals.renderer' at the bottom of the script)
 	var idealLength = 150;
-	layout = Viva.Graph.Layout.forceDirected(graph, {
+	globals.layout = Viva.Graph.Layout.forceDirected(graph, {
 	   springLength: idealLength,
 	   springCoeff : 0.00008,
 	   //dragCoeff : 0.01,
@@ -18,8 +18,8 @@ function prepareGraph()
 		  
 	});
 
-	graphics = Viva.Graph.View.svgGraphics();
-	GRAPH = graph;
+	globals.graphics = Viva.Graph.View.svgGraphics();
+	globals.GRAPH = graph;
 }
 
 

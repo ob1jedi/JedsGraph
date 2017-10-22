@@ -71,21 +71,21 @@ configManager.configs.push( {
 					"nodeLabel": "WORKFLOW",
 					"elementType": "button",
 					"innerHTML": "Configuration",
-					"onclick": "nodeFunctions.show_updateWorkflowModal()",
+					"onclick": "globals.nodeFunctions.show_updateWorkflowModal()",
 					"tooltip": "Configure this workflow"
 				},
 				{
 					"nodeLabel": "WORKFLOW",
 					"elementType": "button",
 					"innerHTML": "New Workflow",
-					"onclick": "nodeFunctions.show_addWorkflowModal()",
+					"onclick": "globals.nodeFunctions.show_addWorkflowModal()",
 					"tooltip": "Create new workflow"
 				},
 				{
 					"nodeLabel": "WORKFLOW",
 					"elementType": "button",
 					"innerHTML": "-",
-					"onclick": "nodeFunctions.show_removeWorkflowModal()",
+					"onclick": "globals.nodeFunctions.show_removeWorkflowModal()",
 					"tooltip": "Delete this workflow"
 				},
 				{
@@ -97,35 +97,35 @@ configManager.configs.push( {
 					"nodeLabel": "WORKFLOW",
 					"elementType": "button",
 					"innerHTML": "Add Content",
-					"onclick": "nodeFunctions.show_addContentModal()",
+					"onclick": "globals.nodeFunctions.show_addContentModal()",
 					"tooltip": "Take a few files"
 				},
 				{
 					"nodeLabel": "WORKFLOW",
 					"elementType": "button",
 					"innerHTML": "Send to Tool",
-					"onclick": "nodeFunctions.show_addToolModal()",
+					"onclick": "globals.nodeFunctions.show_addToolModal()",
 					"tooltip": "Process content with tool"
 				},
 				{
 					"nodeLabel": "WORKFLOW",
 					"elementType": "button",
 					"innerHTML": "Send to Collector",
-					"onclick": "nodeFunctions.show_addCollectorModal()",
+					"onclick": "globals.nodeFunctions.show_addCollectorModal()",
 					"tooltip": "Collect processed content"
 				},
 				{
 					"nodeLabel": "TOOL",
 					"elementType": "button",
 					"innerHTML": "Configuration",
-					"onclick": "nodeFunctions.show_updateToolModal()",
+					"onclick": "globals.nodeFunctions.show_updateToolModal()",
 					"tooltip": "Adjust settings for tool"
 				},
 				{
 					"nodeLabel": "TOOL",
 					"elementType": "button",
 					"innerHTML": "Send to Tool",
-					"onclick": "nodeFunctions.show_addToolModal()",
+					"onclick": "globals.nodeFunctions.show_addToolModal()",
 					"tooltip": "Process content with tool"
 				},
 
@@ -133,17 +133,17 @@ configManager.configs.push( {
 					"nodeLabel": "COLLECTOR",
 					"elementType": "button",
 					"innerHTML": "Configuration",
-					"onclick": "nodeFunctions.show_updateCollectorModal()",
+					"onclick": "globals.nodeFunctions.show_updateCollectorModal()",
 					"tooltip": "Configure collector"
 				}
 
 			]
 	},
 
-	viewOptions: {
-		prefetchLabelSelectors: true
+	"viewOptions": {
+		"prefetchLabelSelectors": true
 	},
-	displaySettings: {
+	"displaySettings": {
 		"selectorColor": "gray",
 		"graphBackground": "linear-gradient(black, #323a39)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
 

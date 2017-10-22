@@ -3,7 +3,7 @@
 		function toggleToolPanel(panelName)
 		{
 			var panel;
-			currentTheme.sourceConfig.viewOptions.panels.map(function (p) {if (p.name==panelName){panel = p;}})
+			globals.currentTheme.sourceConfig.viewOptions.panels.map(function (p) {if (p.name==panelName){panel = p;}})
 			$elButton = document.getElementById('toolbar.'+ panel.name);
 			$elPanel = document.getElementById(panel.name);
 			$parentContainer = document.getElementById(panel.parent);
@@ -15,7 +15,7 @@
 					$elPanel.classList.remove('slide-out');
 					$elPanel.classList.add('slide-in');
 					//$parentContainer.removeChild($elPanel);
-				    timeoutElements.push(new timeoutElementType({panel:$elPanel, button:$elButton}, 1, hideToolPanel));
+				    globals.timeoutElements.push(new timeoutElementType({panel:$elPanel, button:$elButton}, 1, hideToolPanel));
 				}
 				else{//show...
 					$parentContainer.appendChild($elPanel);
@@ -66,7 +66,7 @@
 		function handleDragEnd(e) {
 		  // this/e.target is the source node.
 		  this.style.opacity = '0.9';
-		  toolPanels.forEach(function (col) {
+		  globals.toolPanels.forEach(function (col) {
 			col.classList.remove('over');
 		  });
 		}

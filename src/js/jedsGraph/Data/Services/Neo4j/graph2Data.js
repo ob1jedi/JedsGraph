@@ -1,7 +1,7 @@
 //============ NEO4J COMMAND BROKER ================================================================================================================================================================================================
 function Neo4j_Command(statements, successCallback, _sourceConfig, failCallback)
 {
-	var sourceConfig = _sourceConfig ? _sourceConfig : currentTheme.sourceConfig;
+	var sourceConfig = _sourceConfig ? _sourceConfig : globals.currentTheme.sourceConfig;
 	var body = new neo_APIcall(); 
 	statements.forEach(function(statement){
 		body.statements.push(new neo_Statement(statement));
@@ -33,36 +33,36 @@ function Neo4j_Command(statements, successCallback, _sourceConfig, failCallback)
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jCheckMonitoredNodes(_sourceConfig) {
-	if (monitoredNodes.length == 0) { return; }
+	if (globals.monitoredNodes.length == 0) { return; }
 	var id = 0;
 	var callback = function (nodesResult, sourceConfig) {
 		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
-		if (id >= monitoredNodes.length) {
+		if (id >= globals.monitoredNodes.length) {
 			performAnimations();
-			setTimeout(function () { dataService.CheckMonitoredLinks(); }, config_ext.monitoringOptions.pollInterval * 1000);
+			setTimeout(function () { globals.dataService.CheckMonitoredLinks(); }, globals.config_ext.monitoringOptions.pollInterval * 1000);
 			return;
 		}
-		var command = 'MATCH (n) WHERE ID(n) = ' + getNeoId(monitoredNodes[id++].id) + ' RETURN id(n), labels(n), n';
+		var command = 'MATCH (n) WHERE ID(n) = ' + getNeoId(globals.monitoredNodes[id++].id) + ' RETURN id(n), labels(n), n';
 		Neo4j_Command([command], callback, sourceConfig);
 	};
-	var command = 'MATCH (n) WHERE ID(n) = ' + getNeoId(monitoredNodes[id++].id) + ' RETURN id(n), labels(n), n';
+	var command = 'MATCH (n) WHERE ID(n) = ' + getNeoId(globals.monitoredNodes[id++].id) + ' RETURN id(n), labels(n), n';
 	Neo4j_Command([command], callback, _sourceConfig);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jCheckMonitoredLinks(_sourceConfig) {
-	if (monitoredLinks.length == 0) { return; }
+	if (globals.monitoredLinks.length == 0) { return; }
 	var id = 0;
 	var callback = function (relationsResult, sourceConfig) {
 		addSingleRelationFromResults(relationsResult);
-		if (id >= monitoredLinks.length) {
+		if (id >= globals.monitoredLinks.length) {
 			performAnimations();
-			setTimeout(function () { pollDatabase(); }, config_ext.monitoringOptions.pollInterval * 1000);
+			setTimeout(function () { pollDatabase(); }, globals.config_ext.monitoringOptions.pollInterval * 1000);
 			return;
 		}
-		var command = 'MATCH (n)-[r]-(m) WHERE ID(r) = ' + getNeoId(monitoredLinks[id++].data.id) + ' RETURN id(n), id(m), id(r), type(r), r';
+		var command = 'MATCH (n)-[r]-(m) WHERE ID(r) = ' + getNeoId(globals.monitoredLinks[id++].data.id) + ' RETURN id(n), id(m), id(r), type(r), r';
 		Neo4j_Command([command], callback, sourceConfig);
 	};
-	var command = 'MATCH (n)-[r]-(m) WHERE ID(r) = ' + getNeoId(monitoredLinks[id++].data.id) + ' RETURN id(n), id(m), id(r), type(r), r';
+	var command = 'MATCH (n)-[r]-(m) WHERE ID(r) = ' + getNeoId(globals.monitoredLinks[id++].data.id) + ' RETURN id(n), id(m), id(r), type(r), r';
 	Neo4j_Command([command], callback, _sourceConfig);
 }
 

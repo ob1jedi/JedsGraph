@@ -4,12 +4,12 @@
 			//get the rootmost objects amongst the check nodes...
 			var rootMostNodes = [];
 			var processedNodes = [];
-			checkedNodes.forEach(function(node) { //iterate through checked nodes...
+			globals.checkedNodes.forEach(function(node) { //iterate through checked nodes...
 				if (processedNodes.map(function(n) {return n.id}).indexOf(node.id) == -1){ //...node has not been processed yet
 					processedNodes.push(node); //...add node to processed list
 					var isRootNode = true;
 					node.data.fromNodes.forEach(function (fromnode){ //...iterate through current node's fromNodes
-						if (checkedNodes.map(function(n) {return n.id}).indexOf(node.id) > -1) //...current fromNode is in the checkedNodes list, therefore its not a rootmost node
+						if (globals.checkedNodes.map(function(n) {return n.id}).indexOf(node.id) > -1) //...current fromNode is in the globals.checkedNodes list, therefore its not a rootmost node
 						{	
 							isRootNode = false;
 							return;
@@ -18,7 +18,7 @@
 					if (isRootNode) {rootMostNodes.push(node);}
 				}
 			});
-			if (rootMostNodes.length == 0 && checkedNodes.length != 0) {rootMostNodes.push(checkedNodes[0]);}  //resolve a cyclic scenario by just picking the first checked node.
+			if (rootMostNodes.length == 0 && globals.checkedNodes.length != 0) {rootMostNodes.push(globals.checkedNodes[0]);}  //resolve a cyclic scenario by just picking the first checked node.
 
 			var rootObject = {};
 			processedNodes  = [];
@@ -94,7 +94,7 @@
 					{
 						if (processedNodes.indexOf(childNode.id) == -1)
 						{
-							if (checkedNodes.map(function(n){return n.id}).indexOf(childNode.id) > -1)
+							if (globals.checkedNodes.map(function(n){return n.id}).indexOf(childNode.id) > -1)
 							{
 								if (useArray) 
 									thisObject[nodeLabel].push(createJsonFromNode(childNode, {}, processedNodes, node));

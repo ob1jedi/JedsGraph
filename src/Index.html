@@ -212,13 +212,13 @@
 			<tr>
 				<td>from entity:</td>
 				<td>
-					<select onchange="dataService.Qbuilder('qbuilder.from.entity')" id="qbuilder.from.entity"></select>
+					<select onchange="globals.dataService.Qbuilder('qbuilder.from.entity')" id="qbuilder.from.entity"></select>
 				</td>
 			</tr>
 			<tr>
 				<td>where:</td>
 				<td>
-					<input class="dynamic2" onfocus="dataService.Qbuilder('qbuilder.from.property')" onchange="dataService.Qbuilder('qbuilder.from.property')" id="qbuilder.from.property" type="text" name="" list="qbuilder.from.selectproperty">
+					<input class="dynamic2" onfocus="globals.dataService.Qbuilder('qbuilder.from.property')" onchange="globals.dataService.Qbuilder('qbuilder.from.property')" id="qbuilder.from.property" type="text" name="" list="qbuilder.from.selectproperty">
 					<datalist id="qbuilder.from.selectproperty"></datalist>
 
 				</td>
@@ -227,7 +227,7 @@
 				<td>is:</td>
 				<td>
 					<!--select onchange="qbuilder('qbuilder.from.value')" id="qbuilder.from.value"></select-->
-					<input class="dynamic2" onfocus="dataService.Qbuilder_ClearValue('qbuilder.from.value')" onchange="dataService.Qbuilder('qbuilder.from.value')" id="qbuilder.from.value" type="text" name="" list="qbuilder.from.selectvalue">
+					<input class="dynamic2" onfocus="globals.dataService.Qbuilder_ClearValue('qbuilder.from.value')" onchange="globals.dataService.Qbuilder('qbuilder.from.value')" id="qbuilder.from.value" type="text" name="" list="qbuilder.from.selectvalue">
 					<datalist id="qbuilder.from.selectvalue"></datalist>
 
 				</td>
@@ -331,7 +331,7 @@
 					<div id="hovertext" onclick='checkAll()'>Check all</div>
 				</div>
 			</button>
-			<button onclick='dataService.InitAllNodes()'>Fetch</button>
+			<button onclick='globals.dataService.InitAllNodes()'>Fetch</button>
 			<button onclick='unPinAllNodes()'>Unpin</button>
 			<button onclick='arrangeBy2()'>Arrange</button>
 		</div>
@@ -440,7 +440,7 @@
 			<label class="label" for="txtName">Name</label>
 			<input class="form-control" if="txtName" type="text" placeholder="Enter name">
 		</form>
-		<button onclick="nodeFunctions.add_workflow()" class="btn btn-default pull-right">Submit</button>
+		<button onclick="globals.nodeFunctions.add_workflow()" class="btn btn-default pull-right">Submit</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="updateWorkflowModel">
@@ -450,7 +450,7 @@
 			<label class="label" for="txtName">Name</label>
 			<input class="form-control" if="txtName" type="text" placeholder="Enter name">
 		</form>
-		<button onclick="nodeFunctions.update_workflow()" class="btn btn-default pull-right">Save</button>
+		<button onclick="globals.nodeFunctions.update_workflow()" class="btn btn-default pull-right">Save</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="removeWorkflowModel">
@@ -458,7 +458,7 @@
 			<h2>Remove Workflow</h2>
 			Are you sure you want to remove this workflow?
 		</form>
-		<button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+		<button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
 	</dialog>
 
 	<!-------------------------------------------------------------------->
@@ -474,7 +474,7 @@
 				<option value="URI">URI</option>
 			</select>
 		</form>
-		<button onclick="nodeFunctions.add_content()" class="btn btn-default pull-right">Submit</button>
+		<button onclick="globals.nodeFunctions.add_content()" class="btn btn-default pull-right">Submit</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="updateContentModel">
@@ -489,7 +489,7 @@
 				<option value="Sparta">Sparta</option>
 			</select>
 		</form>
-		<button onclick="nodeFunctions.update_content()" class="btn btn-default pull-right">Submit</button>
+		<button onclick="globals.nodeFunctions.update_content()" class="btn btn-default pull-right">Submit</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="removeContent">
@@ -497,7 +497,7 @@
 			<h2>Remove Workflow</h2>
 			Are you sure you want to remove this content?
 		</form>
-		<button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+		<button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="addToolModal">
@@ -512,7 +512,7 @@
 				<option value="Sparta">Sparta</option>
 			</select>
 		</form>
-		<button onclick="nodeFunctions.add_tool()" class="btn btn-default pull-right">Submit</button>
+		<button onclick="globals.nodeFunctions.add_tool()" class="btn btn-default pull-right">Submit</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="updateToolModel">
@@ -527,7 +527,7 @@
 				<option value="Sparta">Sparta</option>
 			</select>
 		</form>
-		<button onclick="nodeFunctions.update_tool()" class="btn btn-default pull-right">Submit</button>
+		<button onclick="globals.nodeFunctions.update_tool()" class="btn btn-default pull-right">Submit</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="removeTool">
@@ -535,7 +535,7 @@
 			<h2>Remove Workflow</h2>
 			Are you sure you want to remove this tool?
 		</form>
-		<button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+		<button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="addCollectorModal">
@@ -550,7 +550,7 @@
 				<option value="Sparta">Sparta</option>
 			</select>
 		</form>
-		<button onclick="nodeFunctions.add_collector()" class="btn btn-default pull-right">Submit</button>
+		<button onclick="globals.nodeFunctions.add_collector()" class="btn btn-default pull-right">Submit</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="updateCollectorModel">
@@ -565,7 +565,7 @@
 				<option value="Sparta">Sparta</option>
 			</select>
 		</form>
-		<button onclick="nodeFunctions.update_collector()" class="btn btn-default pull-right">Submit</button>
+		<button onclick="globals.nodeFunctions.update_collector()" class="btn btn-default pull-right">Submit</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 	<dialog class="inputModal" id="removeCollector">
@@ -573,7 +573,7 @@
 			<h2>Remove Workflow</h2>
 			Are you sure you want to remove this collector?
 		</form>
-		<button onclick="nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+		<button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
 	</dialog>
 	<!-------------------------------------------------------------------->
 </div>

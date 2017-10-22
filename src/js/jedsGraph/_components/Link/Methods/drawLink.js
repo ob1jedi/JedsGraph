@@ -1,7 +1,7 @@
 function defineLinkDrawing(){
 	//LINKS DRAWING/RENDERING (occurs continuously for every link...)
 	//var geom = Viva.Graph.geom();
-	graphics.placeLink(function(linkUI, fromPos, toPos) {
+	globals.graphics.placeLink(function(linkUI, fromPos, toPos) {
 		var linkDataIndex = linkUI.attr('linkDataIndex');	
 		var linkIndex = linkUI.attr('linkPos');
 
@@ -37,13 +37,13 @@ function defineLinkDrawing(){
 		//Flip the text orientation on relationships so that the text is never upside down...
 		if (linkUI.attr('labelVisible') == 'true'){
 			if (to.x > 0 && (linkUI.attr('textOrient') == '0' || linkUI.attr('textOrient') == '-1')){
-				linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(1,1)');
+				globals.linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(1,1)');
 				linkUI.attr('textOrient','1');
 
 			}
 			else if (to.x < 0 && (linkUI.attr('textOrient') == '1' || linkUI.attr('textOrient') == '-1')){
 				linkUI.attr('textOrient', '0');
-				linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(-1,-1)');
+				globals.linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(-1,-1)');
 
 			}
 		}
@@ -77,7 +77,7 @@ function defineLinkDrawing(){
 		//Place arrow marker...		
 		if (linkDataIndex){
 			var rad = toNodeRadius/6.5 + 2.4 //...'2' is the height of the triangle
-			if(linkList[Number(linkDataIndex)]){linkList[Number(linkDataIndex)].data.UI.toMarkerUI.attr('refX', rad);}
+			if(globals.linkList[Number(linkDataIndex)]){globals.linkList[Number(linkDataIndex)].data.UI.toMarkerUI.attr('refX', rad);}
 		}
 
 		//Set dashed-pattern if the link is actually a planned link...

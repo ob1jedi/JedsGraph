@@ -114,12 +114,12 @@
 		{
 			var _callback = function (ids) {
 				for (var i = 0; i < ids.length; i++) {
-					var newNode = GRAPH.getNode(ids[i]);
-					//layout.pinNode(newNode, true);
-					//var parentPosition = layout.getNodePosition(parentNodeId);
-					//layout.setNodePosition(ids[i], parentPosition.x, parentPosition.y);
-					dataService.CreateRelation_AddToGraph_ReturnLink(parentNodeId, ids[i], [relationName], relationProperties);
+					var newNode = globals.GRAPH.getNode(ids[i]);
+					//globals.layout.pinNode(newNode, true);
+					//var parentPosition = globals.layout.getNodePosition(parentNodeId);
+					//globals.layout.setNodePosition(ids[i], parentPosition.x, parentPosition.y);
+					globals.dataService.CreateRelation_AddToGraph_ReturnLink(parentNodeId, ids[i], [relationName], relationProperties);
 				}
 			}
-			dataService.CreateEntityReturnCallbackWithIds(newNodeName, nodeProperties, _callback);
+			globals.dataService.CreateEntityReturnCallbackWithIds(newNodeName, nodeProperties, _callback);
 		}

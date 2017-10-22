@@ -3,7 +3,7 @@ function defineLinkObjects()
 {
 	//LINKS SETUP (occurs once for every link...)
 	//** UNIQUE REFERENCES ************************************************
-	graphics.link(function(link){ //...get called for every link
+	globals.graphics.link(function(link){ //...get called for every link
 		//====== DATA LINKS ========================================================================================================
 		if (link.data.linkType == 'data')
 		{
@@ -70,7 +70,7 @@ function defineLinkObjects()
 				*/
 				
 				endMarker.append(endArrow);
-				var defs = graphics.getSvgRoot().append('defs');
+				var defs = globals.graphics.getSvgRoot().append('defs');
 				defs.append(midMarker);
 				defs.append(endMarker);
 
@@ -152,7 +152,7 @@ function defineLinkObjects()
 			});
 			
 			$(linkPath).click(function() { // MOUSE CLICK
-			    selectedLink = link;
+			    globals.selectedLink = link;
 			    showLinkDetails(link);
 				toggleLink(link);
 			});
@@ -162,10 +162,10 @@ function defineLinkObjects()
 			link.data.UI.popoutBodyUI = linkRect;
 			link.data.UI.popoutTextUI = linkPoputText;
 			
-			//var linkUI = graphics.getLinkUI(link.id);
+			//var linkUI = globals.graphics.getLinkUI(link.id);
 			if (link.data.linkType == 'data'){
 				ui.attr('fromNode',link.data.fromNodeID).attr('toNode',link.data.toNodeID);
-				ui.attr('linkDataIndex',linkList.length);//default
+				ui.attr('linkDataIndex',globals.linkList.length);//default
 			}
 			ui.attr('fromNodeRadius',25); //default
 			ui.attr('toNodeRadius',25);//default

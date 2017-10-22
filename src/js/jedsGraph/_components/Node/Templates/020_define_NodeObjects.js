@@ -2,7 +2,7 @@
 
 function defineNodes() {
 	//Node elements...
-	graphics.node(function (node) {
+	globals.graphics.node(function (node) {
 
 		nodeOuterLayer = Viva.Graph.svg('g');
 		nodeLayer = Viva.Graph.svg('g');

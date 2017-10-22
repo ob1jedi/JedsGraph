@@ -30,8 +30,8 @@ function JsonParser() {
             var link = dataService.CreateRelation_AddToGraph_ReturnLink(_graphRelations[e].fromEntity.id, _graphRelations[e].toEntity.id, _graphRelations[e].labels, _graphRelations[e].properties);
             var newGraphElement = new GraphElement();
             console.log('link', link);
-            newGraphElement.fromNode = GRAPH.getNode(link.fromId);
-            newGraphElement.toNode = GRAPH.getNode(link.toId);
+            newGraphElement.fromNode = globals.GRAPH.getNode(link.fromId);
+            newGraphElement.toNode = globals.GRAPH.getNode(link.toId);
             newGraphElement.link = link;
             graphElements.push(newGraphElement);
         }

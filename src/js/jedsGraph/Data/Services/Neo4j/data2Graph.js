@@ -32,9 +32,9 @@ function addNodesFromResults(nodesResults, _sourceConfig)
 			var fromNode = addDataNode(datN.id, datN, _sourceConfig);
 			if (fromNode)
 				newNodes.push(fromNode);
-			//if (!GRAPH.getNode(row[I_N_ID])){
-			//	var pos = layout.getNodePosition(row[I_N_ID]);
-			//	layout.setNodePosition(row[I_N_ID], pos.x, pos.y);
+			//if (!globals.GRAPH.getNode(row[I_N_ID])){
+			//	var pos = globals.layout.getNodePosition(row[I_N_ID]);
+			//	globals.layout.setNodePosition(row[I_N_ID], pos.x, pos.y);
 			//}
 			//Node M...
 			var datM = new nodeDataType();
