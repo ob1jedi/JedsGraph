@@ -10,46 +10,48 @@
 		gtag('config', 'UA-108035161-1');
 	</script>
 
+    <title>Graphex</title>
+    <link rel="icon" href="nodes1.png">
+    
+    <!-- inject:css -->
+    <!-- endinject -->
 
-	<title>Graph Engine</title>
-	<!--DEPENDENCIES-->
-	<!--Bootstrap-->
+	<!----------- DEPENDENCIES -------->
+	<!------------ Bootstrap ---------->
 	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
 	<link href="deps/bootstrap.min.css" rel="stylesheet">
-
-	<!--JQuery-->
+	<!--------- JQuery --------->
 	<!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>-->
 	<script src="deps/jquery-1.11.1.min.js"></script>
-
 	<!--<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>-->
 	<script src="deps/jquery.mobile-1.4.5.min.js"></script>
-
 	<!--<script src="https://unpkg.com/vue"></script>-->
 	<script src="deps/vue.js"></script>
+    <!------- Vivagraph -------->
+    <!--<script type="text/javascript" src="deps/vivagraph.js"></script>-->
+    <script src="deps/vivagraph.min.js"></script>
 
-	<!--CUSTOM-->
+	<!-- CONFIG -->
 	<link href="css/jedsGraph.css" rel="stylesheet">
-	<script type="text/javascript" src="deps/vivagraph.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/Config/configloader.json"></script>
+	<script type="text/javascript" src="custom/config/configloader.json"></script>
 	<script type="text/javascript" src="custom/config/defaultConfig.json"></script>
+    <script type="text/javascript" src="custom/config/Data1.json"></script>
 
-	<!-- Developer custom configuration -->
-	<script type="text/javascript" src="custom/config/Data1.json"></script>
+    <!-- SCRIPTS -->
 	<script type="text/javascript" src="js/jedsGraph/Config/baseGraphConfig.json"></script>
 	<script type="text/javascript" src="js/jedsGraph/Config/baseLinkConfig.json"></script>
 	<script type="text/javascript" src="js/jedsGraph/Config/baseNodeConfig.json"></script>
-
 	<script type="text/javascript" src="js/jedsGraph/_factoryClasses/NodeFunctions.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Config/Services/ConfigHelper.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTestFramework.js"></script>
-	<!-- Declarative scripts -->
+    <script type="text/javascript" src="js/VueComponents/Translators/SimpleTranslator.js"></script>
+    <script type="text/javascript" src="js/VueComponents/Translators/createGraphFromJson.js"></script>
+    <script type="text/javascript" src="js/VueComponents/Translators/createJsonFromGraph.js"></script>
+    <script type="text/javascript" src="js/VueComponents/Translators/JsonParser.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/panelCalls.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/toolPanelMangement.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_functions/uiCompliments/uiUpdates.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_functions/citizenMethods.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/Parsers/createGraphFromJson.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/Parsers/createJsonFromGraph.js"></script>
-	<script type="text/javascript" src="js/jedsGraph/Parsers/JsonParser.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_functions/generalMethods.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_components/Graph/Methods/graphMethods.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_components/Link/Methods/linkMethods.js"></script>
@@ -60,16 +62,12 @@
 	<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/data2Graph.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/neo4j.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/graph2Data.js"></script>
-	<!--<script type="text/javascript" src="js/jedsGraph/Data/Services/Neo4j/DataService_Neo4jAdapter.js"></script>-->
 	<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/DataService_LocalStorageAdapter.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/data2Graph.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/LocalStorageDataDriver.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Data/Services/LocalStorage/DataStringHelper.js"></script>
-
 	<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/animations.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_cyclicFunctions/dataMonitoring.js"></script>
-
-	<!-- Procedural scripts -->
 	<script type="text/javascript" src="js/jedsGraph/Models/Entity.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/Relationship.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/DataEntity.js"></script>
@@ -87,21 +85,15 @@
 	<script type="text/javascript" src="js/jedsGraph/_components/Node/Appearances/defineNodeAppearance_dataNode.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_components/Node/Appearances/defineNodeAppearance_plannedNode.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/_components/Node/Appearances/defineNodeAppearance_subNode.js"></script>
-
 	<script type="text/javascript" src="js/jedsGraph/Models/propertyType.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/themeType.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/timeoutElementType.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/viewOptionsType.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/GraphElement.js"></script>
 
-	<!--INITIALIZATION-->
 	<script type="text/javascript" src="js/jedsGraph/020_define_globals.js"></script>
-
-	<!--UNIT TESTS-->
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/DataDriver_LocalStorage_Tests.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/Config_Tests.js"></script>
-
-	<!--MAIN SEQUENCE-->
 	<script type="text/javascript" src="js/jedsGraph/Config/initializeConfiguration.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/030_initSequence/012.setup_UI.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_run_mainSequence.js"></script>
@@ -114,7 +106,9 @@
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/070_render_GraphObject(starts_up_Cycles).js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/080_set_UiStartupSettings.js"></script>
 
-	<script type="text/javascript" src="js/VueComponents/Translators/SimpleTranslator.js"></script>
+
+	
+
 
 </head>
 
@@ -169,6 +163,10 @@
 		<button onclick="submitJsonForGraph()">Submit</button>
 		<button onclick="closeDialog('json2GraphDlg')">Cancel</button>
 	</dialog>
+
+
+    <!-- inject:js -->
+    <!-- endinject -->
 
 	<!--VUE Scrips-->
 	<script src="js/VueComponents/ConsoleElements.js"></script>
