@@ -1,36 +1,6 @@
 ﻿
 var SimpleTranslator = function () {
 
-	this.TranslateV1 = function (expression) {
-		var dataSvc = new DataService();
-		var nodes = expression.split("->");
-		var newNodes = [];
-		nodes.forEach(function (nodeLabel) {
-			var newNode = dataSvc.CreateEntity_AddToGraph_ReturnNode([nodeLabel.trim()]);
-			newNodes.push(newNode);
-		});
-		if (newNodes.length > 1) {
-			for (var i = 0; i < newNodes.length - 1; i++) {
-				var newlink = dataSvc.CreateRelation_AddToGraph_ReturnLink(newNodes[i].id, newNodes[i + 1].id, "");
-			}
-		}
-	}
-
-	this.TranslateV2 = function (expression) {
-		var dataSvc = new DataService();
-
-		var nodes = getNodes(expression);
-		nodes.forEach(function (nodeName) {
-			dataSvc.CreateEntity_AddToGraph_ReturnNode([nodeName.trim()]);
-		});
-	}
-	function getNodes(expression) {
-		var myRe = />*{.+}-*/g;
-		var myArray = myRe.exec(expression);
-		debugger;
-		return myArray;
-	}
-
 	this.Translate = function (expression) {
 		var dataSvc = new DataService();
 		var elements = expression.split('->');

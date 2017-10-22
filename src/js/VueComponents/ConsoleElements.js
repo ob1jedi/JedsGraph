@@ -85,7 +85,7 @@ Vue.component('vw-formula-box', {
                     <td>
 						<label for="txtFormulaInput">Formula</label>
                         <input class="dynamic3" id="txtFormulaInput"
-							v-on:keyup.enter="formulaprop.formulaFunction(formulaprop.formulaValue)"
+							v-on:keyup.enter="formulaprop.executeFormula()"
 							v-model='formulaprop.formulaValue'
 							v-bind:placeholder="formulaprop.formulaDefault">
 						</input>
@@ -94,7 +94,7 @@ Vue.component('vw-formula-box', {
 						<label for="cmdFormulaGenerate">&nbsp</label>
 						<div>
 							<button class ="mybutton" id="cmdFormulaGenerate"
-								v-on:click="formulaprop.formulaFunction(formulaprop.formulaValue)">
+								v-on:click="formulaprop.executeFormula(formulaprop.formulaValue)">
 								generate
 							</button>
 						</div>
@@ -103,10 +103,11 @@ Vue.component('vw-formula-box', {
 						<label for="cboFormulaTranslator">Translator</label>
                         <select id="cboFormulaTranslator"
 							v-model="formulaprop.selectedTranslator"
+                            v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslator)"
 							><option
 								v-for="item in formulaprop.translators"
 								v-bind:value="item.desc"
-								v-bind:key="item.id"
+								v-bind:key="item.desc"
 							>{{item.desc}}</option>
 						</select>
                     </td>
@@ -114,7 +115,7 @@ Vue.component('vw-formula-box', {
 						<label for="cboFormulaExamples">Examples</label>
 						<select id="cboFormulaExamples" name="formulaExample"
 							v-model="formulaprop.selectedExample"
-							v-on:change="formulaprop.useExample(formulaprop.selectedExample)"
+							v-on:change="formulaprop.executeExampleFormula()"
 							><option
 								v-for="item in formulaprop.examples"
 								v-bind:value="item"
@@ -156,9 +157,11 @@ var consoleApp=new Vue({
         	formulaValue: "",
         	appendValue: true,
         	translators: [
-				{ id: 1, desc: "simple X->Y" }
+				{ id: 1, desc: "simple X->Y", translator: SimpleTranslator },
+                { id: 2, desc: "Json 1", translator: JsonTranslator }
         	],
-        	selectedTranslator: { id: 1, desc: "simple X->Y" },
+        	selectedTranslator: "simple X->Y",
+            currentTranslator: { id: 1, desc: "simple X->Y", translator: SimpleTranslator },
         	examples: [
 				"x->y",
 				"Sam->John->Bob",
@@ -188,18 +191,27 @@ var consoleApp=new Vue({
 					</br><span class ="inputModal code">node1->node2^</span>
 				<hr>
 			`,
-			useExample: function(example){
-				var translator = new SimpleTranslator();
-				translator.Translate(this.selectedExample);
-			},
-            formulaFunction: function(expression) {
-                var translator = new SimpleTranslator();
+            selectTranslator: function(value){
+                var currentScope = this;
+                this.translators.forEach( function (trans){
+                    if (trans.desc === value){
+                        currentScope.currentTranslator = trans;
+                        return;
+                    }
+                });
+            },
+            executeFormula: function() {
+                var translator = new this.currentTranslator.translator();
                 translator.Translate(this.formulaValue);
                 this.formulaValue = "";
             },
+            executeExampleFormula: function(){
+				var translator = new this.currentTranslator.translator();
+				translator.Translate(this.selectedExample);
+			},
             showInfoModal: function () {
             	//console.log('MODAL', this.isInfoModalVisible);
-            	this.modalHeader = this.selectedTranslator.desc;
+            	this.modalHeader = this.currentTranslator.desc;
             	this.modalContent = this.reference;
             	this.modalButtonCaption = "Close";
             	ShowInfoModal();

@@ -1,6 +1,12 @@
-function JsonParser() {
+function JsonTranslator() {
     var _graphEntities = [];
     var _graphRelations = [];
+
+    this.Translate = function (expression) {
+		var translator = new JsonTranslator();
+        console.log('expression', expression);
+		translator.TranslateToGraph_ReturnGraphElements('root', expression);
+    }
 
     this.TranslateToGraph_ReturnGraphElements = function (objectName, jsonString, _sourceConfig)
     {

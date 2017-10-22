@@ -10,7 +10,7 @@ function createDataStringHelper() {
 }
 
 function createJsonParser() {
-	return new JsonParser();
+	return new JsonTranslator();
 }
 //[Test]
 globals.allUnitTests.push(function getNextNewNodeId_Given_Expect1() {
