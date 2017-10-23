@@ -1221,6 +1221,6 @@ globals.allUnitTests.push(function CreateGraphElementsFromJson_GivenJson_ExpectG
 	var result = sut.TranslateToGraph_ReturnGraphElements('root', JSON.stringify(inputJSON), globals.currentTheme.sourceConfig);
 
 	// Assert
-	return (result.length == 3
+	return (result.length == 2
 		&& result[0].fromNode.data.labels[0] == "Parent") ? true : result;
 });

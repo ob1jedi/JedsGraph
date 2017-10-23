@@ -2,6 +2,20 @@ function JsonTranslator() {
     var _graphEntities = [];
     var _graphRelations = [];
 
+    this.Name = "Json 1";
+    this.Examples = [
+						'{"x":{"y":{}}}',
+						'{"Sam":{"Bob":{"John":{}}}}'
+    ];
+    this.ReferenceContent = `
+						Objects are nodes, eg. <span class ="inputModal code">{"John":{}}</span>
+						<hr>
+						Nodes start from the properties of the root node.
+						The root node is never materialized.
+						<hr>
+						Arrays will become nodes by the name of the parent property.
+	`;
+
     this.Translate = function (expression) {
 		var translator = new JsonTranslator();
         console.log('expression', expression);
@@ -12,18 +26,20 @@ function JsonTranslator() {
     {
         var jsonObject = JSON.parse(jsonString);
 
-        if (isObject(jsonObject))
-            createEntity(objectName, jsonObject);
-        else if (isArray(jsonObject))
-            for (var i = 0; i < jsonObject.length; i++) {
-                if (isObject(jsonObject[i]))
-                    createEntity(objectName, jsonObject);
-            }
-        else {
-            // If the input is only a primitive, null or undefined, then throw an error.
-            throw "Invalid input: Cannot make a graph from this input."
+        for (var thingKey in jsonObject) {
+        	if (isObject(jsonObject[thingKey]))
+        		createEntity(thingKey, jsonObject[thingKey]);
+        	else if (isArray(jsonObject[thingKey]))
+        		for (var i = 0; i < jsonObject[thingKey].length; i++) {
+        			if (isObject(jsonObject[thingKey][i]))
+        				createEntity(thingKey, jsonObject[thingKey]);
+        		}
+        	else {
+        		// If the input is only a primitive, null or undefined, then throw an error.
+        		throw "Invalid input: Cannot make a graph from this input."
+        	}
         }
-        
+
         var dataService = new DataService();
         for (var e = 0; e < _graphEntities.length; e++)
         {

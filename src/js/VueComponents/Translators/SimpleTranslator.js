@@ -1,5 +1,42 @@
 ﻿
 var SimpleTranslator = function () {
+	this.Name = "Simple X->Y";
+	this.Examples = [
+						"x->y",
+						"Sam->John^->Bob",
+						"-->Product->3",
+						"Diana-MotherOf->William&Harry",
+						"Fe(name: Iron)",
+						"C(name: Carbon, weight: 12.011)",
+						"Oxygen->Hydrogen & Hydrogen"
+	];
+	this.ReferenceContent = `
+						Type any word to create a node, eg. <span class ="inputModal code">John</span>
+						<hr>
+						Create a node with some attributes, eg.
+							</br><span class ="inputModal code">John(age: 30, sex: male)</span>
+						<hr>
+						Create a relationship between two nodes:
+							</br><span class ="inputModal code">node1->node2</span>
+						<hr>
+						Link multiple nodes in a chain:
+							</br><span class ="inputModal code">n1->n2->n3->n4</span>
+						<hr>
+						Link multiple nodes to one node:
+							</br><span class ="inputModal code">n1->n2 & n3 & n4</span>
+						<hr>
+						Alternative relationship syntax: <span class ="inputModal code">--></span>
+						<hr>
+						Create relationship with a name: <span class ="inputModal code">-name-></span>
+						<hr>
+						Create relationship with a name and some attributes:
+							</br><span class ="inputModal code">-owns(since: 2010) -></span>
+						<hr>
+						Select the node using the caret symbol:
+							</br><span class ="inputModal code">node1->node2^</span>
+						<hr>
+	`;
+					
 
 	this.Translate = function (expression) {
 		var dataSvc = new DataService();

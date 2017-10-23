@@ -56,5 +56,7 @@ function Globals(){
 		//DATA PROVIDERS
 		this.dataService = new DataService();
 
-		this.allUnitTests = [];		
+		this.allUnitTests = [];
+
+		this.Translators = [];
 }
