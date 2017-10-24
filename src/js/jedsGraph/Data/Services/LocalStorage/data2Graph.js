@@ -7,7 +7,7 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		datN.labels = graphElement.fromNode.labels;
 		datN.properties = new neoPropertyList(graphElement.fromNode.properties);
 		datN.propertiesObject = graphElement.fromNode.properties;
-		datN.entityConfig = getConfigForEntity(datN.id);
+		datN.entityConfig = GetConfigForEntityId(datN.id);
 		var fromNode = addDataNode(datN.id, datN, _sourceConfig);
 		if (fromNode)
 		    newNodes.push(fromNode);
@@ -17,7 +17,7 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		datM.labels = graphElement.toNode.labels;
 		datM.properties = new neoPropertyList(graphElement.toNode.properties);
 		datM.propertiesObject = graphElement.toNode.properties;
-		datM.entityConfig = getConfigForEntity(datM.id);
+		datM.entityConfig = GetConfigForEntityId(datM.id);
 		var toNode = addDataNode(datM.id, datM, _sourceConfig);
 		if (toNode) {
 			newNodes.push(toNode);
@@ -51,7 +51,7 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 		datM.labels = entity.labels;
 		datM.properties = new neoPropertyList(entity.properties);
 		datM.propertiesObject = entity.properties;
-		datM.entityConfig = getConfigForEntity(entity.id);
+		datM.entityConfig = GetConfigForEntityId(entity.id);
 		var addedNode = addDataNode(entity.id, datM, _sourceConfig)
 		newNodes.push(addedNode);
 	});
@@ -59,10 +59,10 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 	return newNodes;
 }
 
-function getConfigForEntity(entityId)
+function GetConfigForEntityId(entityId)
 {
     var configHelper = new ConfigHelper();
-    return configHelper.GetConfigForEntity(entityId);
+    return configHelper.GetConfigForEntityId(entityId);
 }
 function removeNodeFromGraph(node)
 {

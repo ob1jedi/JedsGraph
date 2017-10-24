@@ -11,26 +11,32 @@
     }
 
 	//Get config file...
-    this.GetConfigForEntity = function (entityId) {
+    this.GetConfigForEntityId = function (entityId) {
         var dataSvc = new DataService();
         var entity = dataSvc.GetEntityById(entityId);
-        var entityConfigs = [];
-
-        entityConfigs.push(globals.masterEntityConfigs[0]);
-        globals.masterEntityConfigs.forEach(function (config) {
-		    if (isConfigForEntity(entity, config)) {
-		        entityConfigs.push(config);
-		    }
-		});
-
-        //debugger;
-        var finalConfig = {};
-        entityConfigs.map(function (cnf) {
-			finalConfig = $.extend(true, {}, finalConfig, cnf);
-		});
-
-		return finalConfig;
+        return this.GetConfigForEntity(entity);
 	}
+
+	//Get config file...
+    this.GetConfigForEntity = function (entity) {
+    	var dataSvc = new DataService();
+    	var entityConfigs = [];
+
+    	entityConfigs.push(globals.masterEntityConfigs[0]);
+    	globals.masterEntityConfigs.forEach(function (config) {
+    		if (isConfigForEntity(entity, config)) {
+    			entityConfigs.push(config);
+    		}
+    	});
+
+    	//debugger;
+    	var finalConfig = {};
+    	entityConfigs.map(function (cnf) {
+    		finalConfig = $.extend(true, {}, finalConfig, cnf);
+    	});
+
+    	return finalConfig;
+    }
 
     function isConfigForEntity(entity, config)
 	{

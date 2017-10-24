@@ -297,6 +297,43 @@ svg, #graphContainer, #schemaContainer {
 	max-height: 200px;
 }
 
+.modPanel {
+	margin: 5px;
+	margin-left: 5px;
+	padding: 0px,0px,0px,0px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #0d0d0d;
+	color: deepskyblue;
+	background-color: #1a1a1a;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	/*border-radius:8px;*/
+	/*font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;*/
+	font-size: 12px;
+	letter-spacing: 0px;
+	opacity: 0.9;
+	/*transform: scaleY(0);
+	-webkit-transform: scaleY(0);*/
+}
+.modPanel label
+{
+	margin: 1px;
+	padding: 1px;
+	color: slategrey;
+	vertical-align: top;
+	font-size: 10px;
+}
+.modPanel input
+{
+	/*width: 80px;*/
+	height: 20px;
+	margin: 2px;
+	border-radius: 3px;
+	background-color: #b3ffff;
+	border-color: transparent;
+	font-size: 12px;
+}
+
 #leftColumn {
 	background-color: #1a1a1a;
 	/*left:10px;*/

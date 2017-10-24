@@ -81,7 +81,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndN
 	var nodes = addEntitiesToGraphAndReturnNodes([entity]);
 	console.log('NODE', nodes);
 	// Act
-	var result = sut.GetConfigForEntity(entityId);
+	var result = sut.GetConfigForEntityId(entityId);
 	console.log('entityConfig', result);
 
 	console.log('globals.masterEntityConfigs', globals.masterEntityConfigs);

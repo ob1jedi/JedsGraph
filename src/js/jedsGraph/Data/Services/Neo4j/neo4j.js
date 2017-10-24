@@ -306,9 +306,10 @@ function Neo4jAddLabel(_sourceConfig) {
 function Neo4jGetAllLabels(_sourceConfig) {
 	var callback = function (data, sourceConfig) {
 	    data.results[0].data.forEach(function (dataobject) {
-	        addDataLabel(dataobject.row[0][0], dataobject.row[1], sourceConfig);
+			// Outdated... "sourceConfig" no longer being used...
+	    	//addEntityLabel(dataobject.row[0][0], dataobject.row[1], sourceConfig);
 	    });
-	    refreshLabelSelectors();
+	    refreshEntitySelectors();
 	};
 
 	var command = "match (n) return labels(n), count(labels(n))";

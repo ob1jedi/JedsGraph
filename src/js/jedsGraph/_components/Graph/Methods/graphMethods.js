@@ -403,7 +403,7 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 }
 		
 		
-function addDataLabel(labelName, _addInstanceCount, _sourceConfig)
+function addEntityLabel(labelName, _addInstanceCount, entityConfig)
 {	
 	var existingLabelSelector = getNeoLabel(labelName);
 	if(existingLabelSelector) 
@@ -414,12 +414,14 @@ function addDataLabel(labelName, _addInstanceCount, _sourceConfig)
 		return;
 	}
 
-	var rgb = {r: Math.ceil(getRandomArbitrary(_sourceConfig.displaySettings.entityRgbRange.min, _sourceConfig.displaySettings.entityRgbRange.max)),
-							g: Math.ceil(getRandomArbitrary(_sourceConfig.displaySettings.entityRgbRange.min, _sourceConfig.displaySettings.entityRgbRange.max)),
-							b: Math.ceil(getRandomArbitrary(_sourceConfig.displaySettings.entityRgbRange.min, _sourceConfig.displaySettings.entityRgbRange.max))
+	var rgbRange = entityConfig.config.attributes.rgbRange;
+	var rgb = {
+		r: Math.ceil(getRandomArbitrary(rgbRange.min, rgbRange.max)),
+		g: Math.ceil(getRandomArbitrary(rgbRange.min, rgbRange.max)),
+		b: Math.ceil(getRandomArbitrary(rgbRange.min, rgbRange.max))
 				}
 	var randomColor = rgb2hex(rgb.r, rgb.g, rgb.b);
-	var newDataLabel = new neoLabelType(labelName, randomColor, rgb, _sourceConfig);
+	var newDataLabel = new neoLabelType(labelName, randomColor, rgb, entityConfig);
 	if (_addInstanceCount) {newDataLabel.instanceCount += _addInstanceCount;}
 	//Add new data label to labels-list
 	globals.labelsList.push(newDataLabel);
@@ -427,23 +429,23 @@ function addDataLabel(labelName, _addInstanceCount, _sourceConfig)
 	return newDataLabel;
 }
 		
-function refreshLabelSelectors(){
+function refreshEntitySelectors(){
 	//Order label selectors...
 	globals.labelsList.sort(sort_by('name', false, function(a){ if (a) {return a.toUpperCase()} }));
 	//Add selector to HTML...
 	var qbuilderFromEntitySelector = document.getElementById('qbuilder.from.entity');
 	var color = 'gray';
-	var button_onclick = "globals.dataService.GetEntitiesByType(false, '" + globals.currentTheme.sourceConfig.prefix + "')";
+	var button_onclick = "globals.dataService.GetEntitiesByType(false, '')";
 	var fetchButton = '<div id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="' + button_onclick + '"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></div>'
 	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorPanel" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
 	if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML = '<option value=""></option>';}
 			
 	globals.labelsList.forEach(function (nodeLabel, index) {
-		color = nodeLabel.data.sourceConfig.displaySettings.selectorColor;
-		button_onclick = "globals.dataService.GetEntitiesByType('" + nodeLabel.name + "', '" + nodeLabel.data.sourceConfig.prefix + "')";
+		color = nodeLabel.data.sourceConfig.config.attributes.selector["background-color"];
+		button_onclick = "globals.dataService.GetEntitiesByType('" + nodeLabel.name + "', '')";
 		fetchButton = '<div id="labelSelector.fetcher.' + nodeLabel.name + '" class="forlabelselector mytooltip" style="background-color:' + nodeLabel.color + '" onclick="' + button_onclick + '">' + nodeLabel.instanceCount + '<div class="mytooltiptext ttleft ttupper">Fetch from database</div></button>'
 		labelSelectorHtml += '<tr><td><div onclick="highlightLabel(' + index + ')" class="labelSelectorPanel" style="background-color:' + color + ';">' + nodeLabel.name + '</div></td><td>' + fetchButton + '</td></tr>';
-		if (qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML += '<option value="' + nodeLabel.name + nodeLabel.data.sourceConfig.prefix + '">' + (nodeLabel.name + " (" + nodeLabel.data.sourceConfig.prefix + ")") + '</option>'; }
+		if (qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML += '<option value="' + nodeLabel.name + '">' + nodeLabel.name + '</option>'; }
 	});
 	labelSelectorHtml += '</table>';
 	var LabelsDiv = document.getElementById('selectorLabels');

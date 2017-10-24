@@ -33,15 +33,36 @@ Vue.component('vw-secondbar', {
 Vue.component('vw-left-sidebar', {
 	template: `
 		<div id='leftColumn' class ="flexcroll">
+			<vw-panel-nodeEditor></vw-panel-nodeEditor>
 		</div>
 		`
 })
 
 Vue.component('vw-panel-nodeEditor', {
 	template: `
-	<div class ='toolPanel' id='nodeEditor'>
-		<div class ="panelHead">Node Editor</div>
-		HELLO THERE
+	<div class ='modPanel' id='nodeEditor'>
+		<div class ="panelHead">Style Editor<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
+		<div>
+			<div>Matching Criteria</div>
+			<label>Entity Type: </label><input></input>
+			<div>Properties: </div>
+			<label>Property Name: </label><input></input>
+			<label>Property Value: </label><input></input>
+			<label>Formula: </label><input></input>
+			<label>Translator: </label><input></input>
+			<hr/>
+		</div>
+		<div>
+			<div>Style Options</div>
+			<div>
+				<label>Color: </label> <input class ="jscolor" value="ab2567"></input>
+				<label>Border Color: </label> <input class ="jscolor" value="ab2567"></input>
+				<label>Circle Text Color: </label> <input class ="jscolor" value="ab2567"></input>
+				<label>Size: </label> <input></input>
+				<label>Shape: </label> <input></input>
+				
+			</div>
+		</div>
 	</div>
 	`
 })
@@ -176,7 +197,7 @@ var consoleApp = new Vue({
 				});
 			},
 			executeFormula: function () {
-				var translator = new this.currentTranslator;
+				var translator = this.currentTranslator;
 				translator.Translate(this.formulaValue);
 				this.formulaValue = "";
 			},
@@ -185,74 +206,19 @@ var consoleApp = new Vue({
 				translator.Translate(this.selectedExample);
 			},
 			showInfoModal: function () {
-				//console.log('MODAL', this.isInfoModalVisible);
 				this.modalHeader = this.currentTranslator.Name;
 				this.modalContent = this.currentTranslator.ReferenceContent;
 				this.modalButtonCaption = "Close";
 				ShowInfoModal();
-				//this.isInfoModalVisible = true;
 			},
 			closeInfoModal: function () {
-				//console.log('MODAL', this.isInfoModalVisible);
 				CloseInfoModal();
-				//this.isInfoModalVisible = true;
 			},
 			formulaParams: []
 		}
 	}
 })
 
-
-//globals.Translators = [
-//	[
-//				{
-//					id: 1,
-//					desc: "simple X->Y",
-//					translator: SimpleTranslator,
-//					examples: [
-//						"x->y",
-//						"Sam->John^->Bob",
-//						"-->Product->3",
-//						"Diana-MotherOf->William&Harry",
-//						"Fe(name: Iron)",
-//						"C(name: Carbon, weight: 12.011)",
-//						"Oxygen->Hydrogen & Hydrogen"
-//					],
-//					referenceContent: `
-//						Type any word to create a node, eg. <span class ="inputModal code">John</span>
-//						<hr>
-//						Create a node with some attributes, eg.
-//							</br><span class ="inputModal code">John(age: 30, sex: male)</span>
-//						<hr>
-//						Create a relationship between two nodes:
-//							</br><span class ="inputModal code">node1->node2</span>
-//						<hr>
-//						Link multiple nodes in a chain:
-//							</br><span class ="inputModal code">n1->n2->n3->n4</span>
-//						<hr>
-//						Link multiple nodes to one node:
-//							</br><span class ="inputModal code">n1->n2 & n3 & n4</span>
-//						<hr>
-//						Alternative relationship syntax: <span class ="inputModal code">--></span>
-//						<hr>
-//						Create relationship with a name: <span class ="inputModal code">-name-></span>
-//						<hr>
-//						Create relationship with a name and some attributes:
-//							</br><span class ="inputModal code">-owns(since: 2010) -></span>
-//						<hr>
-//						Select the node using the caret symbol:
-//							</br><span class ="inputModal code">node1->node2^</span>
-//						<hr>
-//					`,
-//				},
-//				{
-//					id: 2,
-//					desc: "Json 1",
-//					translator: JsonTranslator,
-
-//				}
-//	],
-//]
 
 function ShowInfoModal() {
 	var nodeFlyout = document.getElementById('InfoModal');

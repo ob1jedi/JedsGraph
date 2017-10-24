@@ -35,8 +35,8 @@
 		};
 	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
 		var entity = dataDriver.GetEntityById(entityId);
-		var nodes = addEntitiesToGraphAndReturnNodes([entity])[0];
 		updateUiComponents(labels[0], 1, _sourceConfig);
+		var nodes = addEntitiesToGraphAndReturnNodes([entity])[0];
 		return nodes;
 	}
 
@@ -160,14 +160,20 @@
 		//Neo4jGetAllLabels(_sourceConfig);
 		var labels = dataDriver.GetAllEntityTypesAndEntityIds(_sourceConfig);
 		labels.forEach(function (label) {
-			updateUiComponents(label.label, label.ids.length, _sourceConfig);
+			var pseudoEntity = new DataEntity();
+			pseudoEntity.labels = [label];
+
+			var configHelper = new ConfigHelper();
+			var entityConfig = configHelper.GetConfigForEntity(pseudoEntity);
+
+			updateUiComponents(label.label, label.ids.length, entityConfig);
 		});
 	}
 
-	function updateUiComponents(label, entityCount, _sourceConfig)
+	function updateUiComponents(label, entityCount, entityConfig)
 	{
-		addDataLabel(label, entityCount, _sourceConfig);
-		refreshLabelSelectors();
+		addEntityLabel(label, entityCount, entityConfig);
+		refreshEntitySelectors();
 	}
 
 	function stripDomainFromId(nodeId)
