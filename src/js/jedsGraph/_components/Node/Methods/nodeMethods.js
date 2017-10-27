@@ -3,7 +3,11 @@
 function applyPopoutEffectToNode(newNode, parentNodeId) {
 	globals.layout.pinNode(newNode, true);
 	var pos = globals.layout.getNodePosition(parentNodeId);
-	globals.layout.setNodePosition(newNode.id, getRandomArbitrary(pos.x - newNode.data.nodeSize / 2, pos.x + newNode.data.nodeSize / 2), getRandomArbitrary(pos.y - newNode.data.nodeSize / 2, pos.y + newNode.data.nodeSize / 2));
+	var nodeRadius = Number(newNode.data.entityConfig.config.attributes["radius"]);
+	globals.layout.setNodePosition(newNode.id,
+		getRandomArbitrary(pos.x - nodeRadius / 2, pos.x + nodeRadius / 2),
+		getRandomArbitrary(pos.y - nodeRadius / 2, pos.y + nodeRadius / 2)
+	);
 	globals.layout.pinNode(newNode, false);
 }
 
@@ -15,13 +19,15 @@ function removeWaitingAffectFromNode(nodeId) {
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 function fixTextWidth4Node(node)
-{	
+{
+	
 	//adjust display text...
 	if (node.data.UI.bodyUI && node.data.UI.displayTextUI)
 	{
 		if (!node.data.sourceConfig.displaySettings.showLabels) {return;}
-		var nodeRadius = node.data.nodeSize; //UI.fullUI.attr('r');//nodeUI.attr('r');
+		var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]); //UI.fullUI.attr('r');//nodeUI.attr('r');
 		var widthOfNode = Number(node.data.UI.bodyUI.getBBox().width);
 		var minWidth = widthOfNode - widthOfNode * 0.1;
 		var widthOfText = Number(node.data.UI.displayTextUI.getBBox().width);
@@ -29,8 +35,8 @@ function fixTextWidth4Node(node)
 		var heightOfText = Number(node.data.UI.displayTextUI.getBBox().height);
 		if (!text || text.length == 0) {return;}
 
-		if (node.data.config.nodeDisplayBody.labelPos){
-			switch(node.data.config.nodeDisplayBody.labelPos){
+		if (node.data.entityConfig.config.attributes.labelText["labelPosition"]) {
+			switch(node.data.entityConfig.config.attributes.labelText["labelPosition"]){
 				case "above":
 					node.data.UI.displayTextUI.attr('x', -widthOfText/2 ); //-minWidth/2);
 					node.data.UI.displayTextUI.attr('y', -heightOfText - nodeRadius/3);
@@ -38,6 +44,10 @@ function fixTextWidth4Node(node)
 				case "under":
 					node.data.UI.displayTextUI.attr('x', -widthOfText/2); //-minWidth/2);
 					node.data.UI.displayTextUI.attr('y', nodeRadius + heightOfText);
+					break;
+				case "center":
+					node.data.UI.displayTextUI.attr('x', -widthOfText / 2); //-minWidth/2);
+					node.data.UI.displayTextUI.attr('y', heightOfText / 3);
 					break;
 				case "right":
 					node.data.UI.displayTextUI.attr('x', nodeRadius + nodeRadius/3); //-minWidth/2);
@@ -63,12 +73,14 @@ function fixTextWidth4Node(node)
 						text = (text).substring(0, text.length - 2) + "'";
 						node.data.UI.displayTextUI.text(text);
 					}
-					else if (sizingConfigValue == 'fontsize')
-					{
+					else if (sizingConfigValue == 'fontsize') {
 						var fontsize = Number(node.data.UI.displayTextUI.attr('font-size'));
-						node.data.UI.displayTextUI.attr('font-size', fontsize*0.9);
+						node.data.UI.displayTextUI.attr('font-size', fontsize * 0.9);
 					}
-					else return;
+					else
+					{
+						return;
+					};
 					widthOfText = Number(node.data.UI.displayTextUI.getBBox().width);
 					if (failer > 1000) return;
 				}
@@ -90,7 +102,6 @@ function fixTextWidth4Node(node)
 			node.data.UI.displayTextUI.attr('y',  heightOfText/3 );
 		}
 	}
-			
 	//adjust size of popout text...
 	if(node.data.UI.popoutBodyUI)
 	{	
@@ -100,10 +111,11 @@ function fixTextWidth4Node(node)
 			boxheight = Number(node.data.UI.popoutTextUI.getBBox().height + 20);
 			boxwidth = Number(node.data.UI.popoutTextUI.getBBox().width + 30);
 		}
+		var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
 		node.data.UI.popoutBodyUI.attr('height',boxheight);
 		node.data.UI.fullUI.attr('style','width:'+boxwidth + 'px;');
-		node.data.UI.popoutBodyUI.attr('x', node.data.nodeSize + 10)
-		node.data.UI.popoutTextUI.innerHTML = propertyListToSvgList(node.data.properties, '<tspan x="'+(node.data.nodeSize + 15)+'" dy="1.2em">', '</tspan>');
+		node.data.UI.popoutBodyUI.attr('x', nodeRadius + 10)
+		node.data.UI.popoutTextUI.innerHTML = propertyListToSvgList(node.data.properties, '<tspan x="'+ (nodeRadius + 15) +'" dy="1.2em">', '</tspan>');
 	}
 			
 }
@@ -273,9 +285,10 @@ function highlightSelectedNode(nodeId) {
 
 function addSelectionGraphic(node){
 	node.data.UI.fullUI.insertBefore(globals.CommonUI.focusUI, node.data.UI.bodyUI);
+	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
 	node.data.UI.focusUI = globals.CommonUI.focusUI
-		.attr('r', node.data.nodeSize + node.data.nodeSize / 3)//...for circle
-		.attr('stroke-width', node.data.nodeSize / 5);
+		.attr('r', nodeRadius + (nodeRadius / 3))//...for circle
+		.attr('stroke-width', nodeRadius / 5);
 
 	node.data.UI.focusUI.attr('class', 'selectionRingOut');
 	setTimeout(function () {
@@ -289,10 +302,11 @@ function checkNode(node)
 {
 	globals.checkedNodes.push(node);
 		//if(node.data.UI.fullUI){node.data.UI.fullUI.attr('stroke','#99ff33');}
-		if(!node.data.UI.checkUI){
+	if(!node.data.UI.checkUI){
+		var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
 			globals.CommonUI.checkUI
-				.attr('r', node.data.nodeSize + node.data.nodeSize/4)//...for circle
-				.attr('stroke-width',node.data.nodeSize/5);
+				.attr('r', nodeRadius + nodeRadius/4)//...for circle
+				.attr('stroke-width',nodeRadius/5);
 			node.data.UI.checkUI = globals.CommonUI.checkUI.cloneNode();
 			node.data.UI.fullUI.insertBefore(node.data.UI.checkUI, node.data.UI.bodyUI);
 		}
@@ -311,8 +325,8 @@ function loadNodePopout(node, config)
 {
 	if (config.displaySettings.loadNodePopouts == false)
 		return;
-
-	globals.CommonUI.popoutTextUI.innerHTML = propertyListToSvgList(node.data.properties, '<tspan x="'+(node.data.nodeSize + 15)+'" dy="1.2em">', '</tspan>');
+	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
+	globals.CommonUI.popoutTextUI.innerHTML = propertyListToSvgList(node.data.properties, '<tspan x="'+( nodeRadius + 15)+'" dy="1.2em">', '</tspan>');
 			
 	node.data.UI.popoutBodyUI = globals.CommonUI.popoutBodyUI.cloneNode(true);
 	node.data.UI.fullUI.append(node.data.UI.popoutBodyUI);
@@ -321,6 +335,7 @@ function loadNodePopout(node, config)
 	node.data.UI.fullUI.append(node.data.UI.popoutTextUI);
 
 	fixTextWidth4Node(node);
+
 	node.data.UI.popoutBodyUI.attr('class', 'slidebody');
 	node.data.UI.popoutTextUI.attr('class', 'slidetext');
 }
@@ -447,24 +462,25 @@ function increaseNodeSize(nodeId)
 {
 	if (!nodeId){nodeId = globals.selectedNodeID;}
 	var node = globals.GRAPH.getNode(nodeId);
-	node.data.nodeSize = node.data.nodeSize + 50/node.data.nodeSize;
-	//node.data.UI.popoutBodyUI.attr('x', node.data.nodeSize/2)
-    //            .attr('y', -node.data.nodeSize)
-	//node.data.UI.popoutBodyUI.attr('x', node.data.nodeSize/2)
-    //            .attr('y', -node.data.nodeSize)
+	var nodeRadius = Number( node.data.entityConfig.config.attributes["radius"]);
+	nodeRadius = nodeRadius + 50/nodeRadius;
+	//node.data.UI.popoutBodyUI.attr('x', nodeRadius/2)
+    //            .attr('y', -nodeRadius)
+	//node.data.UI.popoutBodyUI.attr('x', nodeRadius/2)
+    //            .attr('y', -nodeRadius)
 						
-	node.data.UI.bodyUI.attr('r', node.data.nodeSize) //...for circle
-	node.data.UI.imageUI.attr('x', -node.data.nodeSize)
-				.attr('y', -node.data.nodeSize)
-				.attr('rx', node.data.nodeSize)
-				.attr('width', node.data.nodeSize * 2)
-				.attr('height', node.data.nodeSize * 2)
+	node.data.UI.bodyUI.attr('r', nodeRadius) //...for circle
+	node.data.UI.imageUI.attr('x', -nodeRadius)
+				.attr('y', -nodeRadius)
+				.attr('rx', nodeRadius)
+				.attr('width', nodeRadius * 2)
+				.attr('height', nodeRadius * 2)
 			
 	node.data.toLinks.forEach(function (link){
-		link.data.UI.fullUI.attr('fromNodeRadius', node.data.nodeSize);
+		link.data.UI.fullUI.attr('fromNodeRadius', nodeRadius);
 	});
 	node.data.fromLinks.forEach(function (link){
-		link.data.UI.fullUI.attr('toNodeRadius', node.data.nodeSize);
+		link.data.UI.fullUI.attr('toNodeRadius', nodeRadius);
 	});
 
 	increaseNodeSprings(node.id);
@@ -476,7 +492,8 @@ function decreaseNodeSize(nodeId)
 {
 	if (!nodeId){nodeId = globals.selectedNodeID;}
 	var node = globals.GRAPH.getNode(nodeId);
-	node.data.nodeSize = node.data.nodeSize / 1.1;
+	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
+	node.data.entityConfig.config.attributes["radius"] = nodeRadius / 1.1;
 	addNodeToGraph(node.id,node.data);
 	decreaseNodeSprings(node.id);
 }	
@@ -669,7 +686,7 @@ function ringulate(node, inputData)
 		var petalPath = Viva.Graph.svg('circle')
 					.attr('cx', 0) //...for circle
 					.attr('cy', 0)//...for circle
-					.attr('r',node.data.nodeSize + (i * 3))
+					.attr('r', Number(node.data.entityConfig.config.attributes["radius"]) + (i * 3))
 					.attr('fill','transparent')//'#4dffc3')
 					.attr('stroke',node.data.nodeColor)
 					.attr('stroke-width',2)
@@ -755,7 +772,7 @@ function addSubNode(parentNode, id, color, displayLabel)
 	//Adjust length of link...
 	var nodespring = globals.layout.getSpring(parentNode.id, subNodeData.id);
 	console.log('parentNode',parentNode);
-	nodespring.length = parentNode.data.nodeSize; //30;
+	nodespring.length = Number(parentnode.data.entityConfig.config.attributes["radius"]); //30;
 
 	//Adjust link bounciness...
 	//var nodebody = globals.layout.getBody(id);
@@ -766,17 +783,18 @@ function addSubNode(parentNode, id, color, displayLabel)
 		
 function addSatelliteToNode(node)
 {
+	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
 	var rippleCircle = Viva.Graph.svg('circle')
 				.attr('cx', 0)
 				.attr('cy', 0)
-				.attr('r', node.data.nodeSize)
+				.attr('r', nodeRadius)
 				.attr('fill','transparent')//node.data.nodeColor)//'#4dffc3')
 				.attr('stroke','red')
 				.attr('stroke-width','5')
 				.attr('stroke-opacity','0.7')
 		var circletiny = Viva.Graph.svg('circle')
-				.attr('cx', node.data.nodeSize)
-				.attr('cy', node.data.nodeSize)
+				.attr('cx', nodeRadius)
+				.attr('cy', nodeRadius)
 				.attr('r', 5)
 				.attr('fill','red')//node.data.nodeColor)//'#4dffc3')
 				.attr('stroke','red')

@@ -177,7 +177,6 @@ function Neo4jFetchRelation(fromNodeID, toNodeID, _sourceConfig)
 
 function Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback) {
 	var _sourceConfig = globals.currentTheme.sourceConfig;
-	//console.log('globals.currentTheme', globals.currentTheme);
 	var callback = function (nodesResult, sourceConfig) {
 		var ids = addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
 		//globals.layout.setNodePosition(ids[0], 0, 0);

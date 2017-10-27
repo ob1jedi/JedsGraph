@@ -40,7 +40,7 @@ function defineNodes() {
 	function attachMetaData(node, ui) {
 		ui.attr('depth', 5);
 		ui.attr('class', 'node');
-		ui.attr('nodeSize', node.data.nodeSize);
+		ui.attr('nodeSize', Number(node.data.entityConfig.config.attributes["radius"]));
 		ui.attr('nodeid', node.id);
 		ui.attr('dragging', false);
 		ui.attr('nodetype', node.data.nodeType);

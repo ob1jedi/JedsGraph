@@ -71,7 +71,7 @@ function setupCommonUI(){
 
 	globals.CommonUI.popoutTextUI = Viva.Graph.svg('text')
 				//.attr('class', 'slidetext')
-				.attr('y', 0) //node.data.nodeSize/2 + 5)
+				.attr('y', 0) // Number(node.data.entityConfig.config.attributes["radius"])/2 + 5)
 				.attr('x', 0)// - node.data.displayLabel.length)
 				.attr('fill',globals.currentTheme.sourceConfig.displaySettings.entityPopoutTextColor)
 				.attr('stroke-width','0')

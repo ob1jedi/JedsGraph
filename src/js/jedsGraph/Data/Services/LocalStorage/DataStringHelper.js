@@ -258,7 +258,7 @@ var DataStringHelper = function () {
 		var checkAtIndex = startFromIndex;
 		var overflow = 0;
 		while (!arrayContains(separatorArray, string[checkAtIndex]) && checkAtIndex >= -1) {
-			if (++overflow > 100)
+			if (++overflow > 100000)
 				throw "Overflow";
 			checkAtIndex--;
 		}
@@ -270,7 +270,7 @@ var DataStringHelper = function () {
 		var checkAtIndex = startFromIndex;
 		var overflow = 0;
 		while (!arrayContains(separatorArray, string[checkAtIndex]) && checkAtIndex < string.length) {
-			if (++overflow > 100)
+			if (++overflow > 100000)
 				throw "Overflow";
 			checkAtIndex++;
 		}

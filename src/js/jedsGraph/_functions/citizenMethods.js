@@ -31,7 +31,7 @@
 			var x;
 			if (!propertyList) return;
 			propertyList.forEach(function (prop, index){
-				if (prop.key == propertyName)
+				if (prop.key.toLowerCase() === propertyName.toLowerCase())
 				{
 					x = prop.value;
 					return x;

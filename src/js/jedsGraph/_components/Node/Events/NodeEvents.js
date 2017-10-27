@@ -216,7 +216,7 @@ function subNode_OnMouseDown(node, x, y) {
 
 function subNode_OnMouseUp(node, x, y) {
 	node.data.UI.fullUI.attr('dragging', 'false');
-	node.data.UI.fullUI.children[0].attr('r', node.data.nodeSize);
+	node.data.UI.fullUI.children[0].attr('r', Number(node.data.entityConfig.config.attributes["radius"]));
 	fixTextWidth4Node(node, x, y);
 }
 

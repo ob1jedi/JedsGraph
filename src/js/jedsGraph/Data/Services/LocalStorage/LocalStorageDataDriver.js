@@ -5,6 +5,10 @@ var LocalStorageDataDriver = function () {
 
     //----PUBLIC----------------------------------------------------------
 
+	this.UpdadeConfigInDb = function (name, configJson) {
+		writeConfigToStorage(name, configJson);
+		return configJson.id;
+	}
     this.CreateConfigInDbAndReturnId = function (name, configJson) {
     	configJson.id = this.GetNextNewConfigId();
         writeConfigToStorage(name, configJson);
@@ -247,6 +251,7 @@ var LocalStorageDataDriver = function () {
 	}
 	
 	function writeConfigToStorage(name, config) {
+		if (!config.id) throw "Missing config-id in config";
 	    localStorage.setItem(configKeyFromConfigId(config.id), serialize(config));
 	    updateIndex("INDEX_ON_CONFIG_NAMES", name, config.id);
 	}

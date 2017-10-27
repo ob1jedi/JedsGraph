@@ -347,14 +347,35 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 
 	//set display label...
 	thisNodeData.displayLabel = "";
-	if (thisNodeData.config.nodeDisplayValues.displayField) {
-		if (thisNodeData.displayLabel != "") { thisNodeData.displayLabel + '\n'; }
-		var propertyValue = getNodePropertyValue(thisNodeData.properties, thisNodeData.config.nodeDisplayValues.displayField);
-		thisNodeData.displayLabel += propertyValue ? propertyValue : ' ';
-	}
-	else {
+	var configDisplayValueOptions = thisNodeData.entityConfig.config.attributes.labelText["displayData"];
+	console.log('configDisplayValueOptions',configDisplayValueOptions);
+	if (!configDisplayValueOptions) {
 		thisNodeData.displayLabel = finalLabel;
+	} else if (configDisplayValueOptions.key === "property") {
+		thisNodeData.displayLabel = getNodePropertyValue(thisNodeData.properties, configDisplayValueOptions.value);
+	} else if (configDisplayValueOptions.key === "static") {
+		thisNodeData.displayLabel = configDisplayValueOptions.value;
+	} else if (configDisplayValueOptions.key === "first") {
+		for (var i = 0; i < configDisplayValueOptions.value.length; i++)
+		{
+			var potentialFieldValue = getNodePropertyValue(thisNodeData.properties, configDisplayValueOptions.value[i]);
+			if (potentialFieldValue) {
+				thisNodeData.displayLabel = potentialFieldValue;
+				break;
+			}
+		}
 	}
+	if (!thisNodeData.displayLabel || thisNodeData.displayLabel == '') {
+		thisNodeData.displayLabel = " ";
+	}
+	//if (thisNodeData.config.nodeDisplayValues.displayField) {
+	//	if (thisNodeData.displayLabel != "") { thisNodeData.displayLabel + '\n'; }
+	//	var propertyValue = getNodePropertyValue(thisNodeData.properties, thisNodeData.config.nodeDisplayValues.displayField);
+	//	thisNodeData.displayLabel += propertyValue ? propertyValue : ' ';
+	//}
+	//else {
+	//	thisNodeData.displayLabel = finalLabel;
+	//}
 
 	//set circle text...
 	//thisNodeData.entityConfig.config.attributes.circleText["show"] == true
@@ -443,8 +464,23 @@ function refreshEntitySelectors(){
 	globals.labelsList.forEach(function (nodeLabel, index) {
 		color = nodeLabel.data.sourceConfig.config.attributes.selector["background-color"];
 		button_onclick = "globals.dataService.GetEntitiesByType('" + nodeLabel.name + "', '')";
-		fetchButton = '<div id="labelSelector.fetcher.' + nodeLabel.name + '" class="forlabelselector mytooltip" style="background-color:' + nodeLabel.color + '" onclick="' + button_onclick + '">' + nodeLabel.instanceCount + '<div class="mytooltiptext ttleft ttupper">Fetch from database</div></button>'
-		labelSelectorHtml += '<tr><td><div onclick="highlightLabel(' + index + ')" class="labelSelectorPanel" style="background-color:' + color + ';">' + nodeLabel.name + '</div></td><td>' + fetchButton + '</td></tr>';
+		
+		labelSelectorHtml += `
+			<tr>
+				<td>
+					<div onclick="highlightLabel(` + index + `)" class="labelSelectorPanel" style="background-color:` + color + `;" > `
+						+ nodeLabel.name + `
+					</div>
+				</td>
+				<td>
+					<div id="labelSelector.fetcher.` + nodeLabel.name + `" class="forlabelselector mytooltip pull-right" style="background-color:` +nodeLabel.color + `" onclick= "` +button_onclick + `" > `
+						+ nodeLabel.instanceCount + `
+						<div class="mytooltiptext ttleft ttupper">
+							Fetch from database
+						</div>
+					</div>
+				</td>
+			</tr>`;
 		if (qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML += '<option value="' + nodeLabel.name + '">' + nodeLabel.name + '</option>'; }
 	});
 	labelSelectorHtml += '</table>';

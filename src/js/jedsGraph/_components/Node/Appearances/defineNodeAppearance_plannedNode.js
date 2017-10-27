@@ -2,11 +2,11 @@
 	var cnf = node.data.sourceConfig.displaySettings;
 	var nodeConfig = node.data.config.nodeDisplayBody;
 	if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }
-
+	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
 	nodeBody = Viva.Graph.svg('circle')
 		.attr('cx', 0)//...for circle
 		.attr('cy', 0)//...for circle
-		.attr('r', node.data.nodeSize) //...for circle
+		.attr('r', nodeRadius) //...for circle
 		.attr('fill', node.data.nodeColor)//node.data.nodeColor)//'#4dffc3')
 		.attr('stroke-width', 3)
 		.attr('stroke', cnf.entityBorderColor == null ? node.data.nodeBorderColor : cnf.entityBorderColor)
@@ -16,11 +16,11 @@
 	if (!cnf.opaque == true) { nodeBody.attr('fill-opacity', node.data.nodeOpacity); }
 
 	nodeBodyImage = Viva.Graph.svg('image')
-		.attr('x', -node.data.nodeSize)
-		.attr('y', -node.data.nodeSize)
-		.attr('rx', node.data.nodeSize)
-		.attr('width', node.data.nodeSize * 2)
-		.attr('height', node.data.nodeSize * 2)
+		.attr('x', -nodeRadius)
+		.attr('y', -nodeRadius)
+		.attr('rx', nodeRadius)
+		.attr('width', nodeRadius * 2)
+		.attr('height', nodeRadius * 2)
 		.link(nodeConfig.image ? nodeConfig.image : '');
 	if (cnf.rounded == true) { nodeBodyImage.attr('fill', 'url(#gradRound)'); }
 	if (!cnf.opaque == true) { nodeBodyImage.attr('fill-opacity', node.data.nodeOpacity); }
@@ -38,7 +38,7 @@
 
 	popoutTextUI = Viva.Graph.svg('text')
 		.attr('class', 'slideText')
-		.attr('y', -node.data.nodeSize) //node.data.nodeSize/2 + 5)
+		.attr('y', -nodeRadius) //nodeRadius/2 + 5)
 		.attr('x', 0)// - node.data.displayLabel.length)
 		.attr('fill', '#0077b3')
 		.attr('stroke-width', '0')
@@ -49,9 +49,9 @@
 
 	popoutBodyUI = Viva.Graph.svg('rect')
 		.attr('class', 'slideout')
-		.attr('x', node.data.nodeSize / 2)
-		.attr('y', -node.data.nodeSize)
-		.attr('rx', node.data.nodeSize / 4)
+		.attr('x', nodeRadius / 2)
+		.attr('y', -nodeRadius)
+		.attr('rx', nodeRadius / 4)
 		.attr('height', 0)
 		.attr('fill', '#141414')
 	if (!cnf.opaque == true) { popoutBodyUI.attr('fill-opacity', 0.3); }

@@ -2,9 +2,18 @@
 	var dataDriver = new LocalStorageDataDriver();
 
 	this.CreateConfigReturnId = function (configName, jsonConfig) {
-	    if (dataDriver.ConfigExists(configName))
+		if (dataDriver.ConfigExists(configName))
 	        throw "A config by that name already exists";
 	    return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
+	}
+
+	this.CreateUpdateConfigReturnId = function (configName, jsonConfig) {
+		var existingConfig = this.GetConfigByName(configName);
+		if (!existingConfig)
+			return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
+
+		var finalConf = $.extend(existingConfig, jsonConfig);
+		return dataDriver.UpdadeConfigInDb(configName, finalConf);
 	}
 
 	this.GetAllConfigs = function () {
@@ -13,6 +22,7 @@
 	}
 
 	this.GetConfigByName = function (configName) {
+		if (!configName) throw "Config name not provided";
 	    var configs = dataDriver.GetConfigsByName(configName);
 	    if (configs.length == 0)
 	        return null;
@@ -22,7 +32,6 @@
 	this.FetchEntitiesForNodeId = function (nodeId, _sourceConfig) {
 		var graphElements = dataDriver.GetRelatedEntityGraph(stripDomainFromId(nodeId));
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
-
 	}
 
 	this.CreateEntity_AddToGraph_ReturnNode = function (labels, properties, _sourceConfig) {

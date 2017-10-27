@@ -2,20 +2,20 @@
 	var cnf = node.data.sourceConfig.displaySettings;
 	var nodeConfig = node.data.config.nodeDisplayBody;
 	if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }
-
+	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
 	nodeBody = Viva.Graph.svg('circle')
 		.attr('cx', 0)//...for circle
 		.attr('cy', 0)//...for circle
-		.attr('r', node.data.nodeSize) //...for circle
+		.attr('r', nodeRadius) //...for circle
 		.attr('fill', node.data.nodeColor)//node.data.nodeColor)//'#4dffc3')
 		.attr('stroke-width', 3)
 		.attr('stroke', node.data.nodeColor)
 	nodeBodyImage = Viva.Graph.svg('image')
-		.attr('x', -node.data.nodeSize)
-		.attr('y', -node.data.nodeSize)
-		.attr('rx', node.data.nodeSize)
-		.attr('width', node.data.nodeSize * 2)
-		.attr('height', node.data.nodeSize * 2)
+		.attr('x', -nodeRadius)
+		.attr('y', -nodeRadius)
+		.attr('rx', nodeRadius)
+		.attr('width', nodeRadius * 2)
+		.attr('height', nodeRadius * 2)
 		.link(nodeConfig.image ? nodeConfig.image : '');
 	if (cnf.rounded) { nodeBodyImage.attr('fill', 'url(#gradRound)'); }
 	if (!cnf.opaque) { nodeBodyImage.attr('fill-opacity', node.data.nodeOpacity); }

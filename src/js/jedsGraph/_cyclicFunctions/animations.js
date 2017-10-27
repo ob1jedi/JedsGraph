@@ -66,7 +66,7 @@
 				circlex = Viva.Graph.svg('circle')
 						.attr('cx', 0)
 						.attr('cy', 0)
-						.attr('r', node.data.nodeSize)
+						.attr('r', Number(node.data.entityConfig.config.attributes["radius"]))
 						.attr('fill','transparent')//node.data.nodeColor)//'#4dffc3')
 						.attr('stroke','red')
 						.attr('stroke-width','5')
@@ -75,7 +75,7 @@
 				circlex.attr('class','droplet');
 				
 
-				
+				var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
 				var groupx = Viva.Graph.svg('g')
 				var x1 = -13;
 				var y1 = 10;
@@ -87,7 +87,7 @@
 				dpath1 += x2 +' '+ c +',';//control-x2, control-y2
 				dpath1 += x2 +' '+y1; //x2, y2
 				var dpath2 = 'M' + 0 + ',' + 0 +
-                ' A 10,' + node.data.nodeSize + ',-30,0,1,' + node.data.nodeSize*2 + ',' + node.data.nodeSize*2;
+                ' A 10,' + nodeRadius + ',-30,0,1,' + nodeRadius * 2 + ',' + nodeRadius * 2;
 				var dpath3 = "M80 80 A 45 45, 0, 0, 0, 125 125 L 125 80 Z"   
 				var dpath4 = "M10 315 L 110 215 A 30 50 0 0 1 162.55 162.45 L 172.55 152.45 A 30 50 -45 0 1 215.1 109.9 L 315 10"
 				//var dpath = '';
@@ -108,9 +108,9 @@
 				
 				
 				circley = Viva.Graph.svg('circle')
-						.attr('cx', 0) //node.data.nodeSize/2)
-						.attr('cy', 0) //node.data.nodeSize/2)
-						.attr('r', node.data.nodeSize)
+						.attr('cx', 0) //node.data.entityConfig.config.attributes["radius"]/2)
+						.attr('cy', 0) //node.data.entityConfig.config.attributes["radius"]/2)
+						.attr('r', node.data.entityConfig.config.attributes["radius"])
 						.attr('fill','blue')//node.data.nodeColor)//'#4dffc3')
 						.attr('stroke','red')	
 				//groupx.append(circley);

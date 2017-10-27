@@ -6,19 +6,22 @@
 	this.nodeEffects = [];
 
 	this.addNodeBody = function () {
+		var nodeRadius = Number(_cnf.attributes["radius"]);
 		var nodeBody = Viva.Graph.svg(_cnf.attributes["shape"])
 			.attr('cx', 0)//...for circle
 			.attr('cy', 0)//...for circle
-			.attr('r', _cnf.attributes["radius"]) //...for circle
+			.attr('width', nodeRadius)//...for rect
+			.attr('height', nodeRadius)//...for rect
+			.attr('r', nodeRadius) //...for circle
 			.attr('fill', _cnf.attributes["background-color"] == null ? 'grey':_cnf.attributes["background-color"])
 			.attr('stroke-width', 3)
 			.attr('stroke', _cnf.attributes["border-color"] == null ? 'black': _cnf.attributes["border-color"])
 		if (_cnf.attributes["shape"] == "rect") {
-			nodeBody.attr('width', _cnf.attributes["radius"] * 3);
-			nodeBody.attr('height', _cnf.attributes["radius"] * 2);
-			nodeBody.attr('rx', _cnf.attributes["radius"] / 4);
-			nodeBody.attr('x', -(_cnf.attributes["radius"] * 3 / 2));
-			nodeBody.attr('y', -(_cnf.attributes["radius"] * 2 / 2));
+			nodeBody.attr('width', nodeRadius * 3);
+			nodeBody.attr('height', nodeRadius * 2);
+			nodeBody.attr('rx', nodeRadius / 4);
+			nodeBody.attr('x', -(nodeRadius * 3 / 2));
+			nodeBody.attr('y', -(nodeRadius * 2 / 2));
 		}
 		if (_cnf.effects["haze"] == true)
 			nodeBody.attr('filter', 'url(#hazeEffect)'); //haze
@@ -34,19 +37,22 @@
 	}
 
 	this.addNodeImage = function () {
-		if (!_cnf.attributes.img["url"] == null)
-			return;
+
+		//if (!_cnf.attributes.img["url"] == null)
+		//	return;
+		var imgWidth = Number(_cnf.attributes.img["width"]);
+		var imgHeight = Number(_cnf.attributes.img["height"]);
 		var nodeBodyImage = Viva.Graph.svg('image')
-		.attr('x', -_cnf.attributes["radius"])
-		.attr('y', -_cnf.attributes["radius"])
-		.attr('rx', _cnf.attributes["radius"])
-		.attr('width', _cnf.attributes["radius"] * 2)
-		.attr('height', _cnf.attributes["radius"] * 2)
+		//var nodeRadius = Number(nodeRadius);
+		//.attr('rx', nodeRadius)
+		.attr('width', imgWidth)
+		.attr('height', imgHeight)
+		.attr('x', -imgWidth/2)
+		.attr('y', -imgHeight / 2)
+		.attr('opacity', Number(_cnf.attributes.img["opacity"]))
 		.link(_cnf.attributes.img["url"] ? _cnf.attributes.img["url"] : '');
-		if (_cnf.effects["rounded"] == true)
-			nodeBodyImage.attr('fill', 'url(#gradRound)');
-		if (!_cnf.effects["opaque"] == true)
-			nodeBodyImage.attr('fill-opacity', _cnf.attributes.img["opacity"]);
+		if (_cnf.effects["rounded"] == true) nodeBodyImage.attr('fill', 'url(#gradRound)');
+		//if (!_cnf.effects["opaque"] == true) nodeBodyImage.attr('opacity', Number(_cnf.attributes.img["opacity"]));
 		this.node.data.UI.imageUI = nodeBodyImage;
 		this.nodeGraphics.push(nodeBodyImage);
 		return nodeBodyImage;
@@ -65,17 +71,39 @@
 		return nodeOption;
 	}
 
+	this.addNodeLine = function () {
+		var x = Math.ceil(getRandomArbitrary(40, 90));
+		var y = Math.ceil(getRandomArbitrary(40, 90));
+		var r = Math.ceil(getRandomArbitrary(0, 360));
+		var sx = Math.ceil(getRandomArbitrary(-1, 1));
+		var sy = Math.ceil(getRandomArbitrary(-1, 1));
+
+		nodeLine = Viva.Graph.svg('line')
+			.attr('x1', 0)
+			.attr('y1', 0)
+			.attr('x2', x)
+			.attr('y2', y)
+			.attr('style', "stroke:url(#gradShine);transform:rotate("+ r +"deg);")
+			.attr('stroke-width', '2')
+		;
+		this.node.data.UI.options.push(nodeLine);
+		this.nodeGraphics.push(nodeLine);
+		return nodeLine;
+	}
+
 	this.addNodeText = function () {
 		if (!_cnf.attributes.labelText["show"])
 			return;
 		//Text elements...
 		var displayText = Viva.Graph.svg('text')
-			.attr('y', 0)
-			.attr('x', 0)
+			.attr('y', Number(_cnf.attributes.labelText["x"]))
+			.attr('x', Number(_cnf.attributes.labelText["y"]))
 			.attr('fill', _cnf.attributes.labelText["color"])
 			.attr('font-family', _cnf.attributes.labelText["font-family"])
 			.attr('font-weight', _cnf.attributes.labelText["font-weight"])
 			.attr('font-size', '20')
+			//.attr('stroke', 'black')
+			//.attr('stroke-width', '0.5')
 			.text(this.node.data.displayLabel);
 		//if (_cnf.attributes.labelText.effects["haze"] == true)
 		//	displayText.attr('filter', 'url(#darkHazeEffect)'); //haze
@@ -87,12 +115,16 @@
 	this.addNodeCircleTextPath = function () {
 		if (!_cnf.attributes.circleText["show"])
 			return;
+		var r = Number(_cnf.attributes["radius"]) + 5;
 		var circleTextPath = Viva.Graph.svg('path')
 			.attr('id', 'npath_' + this.node.data.id)
-			.attr('d', 'M' + (-_cnf.attributes["radius"] - 3) + ',' + (-1.5) + ' a1,1 0 1,1 ' + (_cnf.attributes["radius"] * 2 + 6) + ',0')
+			.attr('d', `
+				M 0, 0
+				m -${r}, 0
+				a ${r}, ${r} 0 1, 0 ${r*2}, 0
+				a ${r}, ${r} 0 1, 0 -${r*2}, 0`)
 			.attr('fill', 'transparent')
-			//.attr('stroke-width', 5)
-			//.attr('stroke', 'black')
+			.attr('style', "transform:rotate(" + 90 + "deg);")
 		this.node.data.UI.circleTextPath = circleTextPath;
 		this.nodeGraphics.push(circleTextPath);
 		return circleTextPath;
@@ -105,8 +137,10 @@
 			.attr('y', 0)
 			.attr('x', 0)
 			.attr('fill', _cnf.attributes.circleText["color"])
+			.attr('opacity', _cnf.attributes.circleText["opacity"])
 			.attr('font-size', '10')
-		circleText.innerHTML += '<textPath xlink:href="#npath_' + this.node.data.id + '">' + this.node.data.circleText + '</textPath>';
+		circleText.innerHTML += '<textPath alignment-baseline="hanging" text-anchor="middle" xlink:href="#npath_' + this.node.data.id + '" startOffset="50%">' + this.node.data.circleText + '</textPath>';
+		//circleText.innerHTML += '<textPath alignment-baseline="baseline" text-anchor="start" xlink:href="#npath_' + this.node.data.id + '" startOffset="0%">' + this.node.data.circleText + '</textPath>';
 		this.node.data.UI.circleText = circleText;
 		this.nodeGraphics.push(circleText);
 		return circleText;
@@ -158,12 +192,19 @@ function defineNodeAppearance_dataNode(node, ui) {
 	//Circle elements NODE-CIRCLE
 	var nodeAppearance = new nodeAppearanceHelper(node);
 
-	
+	//node.data.variables["Relations"].forEach(function (functionConfig) {
+	//});
+	//for (var i = 0; i < 50; i++) {
+	//	nodeAppearance.addNodeLine();	
+	//}
+
 	nodeAppearance.addNodeBody();
 	nodeAppearance.addNodeImage();
 	nodeAppearance.addNodeText();
 	nodeAppearance.addNodeCircleTextPath();
 	nodeAppearance.addNodeCircleText();
+
+
 	_cnf["relatedThings"].forEach(function (thingConfig) {
 		if (thingConfig.thingName === "option")
 			nodeAppearance.addNodeOption(thingConfig);
@@ -175,9 +216,26 @@ function defineNodeAppearance_dataNode(node, ui) {
 	nodeAppearance.addEffect("shadowEffect",
 		'<filter id="shadowEffect" x="-1" y="-1" width="300%" height="300%"><feOffset result="offOut" in="SourceAlpha" dx="20" dy="20" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>'
 	);
-	nodeAppearance.addEffect("gradGlass",
-		'<linearGradient id="gradGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#606768" stop-opacity="0.3"/><stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="28%" stop-color="#000000" stop-opacity="0.3"/><stop offset="73%" stop-color="#000000" stop-opacity="0.3"/><stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/><stop offset="97%" stop-color="#000000" stop-opacity="0.3"/><stop offset="100%" stop-color="#000000" stop-opacity="0.3"/></linearGradient>'
+	nodeAppearance.addEffect("gradGlass", `
+		<linearGradient id="gradGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%">
+			<stop offset="0%" stop-color="#606768" stop-opacity="0.3"/>
+			<stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/>
+			<stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/>
+			<stop offset="28%" stop-color="#000000" stop-opacity="0.3"/>
+			<stop offset="73%" stop-color="#000000" stop-opacity="0.3"/>
+			<stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/>
+			<stop offset="97%" stop-color="#000000" stop-opacity="0.3"/>
+			<stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>
+		</linearGradient>`
 	);
+	nodeAppearance.addEffect("gradShine", `
+		<linearGradient id="gradShine" x1="0%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0%"   stop-color="white" stop-opacity="0.7"/>
+			<stop offset="100%"  stop-color="purple" stop-opacity="0"/>
+		</linearGradient>
+	`
+	);
+
 	//effects.push('<linearGradient id="coloredGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#606768" stop-opacity="0.3"/><stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="28%" stop-color="#000000" stop-opacity="0.3"/><stop offset="73%" stop-color="#000000" stop-opacity="0.3"/><stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/><stop offset="97%" stop-color="#000000" stop-opacity="0.3"/><stop offset="100%" stop-color="#000000" stop-opacity="0.3"/></linearGradient>');
 	nodeAppearance.addEffect("gradRound",
 		'<radialGradient id="gradRound" cx="50%" cy="50%" r="50%" fx="50%" fy="50%"><stop offset="80%" style="stop-color:rgb(' + node.data.nodeColorRGB.r + ',' + node.data.nodeColorRGB.g + ',' + node.data.nodeColorRGB.b + '); stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(' + (node.data.nodeColorRGB.r - 100) + ',' + (node.data.nodeColorRGB.g - 100) + ',' + (node.data.nodeColorRGB.b - 100) + ');stop-opacity:1" /></radialGradient>'

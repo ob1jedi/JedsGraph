@@ -14,7 +14,7 @@
 		var nodeFlyout = document.getElementById('panel.node');
 		var newContent = '';
 		newContent += '<span class="header">'
-		newContent += node.data.displayLabel;
+		newContent += node.data.labels.toString();
 		newContent += '</span>'
 
 		newContent += '<span class="pull-right">'

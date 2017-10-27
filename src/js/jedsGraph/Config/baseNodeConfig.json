@@ -31,17 +31,26 @@
 				"border-color": "red"
 			},
 
-					"labelText": {
-						/* Options: hyphenate|fontsize*/
-						"labelSizing": "fontsize",
-						"show": true,
-						"color": "#323332",
-						"font-family": "Arial, Helvetica, sans-serif",
-						"font-weight": "normal",
-						"effects": {
-							"haze": false
-						}
-					},
+			"labelText": {
+				"show": true,
+				/* Options: null(show label)|{key:"property", value:"nameOfProperty"}|{key:"static", value:"some text"}|{key:"first", value:["propName1", "propName2"]}*/
+				"displayData": {
+					"key": "first",
+					"value": [ "Name", "Title", "Id" ]
+				},
+				/* Options: above|under|center|right|left|null*/
+				"labelPosition": "center",
+				/* Options: hyphenate|fontsize|null*/
+				"labelSizing": null,
+				"color": "#ccc",
+				"font-family": "Arial, Helvetica, sans-serif",
+				"font-weight": "normal",
+				"x": 0,
+				"y": 0,
+				"effects": {
+					"haze": false
+				}
+			},
 			"circleText": {
 				"show": true,
 				"color": "#d9dce0",
@@ -53,8 +62,20 @@
 				"background-color": "gray"
 			},
 			"img": {
+				/* Options: null|imageUrl*/
 				"url": null,
+				"width": 0,
+				"height": 0,
 				"opacity": 1
+			},
+			"placement": {
+				"depth": null,
+				"start-x": null,
+				"start-y": null
+			},
+			"physics": {
+				"mass": null,
+				"spring": null
 			}
 		},
 
@@ -83,11 +104,11 @@
 
 		"effects": {
 			"haze": false,
-			"glass": false,
-			"highlightHaze": false,
 			"shadow": false,
-			"glow": false,
+			"glass": false,
 			"rounded": false,
+			"highlightHaze": false,
+			"glow": false,
 			"opaque": false
 		},
 

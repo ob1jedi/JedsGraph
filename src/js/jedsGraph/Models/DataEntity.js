@@ -1,6 +1,6 @@
 ﻿function DataEntity() {
-    this.id;
-    this.labels;
-    this.properties;
-    this.relationIds;
+	this.id = 0;
+    this.labels = [];
+    this.properties = {};
+    this.relationIds = [];
 }

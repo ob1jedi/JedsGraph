@@ -6,9 +6,28 @@
         dataSvc = new DataService();
         var confId = dataSvc.CreateConfigReturnId(name, jsonConfig);
         jsonConfig.id = confId;
-        globals.masterEntityConfigs.push(jsonConfig);
+        mergeConfigIntoMasterConfigs(jsonConfig);
         return confId;
-    }
+	}
+
+	this.AddOrUpdateDynamicEntityConfigReturnId = function (name, jsonConfig) {
+		dataSvc = new DataService();
+		var confId = dataSvc.CreateUpdateConfigReturnId(name, jsonConfig);
+		jsonConfig.id = confId;
+		mergeConfigIntoMasterConfigs(jsonConfig);
+		return confId;
+	}
+
+	function mergeConfigIntoMasterConfigs(jsonConfig)
+	{
+		for (var i = 0; i < globals.masterEntityConfigs.length; i++) {
+			if (globals.masterEntityConfigs[i].configName == jsonConfig.configName) {
+				globals.masterEntityConfigs[i] = jsonConfig;
+				return;
+			}
+		}
+		globals.masterEntityConfigs.push(jsonConfig);
+	}
 
 	//Get config file...
     this.GetConfigForEntityId = function (entityId) {
