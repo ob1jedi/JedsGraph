@@ -13,15 +13,19 @@ function initializeConfiguration(callback_setupGraph) {
 
 		//Perform Shinethrough: Merge configs, so that all configs are equal, except for their differences...
 		configManager.configs.map(function (cnf) {
-			if (cnf.configType === "entity")
+			if (cnf.configType === "entity"){
 				globals.masterEntityConfigs.push(cnf);
+      }
 			globals.masterConfigs.push($.extend(true, {}, DefaultConfig, cnf));
 		})
-		//var dynamicConfig = getDynamicConfig();
+		
+    // Add dynamic configs (anything added AFTER the baseconfigs have been loaded)
 		var dataSvc = new DataService(); 
-		var dynamicEntityConfigs = dataSvc.GetAllConfigs();
-		dynamicEntityConfigs.forEach(function (cnf) {
+		var entityConfigs = dataSvc.GetAllConfigs();
+		entityConfigs.forEach(function (cnf) {
 			globals.masterEntityConfigs.push(cnf);
+      // Update VUE component with master configs...
+      consoleApp.tabs.existingMatching.masterEntityConfigs.push(cnf);
 		});
 
 		//Update the config selector on the UI...
@@ -30,6 +34,8 @@ function initializeConfiguration(callback_setupGraph) {
 			if (configManager.defaultConfig = cnf.prefix) { DefaultConfig = cnf }
 			selectorElement.innerHTML += '<option value="' + cnf.configName + '">' + cnf.configName + '</option>';
 		});
+
+
 
 		callback_setupGraph(DefaultConfig);
 	});

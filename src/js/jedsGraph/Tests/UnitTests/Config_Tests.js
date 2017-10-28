@@ -17,7 +17,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 	}
 	var testConfig = {
 		"configName": configName,
-		"configType": "node",
+		"configType": "entity",
 		"matchEntity": matchEntity,
 		"config": {
 			"attributes": {
@@ -64,21 +64,21 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndN
 
 	// Dynamic config...
 	var testConfig = {
-		configName: testConfigName,
-		configType: "node",
-		matchEntity: {
+		"configName": testConfigName,
+		"configType": "entity",
+		"matchEntity": {
 			"labels": [
 				testEntityName
 			]
 		},
-		config: {
-			attributes: {
-				color: "#f2b3ab",
-				circleText: {
-					color: "green"
+		"config": {
+			"attributes": {
+				"color": "#f2b3ab",
+				"circleText": {
+					"color": "green"
 				}
 			},
-			relatedThings: [
+			"relatedThings": [
 				{
 					"thingName": "option",
 					"url": "custom/assets/64.png",
@@ -110,9 +110,9 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 			testEntityName
 		]
 	}
-	var initialConfig = { "configName": configName, "configType": "node", "matchEntity": matchEntity, "config": { "attributes": { "background-color": "#33c11d", "color": "blue", "circleText": { "color": "yellow" } } } };
+	var initialConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "background-color": "#33c11d", "color": "blue", "circleText": { "color": "yellow" } } } };
 	var confId = sut.CreateConfigReturnId(configName, initialConfig);
-	var updatedConfig = { "configName": configName, "configType": "node", "matchEntity": matchEntity, "config": { "attributes": { "radius":15, "background-color": "#33c11d", "color": "red", "circleText": { "color": "red" } } } };
+	var updatedConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "radius":15, "background-color": "#33c11d", "color": "red", "circleText": { "color": "red" } } } };
 
 	// Act
 	var confId2 = sut.CreateUpdateConfigReturnId(configName, updatedConfig);
@@ -125,3 +125,41 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 	refreshNodeAppearance(nodes[0].id);
 
 });
+
+
+////[Test]
+//globals.allUnitTests.push(function insertValueIntoConfig_GivenConfig_ExpectUpdatedConfig() {
+	
+//  // Arrange
+//	var sut = new ConfigHelper();
+//  var configValuePath = "newConfig/config/attributes/background-color";
+//  var newValue = "green";
+//  var sourceConfig = {
+//		"configName": "Test",
+//		"configType": "entity",
+//		"matchEntity": "HELLO",
+//		"config": {
+//			"attributes": {
+//				"background-color": "#33c11d",
+//				"color": "blue",
+//				"circleText": {
+//					"color": "yellow"
+//				},
+//				"img": {
+//					"url": "custom/assets/Space/Earth-PNG-Clipart.png",
+//					"width": 70,
+//					"height": 70
+//				}
+//			}
+//		}
+//	};
+
+
+//  // Act 
+//  var newConfig = sut.AddToConfigReturnConfig(sourceConfig, configValuePath, newValue);
+
+//  // Assert
+//  var result = newConfig.config.attributes["background-color"]
+//  return (result == newValue) ? true : result;
+
+//});

@@ -330,12 +330,33 @@ svg, #graphContainer, #schemaContainer {
 }
 div.modPanel label
 {
+	cursor: pointer;
 	margin: 1px;
 	padding: 1px;
-	color: slategrey;
+	color: #8c8c8c;
 	vertical-align: top;
 	font-size: 10px;
 }
+div.modPanel label.canCheck
+{
+	/*color: slategrey;*/
+	text-decoration: underline;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+}
+div.modPanel label.canCheck:hover
+{
+	color: deepskyblue;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+}
+
+div.modPanel label.active
+{
+	color: #b3ffff;
+
+}
+
 div.modPanel input
 {
 	/*width: 80px;*/
@@ -351,13 +372,14 @@ div.modPanel input
 div.modPanel select
 {
 	/*width: 80px;*/
-	color:#3a3a3a;
+	color:#000;
 	height: 20px;
 	margin: 2px;
 	border-radius: 3px;
 	background-color: #b3ffff;
 	border-color: transparent;
 	font-size: 12px;
+	font-weight:bold;
 	backface-visibility:hidden;
 }
 div.modPanel hr

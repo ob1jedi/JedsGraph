@@ -27,6 +27,7 @@
 			}
 		}
 		globals.masterEntityConfigs.push(jsonConfig);
+    consoleApp.tabs.existingMatching.masterEntityConfigs.push(jsonConfig);
 	}
 
 	//Get config file...
@@ -39,27 +40,43 @@
 	//Get config file...
     this.GetConfigForEntity = function (entity) {
     	var dataSvc = new DataService();
-    	var entityConfigs = [];
-
-    	entityConfigs.push(globals.masterEntityConfigs[0]);
-    	globals.masterEntityConfigs.forEach(function (config) {
-    		if (isConfigForEntity(entity, config)) {
-    			entityConfigs.push(config);
+    	var theseEntityConfigs = [];
+    	//entityConfigs.push(globals.masterEntityConfigs[0]);
+      globals.masterEntityConfigs.forEach(function (thisConfig) {
+        if (isConfigForEntity(entity, thisConfig)) {
+    			theseEntityConfigs.push(thisConfig);
     		}
     	});
-
-    	//debugger;
     	var finalConfig = {};
-    	entityConfigs.map(function (cnf) {
+    	theseEntityConfigs.map(function (cnf) {
     		finalConfig = $.extend(true, {}, finalConfig, cnf);
     	});
-
     	return finalConfig;
     }
 
+
+    
+    //this.AddToConfigReturnConfig =function(sourceConfig, configValuePath, newValue){
+      
+    //  for (var p in o)
+    //  {
+
+    //  }
+      
+    //  var configElements = configValuePath.split('/');
+    //  var inConfig = sourceConfig;
+    //  configValuePath.replace()
+    //  for (var i = 0, path=configValuePath.split('/'), len=path.length; i < len; i++){
+    //    obj = obj[path[i]];
+    //  }
+
+    //  inConfig = newValue;
+    //  return sourceConfig;
+    //}
+
     function isConfigForEntity(entity, config)
-	{
-		if (config.configType != "node")
+	  {
+		if (config.configType != "entity")
 			return false;
 
 		var jsonHelper = new JsonHelper();

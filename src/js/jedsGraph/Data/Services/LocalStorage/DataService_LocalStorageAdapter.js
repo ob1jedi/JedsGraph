@@ -11,9 +11,8 @@
 		var existingConfig = this.GetConfigByName(configName);
 		if (!existingConfig)
 			return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
-
-		var finalConf = $.extend(existingConfig, jsonConfig);
-		return dataDriver.UpdadeConfigInDb(configName, finalConf);
+		var finalConf = $.extend(true, {}, existingConfig, jsonConfig);
+		return dataDriver.UpdateConfigInDb(configName, finalConf);
 	}
 
 	this.GetAllConfigs = function () {

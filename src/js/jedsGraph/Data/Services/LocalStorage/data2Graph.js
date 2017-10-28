@@ -64,6 +64,7 @@ function GetConfigForEntityId(entityId)
     var configHelper = new ConfigHelper();
     return configHelper.GetConfigForEntityId(entityId);
 }
+
 function removeNodeFromGraph(node)
 {
 	removeNodeFromStage(node.id);

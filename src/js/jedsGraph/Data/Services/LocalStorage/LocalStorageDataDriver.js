@@ -5,7 +5,7 @@ var LocalStorageDataDriver = function () {
 
     //----PUBLIC----------------------------------------------------------
 
-	this.UpdadeConfigInDb = function (name, configJson) {
+	this.UpdateConfigInDb = function (name, configJson) {
 		writeConfigToStorage(name, configJson);
 		return configJson.id;
 	}
