@@ -11,8 +11,13 @@
 		var existingConfig = this.GetConfigByName(configName);
 		if (!existingConfig)
 			return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
-		var finalConf = $.extend(true, {}, existingConfig, jsonConfig);
-		return dataDriver.UpdateConfigInDb(configName, finalConf);
+		var jsonHelper = new JsonHelper();
+    //var finalConf = $.extend(true, {}, existingConfig, jsonConfig);
+    var finalConf = jsonHelper.MergeJson(existingConfig, jsonConfig, "arrayId");
+		console.log('existingConfig',existingConfig );
+    console.log('jsonConfig',jsonConfig );
+    console.log('finalConf',finalConf );
+    return dataDriver.UpdateConfigInDb(configName, finalConf);
 	}
 
 	this.GetAllConfigs = function () {

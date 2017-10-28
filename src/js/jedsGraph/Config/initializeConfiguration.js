@@ -12,13 +12,14 @@ function initializeConfiguration(callback_setupGraph) {
 		var DefaultConfig = configManager.configs[0];
 
 		//Perform Shinethrough: Merge configs, so that all configs are equal, except for their differences...
-		configManager.configs.map(function (cnf) {
+		var jsonHelper = new JsonHelper();
+    configManager.configs.map(function (cnf) {
 			if (cnf.configType === "entity"){
 				globals.masterEntityConfigs.push(cnf);
       }
-			globals.masterConfigs.push($.extend(true, {}, DefaultConfig, cnf));
+			//globals.masterConfigs.push($.extend(true, {}, DefaultConfig, cnf));
+      globals.masterConfigs.push(jsonHelper.MergeJson(DefaultConfig, cnf, "arrayId"));
 		})
-		
     // Add dynamic configs (anything added AFTER the baseconfigs have been loaded)
 		var dataSvc = new DataService(); 
 		var entityConfigs = dataSvc.GetAllConfigs();

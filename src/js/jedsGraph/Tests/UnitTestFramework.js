@@ -8,7 +8,7 @@
 
 	// Public...
 	this.runAllUnitTests = function (tests) {
-			localStorage.clear();
+			//localStorage.clear();
 			localStorage.removeItem('NEXT_NODE_ID');
 			localStorage.removeItem('NEXT_LINK_ID');
 			localStorage.removeItem('NEXT_CONFIG_ID');

@@ -1,0 +1,34 @@
+JsonHelper
+--------------
+
+The problem with merging json is that arrays are non-deterministic.
+As soon as you put something into an array, you can only remove it or leave it, but you can't update it.
+For instance, there's no resonable way to differentiate between two object-type elements inside an array.
+Your options are:
+- Remove all objects in array 1 and replace them with objects from array 2. (leads to loss of data)
+- Insert objects from array 2 into array 1 irrespective of existing objects in array1 (leads to duplicate data)
+- Leave identical objects (expensive to compare objects; doesn't allow for updating of existing objects since they have to be identical to match anyway, and therefore leads to variants of data) 
+
+There is hope however, you can either add descriminators into your data, or tell your functions how to descriminate the elements in each array.
+I've made the following solution which works for me: 
+Firstly, because its my data, I inject a common discriminator into my data.
+So every object in an array has a unique 'identifier-key' property.
+Whenever I merge 2 json objects, the 'identifier-key' is used to manage the objects inside of arrays.
+It caters for objects-inside-arrays, and also arrays-inside-arrays.
+
+I made the following set of rules:
+
+Rules include
+1: Every object (specifically the ones inside arrays) needs an 'object-key' property that uniquely identifies each object (scoped to the parent array at minimum).
+	example [ {MyKey:1, prop:1}, {MyKey:2, prop:2} ] and [ {MyKey:3, prop:3}, {MyKey:2, prop:4} ] returns [ {MyKey:1, prop:1}, {MyKey:2, prop:4}, {MyKey:3, prop:3} ]
+2: Every array (specifically the ones inside other arrays) need to contain a string element with format of 'object-key:unique-value' that uniquely identifies each array inside the array.
+	example: [ ["MyKey:1", 1],["MyKey:2", 2] ] and [ ["MyKey:3", 3],["MyKey:2", 4] ] returns [ ["MyKey:1", 1],["MyKey:2", 2, 4], ["MyKey:3", 3] ]
+3. Objects inside arrays will not replace Arrays inside arrays and visa-versa.
+	example: [ ["MyKey:1"],{MyKey:2} ] and [ {MyKey:1},["MyKey:2"] ] returns [ ["MyKey:1"], {MyKey:1}, ["MyKey:2"], {MyKey:2} ]
+4. The object-key field name must be the same throughout the data structure.
+
+Here are the methods:
+  (see jsonHelper method: JsonHelper.MergeJson)
+
+And here is a function that tests the method: 
+  (see jsonHelper_Tests mergeJson_Given2ComplexObjects_Expect1UpdatedObject)

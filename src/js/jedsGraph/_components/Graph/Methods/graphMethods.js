@@ -348,7 +348,7 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 	//set display label...
 	thisNodeData.displayLabel = "";
 	var configDisplayValueOptions = thisNodeData.entityConfig.config.attributes.labelText["displayData"];
-	console.log('configDisplayValueOptions',configDisplayValueOptions);
+
 	if (!configDisplayValueOptions) {
 		thisNodeData.displayLabel = finalLabel;
 	} else if (configDisplayValueOptions.key === "property") {

@@ -97,14 +97,11 @@ Vue.component('vw-panel-nodeEditor-styles', {
 					<td>
             <label class="canCheck"
               v-on:click="(styles.bNodeColor=!styles.bNodeColor)" 
-              v-bind:class="{ active: styles.bNodeColor }">
-                Background Col:
-              </label>
-            </td>
+              v-bind:class="{ active: styles.bNodeColor }">Background Col:</label></td>
 					<td>
 						<input class="jscolor tinybox pull-right"
-							v-model.lazy='styles.selectedNodeColor'
-							v-on:change="styles.updateNodeBackgroundColor('#' + styles.selectedNodeColor)">
+							v-model.lazy="styles.selectedNodeColor"
+							v-on:change="styles.updateNodeBackgroundColor()">
 						</input>
 					</td>
 				</tr>
@@ -114,8 +111,8 @@ Vue.component('vw-panel-nodeEditor-styles', {
               v-bind:class="{ active: styles.bNodeBorderColor }">Border Color:</label></td>
 					<td>
 						<input class ="jscolor tinybox pull-right"
-							v-model.lazy='styles.selectedNodeBorderColor'
-							v-on:change="styles.updateNodeBorderColor('#' + styles.selectedNodeBorderColor)">
+							v-model.lazy="styles.selectedNodeBorderColor"
+							v-on:change="styles.updateNodeBorderColor()">
 						</input>
 					</td>
 				</tr>
@@ -125,8 +122,8 @@ Vue.component('vw-panel-nodeEditor-styles', {
               v-bind:class="{ active: styles.bNodeTextColor }">Text Color:</label></td>
 					<td>
 						<input class ="jscolor tinybox pull-right"
-							v-model.lazy='styles.selectedNodeTextColor'
-							v-on:change="styles.updateNodeTextColor('#' + styles.selectedNodeTextColor)">
+							v-model.lazy="styles.selectedNodeTextColor"
+							v-on:change="styles.updateNodeTextColor()">
 						</input>
 					</td>
 				</tr>
@@ -136,8 +133,8 @@ Vue.component('vw-panel-nodeEditor-styles', {
               v-bind:class="{ active: styles.bNodeCircleTextColor }">Circle Text Color: </label></td>
 					<td>
 						<input class ="jscolor tinybox pull-right"
-							v-model.lazy='styles.selectedNodeCircleTextColor'
-							v-on:change="styles.updateNodeCircleTextColor('#' + styles.selectedNodeCircleTextColor)">
+							v-model.lazy="styles.selectedNodeCircleTextColor"
+							v-on:change="styles.updateNodeCircleTextColor()">
 						</input>
 					</td>
 				</tr>
@@ -213,6 +210,7 @@ Vue.component('vw-panel-nodeEditor-behaviours', {
 	props: ['behaviours'],
 	template: `
 		<div class ="tabcontent">
+
 			<table class ="table">
 				<tr>
 					<td><label class="canCheck"
@@ -243,6 +241,36 @@ Vue.component('vw-panel-nodeEditor-behaviours', {
 				</tr>
 
 			</table>
+
+      <label class="canCheck" v-on:click="(behaviours.bDisplayText=!behaviours.bDisplayText)" v-bind:class="{ active: behaviours.bDisplayText }"> Label binding: </label> 
+      <table>
+        <tr>
+          <td> 
+            <select class ="halfbox pull-right" v-model="behaviours.selectedDisplayTextType">
+              <option v-for="type in ['type','property','static','first']" v-bind:value="type">
+                {{type}}
+              </option>
+            </select> 
+          </td>
+          <td> <input class ="halfbox pull-right" v-model="behaviours.selectedDisplayField"></input> </td>
+        </tr>
+      </table>
+
+      <label class="canCheck" v-on:click="(behaviours.bDisplayImage=!behaviours.bDisplayImage)" v-bind:class="{ active: behaviours.bDisplayImage }"> Image binding: </label> 
+      <table>
+        <tr>
+          <td> 
+            <select class ="halfbox pull-right" v-model="behaviours.selectedNodeImageType">
+              <option v-for="type in ['property','static']" v-bind:value="type">
+                {{type}}
+              </option>
+            </select> 
+          </td>
+          <td> <input class ="halfbox pull-right" v-model="behaviours.selectedNodeImageValue"></input> </td>
+        </tr>
+      </table>
+
+
 			<hr>
 
 		</div>
@@ -495,30 +523,30 @@ var consoleApp = new Vue({
         bNodeShape:false,
         bNodeImageUrl:false,
 
-				selectedNodeColor: '#BFBC8B',
-				selectedNodeBorderColor: '#8ABF8A',
-				selectedNodeTextColor: '#8A9DBF',
-				selectedNodeCircleTextColor: '#7EDEE6',
+				selectedNodeColor: 'BFBC8B',
+				selectedNodeBorderColor: '8ABF8A',
+				selectedNodeTextColor: '8A9DBF',
+				selectedNodeCircleTextColor: '7EDEE6',
 				selectedNodeShape: 'circle',
 				selectedNodeSize: 25,
 				selectedNodeImageUrl: null,
 				//shapes: [{ key: 'circle', value: 'circle' }, { key: 'rectangle', value: "rect" }, { key: 'triangle', value: "path" }],
 				shapes: [{ key: 'circle', value: 'circle' }],
-				updateNodeBackgroundColor: function (color) {
+				updateNodeBackgroundColor: function () {
 					if (globals.selectedNode)
-            globals.selectedNode.data.UI.bodyUI.attributes["fill"].nodeValue = color;
+            globals.selectedNode.data.UI.bodyUI.attributes["fill"].nodeValue = '#' + this.selectedNodeColor;
 				},
-				updateNodeBorderColor: function (color) {
+				updateNodeBorderColor: function () {
 					if (globals.selectedNode)
-            globals.selectedNode.data.UI.bodyUI.attributes["stroke"].nodeValue = color;
+            globals.selectedNode.data.UI.bodyUI.attributes["stroke"].nodeValue = '#' + this.selectedNodeBorderColor;
 				},
-				updateNodeTextColor: function (color) {
+				updateNodeTextColor: function () {
 					if (globals.selectedNode)
-            globals.selectedNode.data.UI.displayTextUI.attributes["fill"].nodeValue = color;
+            globals.selectedNode.data.UI.displayTextUI.attributes["fill"].nodeValue = '#' + this.selectedNodeTextColor;
 				},
-				updateNodeCircleTextColor: function (color) {
+				updateNodeCircleTextColor: function () {
 					if (globals.selectedNode)
-            globals.selectedNode.data.UI.circleText.attributes["fill"].nodeValue = color;
+            globals.selectedNode.data.UI.circleText.attributes["fill"].nodeValue = '#' + this.selectedNodeCircleTextColor;
 				},
 				updateNodeSize: function (size) {
 					if (globals.selectedNode)
@@ -549,6 +577,10 @@ var consoleApp = new Vue({
         bDisplayText:false,
 				selectedDisplayTextType: null,
 				selectedDisplayField: null,
+        
+        bDisplayImage: false,
+        selectedNodeImageType: null,
+        selectedNodeImageValue: null
 			},
 			saveMatch: function () {
 				console.log('Saving...');
@@ -585,15 +617,15 @@ var consoleApp = new Vue({
 				//	}
 				//};
         //console.log('CURRENT CONFIG' , tempConfig);
-
+        
         var s = this.styles;
-        tempConfig = addToConfig(s.bNodeColor           ,tempConfig, {"config":{"attributes":{"background-color":s.selectedNodeColor}}}     );
-				tempConfig = addToConfig(s.bNodeBorderColor     ,tempConfig, {"config":{"attributes":{"border-color" :s.selectedNodeBorderColor}}}  );
-        tempConfig = addToConfig(s.bNodeShape           ,tempConfig, {"config":{"attributes":{"shape" :s.selectedNodeShape}}}               );
-        tempConfig = addToConfig(s.bNodeSize            ,tempConfig, {"config":{"attributes":{"radius" :s.selectedNodeSize}}}               );
-        tempConfig = addToConfig(s.bNodeTextColor       ,tempConfig, {"config":{"attributes":{"labelText":{"color" :s.selectedNodeTextColor}}}});
-        tempConfig = addToConfig(s.bNodeCircleTextColor ,tempConfig, {"config":{"attributes":{"circleText":{"color" :s.selectedNodeCircleTextColor}}}});
-        tempConfig = addToConfig(s.bNodeImageUrl        ,tempConfig, {"config":{"attributes":{"img":{"url" :s.selectedNodeImageUrl}}}}      );
+        tempConfig = addToConfig(s.bNodeColor           ,tempConfig, {"config":{"attributes":{"background-color": '#' + s.selectedNodeColor}}}     );
+				tempConfig = addToConfig(s.bNodeBorderColor     ,tempConfig, {"config":{"attributes":{"border-color" : '#' + s.selectedNodeBorderColor}}}  );
+        tempConfig = addToConfig(s.bNodeShape           ,tempConfig, {"config":{"attributes":{"shape" : s.selectedNodeShape}}}               );
+        tempConfig = addToConfig(s.bNodeSize            ,tempConfig, {"config":{"attributes":{"radius" : s.selectedNodeSize}}}               );
+        tempConfig = addToConfig(s.bNodeTextColor       ,tempConfig, {"config":{"attributes":{"labelText":{"color" : '#' + s.selectedNodeTextColor}}}});
+        tempConfig = addToConfig(s.bNodeCircleTextColor ,tempConfig, {"config":{"attributes":{"circleText":{"color" : '#' + s.selectedNodeCircleTextColor}}}});
+        //tempConfig = addToConfig(s.bNodeImageUrl        ,tempConfig, {config:{attributes:{"img":{"url" :s.selectedNodeImageUrl}}}}      );
 
         var b = this.behaviours;
         if (b.bDisplayText){
@@ -610,10 +642,21 @@ var consoleApp = new Vue({
 					  tempConfig.config.attributes.labelText.displayData = { key: "first", value: b.selectedDisplayField.split(',').map(function(fieldName){ return fieldName.trim()} ) };
 				  }
         }
+        if (b.bDisplayImage)
+        {
+            var cnf = {"config":{"attributes":{"img":{"displayData":{ "key" : '', "value": ''}}}}};
+            cnf.config.attributes.img.displayData.key = b.selectedNodeImageType;
+            cnf.config.attributes.img.displayData.value = b.selectedNodeImageValue.trim();
+          console.log('tempConfig' , tempConfig);
+          console.log('cnf' , cnf);
+            tempConfig = addToConfig(b.bDisplayImage ,tempConfig, cnf );
+					  //tempConfig.config.attributes.img.displayData = { key: b.selectedDisplayTextType, value: b.selectedNodeImageValue.trim() };
+        }
 
-        //console.log('NEW CONFIG' , tempConfig);
 
-				//configHelper.AddOrUpdateDynamicEntityConfigReturnId(tempConfig.configName, tempConfig);
+        console.log('NEW CONFIG' , tempConfig);
+        //debugger;
+				configHelper.AddOrUpdateDynamicEntityConfigReturnId(tempConfig.configName, tempConfig);
 
 				//var nodes = getNodesByMatchingLabels(globals.nodeList, [this.newMatching.selectedNodeType]);
 				//console.log('Refreshing nodes:', nodes);
@@ -647,9 +690,13 @@ var consoleApp = new Vue({
 })
 
 function addToConfig(isActive, config, newConfig){
+  console.log( 'isActive', isActive);
     if (!isActive)
       return config;
-    return $.extend(true, {}, config, newConfig);
+    var jsonHelper = new JsonHelper();
+    //return $.extend(true, {}, config, newConfig);
+  console.log( 'creating new config...')
+    return jsonHelper.MergeJson(config, newConfig, "arrayId");
 }
     
 //    var inConfig = config;

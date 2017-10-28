@@ -40,9 +40,22 @@
 
 		//if (!_cnf.attributes.img["url"] == null)
 		//	return;
+    // Evaluate image url:
+    var imageUrl = "";
+    if (_cnf.attributes.img.displayData["key"] === "property")
+      imageUrl = this.node.data.propertiesObject[_cnf.attributes.img.displayData["value"]];
+    else
+      imageUrl = _cnf.attributes.img["url"];
+
 		var imgWidth = Number(_cnf.attributes.img["width"]);
 		var imgHeight = Number(_cnf.attributes.img["height"]);
-		var nodeBodyImage = Viva.Graph.svg('image')
+		
+    if (imageUrl &&imgWidth === 0)
+      imgWidth = 100;
+    if (imageUrl && imgHeight === 0)
+      imgHeight = 100;
+
+    var nodeBodyImage = Viva.Graph.svg('image')
 		//var nodeRadius = Number(nodeRadius);
 		//.attr('rx', nodeRadius)
 		.attr('width', imgWidth)
@@ -50,7 +63,7 @@
 		.attr('x', -imgWidth/2)
 		.attr('y', -imgHeight / 2)
 		.attr('opacity', Number(_cnf.attributes.img["opacity"]))
-		.link(_cnf.attributes.img["url"] ? _cnf.attributes.img["url"] : '');
+    .link(imageUrl);
 		if (_cnf.effects["rounded"] == true) nodeBodyImage.attr('fill', 'url(#gradRound)');
 		//if (!_cnf.effects["opaque"] == true) nodeBodyImage.attr('opacity', Number(_cnf.attributes.img["opacity"]));
 		this.node.data.UI.imageUI = nodeBodyImage;

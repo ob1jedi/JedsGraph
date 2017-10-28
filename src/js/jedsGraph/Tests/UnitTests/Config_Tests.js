@@ -37,7 +37,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 	var baseNodeConfig = globals.masterConfigs.forEach(function (config) { if (config.prefix == "BNC") return config; });
 
 	// Act
-	var confId = sut.CreateConfigReturnId(configName, testConfig);
+	var confId = sut.CreateUpdateConfigReturnId(configName, testConfig);
 	var result = sut.GetConfigByName(configName);
 
 	// Assert
@@ -90,7 +90,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndN
 		}
 	};
 
-	var conf = sut.AddDynamicEntityConfigReturnId(testConfigName, testConfig);
+	var confId = sut.AddDynamicEntityConfigReturnId(testConfigName, testConfig);
 	var entity = dataSvc.GetEntityById(entityId);
 	var nodes = addEntitiesToGraphAndReturnNodes([entity]);
 	// Act
@@ -111,7 +111,7 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 		]
 	}
 	var initialConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "background-color": "#33c11d", "color": "blue", "circleText": { "color": "yellow" } } } };
-	var confId = sut.CreateConfigReturnId(configName, initialConfig);
+	var confId = sut.CreateUpdateConfigReturnId(configName, initialConfig);
 	var updatedConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "radius":15, "background-color": "#33c11d", "color": "red", "circleText": { "color": "red" } } } };
 
 	// Act

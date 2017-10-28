@@ -63,7 +63,12 @@
 			},
 			"img": {
 				/* Options: null|imageUrl*/
-				"url": null,
+        "url": null,
+        /* Options: null|{key:"property", value:"nameOfProperty"}|{key:"static", value:"some text"}*/
+        "displayData": {
+					"key": null,
+					"value": null
+				},
 				"width": 0,
 				"height": 0,
 				"opacity": 1
@@ -81,22 +86,25 @@
 
 		"relatedThings": [
 			/* example of "option" thing: {"thingName": "option","url": "custom/assets/64.png","x": 10,"y": 0,"size": 50}, */
-			{
-				"thingName": "popoutBox",
-				"TextColor": "#0077b3",
-				"BoxColor": "#bfbfbf"
-			},
-			{
-				"thingName": "flyout",
-				"show": true
-			},
-			{
-				"thingName": "flyoutButton",
-				"elementType": "button",
-				"innerHTML": "New Workflow",
-				"onclick": "globals.nodeFunctions.show_addWorkflowModal()",
-				"tooltip": "Create new workflow"
-			}
+      {
+        "arrayId":  1,
+        "thingName": "popoutBox",
+        "TextColor": "#0077b3",
+        "BoxColor": "#bfbfbf"
+      },
+      {
+        "arrayId":  2,
+        "thingName": "flyout",
+        "show": true
+      },
+      {
+        "arrayId":  3,
+        "thingName": "flyoutButton",
+        "elementType": "button",
+        "innerHTML": "New Workflow",
+        "onclick": "globals.nodeFunctions.show_addWorkflowModal()",
+        "tooltip": "Create new workflow"
+      }
 		],
 		"behaviours": {
 			"loadNodePopouts": false
@@ -116,42 +124,46 @@
 		"functions": [
 			/*available event: onDisplay, onClick, onDrag, onHide */
 			/*available functionName: getRelationCount, getOutboundRelationCount, getInboundRelationCount, getTallestTree, getDeepestRoot, getAncestorCount, getDescendantCount */
-			{
-				"onEvent": "onDisplay",
-				"executeFunction": "getRelationCounts",
-				"withParams": {},
-				"intoVariable": "Relations"
-			}
+      {
+        "arrayId":  1,
+        "onEvent": "onDisplay",
+        "executeFunction": "getRelationCounts",
+        "withParams": { },
+        "intoVariable": "Relations"
+      }
 		],
 
 		"plugins": [
-			{
-				"name": "Petalize",
-				"params": {
-					"propertyName": "Relations",
-					"petalImageUrl": "custom/svg/Leaves/black-willow.svg",
-					"startAtRadius": 25,
-					"petalSize": 30
-				}
-			},
-			{
-				"name": "Ringulate",
-				"params": {
-					"propertyName": "Relations",
-					"petalImageUrl": "custom/svg/Leaves/black-willow.svg"
-				}
-			}
+      {
+        "arrayId":  1,
+        "name": "Petalize",
+        "params": {
+          "propertyName": "Relations",
+          "petalImageUrl": "custom/svg/Leaves/black-willow.svg",
+          "startAtRadius": 25,
+          "petalSize": 30
+        }
+      },
+      {
+        "arrayId":  2,
+        "name": "Ringulate",
+        "params": {
+          "propertyName": "Relations",
+          "petalImageUrl": "custom/svg/Leaves/black-willow.svg"
+        }
+      }
 		],
 		"appearanceRules": [
-			{
-				"ifProperty": "categoryID",
-				"isValue": 5,
-				"thenNodeDisplayBody": {
-					"color": "gray",
-					"size": 50,
-					"image": "custom/svg/placeholder.svg"
-				}
-			}
+      {
+        "arrayId":  1,
+        "ifProperty": "categoryID",
+        "isValue": 5,
+        "thenNodeDisplayBody": {
+          "color": "gray",
+          "size": 50,
+          "image": "custom/svg/placeholder.svg"
+        }
+      }
 		],
 
 		"dynamicSizingOptions": {
