@@ -106,6 +106,7 @@ var LocalStorageDataDriver = function () {
 	}
 
 	this.GetNextNewConfigId = function () {
+    //debugger;
 		var nextIndex = GetNextIndexForCounter('NEXT_CONFIG_ID');
 		return nextIndex;
 	}

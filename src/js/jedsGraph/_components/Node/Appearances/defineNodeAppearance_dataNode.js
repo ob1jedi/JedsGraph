@@ -44,10 +44,14 @@
     var imageUrl = "";
     if (_cnf.attributes.img.displayData["key"] === "property")
       imageUrl = this.node.data.propertiesObject[_cnf.attributes.img.displayData["value"]];
+    else if (_cnf.attributes.img.displayData["key"] === "static")
+      imageUrl = _cnf.attributes.img.displayData["value"];
     else
       imageUrl = _cnf.attributes.img["url"];
 
-		var imgWidth = Number(_cnf.attributes.img["width"]);
+    console.log('imageUrl', imageUrl);
+		
+    var imgWidth = Number(_cnf.attributes.img["width"]);
 		var imgHeight = Number(_cnf.attributes.img["height"]);
 		
     if (imageUrl &&imgWidth === 0)

@@ -25,7 +25,7 @@
       }
     }
     globals.masterEntityConfigs.push(jsonConfig);
-    consoleApp.tabs.existingMatching.masterEntityConfigs.push(jsonConfig);
+    consoleApp.tabs.newMatching.masterEntityConfigs.push(jsonConfig);
   }
 
   //Get config file...
@@ -80,7 +80,7 @@
 
     var jsonHelper=new JsonHelper();
     if(config.matchEntity!=null) {
-      return jsonHelper.Contains(config.matchEntity,entity)
+      return jsonHelper.Contains(config.matchEntity, entity, false)
     }
     return true;
   }

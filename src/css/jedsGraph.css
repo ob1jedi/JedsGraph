@@ -360,27 +360,45 @@ div.modPanel label.active
 div.modPanel input
 {
 	/*width: 80px;*/
+    border-style:solid;
+    border-width:1px;
 	color:#000;
 	height: 20px;
 	margin: 2px;
 	border-radius: 3px;
-	background-color: #b3ffff;
-	border-color: transparent;
+	background-color: #6f7c79;
+	border-color: #b3ffff;
 	font-weight:bold;
 	font-size: 12px;
+}
+div.modPanel input.active
+{
+	/*width: 80px;*/
+	color:#000;
+	background-color: #b3ffff;
+	border-color: transparent;
 }
 div.modPanel select
 {
 	/*width: 80px;*/
+    border-style:solid;
+    border-width:1px;
 	color:#000;
 	height: 20px;
 	margin: 2px;
 	border-radius: 3px;
-	background-color: #b3ffff;
-	border-color: transparent;
+	background-color: #6f7c79;
+	border-color: #b3ffff;
 	font-size: 12px;
 	font-weight:bold;
 	backface-visibility:hidden;
+}
+div.modPanel select.active
+{
+	/*width: 80px;*/
+	color:#000;
+	background-color: #b3ffff;
+	border-color: transparent;
 }
 div.modPanel hr
 {
@@ -395,6 +413,18 @@ div.modPanel input.tinybox
 	width: 60px;
 	padding:0px;
 	border-width: 0px;
+}
+
+
+
+div.modPanel select.fullbox
+{
+	width: 155px;
+	border-width: 0px;
+}
+div.modPanel span.active.fullbox
+{
+	font-size:0px;
 }
 
 div.modPanel div.tabcontent table span
@@ -449,8 +479,8 @@ div.tab button:hover {
 
 /* Create an active/current tablink class */
 div.tab button.active {
-    background-color: rgba(187,187,187,0.3);
-	color: slategrey;
+    background-color: #555a63;
+	/*color: #b3ffff;*/
 }
 
 /* Style the tab content */

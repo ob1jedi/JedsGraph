@@ -1,21 +1,41 @@
 ﻿function JsonHelper() {
 
-  this.Contains=function(subsetJson,supersetJson) {
+  this.Contains=function(subsetJson,supersetJson, caseSensitive) {
     if(!ofSameType(subsetJson,supersetJson))
       return false;
 
-    switch(typeof subsetJson) {
-      case "object":
+    if (isObject(subsetJson))
         for(var key in subsetJson)
           return this.Contains(subsetJson[key],supersetJson[key])
-      case "array":
-        for(var i=0;i<subsetJson;i++)
+    else if (isArray(subsetJson))
+        for(var i=0;i<subsetJson.length;i++)
           return this.Contains(subsetJson[i],supersetJson[i])
-      default:
-        return subsetJson===supersetJson;
-    }
-    return true;
+    else if (typeof subsetJson === "string")
+      if (caseSensitive)
+        return subsetJson === supersetJson;
+      else
+        return subsetJson.toLowerCase() === supersetJson.toLowerCase()
+    else
+      return subsetJson === supersetJson;
   }
+
+  this.GetValueWithPath =function(json, path){
+    var elements = path.split('/');
+    var configElement = json;
+    for (var i=0; i < elements.length; i++){
+      if (configElement === undefined)
+       return undefined;
+
+      var subels = elements[i].split('[');
+      if (subels.length > 1){ 
+        configElement = configElement[subels[0]][Number(subels[1].replace(']',''))];
+      }
+      else
+        configElement = configElement[subels[0]];
+    }
+    return configElement;
+  }
+
 
   this.MergeJson=function(baseJson,newJson,idFieldName) {
     if (!newJson || !baseJson) 
@@ -25,17 +45,14 @@
 
   function mergeJson(baseJson,newJson,idFieldName){
     if(!ofSameType(baseJson,newJson)){
-      //debugger;
       return clone(newJson);
     }
     if(isArray(baseJson))
       baseJson=mergeArrays(baseJson,newJson,idFieldName);
     else if(isObject(baseJson)){
-      if (baseJson == null) debugger;
       baseJson=mergeObjects(baseJson,newJson,idFieldName);
       }
     else{
-      //debugger;
       baseJson=newJson;
     }
     return baseJson;
@@ -47,7 +64,6 @@
       returnObject[key]= clone(baseObject[key]);
     }
     for(var key in newObject) {
-      if (baseObject == null) debugger;
       if(baseObject[key] === undefined){
         returnObject[key]=clone(newObject[key])
       }
@@ -116,6 +132,6 @@
     return !isObject(input)&&!isArray(input);
   }
   function ofSameType(element1,element2) {
-    return typeof element1===typeof element1 && Array.isArray(element1) === Array.isArray(element2);
+    return typeof element1===typeof element2 && Array.isArray(element1) === Array.isArray(element2);
   }
 }

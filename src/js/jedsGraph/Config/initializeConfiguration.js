@@ -26,7 +26,7 @@ function initializeConfiguration(callback_setupGraph) {
 		entityConfigs.forEach(function (cnf) {
 			globals.masterEntityConfigs.push(cnf);
       // Update VUE component with master configs...
-      consoleApp.tabs.existingMatching.masterEntityConfigs.push(cnf);
+      consoleApp.tabs.newMatching.masterEntityConfigs.push(cnf);
 		});
 
 		//Update the config selector on the UI...

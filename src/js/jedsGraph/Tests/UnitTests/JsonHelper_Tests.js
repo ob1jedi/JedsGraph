@@ -158,3 +158,114 @@ globals.allUnitTests.push(function mergeJson_Given2ComplexObjects_Expect1Updated
     && result.level1Object.level2Object.level3Array[7][1] === 3
     )?true:result;
 });
+
+
+//[Test]
+globals.allUnitTests.push(function getJsonValueWithPath_GivenJsonAndPath_ExpectValue() {
+  // Arrange
+  var sut=new JsonHelper();
+  var path = "property1";
+
+  var jsonObject1={
+    property1: "test 1"
+  }
+
+  // Act
+  var result=sut.GetValueWithPath(jsonObject1,path);
+
+  // Assert
+  console.log('Merged Json object',result);
+  return (result=="test 1")?true:result;
+});
+
+//[Test]
+globals.allUnitTests.push(function getJsonValueWithPath_GivenJsonAndPath_ExpectValue_Case2() {
+  // Arrange
+  var sut=new JsonHelper();
+  var path = "level1Object/level2Object/level3String";
+
+  var jsonObject1={
+    level1String: "level1String",
+    level1Object: {
+      level2Striing: "level1String",
+      level2Object: {
+        level3String: "level3String"
+      }
+    }
+  }
+
+  // Act
+  var result=sut.GetValueWithPath(jsonObject1,path);
+
+  // Assert
+  return (result=="level3String")?true:result;
+});
+
+//[Test]
+globals.allUnitTests.push(function getJsonValueWithPath_GivenJsonAndFalsePath_ExpectUndefined() {
+  // Arrange
+  var sut=new JsonHelper();
+  var path = "level1Object/falseValue";
+
+  var jsonObject1={
+    level1String: "level1String",
+    level1Object: {
+      level2Striing: "level1String",
+      level2Object: {
+        level3String: "level3String"
+      }
+    }
+  }
+
+  // Act
+  var result=sut.GetValueWithPath(jsonObject1,path);
+
+  // Assert
+  return (result==undefined)?true:result;
+});
+
+//[Test]
+globals.allUnitTests.push(function getJsonValueWithPath_GivenJsonAndFalsePath_ExpectUndefined_Case2() {
+  // Arrange
+  var sut=new JsonHelper();
+  var path = "level1Object/falsePath/impossibleValue";
+
+  var jsonObject1={
+    level1String: "level1String",
+    level1Object: {
+      level2Striing: "level1String",
+      level2Object: {
+        level3String: "level3String"
+      }
+    }
+  }
+
+  // Act
+  var result=sut.GetValueWithPath(jsonObject1,path);
+
+  // Assert
+  return (result==undefined)?true:result;
+});
+
+//[Test]
+globals.allUnitTests.push(function getJsonValueWithPath_GivenJsonWithArray_ExpectValue() {
+  // Arrange
+  var sut=new JsonHelper();
+  var path = "level1Object/level2Array[0]";
+
+  var jsonObject1={
+    level1String: "level1String",
+    level1Object: {
+      level2Striing: "level1String",
+      level2Array: [
+        "level3ArrayString"
+      ]
+    }
+  }
+
+  // Act
+  var result=sut.GetValueWithPath(jsonObject1,path);
+
+  // Assert
+  return (result=="level3ArrayString")?true:result;
+});
