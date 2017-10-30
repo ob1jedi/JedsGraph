@@ -11,7 +11,7 @@ Vue.component('vw-panel-nodeEditor',{
 			<div class="panelHead">Node Type Editor<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
 
 			<div class ="tab">
-			  <button class ="tablinks" v-on:click="tabsprop.selectedMatchingTab='NEW'" v-bind:class="{ active: tabsprop.selectedMatchingTab==='NEW'}">New Match</button>
+			  <button class ="tablinks" v-on:click="tabsprop.selectedMatchingTab='NEW'" v-bind:class="{ active: tabsprop.selectedMatchingTab==='NEW'}">Match</button>
 			</div>
 			<div>
 				<vw-panel-nodeEditor-matching v-show="tabsprop.selectedMatchingTab==='NEW'" v-bind:tabs="tabsprop"></vw-panel-nodeEditor-matching>
@@ -20,7 +20,7 @@ Vue.component('vw-panel-nodeEditor',{
 			<div class ="tab">
 			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='STYLES'" v-bind:class="{ active: tabsprop.selectedStyleTab==='STYLES'}">Style</button>
 			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='EFFECTS'" v-bind:class="{ active: tabsprop.selectedStyleTab==='EFFECTS'}">Effects</button>
-			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='BEHAVIOURS'" v-bind:class="{ active: tabsprop.selectedStyleTab==='BEHAVIOURS'}">Data Binding</button>
+			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='BEHAVIOURS'" v-bind:class="{ active: tabsprop.selectedStyleTab==='BEHAVIOURS'}">Binding</button>
 			</div>
 			<div>
 				<vw-panel-nodeEditor-styles v-show="tabsprop.selectedStyleTab==='STYLES'" v-bind:styles="tabsprop.styles"></vw-panel-nodeEditor-styles>
@@ -46,20 +46,13 @@ Vue.component('vw-panel-nodeEditor-matching',{
   props: ['tabs'],
   template: `
 		<div class ="tabcontent">
-			
-      <!--<label class="active">Config:</label>
-      <span>
-        <input class="active" v-model='tabs.newMatching.selectedConfig' list="existingConfigs">
-        <span class="btn brn-sm" list="existingConfigs"> V </span>
-      </span>
-      <datalist id="existingConfigs" autocomplete="off"
-          v-on:change="tabs.selectExisting(tabs.newMatching.selectedConfig)">
-				<option v-for="config in tabs.newMatching.masterEntityConfigs" v-bind:value="config.configName">
-      </datalist>-->
 
-      <label class="active">Config:</label>
-      <select class ="active fullbox" v-model='tabs.newMatching.selectedConfig'
-          v-on:change="tabs.selectExisting(tabs.newMatching.selectedConfig)">
+      <label class="canCheck"
+        v-on:click="(tabs.newMatching.bExistingConfig=false); (tabs.newMatching.selectedConfig=null)"
+        v-bind:class="{ active: tabs.newMatching.bExistingConfig }">Existing Config:</label>
+      <select class ="fullbox" v-model='tabs.newMatching.selectedConfig'
+          v-bind:class="{ active: tabs.newMatching.bExistingConfig }"
+          v-on:change="tabs.selectExisting(tabs.newMatching.selectedConfig); tabs.newMatching.bExistingConfig=true">
 				<option v-for="config in tabs.newMatching.masterEntityConfigs" v-bind:value="config">{{config.configName}}</option>
 			</select>
 			
@@ -238,7 +231,7 @@ Vue.component('vw-panel-nodeEditor-behaviours',{
   template: `
 		<div class ="tabcontent">
 
-      <label class="canCheck" v-on:click="(behaviours.bDisplayText=!behaviours.bDisplayText)" v-bind:class="{ active: behaviours.bDisplayText }"> Label binding: </label>
+      <label class="canCheck" v-on:click="(behaviours.bDisplayText=!behaviours.bDisplayText)" v-bind:class="{ active: behaviours.bDisplayText }"> Center text: </label>
       <table>
         <tr>
           <td>
@@ -255,7 +248,7 @@ Vue.component('vw-panel-nodeEditor-behaviours',{
         </tr>
       </table>
 
-      <label class="canCheck" v-on:click="(behaviours.bDisplayImage=!behaviours.bDisplayImage)" v-bind:class="{ active: behaviours.bDisplayImage }"> Image binding: </label>
+      <label class="canCheck" v-on:click="(behaviours.bDisplayImage=!behaviours.bDisplayImage)" v-bind:class="{ active: behaviours.bDisplayImage }"> Image URL: </label>
       <table>
         <tr>
           <td>
@@ -507,20 +500,26 @@ var consoleApp=new Vue({
       // Matching Tabs...
       selectedMatchingTab: 'NEW',
       newMatching: {
-        bHasProperties:false,
+        bExistingConfig: null,
+        selectedConfig: null,
+        masterEntityConfigs: [],
+
         selectedNodeType: '',
+        
+        bHasProperties:false,
         properties: [],
         addProperty: function() {
           this.properties.push({ key: '',value: '' });
         },
-        selectedConfig: null,
-        masterEntityConfigs: [],
+
+
       },
       existingMatching: {
 
       },
       selectExisting: function(selectedConfig){
         var jsonHelper = new JsonHelper();
+        debugger;
         this.styles.selectedNodeColor =           jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/background-color") || null;
         this.styles.bNodeColor =                  jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/background-color") ? true:false;
         this.styles.selectedNodeBorderColor =     jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/border-color") || null;
@@ -650,27 +649,29 @@ var consoleApp=new Vue({
         tempConfig=addToConfig(s.bNodeImageUrl,tempConfig,{ config: { attributes: { "img": { "url": s.selectedNodeImageUrl } } } });
 
         var b=this.behaviours;
-        tempConfig=addToConfig(b.bDisplayImage,tempConfig,
-          {
-            "config": {
-              "attributes": {
-                "img": {
-                  "displayData": { "key": b.selectedNodeImageType,"value": b.selectedNodeImageValue.trim() }
-                }
-              }
-            }
-          });
-
         tempConfig=addToConfig(b.bDisplayText,tempConfig,
           {
             "config": {
               "attributes": {
                 "labelText": {
-                  "displayData": { "key": b.selectedNodeImageType,"value": b.selectedNodeImageValue.trim() }
+                  "displayData": { "key": b.selectedDisplayTextType,"value": b.selectedDisplayField }
                 }
               }
             }
           });
+
+        tempConfig=addToConfig(b.bDisplayImage,tempConfig,
+          {
+            "config": {
+              "attributes": {
+                "img": {
+                  "displayData": { "key": b.selectedNodeImageType,"value": b.selectedNodeImageValue }
+                }
+              }
+            }
+          });
+
+
 
 
         configHelper.AddOrUpdateDynamicEntityConfigReturnId(tempConfig.configName,tempConfig);

@@ -141,7 +141,7 @@
 
       //GET STARTUP NODES>>
       cnf.startupOptions.startupSearch.forEach(function(search,index) {
-        globals.dataService.GetNodesByDetails(search.nodeLabel,search.properties,cnf)
+        globals.dataService.GetEntitiesByDetails(search.nodeLabel,search.properties,cnf)
       });
 
       //RUN STARTUP QUERIES>>

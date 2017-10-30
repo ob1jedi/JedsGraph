@@ -120,7 +120,7 @@ function Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix)
 	Neo4j_Command([command], callback, _sourceConfig);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function Neo4jGetNodesByDetails(nodeLabel, properties, _sourceConfig)
+function Neo4jGetEntitiesByDetails(nodeLabel, properties, _sourceConfig)
 {
 	var callback = function (nodesResult, sourceConfig) {
 		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
@@ -143,17 +143,17 @@ function Neo4jGetNodesByDetails(nodeLabel, properties, _sourceConfig)
 	Neo4j_Command([command], callback, _sourceConfig);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function Neo4jInitAllNodes(_sourceConfig)
+function Neo4jGetAllEntities(_sourceConfig)
 {
 	var callback = function (nodesResult, sourceConfig) {
 		addSingleNodeFromResultsAndReturnIds(nodesResult, sourceConfig);
-		globals.dataService.InitAllRelations(_sourceConfig);
+		globals.dataService.GetAllRelations(_sourceConfig);
 	}
 	var command = 'MATCH (n) RETURN id(n), labels(n), (n) LIMIT ' + _sourceConfig.dataAccessOptions.generalFetchLimit;
 	Neo4j_Command([command], callback, _sourceConfig);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function Neo4jInitAllRelations(_sourceConfig)
+function Neo4jGetAllRelations(_sourceConfig)
 {
 	var callback = function (relationsResult, sourceConfig) {
 		addSingleRelationFromResults(relationsResult, sourceConfig);

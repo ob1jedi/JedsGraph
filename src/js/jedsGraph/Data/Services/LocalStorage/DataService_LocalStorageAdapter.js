@@ -103,21 +103,21 @@
 	    return dataDriver.GetEntityFromDatabase(entityId);
 	}
 
-	this.GetNodesByDetails = function (nodeLabel, properties, _sourceConfig) {
-		//Neo4jGetNodesByDetails(nodeLabel, properties, _sourceConfig);
+	this.GetEntitiesByDetails = function (nodeLabel, properties, _sourceConfig) {
+		//Neo4jGetEntitiesByDetails(nodeLabel, properties, _sourceConfig);
 	}
 
-	this.InitAllNodes = function (_sourceConfig) {
+	this.GetAllEntities = function (_sourceConfig) {
 		var labelData = dataDriver.GetAllEntityTypes();
 		labelData.forEach(function (labelData) {
 			var nodes = dataDriver.GetEntitiesByType(labelData);
 			addEntitiesToGraphAndReturnNodes(nodes, globals.currentTheme.sourceConfig);
 		});
-		this.InitAllRelations(_sourceConfig);
-		//Neo4jInitAllNodes(_sourceConfig);
+		this.GetAllRelations(_sourceConfig);
+		//Neo4jGetAllEntities(_sourceConfig);
 	}
 
-	this.InitAllRelations = function (_sourceConfig) {
+	this.GetAllRelations = function (_sourceConfig) {
 		var labelDatas = dataDriver.GetAllRelationTypesAndRelationIds();
 
 		var graphElements = labelDatas.map(function (labelData) {
@@ -126,7 +126,7 @@
 			});
 		});
 		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
-		//Neo4jInitAllRelations(_sourceConfig);
+		//Neo4jGetAllRelations(_sourceConfig);
 	}
 
 	this.CreateEntityReturnCallbackWithIds = function (entityName, propList, inputCallback) {

@@ -40,16 +40,16 @@
 		Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
 	}
 
-	this.GetNodesByDetails = function (nodeLabel, properties, _sourceConfig) {
-		Neo4jGetNodesByDetails(nodeLabel, properties, _sourceConfig);
+	this.GetEntitiesByDetails = function (nodeLabel, properties, _sourceConfig) {
+		Neo4jGetEntitiesByDetails(nodeLabel, properties, _sourceConfig);
 	}
 
-	this.InitAllNodes = function (_sourceConfig) {
-		Neo4jInitAllNodes(_sourceConfig);
+	this.GetAllEntities = function (_sourceConfig) {
+		Neo4jGetAllEntities(_sourceConfig);
 	}
 
-	this.InitAllRelations = function (_sourceConfig) {
-		Neo4jInitAllRelations(_sourceConfig);
+	this.GetAllRelations = function (_sourceConfig) {
+		Neo4jGetAllRelations(_sourceConfig);
 	}
 
 	this.CreateEntityReturnCallbackWithIds = function (entityName, propList, inputCallback) {

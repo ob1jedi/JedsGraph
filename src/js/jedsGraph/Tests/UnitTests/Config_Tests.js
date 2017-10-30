@@ -22,7 +22,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 		"config": {
 			"attributes": {
 				"background-color": "#33c11d",
-				"color": "blue",
+				"border-color": "blue",
 				"circleText": {
 					"color": "yellow"
 				},
@@ -74,7 +74,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndN
 		},
 		"config": {
 			"attributes": {
-				"color": "#f2b3ab",
+				"background-color": "#f2b3ab",
 				"circleText": {
 					"color": "green"
 				}
@@ -111,9 +111,9 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 			testEntityName
 		]
 	}
-	var initialConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "background-color": "#33c11d", "color": "blue", "circleText": { "color": "yellow" } } } };
+	var initialConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "background-color": "#33c11d", "border-color": "blue", "circleText": { "color": "yellow" } } } };
 	var confId = sut.CreateUpdateConfigReturnId(configName, initialConfig);
-	var updatedConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "radius":15, "background-color": "#33c11d", "color": "red", "circleText": { "color": "red" } } } };
+	var updatedConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "radius":15, "background-color": "#33c11d", "border-color": "red", "circleText": { "color": "red" } } } };
 
 	// Act
 	var confId2 = sut.CreateUpdateConfigReturnId(configName, updatedConfig);

@@ -370,6 +370,8 @@ div.modPanel input
 	border-color: #b3ffff;
 	font-weight:bold;
 	font-size: 12px;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
 }
 div.modPanel input.active
 {
@@ -377,6 +379,8 @@ div.modPanel input.active
 	color:#000;
 	background-color: #b3ffff;
 	border-color: transparent;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
 }
 div.modPanel select
 {
@@ -392,6 +396,8 @@ div.modPanel select
 	font-size: 12px;
 	font-weight:bold;
 	backface-visibility:hidden;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
 }
 div.modPanel select.active
 {
@@ -399,6 +405,8 @@ div.modPanel select.active
 	color:#000;
 	background-color: #b3ffff;
 	border-color: transparent;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
 }
 div.modPanel hr
 {
@@ -421,6 +429,10 @@ div.modPanel select.fullbox
 {
 	width: 155px;
 	border-width: 0px;
+}
+div.modPanel span.fullbox
+{
+	font-size:0px;
 }
 div.modPanel span.active.fullbox
 {
