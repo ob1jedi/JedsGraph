@@ -177,7 +177,7 @@ svg, #graphContainer, #schemaContainer {
 
 
 .labelSelectorPanel {
-	/*width: 125px;*/
+	max-width: 115px;
 	margin:2px;
 	padding: 5px;
 	color: #1a1a1a;

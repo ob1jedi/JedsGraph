@@ -68,7 +68,7 @@ function JsonTranslator() {
   function processArray(name, array) {
     for(var i=0;i<array.length;i++) {
       if(isObject(array[i]))
-        createEntity(thingKey,array);
+        createEntity(name,array);
       else if(isPrimitive(array[i])) {
         createEntity(array[i],{});
       }
