@@ -8,6 +8,14 @@ function JsonTranslator() {
           '{"x":{"y":{}}}',
           '{"Sam":{"Bob":{"John":{}}}}'
   ];
+  this.ImportExamples=[
+    {
+      name: "This day in history", 
+      params: ["$day", "$month", "$year"],
+      value: 'http://en.wikipedia.org/api/rest_v1/feed/featured/$year/$month/$day' 
+    }
+  ];
+
   this.ReferenceContent=`
 						Objects are nodes, eg. <span class ="inputModal code">{"John":{}}</span>
 						<hr>

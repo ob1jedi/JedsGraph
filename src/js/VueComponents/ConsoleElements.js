@@ -55,13 +55,13 @@ Vue.component('vw-panel-nodeEditor-matching',{
           v-on:change="tabs.selectExisting(tabs.newMatching.selectedConfig); tabs.newMatching.bExistingConfig=true">
 				<option v-for="config in tabs.newMatching.masterEntityConfigs" v-bind:value="config">{{config.configName}}</option>
 			</select>
-			
-      
-      
+
+
+
       <label class="active">Node type of: </label>
 			<input class="active" v-model.lazy='tabs.newMatching.selectedNodeType' v-bind:value="tabs.newMatching.selectedNodeType"></input>
 
-      <label v-bind:class="{ active: tabs.newMatching.bHasProperties }">With properties: 
+      <label v-bind:class="{ active: tabs.newMatching.bHasProperties }">With properties:
         <span v-on:click="tabs.newMatching.addProperty(); tabs.newMatching.bHasProperties=true;" class ="btn btn-sm"><i class ="glyphicon glyphicon-plus"></i></span>
       </label>
 
@@ -235,8 +235,8 @@ Vue.component('vw-panel-nodeEditor-behaviours',{
       <table>
         <tr>
           <td>
-            <select class ="halfbox pull-right" 
-                v-model="behaviours.selectedDisplayTextType" 
+            <select class ="halfbox pull-right"
+                v-model="behaviours.selectedDisplayTextType"
                 v-bind:class="{ active: behaviours.bDisplayText }"
                 v-on:change="behaviours.bDisplayText=true">
               <option v-for="type in ['type','property','static','first']" v-bind:value="type">
@@ -252,8 +252,8 @@ Vue.component('vw-panel-nodeEditor-behaviours',{
       <table>
         <tr>
           <td>
-            <select class ="halfbox pull-right" 
-                v-model="behaviours.selectedNodeImageType" 
+            <select class ="halfbox pull-right"
+                v-model="behaviours.selectedNodeImageType"
                 v-bind:class="{ active: behaviours.bDisplayImage }"
                 v-on:change="behaviours.bDisplayImage=true">
               <option v-for="type in ['property','static']" v-bind:value="type">
@@ -361,64 +361,75 @@ Vue.component('vw-formula-box',{
             <table>
                 <tr>
                     <td>
-						<label for="txtFormulaInput">Formula</label>
-                        <input class="dynamic3" id="txtFormulaInput"
-							v-on:keyup.enter="formulaprop.executeFormula()"
-							v-model='formulaprop.formulaValue'
-							v-bind:placeholder="formulaprop.currentTranslator.Examples[0]">
-						</input>
-                    </td>
-                    <td>
-						<label for="cmdFormulaGenerate">&nbsp</label>
-						<div>
-							<button class ="mybutton" id="cmdFormulaGenerate"
-								v-on:click="formulaprop.executeFormula(formulaprop.formulaValue)">
-								generate
-							</button>
-						</div>
-                    </td>
-					<td>
-						<label for="cboFormulaTranslator">Translator</label>
-                        <select id="cboFormulaTranslator"
-							v-model="formulaprop.selectedTranslatorName"
-                            v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslatorName)"
-							><option
-								v-for="item in formulaprop.translators"
-								v-bind:value="item.Name"
-								v-bind:key="item.Name"
-							>{{item.Name}}</option>
-						</select>
-                    </td>
-					<td>
-						<label for="cboFormulaExamples">Examples</label>
-						<select id="cboFormulaExamples" name="formulaExample"
-							v-model="formulaprop.selectedExample"
-							v-on:change="formulaprop.executeExampleFormula()"
-							><option
-								v-for="example in formulaprop.currentTranslator.Examples"
-								v-bind:value="example"
-							>{{example}}</option>
-						</select>
-					</td>
+						        <label for="txtFormulaInput">Formula</label>
+                                <input class="dynamic3" id="txtFormulaInput"
+							        v-on:keyup.enter="formulaprop.executeFormula()"
+							        v-model='formulaprop.formulaValue'>
+						        </input>
+                            </td>
+                            <td>
+						        <label for="cmdFormulaGenerate">&nbsp</label>
+						        <div>
+							        <button class ="mybutton" id="cmdFormulaGenerate"
+								        v-on:click="formulaprop.executeFormula(formulaprop.formulaValue)">
+								        generate
+							        </button>
+						        </div>
+                            </td>
+					        <td>
+						        <label for="cboFormulaTranslator">Translator</label>
+                      <select id="cboFormulaTranslator"
+							        v-model="formulaprop.selectedTranslatorName"
+                      v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslatorName)"
+							        ><option
+								        v-for="item in formulaprop.translators"
+								        v-bind:value="item.Name"
+								        v-bind:key="item.Name"
+							        >{{item.Name}}</option>
+						        </select>
+                  </td>
+					        <td>
+						        <label for="cboFormulaExamples">Examples</label>
+						        <select class="halfbox" id="cboFormulaExamples" name="formulaExample"
+							        v-model="formulaprop.selectedExample"
+							        v-on:change="formulaprop.executeExampleFormula()"
+							        ><option
+								        v-for="example in formulaprop.currentTranslator.Examples"
+								        v-bind:value="example"
+							        >{{example}}</option>
+						        </select>
+					        </td>
 
-					<td>
-						<label for="cmdInfo">&nbsp</label>
-						<div>
-							<button id="cmdInfo"
-								v-on:click="formulaprop.showInfoModal()"
-							><i class ="glyphicon glyphicon-question-sign"></i></button>
-						</div>
-                    </td>
+                  <td v-show="(formulaprop.currentTranslator.ImportExamples && formulaprop.currentTranslator.ImportExamples.length>0)">
+                  <label for="cboFormulaImports">Imports</label>
+						        <select id="cboFormulaImports"
+							        v-model="formulaprop.selectedImport"
+							        v-on:change="formulaprop.importFromUrl(formulaprop.selectedImport.value)"
+							        ><option
+								        v-for="importExample in formulaprop.currentTranslator.ImportExamples"
+								        v-bind:value="importExample"
+							        >{{importExample.name}}</option>
+						        </select>
+					        </td>
 
-					<td>
-						<label for="cmdUrlImport">&nbsp</label>
-						<div>
-							<button class ="mybutton" id="cmdUrlImport"
-								v-on:click="formulaprop.importFromUrl()">
-								Import
-							</button>
-						</div>
-                    </td>
+					        <td>
+						        <label for="cmdInfo">&nbsp</label>
+						        <div>
+							        <button id="cmdInfo"
+								        v-on:click="formulaprop.showInfoModal()"
+							        ><i class ="glyphicon glyphicon-question-sign"></i></button>
+						        </div>
+                  </td>
+
+					        <!--<td>
+						        <label for="cmdUrlImport">&nbsp</label>
+						        <div>
+							        <button class ="mybutton" id="cmdUrlImport"
+								        v-on:click="formulaprop.importFromUrl()">
+								        Import: OnThisDay
+							        </button>
+						        </div>
+                  </td>-->
 
                 </tr>
             </table>
@@ -449,13 +460,14 @@ var consoleApp=new Vue({
       selectedTranslatorName: new SimpleTranslator().Name,
       currentTranslator: new SimpleTranslator(),
       selectedExample: "",
-
+      selectedImport: null,
       selectTranslator: function(value) {
         var currentScope=this;
         this.translators.forEach(function(trans) {
           if(trans.Name===value) {
             currentScope.currentTranslator=trans;
             currentScope.selectedTranslatorName=trans.Name;
+            console.log('translator', currentScope.currentTranslator);
             return;
           }
         });
@@ -488,9 +500,14 @@ var consoleApp=new Vue({
         var translator=this.currentTranslator;
         var httpClient=new HttpClient();
         //httpClient.get('http://en.wikipedia.org/api/rest_v1/feed/featured/2000/03/15', function (response) {
+        //var URL = 'http://en.wikipedia.org/api/rest_v1/feed/featured/' + 2000 + '/'+ ("0" + (new Date().getMonth() + 1)).slice(-2)+'/'+ ("0" + (new Date().getDate())).slice(-2);
+        var finalUrl = url;
+        finalUrl = finalUrl.replace('$day', ("0" + (new Date().getDate())).slice(-2));
+        finalUrl = finalUrl.replace('$month', ("0" + (new Date().getMonth() + 1)).slice(-2));
+        finalUrl = finalUrl.replace('$year', 2000);
 
-        console.log('URL','http://en.wikipedia.org/api/rest_v1/feed/featured/'+2000+'/'+new Date().getMonth()+'/'+new Date().getDate());
-        httpClient.get('http://en.wikipedia.org/api/rest_v1/feed/featured/'+2000+'/'+10+'/'+29,function(response) {
+        console.log('URL',finalUrl);
+        httpClient.get(finalUrl,function(response) {
           console.log('response',response);
           translator.Translate(response);
         });
@@ -505,8 +522,8 @@ var consoleApp=new Vue({
         masterEntityConfigs: [],
 
         selectedNodeType: '',
-        
-        bHasProperties:false,
+
+        bHasProperties: false,
         properties: [],
         addProperty: function() {
           this.properties.push({ key: '',value: '' });
@@ -517,32 +534,32 @@ var consoleApp=new Vue({
       existingMatching: {
 
       },
-      selectExisting: function(selectedConfig){
-        var jsonHelper = new JsonHelper();
+      selectExisting: function(selectedConfig) {
+        var jsonHelper=new JsonHelper();
         debugger;
-        this.styles.selectedNodeColor =           jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/background-color") || null;
-        this.styles.bNodeColor =                  jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/background-color") ? true:false;
-        this.styles.selectedNodeBorderColor =     jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/border-color") || null;
-        this.styles.bNodeBorderColor =            jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/border-color")?true:false;
-        this.styles.selectedNodeTextColor =       jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/labelText/color") || null;
-        this.styles.bNodeTextColor =              jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/labelText/color")?true:false;
-        this.styles.selectedNodeCircleTextColor = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/circleText/color") || null;
-        this.styles.bNodeCircleTextColor =        jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/circleText/color")?true:false;
-        this.styles.selectedNodeSize =            jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/radius") || null;
-        this.styles.bNodeSize =                   jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/radius")?true:false;
-        this.styles.selectedNodeShape =           jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/shape") || null;
-        this.styles.bNodeShape =                  jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/shape")?true:false;
-        this.styles.selectedNodeImageUrl =        jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/img/url") || null;
-        this.styles.bNodeImageUrl =               jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/img/url")?true:false;
-        
-        this.newMatching.selectedNodeType =       jsonHelper.GetValueWithPath(selectedConfig, "matchEntity/labels[0]") || null;
-        var properties = jsonHelper.GetValueWithPath(selectedConfig, "matchEntity/properties");
-        this.newMatching.bHasProperties = false;
-        this.newMatching.properties = [];
-        if (properties){
-          this.newMatching.bHasProperties = true;
-          for (var keyName in properties)
-            this.newMatching.properties.push({"key": keyName, "value": properties[keyName]});
+        this.styles.selectedNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")||null;
+        this.styles.bNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")?true:false;
+        this.styles.selectedNodeBorderColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/border-color")||null;
+        this.styles.bNodeBorderColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/border-color")?true:false;
+        this.styles.selectedNodeTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/labelText/color")||null;
+        this.styles.bNodeTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/labelText/color")?true:false;
+        this.styles.selectedNodeCircleTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/circleText/color")||null;
+        this.styles.bNodeCircleTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/circleText/color")?true:false;
+        this.styles.selectedNodeSize=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/radius")||null;
+        this.styles.bNodeSize=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/radius")?true:false;
+        this.styles.selectedNodeShape=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/shape")||null;
+        this.styles.bNodeShape=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/shape")?true:false;
+        this.styles.selectedNodeImageUrl=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/img/url")||null;
+        this.styles.bNodeImageUrl=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/img/url")?true:false;
+
+        this.newMatching.selectedNodeType=jsonHelper.GetValueWithPath(selectedConfig,"matchEntity/labels[0]")||null;
+        var properties=jsonHelper.GetValueWithPath(selectedConfig,"matchEntity/properties");
+        this.newMatching.bHasProperties=false;
+        this.newMatching.properties=[];
+        if(properties) {
+          this.newMatching.bHasProperties=true;
+          for(var keyName in properties)
+            this.newMatching.properties.push({ "key": keyName,"value": properties[keyName] });
         }
 
       },
@@ -570,19 +587,19 @@ var consoleApp=new Vue({
           this.bNodeColor=true;
           console.log('this.selectedNodeColor',this.selectedNodeColor);
           if(globals.selectedNode)
-            globals.selectedNode.data.UI.bodyUI.attributes["fill"].nodeValue= this.selectedNodeColor;
+            globals.selectedNode.data.UI.bodyUI.attributes["fill"].nodeValue=this.selectedNodeColor;
         },
         updateNodeBorderColor: function() {
           if(globals.selectedNode)
-            globals.selectedNode.data.UI.bodyUI.attributes["stroke"].nodeValue= this.selectedNodeBorderColor;
+            globals.selectedNode.data.UI.bodyUI.attributes["stroke"].nodeValue=this.selectedNodeBorderColor;
         },
         updateNodeTextColor: function() {
           if(globals.selectedNode)
-            globals.selectedNode.data.UI.displayTextUI.attributes["fill"].nodeValue= this.selectedNodeTextColor;
+            globals.selectedNode.data.UI.displayTextUI.attributes["fill"].nodeValue=this.selectedNodeTextColor;
         },
         updateNodeCircleTextColor: function() {
           if(globals.selectedNode)
-            globals.selectedNode.data.UI.circleText.attributes["fill"].nodeValue= this.selectedNodeCircleTextColor;
+            globals.selectedNode.data.UI.circleText.attributes["fill"].nodeValue=this.selectedNodeCircleTextColor;
         },
         updateNodeSize: function(size) {
           if(globals.selectedNode)

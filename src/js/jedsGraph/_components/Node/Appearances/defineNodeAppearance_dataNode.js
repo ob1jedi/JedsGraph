@@ -48,8 +48,6 @@
       imageUrl = _cnf.attributes.img.displayData["value"];
     else
       imageUrl = _cnf.attributes.img["url"];
-
-    console.log('imageUrl', imageUrl);
 		
     var imgWidth = Number(_cnf.attributes.img["width"]);
 		var imgHeight = Number(_cnf.attributes.img["height"]);
