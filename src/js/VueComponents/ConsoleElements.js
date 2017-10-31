@@ -455,7 +455,8 @@ var consoleApp=new Vue({
       formulaValue: "",
       translators: [
 				new SimpleTranslator(),
-				new JsonTranslator()
+				new JsonTranslator(),
+        new UrlParamsTranslator()
       ],
       selectedTranslatorName: new SimpleTranslator().Name,
       currentTranslator: new SimpleTranslator(),
@@ -536,19 +537,25 @@ var consoleApp=new Vue({
       },
       selectExisting: function(selectedConfig) {
         var jsonHelper=new JsonHelper();
-        debugger;
+        //debugger;
         this.styles.selectedNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")||null;
         this.styles.bNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")?true:false;
+        
         this.styles.selectedNodeBorderColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/border-color")||null;
         this.styles.bNodeBorderColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/border-color")?true:false;
+        
         this.styles.selectedNodeTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/labelText/color")||null;
         this.styles.bNodeTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/labelText/color")?true:false;
+        
         this.styles.selectedNodeCircleTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/circleText/color")||null;
         this.styles.bNodeCircleTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/circleText/color")?true:false;
+        
         this.styles.selectedNodeSize=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/radius")||null;
         this.styles.bNodeSize=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/radius")?true:false;
+        
         this.styles.selectedNodeShape=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/shape")||null;
         this.styles.bNodeShape=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/shape")?true:false;
+        
         this.styles.selectedNodeImageUrl=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/img/url")||null;
         this.styles.bNodeImageUrl=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/img/url")?true:false;
 
@@ -687,11 +694,9 @@ var consoleApp=new Vue({
               }
             }
           });
-
-
-
-
+        // Save config...
         configHelper.AddOrUpdateDynamicEntityConfigReturnId(tempConfig.configName,tempConfig);
+        alert('Config Saved "' + tempConfig.configName + '"')
       },
 
       reset: function() {

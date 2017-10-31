@@ -25,7 +25,7 @@ function JsonTranslator() {
 						Arrays will become nodes by the name of the parent property.
 	`;
 
-  this.Translate=function(expression,_baseObjectName) {
+  this.Translate=function(expression, _baseObjectName) {
     var translator=new JsonTranslator();
     //console.log('expression', expression);
     translator.TranslateToGraph_ReturnGraphElements(_baseObjectName||'root',expression);
