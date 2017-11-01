@@ -433,12 +433,13 @@ Vue.component('vw-formula-box',{
 						        </div>
                   </td>
 
-                  <td>
+                  <!--<td>
 						        <label for="cmdTest">&nbsp</label>
 						        <div>
 							        <button id="cmdTest" onclick="ShowGlobalInfoModal('WaitingModal1')">Test</button>
 						        </div>
-                  </td>
+                  </td>-->
+
                 </tr>
             </table>
             <vw-info-modal 
