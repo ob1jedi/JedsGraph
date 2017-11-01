@@ -1,24 +1,30 @@
 ﻿
 function UrlParamsTranslator() {
 
-	this.Name = "Url Params";
+	this.Name = "Url-param Syntax";
 	this.Examples = [
 						"x--y",
             "x--y.x--z",
             "x--y.y--z"
 	];
 	this.ReferenceContent = `
-            This format is safe to pass in your URL in the "graph" parameter.
-            Example: 
-							</br><span class ="inputModal code">http://graphex.io/?graph=x--y.y--z</span>
+            This format is safe to pass in your URL,
+            <br/> in the "graph" parameter.
+            <br/>Example: 
+						</br><span class ="inputModal code">http://graphex.io/?graph=x--y.y--z</span>
 						<hr>
 						Create a node with any alphanumric sequence of characters:
-							</br><span class ="inputModal code">node1->MyNode1</span>
+						</br><span class ="inputModal code">MyNode1</span>
 						<hr>
-						Link multiple nodes with: 
-							</br><span class ="inputModal code">--</span>
-            Example:
-              </br><span class ="inputModal code">n1--n2</span>
+						Link two nodes with: <span class ="inputModal code">--</span>
+            <br/>Example:
+            </br><span class ="inputModal code">n1--n2</span>
+            <hr>
+						Create multiple pairs of linked nodes by separaing with a full-stop: <span class ="inputModal code"> . </span>
+            <br/>Nodes will link to previouse nodes by name.
+            <br/>Example:
+            </br><span class ="inputModal code">n1--n2.n2--n3</span>
+
 	`;
 					
 

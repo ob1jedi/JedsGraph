@@ -38,7 +38,6 @@ function defineNodeDrawing(){
         globals.consoleService.hideNodeFlyout();
 
     }
-
 	
     function applyDepthOffset(offset)
     {
@@ -48,6 +47,9 @@ function defineNodeDrawing(){
             pos.x = pos.x + (offset.x * node.data.depth);
             pos.y = pos.y + (offset.y * node.data.depth);
             globals.layout.setNodePosition(node.id, pos.x, pos.y);
+
+            
+
         });
     }
 

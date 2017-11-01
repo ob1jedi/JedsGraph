@@ -326,17 +326,28 @@ Vue.component('vw-right-sidebar',{
 // ================= INFO MODAL ================= 
 
 Vue.component('vw-info-modal',{
-  props: ['formulaprop'],
+  props: {
+    modalId: {type: String},
+    canCancel:{type: Boolean, default:true},
+    strHeader: {type: String}, 
+    htmlContent: {type: String}, 
+    button1Caption: {type: String},
+    button1Function: {type: String},
+    button2Caption: {type: String},
+    button2Function: {type: String}
+  },
   template:
 	`
-	<dialog class ="inputModal" id="InfoModal">
-		<form class ="form-group">
-			<h2>{{ formulaprop.modalHeader }}</h2>
-			<div class ="inputModal modalContent flexcroll"
-				v-html=formulaprop.currentTranslator.ReferenceContent>
+	<dialog class="inputModal" v-bind:id="modalId">
+    <button v-if='canCancel' onclick='CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
+		<form class="form-group"> 
+			<h2>{{ strHeader }}</h2>
+			<div class="inputModal modalContent flexcroll"
+				v-html="htmlContent">
 			</div>
+      <button v-show='button1Caption' v-on:click="button1Function||null" class="pull-right">{{ button1Caption }}</button>
+      <button v-show='button2Caption' v-on:click="button2Function||null" class="pull-right">{{ button2Caption }}</button>
 		</form>
-		<button v-on:click="formulaprop.closeInfoModal" class ="btn btn-default pull-right">{{ formulaprop.modalButtonCaption }}</button>
 	</dialog>
 	`
 })
@@ -352,12 +363,13 @@ Vue.component('vw-mode-indicator',{
 		`
 })
 
-
 // ================= FORMULA BOX ================= 
 Vue.component('vw-formula-box',{
   props: ['formulaprop'],
   template: `
         <div id='formulaBox'>
+            
+            
             <table>
                 <tr>
                     <td>
@@ -416,23 +428,26 @@ Vue.component('vw-formula-box',{
 						        <label for="cmdInfo">&nbsp</label>
 						        <div>
 							        <button id="cmdInfo"
-								        v-on:click="formulaprop.showInfoModal()"
+								        onclick="ShowGlobalInfoModal('TranslatorInfo')"
 							        ><i class ="glyphicon glyphicon-question-sign"></i></button>
 						        </div>
                   </td>
 
-					        <!--<td>
-						        <label for="cmdUrlImport">&nbsp</label>
+                  <td>
+						        <label for="cmdTest">&nbsp</label>
 						        <div>
-							        <button class ="mybutton" id="cmdUrlImport"
-								        v-on:click="formulaprop.importFromUrl()">
-								        Import: OnThisDay
-							        </button>
+							        <button id="cmdTest" onclick="ShowGlobalInfoModal('WaitingModal1')">Test</button>
 						        </div>
-                  </td>-->
-
+                  </td>
                 </tr>
             </table>
+            <vw-info-modal 
+              modalId='TranslatorInfo' 
+              v-bind:canCancel='true' 
+              v-bind:strHeader='formulaprop.currentTranslator.Name' 
+              v-bind:htmlContent=formulaprop.currentTranslator.ReferenceContent>
+            </vw-info-modal>
+            <vw-info-modal modalId='WaitingModal1' v-bind:canCancel='false' strHeader='Loading' htmlContent='Please wait...'></vw-info-modal>
         </div>
 		`
 })
@@ -487,16 +502,17 @@ var consoleApp=new Vue({
       infoModal: {
         showModal: false
       },
-      showInfoModal: function() {
+      showInfoModal: function(heading, content, buttons) {
         this.modalHeader=this.currentTranslator.Name;
         this.modalContent=this.currentTranslator.ReferenceContent;
         this.modalButtonCaption="Close";
-        ShowInfoModal();
+        ShowGlobalInfoModal('TranslatorInfo');
       },
       closeInfoModal: function() {
         CloseInfoModal();
       },
       importFromUrl(url) {
+        ShowGlobalInfoModal('WaitingModal1')
         console.log('IMPORTING...');
         var translator=this.currentTranslator;
         var httpClient=new HttpClient();
@@ -511,6 +527,7 @@ var consoleApp=new Vue({
         httpClient.get(finalUrl,function(response) {
           console.log('response',response);
           translator.Translate(response);
+          CloseGlobalInfoModal('WaitingModal1')
         });
       }
     },
@@ -749,4 +766,12 @@ function CloseInfoModal() {
   nodeFlyout.close();
 }
 
+function ShowGlobalInfoModal(modalId) {
+  var nodeFlyout=document.getElementById(modalId);
+  nodeFlyout.showModal();
+}
+function CloseGlobalInfoModal(modalId) {
+  var nodeFlyout=document.getElementById(modalId);
+  nodeFlyout.close();
+}
 

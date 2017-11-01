@@ -18,7 +18,7 @@
 		node_OnMouseLeave(node, x, y);
 
 	else if (eventType == "MouseDragging")
-		node_OnMouseLeave(node, x, y);
+		node_OnDrag(node, x, y);
 
 	else if (eventType == "SubNodePulledOut")
 		node_Event_subNodePulledOut(node, x, y);
@@ -194,6 +194,7 @@ function dataNode_OnMouseLeave(node, x, y) {
 }
 
 function dataNode_OnDrag(node, x, y) {
+  // pushOtherNodes
 	// not yet implemented
 }
 
