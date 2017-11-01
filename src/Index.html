@@ -128,13 +128,9 @@
 		<vw-left-sidebar></vw-left-sidebar>
 		<vw-right-sidebar v-bind:tabs="tabs"></vw-right-sidebar>
 		<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>
-		<vw-info-modal v-if="formulaToolbar.isInfoModalVisible" @close="formulaToolbar.isInfoModalVisible = false">
-			<!--
-			  you can use custom content here to overwrite
-			  default content
-			-->
+		<!--<vw-info-modal v-if="formulaToolbar.isInfoModalVisible" @close="formulaToolbar.isInfoModalVisible = false">
 			<h3 slot="header">custom header</h3>
-		</vw-info-modal>
+		</vw-info-modal>-->
 
 	</div>
 
@@ -164,7 +160,7 @@
 		<button onclick="closeDialog('json2GraphDlg')">Cancel</button>
 	</dialog>
 
-
+	
 	<!-- inject:js -->
 	<!-- endinject -->
 	<!--VUE Scrips-->

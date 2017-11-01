@@ -463,9 +463,9 @@ var consoleApp=new Vue({
     },
     // Formula toolbar
     formulaToolbar: {
-      modalHeader: "",
-      modalContent: "",
-      modalButtonCaption: "Close",
+      //modalHeader: "",
+      //modalContent: "",
+      //modalButtonCaption: "Close",
 
       formulaValue: "",
       translators: [
@@ -499,18 +499,18 @@ var consoleApp=new Vue({
       },
 
       // Info model
-      infoModal: {
-        showModal: false
-      },
-      showInfoModal: function(heading, content, buttons) {
-        this.modalHeader=this.currentTranslator.Name;
-        this.modalContent=this.currentTranslator.ReferenceContent;
-        this.modalButtonCaption="Close";
-        ShowGlobalInfoModal('TranslatorInfo');
-      },
-      closeInfoModal: function() {
-        CloseInfoModal();
-      },
+      //infoModal: {
+      //  showModal: false
+      //},
+      //showInfoModal: function(heading, content, buttons) {
+      //  this.modalHeader=this.currentTranslator.Name;
+      //  this.modalContent=this.currentTranslator.ReferenceContent;
+      //  this.modalButtonCaption="Close";
+      //  ShowGlobalInfoModal('TranslatorInfo');
+      //},
+      //closeInfoModal: function() {
+      //  CloseInfoModal();
+      //},
       importFromUrl(url) {
         ShowGlobalInfoModal('WaitingModal1')
         console.log('IMPORTING...');
