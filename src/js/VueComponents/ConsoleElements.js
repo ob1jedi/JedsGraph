@@ -368,87 +368,102 @@ Vue.component('vw-formula-box',{
   props: ['formulaprop'],
   template: `
         <div id='formulaBox'>
-            
-            
             <table>
-                <tr>
-                    <td>
-						        <label for="txtFormulaInput">Formula</label>
-                                <input class="dynamic3" id="txtFormulaInput"
-							        v-on:keyup.enter="formulaprop.executeFormula()"
-							        v-model='formulaprop.formulaValue'>
-						        </input>
-                            </td>
-                            <td>
-						        <label for="cmdFormulaGenerate">&nbsp</label>
-						        <div>
-							        <button class ="mybutton" id="cmdFormulaGenerate"
-								        v-on:click="formulaprop.executeFormula(formulaprop.formulaValue)">
-								        generate
-							        </button>
-						        </div>
-                            </td>
-					        <td>
-						        <label for="cboFormulaTranslator">Translator</label>
-                      <select id="cboFormulaTranslator"
-							        v-model="formulaprop.selectedTranslatorName"
-                      v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslatorName)"
-							        ><option
-								        v-for="item in formulaprop.translators"
-								        v-bind:value="item.Name"
-								        v-bind:key="item.Name"
-							        >{{item.Name}}</option>
-						        </select>
-                  </td>
-					        <td>
-						        <label for="cboFormulaExamples">Examples</label>
-						        <select class="halfbox" id="cboFormulaExamples" name="formulaExample"
-							        v-model="formulaprop.selectedExample"
-							        v-on:change="formulaprop.executeExampleFormula()"
-							        ><option
-								        v-for="example in formulaprop.currentTranslator.Examples"
-								        v-bind:value="example"
-							        >{{example}}</option>
-						        </select>
-					        </td>
+              <tr>
+                <td>
+						      <label for="txtFormulaInput">Formula</label>
+                  <input class="dynamic3" id="txtFormulaInput"
+							      v-on:keyup.enter="formulaprop.executeFormula()"
+							      v-model='formulaprop.formulaValue'
+                    datalist="formulaHistory">
+						      </input>
+                  <datalist id="formulaHistory">
+                    <option v-for="formula in formulaprop.formulaHistory" v-bind:value="formula.formula">{{formula.formula}}</option>
+                  </datalist>
+                </td>
+                <td>
+						      <label for="cmdFormulaGenerate">&nbsp</label>
+						      <div>
+							      <button class ="mybutton" id="cmdFormulaGenerate"
+								      v-on:click="formulaprop.executeFormula(formulaprop.formulaValue)">
+								      generate
+							      </button>
+						      </div>
+                </td>
+					      <td>
+						      <label for="cboFormulaTranslator">Translator</label>
+                    <select id="cboFormulaTranslator"
+							      v-model="formulaprop.selectedTranslatorName"
+                    v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslatorName)"
+							      ><option
+								      v-for="item in formulaprop.translators"
+								      v-bind:value="item.Name"
+								      v-bind:key="item.Name"
+							      >{{item.Name}}</option>
+						      </select>
+                </td>
+					      <td>
+						      <label for="cboFormulaExamples">Examples</label>
+						      <select class="halfbox" id="cboFormulaExamples" name="formulaExample"
+							      v-model="formulaprop.selectedExample"
+							      v-on:change="formulaprop.executeExampleFormula()"
+							      ><option
+								      v-for="example in formulaprop.currentTranslator.Examples"
+								      v-bind:value="example"
+							      >{{example}}</option>
+						      </select>
+					      </td>
 
-                  <td v-show="(formulaprop.currentTranslator.ImportExamples && formulaprop.currentTranslator.ImportExamples.length>0)">
-                  <label for="cboFormulaImports">Imports</label>
-						        <select id="cboFormulaImports"
-							        v-model="formulaprop.selectedImport"
-							        v-on:change="formulaprop.importFromUrl(formulaprop.selectedImport.value)"
-							        ><option
-								        v-for="importExample in formulaprop.currentTranslator.ImportExamples"
-								        v-bind:value="importExample"
-							        >{{importExample.name}}</option>
-						        </select>
-					        </td>
+                <td v-show="(formulaprop.currentTranslator.ImportExamples && formulaprop.currentTranslator.ImportExamples.length>0)">
+                <label for="cboFormulaImports">Imports</label>
+						      <select id="cboFormulaImports"
+							      v-model="formulaprop.selectedImport"
+							      v-on:change="formulaprop.importFromUrl(formulaprop.selectedImport.value)"
+							      ><option
+								      v-for="importExample in formulaprop.currentTranslator.ImportExamples"
+								      v-bind:value="importExample"
+							      >{{importExample.name}}</option>
+						      </select>
+					      </td>
 
-					        <td>
-						        <label for="cmdInfo">&nbsp</label>
-						        <div>
-							        <button id="cmdInfo"
-								        onclick="ShowGlobalInfoModal('TranslatorInfo')"
-							        ><i class ="glyphicon glyphicon-question-sign"></i></button>
-						        </div>
-                  </td>
+					      <td>
+						      <label for="cmdInfo">&nbsp</label>
+						      <div>
+							      <button id="cmdInfo"
+								      onclick="ShowGlobalInfoModal('TranslatorInfo')"
+							      ><i class ="glyphicon glyphicon-question-sign"></i></button>
+						      </div>
+                </td>
 
-                  <!--<td>
-						        <label for="cmdTest">&nbsp</label>
-						        <div>
-							        <button id="cmdTest" onclick="ShowGlobalInfoModal('WaitingModal1')">Test</button>
-						        </div>
-                  </td>-->
+                <td>
+						      <label for="cmdTest">&nbsp</label>
+						      <div>
+							      <button id="cmdTest" v-on:click="formulaprop.generateLink()">Create Link</button>
+						      </div>
+                </td>
 
-                </tr>
+              </tr>
             </table>
+            
             <vw-info-modal 
               modalId='TranslatorInfo' 
               v-bind:canCancel='true' 
               v-bind:strHeader='formulaprop.currentTranslator.Name' 
-              v-bind:htmlContent=formulaprop.currentTranslator.ReferenceContent>
+              v-bind:htmlContent='formulaprop.currentTranslator.ReferenceContent'>
             </vw-info-modal>
-            <vw-info-modal modalId='WaitingModal1' v-bind:canCancel='false' strHeader='Loading' htmlContent='Please wait...'></vw-info-modal>
+            
+            <vw-info-modal modalId='GenerateLink' 
+              strHeader='Copy link' 
+              v-bind:htmlContent='formulaprop.generatedGraphLink'>
+              buttonCaption='Copy Link'
+              button1Function=''
+            </vw-info-modal>
+            
+            <vw-info-modal modalId='WaitingModal1' 
+              v-bind:canCancel='false' 
+              strHeader='Loading' 
+              htmlContent='Please wait...'>
+            </vw-info-modal>
         </div>
 		`
 })
@@ -469,6 +484,7 @@ var consoleApp=new Vue({
       //modalButtonCaption: "Close",
 
       formulaValue: "",
+      formulaHistory: [],
       translators: [
 				new SimpleTranslator(),
 				new JsonTranslator(),
@@ -476,7 +492,7 @@ var consoleApp=new Vue({
       ],
       selectedTranslatorName: new SimpleTranslator().Name,
       currentTranslator: new SimpleTranslator(),
-      selectedExample: "",
+      selectedExample: (new SimpleTranslator().Examples && new SimpleTranslator().Examples.length > 0) ? ('example: ' + new SimpleTranslator().Examples[0]) : "",
       selectedImport: null,
       selectTranslator: function(value) {
         var currentScope=this;
@@ -492,44 +508,34 @@ var consoleApp=new Vue({
       executeFormula: function() {
         var translator=this.currentTranslator;
         translator.Translate(this.formulaValue);
+        this.formulaHistory.push({"formula": this.formulaValue, "translator": this.currentTranslator});
         this.formulaValue="";
       },
       executeExampleFormula: function() {
         var translator=this.currentTranslator;
         translator.Translate(this.selectedExample);
       },
-
-      // Info model
-      //infoModal: {
-      //  showModal: false
-      //},
-      //showInfoModal: function(heading, content, buttons) {
-      //  this.modalHeader=this.currentTranslator.Name;
-      //  this.modalContent=this.currentTranslator.ReferenceContent;
-      //  this.modalButtonCaption="Close";
-      //  ShowGlobalInfoModal('TranslatorInfo');
-      //},
-      //closeInfoModal: function() {
-      //  CloseInfoModal();
-      //},
       importFromUrl(url) {
         ShowGlobalInfoModal('WaitingModal1')
         console.log('IMPORTING...');
         var translator=this.currentTranslator;
         var httpClient=new HttpClient();
-        //httpClient.get('http://en.wikipedia.org/api/rest_v1/feed/featured/2000/03/15', function (response) {
-        //var URL = 'http://en.wikipedia.org/api/rest_v1/feed/featured/' + 2000 + '/'+ ("0" + (new Date().getMonth() + 1)).slice(-2)+'/'+ ("0" + (new Date().getDate())).slice(-2);
         var finalUrl = url;
         finalUrl = finalUrl.replace('$day', ("0" + (new Date().getDate())).slice(-2));
         finalUrl = finalUrl.replace('$month', ("0" + (new Date().getMonth() + 1)).slice(-2));
         finalUrl = finalUrl.replace('$year', 2000);
-
         console.log('URL',finalUrl);
         httpClient.get(finalUrl,function(response) {
           console.log('response',response);
           translator.Translate(response);
           CloseGlobalInfoModal('WaitingModal1')
         });
+      },
+      generatedGraphLink:"", 
+      generateLink: function(){
+        var encodedFormula = new StringHelper().ReplaceEachOfCharSet(btoa(this.formulaValue), '+/=','._-');
+        this.generatedGraphLink = "http://graphex.io/?trans='Simple'&grenc=" + encodedFormula;
+        ShowGlobalInfoModal('GenerateLink')
       }
     },
     tabs: {

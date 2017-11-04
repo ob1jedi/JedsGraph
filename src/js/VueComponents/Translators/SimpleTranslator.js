@@ -1,6 +1,6 @@
 ﻿
 var SimpleTranslator = function () {
-	this.Name = "Simple X->Y";
+	this.Name = "Simple-XY";
 	this.Examples = [
 						"x->y",
 						"Sam->John^->Bob",

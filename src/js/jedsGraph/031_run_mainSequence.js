@@ -41,11 +41,22 @@ function main() {
         var translator = new UrlParamsTranslator();
         translator.Translate(param.value);
       }
+
+      if (param.key == "grenc"){
+        var translator = urlHelper.GetParameterByName("trans");
+        var base64Str = new StringHelper().ReplaceEachOfCharSet(param.value, '._-','+/=');
+        var decodedData = atob(base64Str);
+        var translator = new SimpleTranslator();
+        translator.Translate(decodedData);
+      }
+
+
     });
 
 	}
 
 }
+
 
 var UrlHelper = function(){
 

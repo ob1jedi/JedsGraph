@@ -1,7 +1,7 @@
 ﻿
 function UrlParamsTranslator() {
 
-	this.Name = "Url-param Syntax";
+	this.Name = "Param Syntax";
 	this.Examples = [
 						"x--y",
             "x--y.x--z",
