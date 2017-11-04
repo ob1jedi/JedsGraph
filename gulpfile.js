@@ -2,6 +2,8 @@ var gulp = require('gulp');
 var webserver = require('gulp-webserver');
 var browserSync = require('browser-sync').create();
 var inject = require('gulp-inject');
+var build = require('gulp-build');
+var through = require('through2')
 
 gulp.task('default', function() {
 	gulp.start('serve');
@@ -33,4 +35,16 @@ gulp.task('sync', function () {
             baseDir: "./src"
         }
     });
+});
+
+//import through from'through2';
+
+gulp.task('build', function() {
+  //gulp.src('src/*.js')
+  gulp.src('./src/**/*.js')
+	  //.pipe(through.obj(function (file, enc, cb) {
+		//  console.log(file);
+		//}))
+      .pipe(build({ GA_ID: '123456' }))
+      .pipe(gulp.dest('dist'))
 });

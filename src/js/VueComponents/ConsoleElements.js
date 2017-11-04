@@ -442,6 +442,13 @@ Vue.component('vw-formula-box',{
 						      </div>
                 </td>
 
+                <td>
+						      <label>&nbsp</label>
+						      <div>
+                    <a href="../../../html/help/formulas.html" target="_blank">Graphex</a>
+						      </div>
+                </td>
+
               </tr>
             </table>
             
@@ -534,7 +541,7 @@ var consoleApp=new Vue({
       generatedGraphLink:"", 
       generateLink: function(){
         var encodedFormula = new StringHelper().ReplaceEachOfCharSet(btoa(this.formulaValue), '+/=','._-');
-        this.generatedGraphLink = "http://graphex.io/?trans='Simple'&grenc=" + encodedFormula;
+        this.generatedGraphLink = "http://www.graphex.io/?trans='Simple'&grenc=" + encodedFormula;
         ShowGlobalInfoModal('GenerateLink')
       }
     },

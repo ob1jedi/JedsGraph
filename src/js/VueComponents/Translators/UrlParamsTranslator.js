@@ -11,7 +11,7 @@ function UrlParamsTranslator() {
             This format is safe to pass in your URL,
             <br/> in the "graph" parameter.
             <br/>Example: 
-						</br><span class ="inputModal code">http://graphex.io/?graph=x--y.y--z</span>
+						</br><span class ="inputModal code">http://www.graphex.io/?graph=x--y.y--z</span>
 						<hr>
 						Create a node with any alphanumric sequence of characters:
 						</br><span class ="inputModal code">MyNode1</span>

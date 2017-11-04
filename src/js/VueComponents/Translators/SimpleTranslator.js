@@ -8,7 +8,8 @@ var SimpleTranslator = function () {
 						"Diana-MotherOf->William&Harry",
 						"Fe(name: Iron)",
 						"C(name: Carbon, weight: 12.011)",
-						"Oxygen->Hydrogen & Hydrogen"
+						"Oxygen->Hydrogen & Hydrogen",
+            "mom->dad; mom->me; dad->me; me->son"
 	];
 	this.ReferenceContent = `
 						Type any word to create a node, eg. <span class ="inputModal code">John</span>
@@ -40,19 +41,31 @@ var SimpleTranslator = function () {
 
 	this.Translate = function (expression) {
 		var dataSvc = new DataService();
-		var elements = expression.split('->');
-		var graph = [];
+		
+    
+    var subExpressions = expression.split(';');
+
+    for (var i =0; i< subExpressions.length; i++){
+      processExpression(subExpressions[i].trim());
+    }
+
+	}
+
+  function processExpression(expression){
+    var elements = expression.split('->');
 		var currentElement = elements[0];
 		var currentEntity = getEntityDetails(currentElement.trim());
-		var currentNode = null;
+		var currentNodes = [];
 		if (currentEntity === null) {
 			//...we're attaching to the currently selected node on the stage
 			//debugger;
 			if (!IsNodeSelected) return;
-			currentNode = globals.selectedNode;
+			currentNodes = [globals.selectedNode];
 		}
 		else {
-			currentNode = dataSvc.CreateEntity_AddToGraph_ReturnNode(currentEntity.labels, currentEntity.properties);
+      currentNodes = getNodesFromStage(currentEntity.labels, currentEntity.properties);
+			if (currentNodes.length == 0 )
+        currentNodes.push(dataSvc.CreateEntity_AddToGraph_ReturnNode(currentEntity.labels, currentEntity.properties));
 			if (mustSelectNode(currentElement))
 				highlightSelectedNode(currentNode.id);
 		}
@@ -64,35 +77,63 @@ var SimpleTranslator = function () {
 			for (s = 0; s < subElements.length; s++) {
 				var subElement = subElements[s];
 				var nextEntity = getEntityDetails(subElement);
-				var nextNode = null;
+				var nextNodes = [];
 				if (nextEntity === null) {
 					//...we're attaching to the currently selected node on the stage
 					if (!IsNodeSelected) {
 						return;
 					}
-					nextNode = globals.selectedNode;
+					nextNodes = [globals.selectedNode];
 				}
 				else {
 					//...we need to create a new entity.
 					//if (AppendToStageNode == true) {
 						//TODO: perform search...
 					//}
-					nextNode = dataSvc.CreateEntity_AddToGraph_ReturnNode(nextEntity.labels, nextEntity.properties);
-					if (mustSelectNode(subElement))
-						highlightSelectedNode(nextNode.id)
-					applyPopoutEffectToNode(nextNode, currentNode.id)
+					nextNodes =getNodesFromStage(nextEntity.labels, nextEntity.properties);
+          if (nextNodes.length == 0)      
+            nextNodes = [dataSvc.CreateEntity_AddToGraph_ReturnNode(nextEntity.labels, nextEntity.properties)];
+					if (mustSelectNode(subElement)){
+						nextNodes.forEach((nextNode) => highlightSelectedNode(nextNode.id));
+          }
+					applyPopoutEffectToNode(nextNodes[0], currentNodes[0].id);
 				}
-				var link = dataSvc.CreateRelation_AddToGraph_ReturnLink(
-					currentNode.id,
-					nextNode.id,
-					(relation === null) ? [] : relation.labels,
-					(relation === null) ? {} : relation.properties
-				)
+        currentNodes.forEach((currentNode) => {
+				  nextNodes.forEach((nextNode) => {
+            var link = dataSvc.CreateRelation_AddToGraph_ReturnLink(
+					    currentNode.id,
+					    nextNode.id,
+					    (relation === null) ? [] : relation.labels,
+					    (relation === null) ? {} : relation.properties
+				    );
+          });
+        });
 			}
 			currentElement = nextElement;
-			currentNode = nextNode;
+			currentNodes = nextNodes;
 		}
-	}
+  }
+
+  function getNodesFromStage(labels, properties){
+    var nodes = [];
+    for (var i = 0; i < globals.nodeList.length; i++){
+      var labelsMatch = true;
+      for (var l = 0; l < labels.length; l++){
+        if (globals.nodeList[i].data.labels.indexOf(labels[l]) == -1)
+          labelsMatch = false;
+      }
+      if (labelsMatch){
+        var propertiesMatch = true;
+        for (var key in properties)
+          if (globals.nodeList[i].data.propertiesObject[key] != properties[key])
+            propertiesMatch = false;
+      }
+      if (labelsMatch && propertiesMatch)
+        nodes.push(globals.nodeList[i]);
+      
+    }
+    return nodes;
+  }
 	function mustSelectNode(element)
 	{
 		return element.includes('^');

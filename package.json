@@ -22,6 +22,7 @@
   "devDependencies": {
     "browser-sync": "^2.18.13",
     "gulp": "^3.9.1",
+    "gulp-build": "^0.5.3",
     "gulp-inject": "^4.3.0",
     "gulp-webserver": "^0.9.1"
   }
