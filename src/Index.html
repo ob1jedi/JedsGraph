@@ -13,6 +13,7 @@
     <title>Graphex</title>
     <link rel="icon" href="nodes1.png">
     
+    <!---------GULP SCRIPT INJECTOR --------------->
     <!-- inject:css -->
     <!-- endinject -->
 
@@ -20,11 +21,13 @@
 	<!------------ Bootstrap ---------->
 	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
 	
+    <!---------GULP SCRIPT MINIFIER --------------->
     <!-- build:css scripts/styles.css -->
-    <link href="deps/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/jedsGraph.css" rel="stylesheet">
     <!-- endbuild -->
     
+    <!-- build:js scripts/libs.js -->
     <!--------- JQuery --------->
 	<!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>-->
 	<script src="deps/jquery-1.11.1.min.js"></script>
@@ -36,9 +39,11 @@
     <!------- Vivagraph -------->
     <!--<script type="text/javascript" src="deps/vivagraph.js"></script>-->
     <script src="deps/vivagraph.min.js"></script>
+	<!-- endbuild -->
 
     <!--<link href="html/help/formulas.html" rel="subresource">-->
 
+    <!---------GULP SCRIPT MINIFIER --------------->
     <!-- build:js scripts/initconfig.js -->
 	<script type="text/javascript" src="custom/config/configloader.js"></script>
 	<script type="text/javascript" src="custom/config/defaultConfig.js"></script>
@@ -48,6 +53,7 @@
 	<script type="text/javascript" src="js/jedsGraph/Config/baseNodeConfig.js"></script>
     <!-- endbuild -->
 
+    <!---------GULP SCRIPT MINIFIER --------------->
     <!-- build:js scripts/combined.js -->
 	<script type="text/javascript" src="js/jedsGraph/_factoryClasses/NodeFunctions.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Config/Services/ConfigHelper.js"></script>
@@ -120,9 +126,6 @@
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/080_set_UiStartupSettings.js"></script>
     <!-- endbuild -->
 
-	
-
-
 </head>
 
 <body onload='main()'>
@@ -168,10 +171,15 @@
 	</dialog>
 
 	
+    <!---------GULP SCRIPT INJECTOR --------------->
 	<!-- inject:js -->
 	<!-- endinject -->
-	<!--VUE Scrips-->
-	<script src="js/VueComponents/ConsoleElements.js"></script>
+
+    <!---------GULP SCRIPT MINIFIER --------------->
+    <!-- build:js scripts/combined2.js -->
+    <!-----VUE Scrips----->
+    <script src="js/VueComponents/ConsoleElements.js"></script>
+    <!-- endbuild -->
 </body>
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------->
