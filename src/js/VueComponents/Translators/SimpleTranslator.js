@@ -40,18 +40,14 @@ var SimpleTranslator = function () {
 					
 
 	this.Translate = function (expression) {
-		var dataSvc = new DataService();
-		
-    
     var subExpressions = expression.split(';');
-
     for (var i =0; i< subExpressions.length; i++){
       processExpression(subExpressions[i].trim());
     }
-
 	}
 
   function processExpression(expression){
+    var dataSvc = new DataService();
     var elements = expression.split('->');
 		var currentElement = elements[0];
 		var currentEntity = getEntityDetails(currentElement.trim());
