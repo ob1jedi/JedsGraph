@@ -4,6 +4,10 @@ var browserSync = require('browser-sync').create();
 var inject = require('gulp-inject');
 var build = require('gulp-build');
 var through = require('through2')
+var print = require('gulp-print');
+var pump = require('pump');
+var uglify = require('gulp-uglify');
+
 
 gulp.task('default', function() {
 	gulp.start('serve');
@@ -41,10 +45,25 @@ gulp.task('sync', function () {
 
 gulp.task('build', function() {
   //gulp.src('src/*.js')
-  gulp.src('./src/**/*.js')
+  gulp.src(['./src/js/**/*.js', 
+			'./src/**/*.html', 
+			'./src/**/*.css',
+			'./src/**/*.svg'])
 	  //.pipe(through.obj(function (file, enc, cb) {
 		//  console.log(file);
 		//}))
-      .pipe(build({ GA_ID: '123456' }))
+	  .pipe(print())
+      .pipe(uglify())
+	  .pipe(build({ GA_ID: '123456' }))
       .pipe(gulp.dest('dist'))
+});
+
+gulp.task('compress', function (cb) {
+  pump([
+        gulp.src('src/js/*.js'),
+        uglify(),
+        gulp.dest('dist')
+    ],
+    cb
+  );
 });
