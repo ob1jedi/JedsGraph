@@ -442,12 +442,12 @@ Vue.component('vw-formula-box',{
 						      </div>
                 </td>
 
-                <td>
+                <!--<td>
 						      <label>&nbsp</label>
 						      <div>
                     <a href="../../../html/help/formulas.html" target="_blank">Graphex</a>
 						      </div>
-                </td>
+                </td>-->
 
               </tr>
             </table>
