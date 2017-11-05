@@ -19,33 +19,36 @@
 	<!----------- DEPENDENCIES -------->
 	<!------------ Bootstrap ---------->
 	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
-	<link href="deps/bootstrap.min.css" rel="stylesheet">
-	<!--------- JQuery --------->
+	
+    <!-- build:css scripts/styles.css -->
+    <link href="deps/bootstrap.min.css" rel="stylesheet">
+    <link href="css/jedsGraph.css" rel="stylesheet">
+    <!-- endbuild -->
+    
+    <!--------- JQuery --------->
 	<!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>-->
 	<script src="deps/jquery-1.11.1.min.js"></script>
 	<!--<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>-->
 	<script src="deps/jquery.mobile-1.4.5.min.js"></script>
-	<!--<script src="https://unpkg.com/vue"></script>-->
+    <!--------- VUE --------->
+    <!--<script src="https://unpkg.com/vue"></script>-->
 	<script src="deps/vue.js"></script>
     <!------- Vivagraph -------->
     <!--<script type="text/javascript" src="deps/vivagraph.js"></script>-->
     <script src="deps/vivagraph.min.js"></script>
-	<!------- Color picker -------->
-	<script src="deps/jscolor.js"></script>
-
-	<!-- CONFIG -->
-
-	<link href="css/jedsGraph.css" rel="stylesheet">
-	<script type="text/javascript" src="custom/config/configloader.json"></script>
-	<script type="text/javascript" src="custom/config/defaultConfig.json"></script>
-    <script type="text/javascript" src="custom/config/Data1.json"></script>
-
 
     <!--<link href="html/help/formulas.html" rel="subresource">-->
-    <!-- SCRIPTS -->
-	<script type="text/javascript" src="js/jedsGraph/Config/baseGraphConfig.json"></script>
-	<script type="text/javascript" src="js/jedsGraph/Config/baseLinkConfig.json"></script>
-	<script type="text/javascript" src="js/jedsGraph/Config/baseNodeConfig.json"></script>
+
+    <!-- build:js scripts/initconfig.js -->
+	<script type="text/javascript" src="custom/config/configloader.js"></script>
+	<script type="text/javascript" src="custom/config/defaultConfig.js"></script>
+    <script type="text/javascript" src="custom/config/Data1.js"></script> 
+   	<script type="text/javascript" src="js/jedsGraph/Config/baseGraphConfig.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Config/baseLinkConfig.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Config/baseNodeConfig.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js scripts/combined.js -->
 	<script type="text/javascript" src="js/jedsGraph/_factoryClasses/NodeFunctions.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Config/Services/ConfigHelper.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTestFramework.js"></script>
@@ -99,7 +102,6 @@
 	<script type="text/javascript" src="js/jedsGraph/Models/timeoutElementType.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/viewOptionsType.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/GraphElement.js"></script>
-
 	<script type="text/javascript" src="js/jedsGraph/020_define_globals.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/DataDriver_LocalStorage_Tests.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/Config_Tests.js"></script>
@@ -116,7 +118,7 @@
 	<script type="text/javascript" src="js/jedsGraph/_components/Link/Methods/drawLink.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/070_render_GraphObject(starts_up_Cycles).js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_mainSequence/080_set_UiStartupSettings.js"></script>
-
+    <!-- endbuild -->
 
 	
 

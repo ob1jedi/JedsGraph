@@ -6,7 +6,15 @@ var build = require('gulp-build');
 var through = require('through2')
 var print = require('gulp-print');
 var pump = require('pump');
-var uglify = require('gulp-uglify');
+var gulpSeries = require('gulp-series');
+var clean = require('gulp-clean');
+//var uglifycss = require('gulp-uglifycss');
+//var htmlminifier = require('gulp-html-minifier');
+var useref = require('gulp-useref');
+var gulpif = require('gulp-if');
+var uglifyes = require('uglify-es');
+var composer = require('gulp-uglify/composer');
+var minifyes = composer(uglifyes, console);
 
 
 gulp.task('default', function() {
@@ -27,6 +35,16 @@ gulp.task('serve', function() {
     .pipe(webserver({
 	  fallback: 'index.html',
       port:'9090',
+      livereload: true,
+      open: true
+    }));
+});
+
+gulp.task('serve-live', function() {
+  gulp.src('dist')
+    .pipe(webserver({
+	  fallback: 'index.html',
+      port:'9091',
       livereload: true,
       open: true
     }));
@@ -58,12 +76,34 @@ gulp.task('build', function() {
       .pipe(gulp.dest('dist'))
 });
 
+gulp.task('clean', function () {
+    return gulp.src('dist', {read: false})
+        .pipe(clean());
+});
+
+gulp.task('compress-2', function() {
+  gulp.src('./src/Index.html')
+	  .pipe(useref())
+      .pipe(gulpif('*.js', minifyes()))
+      .pipe(gulp.dest('dist'))
+});
+
 gulp.task('compress', function (cb) {
   pump([
-        gulp.src('src/js/*.js'),
-        uglify(),
-        gulp.dest('dist')
+        gulp.src('./src/Index.html'),
+		useref(),
+		gulpif('*.js', minifyes()),
+		gulp.dest('dist')
     ],
     cb
   );
 });
+
+gulpSeries.registerTasks({
+	"cleany" : (()=> gulp.start('clean')),
+	"compressy" : (()=> gulp.start('compress')),
+	"deploy" : (()=> gulp.start('serve-live'))
+})
+gulpSeries.registerSeries("deploy", ["cleany", "compressy", "deploy"]);
+	
+

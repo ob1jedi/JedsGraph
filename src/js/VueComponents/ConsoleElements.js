@@ -460,10 +460,10 @@ Vue.component('vw-formula-box',{
             </vw-info-modal>
             
             <vw-info-modal modalId='GenerateLink' 
-              strHeader='Copy link' 
+              strHeader='Formula link' 
               v-bind:htmlContent='formulaprop.generatedGraphLink'>
-              buttonCaption='Copy Link'
-              button1Function=''
+              button1Caption='Copy Link'
+              v-bind:button1Function='formulaprop.copyLink(formulaprop.generatedGraphLink)'
             </vw-info-modal>
             
             <vw-info-modal modalId='WaitingModal1' 

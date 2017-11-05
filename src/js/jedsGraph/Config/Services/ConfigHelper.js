@@ -117,11 +117,11 @@
 
 
     //setting up panels...
-    $topBar=document.getElementById('topBar');
-    $topBar.addEventListener('dragenter',handleDragEnter,false);
-    $topBar.addEventListener('dragover',handleDragOver,false);
-    $topBar.addEventListener('dragleave',handleDragLeave,false);
-    $topBar.addEventListener('drop',handleDrop,false);
+    //$topBar=document.getElementById('topBar');
+    //$topBar.addEventListener('dragenter',handleDragEnter,false);
+    //$topBar.addEventListener('dragover',handleDragOver,false);
+    //$topBar.addEventListener('dragleave',handleDragLeave,false);
+    //$topBar.addEventListener('drop',handleDrop,false);
 
     config.viewOptions.panels.forEach(function(panelConfig) {
       setupUiPanelAndTopbar(panelConfig)
@@ -162,8 +162,8 @@
         toggleToolPanel(panelConfig.name);
       }
       $elPanel.setAttribute('draggable',true);
-      $elPanel.addEventListener('dragstart',handleDragStart,false);
-      $elPanel.addEventListener('dragend',handleDragEnd,false);
+      //$elPanel.addEventListener('dragstart',handleDragStart,false);
+      //$elPanel.addEventListener('dragend',handleDragEnd,false);
       globals.toolPanels.push($elPanel);
     }
     else {

@@ -14,8 +14,8 @@
 			{ "nodeLabel": "STREAM" }
 		],
 		"startupQueries": [
-			//{fromEntity:"service", whereProperty:"serviceName", equalsValue:"vanguard2"},
-			//{fromEntity:"version", whereProperty:"versionName", equalsValue:"V23"}
+			/*{fromEntity:"service", whereProperty:"serviceName", equalsValue:"vanguard2"},*/
+			/*{fromEntity:"version", whereProperty:"versionName", equalsValue:"V23"}*/
 		]
 	}
 });
