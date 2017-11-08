@@ -42,7 +42,7 @@
 				"labelPosition": "center",
 				/* Options: hyphenate|fontsize|null*/
 				"labelSizing": null,
-				"color": "#ccc",
+				"color": "#cccccc",
 				"font-family": "Arial, Helvetica, sans-serif",
 				"font-weight": "normal",
 				"x": 0,

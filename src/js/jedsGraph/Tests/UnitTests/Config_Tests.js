@@ -22,9 +22,9 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 		"config": {
 			"attributes": {
 				"background-color": "#33c11d",
-				"border-color": "blue",
+				"border-color": "#334687",
 				"circleText": {
-					"color": "yellow"
+					"color": "#00FF00"
 				},
 				"img": {
 					"url": "custom/assets/Space/Earth-PNG-Clipart.png",
@@ -42,7 +42,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 	var result = sut.GetConfigByName(configName);
 
 	// Assert
-	return (result.config.attributes.circleText.color === "yellow") ? true : result;
+	return (result.config.attributes.circleText.color === "#00FF00") ? true : result;
 });
 
 //[Test]globals.allUnitTests
@@ -76,7 +76,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndN
 			"attributes": {
 				"background-color": "#f2b3ab",
 				"circleText": {
-					"color": "green"
+					"color": "#6fa563"
 				}
 			},
 			"relatedThings": [
@@ -97,7 +97,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndN
 	// Act
 	var result = sut.GetConfigForEntityId(entityId);
 	// Assert
-	return (result.config.attributes.circleText.color == "green") ? true : result;
+	return (result.config.attributes.circleText.color == "#6fa563") ? true : result;
 });
 
 //[Test]
@@ -111,16 +111,43 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 			testEntityName
 		]
 	}
-	var initialConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "background-color": "#33c11d", "border-color": "blue", "circleText": { "color": "yellow" } } } };
+	var initialConfig = { 
+    "configName": configName, 
+    "configType": "entity", 
+    "matchEntity": matchEntity, 
+    "config": { 
+      "attributes": { 
+        "background-color": "#33c11d", 
+        "border-color": "#4155f4", 
+        "circleText": { 
+          "color": "#0000FF" 
+        } 
+      } 
+    } 
+  };
 	var confId = sut.CreateUpdateConfigReturnId(configName, initialConfig);
-	var updatedConfig = { "configName": configName, "configType": "entity", "matchEntity": matchEntity, "config": { "attributes": { "radius":15, "background-color": "#33c11d", "border-color": "red", "circleText": { "color": "red" } } } };
+	var updatedConfig = { 
+    "configName": configName, 
+    "configType": "entity", 
+    "matchEntity": matchEntity, 
+    "config": { 
+      "attributes": { 
+        "radius":15, 
+        "background-color": "#33c11d", 
+        "border-color": "#4155f4", 
+        "circleText": { 
+          "color": "#FF0000" 
+        } 
+      } 
+    } 
+  };
 
 	// Act
 	var confId2 = sut.CreateUpdateConfigReturnId(configName, updatedConfig);
 
 	// Assert
 	var result = sut.GetConfigByName(configName);
-	return (result.config.attributes.circleText.color === "red" && result.config.attributes.radius === 15) ? true : result;
+	return (result.config.attributes.circleText.color === "#FF0000" && result.config.attributes.radius === 15) ? true : result;
 	
 	var nodes = getNodesByMatchingLabels(globals.nodeList, [testEntityName]);
 	refreshNodeAppearance(nodes[0].id);
