@@ -401,38 +401,43 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 		}
 
 		thisNodeData.nodeColorRGB = aNeoLabel.colorRGB;
+    thisNodeData.nodeColor = rgb2hex(thisNodeData.nodeColorRGB.r, thisNodeData.nodeColorRGB.g, thisNodeData.nodeColorRGB.b);
 
 		if (!thisNodeData.entityConfig.config.attributes["border-color"]) {
-			thisNodeData.entityConfig.config.attributes["border-color"] =
-				rgb2hex(thisNodeData.nodeColorRGB.r - 50, thisNodeData.nodeColorRGB.g - 50, thisNodeData.nodeColorRGB.b - 50);
+			var nodeBorderColorRGB = {
+        r: thisNodeData.nodeColorRGB.r - 50, 
+        g: thisNodeData.nodeColorRGB.g - 50, 
+        b: thisNodeData.nodeColorRGB.b - 50
+      }
+      var nodeColorHex = rgb2hex(nodeBorderColorRGB.r, nodeBorderColorRGB.g, nodeBorderColorRGB.b);
+      thisNodeData.entityConfig.config.attributes["border-color"] = nodeColorHex;
+      thisNodeData.nodeBorderColor = nodeColorHex;
 		}
-
 		//thisNodeData.nodeColor = aNeoLabel.color;
 		//thisNodeData.nodeBorderColor = rgb2hex(thisNodeData.nodeColorRGB.r-20, thisNodeData.nodeColorRGB.g-20, thisNodeData.nodeColorRGB.b-20);
 	}
-			
+
 	if (thisIsNewNode) {
 		dataNode = addNodeToGraph(thisNodeData.id, thisNodeData);	
-		globals.nodeList.push(dataNode);
 		PerformNodeStatFunctions(dataNode);
+    var graphHelper = new GraphHelper();
+    graphHelper.AddToEntityTypeDefs(dataNode);
+    globals.nodeList.push(dataNode);	
 		return dataNode; //RETURN ONLY IF NODE IS NEW
 	}
-	else
-	{
-		PerformNodeStatFunctions(dataNode);
-	}
 }
-		
+
+
 		
 function addEntityLabel(labelName, _addInstanceCount, entityConfig)
 {	
-	var existingLabelSelector = getNeoLabel(labelName);
-	if(existingLabelSelector) 
+	var existingDataLabel = getNeoLabel(labelName);
+	if(existingDataLabel) 
 	{
-		if(_addInstanceCount){existingLabelSelector.instanceCount += _addInstanceCount};
+		if(_addInstanceCount){existingDataLabel.instanceCount += _addInstanceCount};
 		var fetchbutton = document.getElementById('labelSelector.fetcher.' + labelName)
-		if (fetchbutton) {fetchbutton.innerHTML = existingLabelSelector.instanceCount;}
-		return;
+		if (fetchbutton) {fetchbutton.innerHTML = existingDataLabel.instanceCount;}
+		return existingDataLabel;
 	}
 
 	var rgbRange = entityConfig.config.attributes.rgbRange;

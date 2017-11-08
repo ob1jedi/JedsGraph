@@ -108,11 +108,14 @@
 	<script type="text/javascript" src="js/jedsGraph/Models/timeoutElementType.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/viewOptionsType.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Models/GraphElement.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/PropertyTypeDef.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Models/EntityTypeDef.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/020_define_globals.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/DataDriver_LocalStorage_Tests.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/Config_Tests.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/Translator_Tests.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/JsonHelper_Tests.js"></script>
+	<script type="text/javascript" src="js/jedsGraph/Tests/UnitTests/GraphHelper_Tests.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/Config/initializeConfiguration.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/030_initSequence/012.setup_UI.js"></script>
 	<script type="text/javascript" src="js/jedsGraph/031_run_mainSequence.js"></script>
@@ -132,10 +135,10 @@
 
 	<div id="vue-app">
 		<vw-graph></vw-graph>
-		<vw-topbar></vw-topbar>
+		<vw-topbar v-bind:topbar="topbar"></vw-topbar>
 		<vw-formula-box v-bind:formulaprop="formulaToolbar"></vw-formula-box>
 		<vw-info-modal v-bind:formulaprop="formulaToolbar"></vw-info-modal>
-		<vw-left-sidebar></vw-left-sidebar>
+		<vw-left-sidebar v-bind:sysdata="systemData"></vw-left-sidebar>
 		<vw-right-sidebar v-bind:tabs="tabs"></vw-right-sidebar>
 		<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>
 		<!--<vw-info-modal v-if="formulaToolbar.isInfoModalVisible" @close="formulaToolbar.isInfoModalVisible = false">
@@ -187,10 +190,10 @@
 
 <div id='noColumn'>
 
-	<div class="labelSelectorDisplay toolPanel flexcroll" id='panel.labelselectors'>
+	<!--<div class="labelSelectorDisplay toolPanel flexcroll" id='panel.labelselectors'>
 		<div class="panelHead">Node Types</div>
 		<table id="selectorLabels" class="label"></table>
-	</div>
+	</div>-->
 
 	<div class='toolPanel' id='panel.config'>
 		<div class="panelHead">Configuration:</div>

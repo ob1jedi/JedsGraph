@@ -123,9 +123,9 @@
     //$topBar.addEventListener('dragleave',handleDragLeave,false);
     //$topBar.addEventListener('drop',handleDrop,false);
 
-    config.viewOptions.panels.forEach(function(panelConfig) {
-      setupUiPanelAndTopbar(panelConfig)
-    });
+    //config.viewOptions.panels.forEach(function(panelConfig) {
+    //  setupUiPanelAndTopbar(panelConfig)
+    //});
 
     //Set global variable
     globals.config_ext=config;
@@ -152,36 +152,36 @@
 
   }
 
-  function setupUiPanelAndTopbar(panelConfig) {
+  //function setupUiPanelAndTopbar(panelConfig) {
 
-    $elPanel=document.getElementById(panelConfig.name);
-    if(panelConfig.available) {
-      addTopBarButton(panelConfig.name,panelConfig.desc,panelConfig.icon)
-      $parentContainer=document.getElementById(panelConfig.parent);
-      if($parentContainer&&panelConfig.visible) {
-        toggleToolPanel(panelConfig.name);
-      }
-      $elPanel.setAttribute('draggable',true);
-      //$elPanel.addEventListener('dragstart',handleDragStart,false);
-      //$elPanel.addEventListener('dragend',handleDragEnd,false);
-      globals.toolPanels.push($elPanel);
-    }
-    else {
-      $elPanel.remove();
-    }
-  }
+  //  $elPanel=document.getElementById(panelConfig.name);
+  //  if(panelConfig.available) {
+  //    addTopBarButton(panelConfig.name,panelConfig.desc,panelConfig.icon)
+  //    $parentContainer=document.getElementById(panelConfig.parent);
+  //    if($parentContainer&&panelConfig.visible) {
+  //      toggleToolPanel(panelConfig.name);
+  //    }
+  //    $elPanel.setAttribute('draggable',true);
+  //    //$elPanel.addEventListener('dragstart',handleDragStart,false);
+  //    //$elPanel.addEventListener('dragend',handleDragEnd,false);
+  //    globals.toolPanels.push($elPanel);
+  //  }
+  //  else {
+  //    $elPanel.remove();
+  //  }
+  //}
 
-  function addTopBarButton(name,description,icon) {
-    $topBar=document.getElementById('topBar');
-    var tobarButton='';
-    tobarButton+='<button id="toolbar.'+name+'" onclick="toggleToolPanel(\''+name+'\')" class="toolPanelIcon mytooltip">';
-    tobarButton+='  <span class="'+icon+'" aria-hidden="true">';
-    tobarButton+='  </span>';
-    tobarButton+='  <div class="mytooltiptext ttright ttcenter">'+description;
-    tobarButton+='  </div>';
-    tobarButton+='</button>';
-    $topBar.innerHTML+=tobarButton;
-  }
+  //function addTopBarButton(name,description,icon) {
+  //  $topBar=document.getElementById('topBar');
+  //  var tobarButton='';
+  //  tobarButton+='<button id="toolbar.'+name+'" onclick="toggleToolPanel(\''+name+'\')" class="toolPanelIcon mytooltip">';
+  //  tobarButton+='  <span class="'+icon+'" aria-hidden="true">';
+  //  tobarButton+='  </span>';
+  //  tobarButton+='  <div class="mytooltiptext ttright ttcenter">'+description;
+  //  tobarButton+='  </div>';
+  //  tobarButton+='</button>';
+  //  $topBar.innerHTML+=tobarButton;
+  //}
 
   this.getConfig=function(apparentConfig) {
     return apparentConfig?apparentConfig:globals.currentTheme.sourceConfig;

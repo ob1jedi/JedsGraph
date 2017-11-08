@@ -95,8 +95,8 @@
 
 	this.GetEntitiesByType = function (byLabel, sourceConfigPrefix) {
 		//Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
-		var nodes = dataDriver.GetEntitiesByType(byLabel);
-		return addEntitiesToGraphAndReturnNodes(nodes, globals.currentTheme.sourceConfig);
+		var entities = dataDriver.GetEntitiesByType(byLabel);
+		return addEntitiesToGraphAndReturnNodes(entities, globals.currentTheme.sourceConfig);
 	}
 
 	this.GetEntityById = function(entityId, sourceConfigPrefix) {
@@ -110,8 +110,8 @@
 	this.GetAllEntities = function (_sourceConfig) {
 		var labelData = dataDriver.GetAllEntityTypes();
 		labelData.forEach(function (labelData) {
-			var nodes = dataDriver.GetEntitiesByType(labelData);
-			addEntitiesToGraphAndReturnNodes(nodes, globals.currentTheme.sourceConfig);
+			var entities = dataDriver.GetEntitiesByType(labelData);
+			addEntitiesToGraphAndReturnNodes(entities, globals.currentTheme.sourceConfig);
 		});
 		this.GetAllRelations(_sourceConfig);
 		//Neo4jGetAllEntities(_sourceConfig);
@@ -185,8 +185,9 @@
 
 	function updateUiComponents(label, entityCount, entityConfig)
 	{
-		addEntityLabel(label, entityCount, entityConfig);
+		var typeSelector = addEntityLabel(label, entityCount, entityConfig);
 		refreshEntitySelectors();
+    consoleApp.updateTypeSelectors(typeSelector);
 	}
 
 	function stripDomainFromId(nodeId)

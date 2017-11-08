@@ -23,7 +23,17 @@
     }
   }
 
-
+  this.IsImage = function(value){
+    if (getType(value) != "string")// || value.slice(4) != "http")
+      return false;
+    var ext = value.slice(-4);
+    return (ext == ".jpg" 
+      || ext == ".png" 
+      || ext == ".gif" 
+      || ext == ".svg" 
+      || ext == ".ico" 
+      || value.slice(-5) == ".jpeg");
+  }
   //this.CompressString2 = function(s){
   //  var dict = [];
 

@@ -70,8 +70,8 @@ Vue.component('vw-panel-nodeEditor-matching',{
 				<th><label>Name  </label></th>
 				<th><label>Value </label></th>
 				<tr v-for="property in tabs.newMatching.properties">
-					<td><input v-bind="property.key" class="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
-					<td><input v-bind="property.value" class ="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
+					<td><input v-bind:value="property.key" class="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
+					<td><input v-bind:value="property.value" class ="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
 				</tr>
 			</table>
 		</div>
@@ -272,9 +272,61 @@ Vue.component('vw-panel-nodeEditor-behaviours',{
 		`
 })
 
+// ================= TOPBAR ================= 
 
+Vue.component('vw-topbar',{
+  props: ['topbar'],
+  template:
+`
+	<div id='graphexTopBar'>
+    <button v-for="item in topbar.items">{{item.caption}}</button>
+	</div>
+`
+})
 
-// ================= SIDEBARS & TOPBARS & GRAPH ================= 
+//Vue.component('vw-topbar',{
+//  template:
+//`
+//	<div id='topBar' class="topbar-shadow">
+//	</div>
+//`
+//})
+
+Vue.component('vw-panel-nodeSelector',{
+  props: ['sysdata'],
+  template: `
+    <div class='modPanel' id='typeSelectors'>
+			<div class="panelHead">Type Selector<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
+      
+      <div class="labelSelectorDisplay flexcroll" id='labelSelectorsPanel'>
+		    <!--<table id="selectorLabels" class="label">-->
+
+        <table class="label">
+          <tr v-for="selector in sysdata.typeSelectors">
+				    <td>
+					    <div class="labelSelectorPanel"> 
+                {{ selector.name }} &nbsp;
+					    </div>
+				    </td>
+				    <td>
+					    <div id="labelSelector.fetcher" 
+                  class="forlabelselector mytooltip pull-right"
+                  v-bind:style="{ 'background-color': selector.color }">
+						    {{ selector.instanceCount }}
+						    <div class="mytooltiptext ttleft ttupper">
+							    Fetch from database
+						    </div>
+					    </div>
+				    </td>
+			    </tr>
+        </table>
+	    </div>
+
+    </div>
+  `
+})
+
+// ================= SIDEBARS & GRAPH ================= 
 
 Vue.component('vw-graph',{
   template:
@@ -290,13 +342,7 @@ Vue.component('vw-panel',{
 })
 
 
-Vue.component('vw-topbar',{
-  template:
-`
-	<div id='topBar' class="topbar-shadow">
-	</div>
-`
-})
+
 
 Vue.component('vw-secondbar',{
   template:
@@ -308,8 +354,10 @@ Vue.component('vw-secondbar',{
 })
 
 Vue.component('vw-left-sidebar',{
+  props: ['sysdata'],
   template: `
 		<div id='leftColumn' class ="flexcroll">
+      <vw-panel-nodeSelector v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
 		</div>
 		`
 })
@@ -322,6 +370,8 @@ Vue.component('vw-right-sidebar',{
 		</div>
 		`
 })
+
+
 
 // ================= INFO MODAL ================= 
 
@@ -475,10 +525,59 @@ Vue.component('vw-formula-box',{
 		`
 })
 
-var consoleApp=new Vue({
+var consoleApp = new Vue({
   components: ['vw-panel-nodeEditor'],
   el: '#vue-app',
   data: {
+    systemData:{
+      typeSelectors: [],
+      addSelector: function(){
+        console.log(this.typeSelectors);
+        this.typeSelectors.push({name:"x"})
+      }
+    },
+    // PUBLIC
+    updateTypeSelectors: function(typeSelector){
+      //console.log('updatingTypeSelectors');
+      this.systemData.typeSelectors.push(typeSelector);
+      //console.log('label selectors', this.systemData.typeSelectors);
+    },
+    selectNode: function(node){
+      this.selectedNode = node;
+      var nodeConfig = node.data.entityConfig.config;
+      
+      this.tabs.newMatching.selectedNodeType = node.data.labels[0];
+      this.tabs.newMatching.properties = node.data.properties || [];
+      
+      this.tabs.styles.selectedNodeColor = nodeConfig.attributes["background-color"];
+      this.tabs.styles.selectedNodeBorderColor = nodeConfig.attributes["border-color"];
+      //debugger;
+      this.tabs.styles.selectedNodeTextColor = nodeConfig.attributes.labelText["color"];
+      this.tabs.styles.selectedNodeCircleTextColor = nodeConfig.attributes.circleText["color"];
+      this.tabs.styles.selectedNodeShape = nodeConfig.attributes["shape"];
+      this.tabs.styles.selectedNodeSize = nodeConfig.attributes["radius"];
+      this.tabs.styles.selectedNodeImageUrl = nodeConfig.attributes.img["url"];
+
+      this.tabs.effects.hasEffectHaze = nodeConfig.effects["haze"];
+      this.tabs.effects.hasEffectShadow = nodeConfig.effects["shadow"];
+      this.tabs.effects.hasEffectGlass = nodeConfig.effects["glass"];
+      this.tabs.effects.hasEffectRounded = nodeConfig.effects["rounded"];
+
+      this.tabs.behaviours.selectedDisplayTextType = nodeConfig.attributes.labelText.displayData["key"];
+      this.tabs.behaviours.selectedDisplayField = nodeConfig.attributes.labelText.displayData["value"];;
+      this.tabs.behaviours.selectedNodeImageType = nodeConfig.attributes.img.displayData["key"];
+      this.tabs.behaviours.selectedNodeImageValue = nodeConfig.attributes.img.displayData["value"];;;
+
+    },
+    // PRIVATE
+    selectedNode: null,
+    topbar:{
+      items: [
+        { caption: "File"},
+        { caption: "Menu"},
+        { caption: "Menu"},
+        ]
+    },
     // Indicator
     indicator: {
       title: "view",

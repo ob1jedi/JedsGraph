@@ -7,6 +7,10 @@ function Globals(){
 		//.....Functional variables.......
 		this.labelsList = []; //list of "neoLabelType" objects
 		this.nodeList = []; //list of "node" objects
+    
+    this.entityTypeDefs = []; 
+
+
 		this.monitoredNodes = [];//list of "node" objects
 		this.toolPanels = [];
 		this.monitoredLinks = []; //list of "link" objects

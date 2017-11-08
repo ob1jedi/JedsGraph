@@ -146,7 +146,10 @@ function dataNode_OnMouseEnter(node, x, y) {
 }
 
 function dataNode_OnMouseDown(node,x, y) {
-	highlightSelectedNode(node.id);
+	var graphHelper = new GraphHelper();
+  graphHelper.SelectNode(node);
+
+  highlightSelectedNode(node.id);
 	globals.nodeFunctions = NodeFunctionsFactory.createNew(node);
 	//console.log('globals.nodeFunctions', globals.nodeFunctions);
 	globals.layout.pinNode(node, true);

@@ -6,7 +6,7 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		datN.id = graphElement.fromNode.id;
 		datN.labels = graphElement.fromNode.labels;
 		datN.properties = new neoPropertyList(graphElement.fromNode.properties);
-		datN.propertiesObject = graphElement.fromNode.properties;
+    datN.propertiesObject = graphElement.fromNode.properties;
 		datN.entityConfig = GetConfigForEntityId(datN.id);
 		var fromNode = addDataNode(datN.id, datN, _sourceConfig);
 		if (fromNode)
@@ -48,7 +48,7 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 	entities.forEach(function (entity) {
 		var datM = new nodeDataType;
 		datM.id = entity.id;
-		datM.labels = entity.labels;
+		datM.labels = entity.labels || [];
 		datM.properties = new neoPropertyList(entity.properties);
 		datM.propertiesObject = entity.properties;
 		datM.entityConfig = GetConfigForEntityId(entity.id);

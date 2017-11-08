@@ -13,6 +13,8 @@ function nodeDataType() {
     this.nodeShape = 'circle';
     this.height = 25;
     this.width = 25;
+    this.properties = [];
+    this.propertiesObject = {}
     this.nodeColorRGB = { r: 100, g: 100, b: 100 };
     this.nodeOpacity = '1'
     this.textColor = '#ffffff';

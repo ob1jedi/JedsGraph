@@ -66,7 +66,7 @@ var LocalStorageDataDriver = function () {
 		link.id = this.GetNextNewRelationId();
 		link.fromNodeId = fromEntityId;
 		link.toNodeId = toEntityId;
-		link.labels = labels ? labels : [];
+		link.labels = labels || [];
 		link.properties = properties ? properties : {};
 
 		var fromEntity = this.GetEntityFromDatabase(fromEntityId);
