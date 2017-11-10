@@ -279,9 +279,40 @@ Vue.component('vw-topbar',{
   template:
 `
 	<div id='graphexTopBar'>
-    <button v-for="item in topbar.items">{{item.caption}}</button>
+    <table>
+      <tr>
+        <td>
+          <div class="logo">GRAPH≡X</div>
+        </td>
+        <td>
+            <vw-dropdown-menu v-for="item in topbar.items" v-bind:name="item.caption" v-bind:menuitems="item.items"></vw-dropdown-menu>
+        </td>
+      </tr>
+
+    </table>
+        
 	</div>
 `
+})
+
+Vue.component('vw-dropdown-menu',{
+  props: ['name', 'menuitems'],
+  template: `
+    <span class="dropdown">
+      <button class="dropbtn">{{name}}</button>
+      <div class="dropdown-content">
+        <a href="#">Link 1</a>
+        <a href="#">Link 2</a>
+        <a href="#">Link 3</a>
+      </div>
+    </span>
+
+    <!--<span class="menuButton" v-for="item in topbar.items">-->
+    <!--<div id="floatingMenu" class="list-group">
+      <a href="#" v-for="item in menuitems" class="list-group-item list-group-item-action">{{ item.caption }}
+      </a>
+    </div>-->
+		`
 })
 
 //Vue.component('vw-topbar',{
@@ -299,18 +330,17 @@ Vue.component('vw-panel-nodeSelector',{
 			<div class="panelHead">Type Selector<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
       
       <div class="labelSelectorDisplay flexcroll" id='labelSelectorsPanel'>
-		    <!--<table id="selectorLabels" class="label">-->
-
         <table class="label">
-          <tr v-for="selector in sysdata.typeSelectors">
+          <tr v-for="(selector, index) in sysdata.typeSelectors">
 				    <td>
-					    <div class="labelSelectorPanel"> 
+					    <div v-on:click="sysdata.highlightNodesByType(index)" class="labelSelectorPanel"> 
                 {{ selector.name }} &nbsp;
 					    </div>
 				    </td>
 				    <td>
 					    <div id="labelSelector.fetcher" 
                   class="forlabelselector mytooltip pull-right"
+                  v-on:click="sysdata.getEntitiesByType(selector.name, index)"
                   v-bind:style="{ 'background-color': selector.color }">
 						    {{ selector.instanceCount }}
 						    <div class="mytooltiptext ttleft ttupper">
@@ -321,7 +351,6 @@ Vue.component('vw-panel-nodeSelector',{
 			    </tr>
         </table>
 	    </div>
-
     </div>
   `
 })
@@ -348,7 +377,7 @@ Vue.component('vw-secondbar',{
   template:
 `
 	<div id='secondBar'>
-        <vw-formula-box></vw-formula-box>
+        <!--<vw-formula-box></vw-formula-box>-->
 	</div>
 `
 })
@@ -356,9 +385,9 @@ Vue.component('vw-secondbar',{
 Vue.component('vw-left-sidebar',{
   props: ['sysdata'],
   template: `
-		<div id='leftColumn' class ="flexcroll">
-      <vw-panel-nodeSelector v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
-		</div>
+		  <div id='leftColumn' class ="flexcroll">
+        <vw-panel-nodeSelector v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
+		  </div>
 		`
 })
 
@@ -412,6 +441,8 @@ Vue.component('vw-mode-indicator',{
         </div>
 		`
 })
+
+
 
 // ================= FORMULA BOX ================= 
 Vue.component('vw-formula-box',{
@@ -531,16 +562,26 @@ var consoleApp = new Vue({
   data: {
     systemData:{
       typeSelectors: [],
-      addSelector: function(){
-        console.log(this.typeSelectors);
-        this.typeSelectors.push({name:"x"})
+      getEntitiesByType:function(entityTypeName, index){
+        var dataService = new DataService();
+        if (index == 0)
+          dataService.GetAllEntities();
+        else
+          dataService.GetEntitiesByType(entityTypeName);
+      },
+      highlightNodesByType:function(index){
+        if (index == 0)
+          highlightLabel();
+        else
+          highlightLabel(index);
       }
     },
     // PUBLIC
     updateTypeSelectors: function(typeSelector){
-      //console.log('updatingTypeSelectors');
+      if (this.systemData.typeSelectors.length == 0) 
+        this.systemData.typeSelectors.push({"name":"All", "instanceCount": 0, "color":"gray"});
+      this.systemData.typeSelectors[0].instanceCount += Number(typeSelector.instanceCount);
       this.systemData.typeSelectors.push(typeSelector);
-      //console.log('label selectors', this.systemData.typeSelectors);
     },
     selectNode: function(node){
       this.selectedNode = node;
@@ -572,11 +613,17 @@ var consoleApp = new Vue({
     // PRIVATE
     selectedNode: null,
     topbar:{
+
       items: [
-        { caption: "File"},
-        { caption: "Menu"},
-        { caption: "Menu"},
-        ]
+        { caption: "File", subitems:[
+            { caption: "Clear stored data" }
+          ] },
+      ],
+
+      resetStorage:function(){
+        var dataService = new DataService();
+        dataService.dropDatabase();
+      }
     },
     // Indicator
     indicator: {

@@ -12,7 +12,7 @@
 
     <title>Graphex</title>
     <link rel="icon" href="nodes1.png">
-    
+
     <!---------GULP SCRIPT INJECTOR --------------->
     <!-- inject:css -->
     <!-- endinject -->
@@ -24,7 +24,9 @@
     <!---------GULP SCRIPT MINIFIER --------------->
     <!-- build:css scripts/styles.css -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/jedsGraph.css" rel="stylesheet">
+    
+	<link href="css/jedsGraph.css" rel="stylesheet">
+	<link href="css/dropdownMenu.css" rel="stylesheet">
     <!-- endbuild -->
     
     <!-- build:js scripts/libs.js -->
@@ -133,14 +135,15 @@
 
 <body onload='main()'>
 
+
 	<div id="vue-app">
 		<vw-graph></vw-graph>
-		<vw-topbar v-bind:topbar="topbar"></vw-topbar>
 		<vw-formula-box v-bind:formulaprop="formulaToolbar"></vw-formula-box>
 		<vw-info-modal v-bind:formulaprop="formulaToolbar"></vw-info-modal>
 		<vw-left-sidebar v-bind:sysdata="systemData"></vw-left-sidebar>
 		<vw-right-sidebar v-bind:tabs="tabs"></vw-right-sidebar>
 		<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>
+		<vw-topbar v-bind:topbar="topbar"></vw-topbar>
 		<!--<vw-info-modal v-if="formulaToolbar.isInfoModalVisible" @close="formulaToolbar.isInfoModalVisible = false">
 			<h3 slot="header">custom header</h3>
 		</vw-info-modal>-->
@@ -173,16 +176,15 @@
 		<button onclick="closeDialog('json2GraphDlg')">Cancel</button>
 	</dialog>
 
-	
-    <!---------GULP SCRIPT INJECTOR --------------->
+
+	<!---------GULP SCRIPT INJECTOR --------------->
 	<!-- inject:js -->
 	<!-- endinject -->
-
-    <!---------GULP SCRIPT MINIFIER --------------->
-    <!-- build:js scripts/combined2.js -->
-    <!-----VUE Scrips----->
-    <script src="js/VueComponents/ConsoleElements.js"></script>
-    <!-- endbuild -->
+	<!---------GULP SCRIPT MINIFIER --------------->
+	<!-- build:js scripts/combined2.js -->
+	<!-----VUE Scrips----->
+	<script src="js/VueComponents/ConsoleElements.js"></script>
+	<!-- endbuild -->
 </body>
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------->
