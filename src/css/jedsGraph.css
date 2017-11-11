@@ -531,9 +531,10 @@ div.tabcontent {
 	min-height: 0px;
 	position: fixed;
 	opacity: 0.9;
-	resize:vertical;
+	resize:horizontal;
 	overflow: auto;
 }
+
 
 #rightColumn {
 	background-color: #1a1a1a;

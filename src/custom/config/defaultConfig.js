@@ -201,8 +201,7 @@ configManager.configs.push( {
 		"selectorColor": "gray",
 		"backgroundImage": null /*URL or, set to null for nothing*/
 		,
-		"graphBackground": "linear-gradient(#002533, #00384d, #002533)" //"linear-gradient(#002533, #00384d)", //"#0e1a25",
-		,
+		"graphBackground": "#1a1a1a", /*"linear-gradient(#002533, #00384d, #002533)*/ /*"linear-gradient(#002533, #00384d)"*/ /*"#0e1a25",*/
 		"highlightColor": "#99ff33",
 		"focusColor": "red",
 		"entityShape": "circle",
