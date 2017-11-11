@@ -301,9 +301,7 @@ Vue.component('vw-dropdown-menu',{
     <span class="dropdown">
       <button class="dropbtn">{{name}}</button>
       <div class="dropdown-content">
-        <a href="#">Link 1</a>
-        <a href="#">Link 2</a>
-        <a href="#">Link 3</a>
+        <a href="#" v-for="item in menuitems">{{ item.caption }}</a>
       </div>
     </span>
 
@@ -615,13 +613,15 @@ var consoleApp = new Vue({
     topbar:{
 
       items: [
-        { caption: "File", subitems:[
-            { caption: "Clear stored data" }
-          ] },
+         {caption: "File", items:[
+            {caption: "Reset storage", func: this.resetStorage},
+            {caption: "Reset storage", func: this.resetStorage}
+        ] }
       ],
 
       resetStorage:function(){
         var dataService = new DataService();
+        console.log('resetting storage');
         dataService.dropDatabase();
       }
     },
