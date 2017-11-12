@@ -314,13 +314,6 @@ Vue.component('vw-dropdown-menu',{
 		`
 })
 
-//Vue.component('vw-topbar',{
-//  template:
-//`
-//	<div id='topBar' class="topbar-shadow">
-//	</div>
-//`
-//})
 
 Vue.component('vw-panel-nodeSelector',{
   props: ['sysdata'],
@@ -342,7 +335,7 @@ Vue.component('vw-panel-nodeSelector',{
                   class="forlabelselector mytooltip pull-right"
                   v-on:click="sysdata.getAllEntities()"
                   v-bind:style="{ 'background-color': 'gray' }">
-						    {{ sysdata.totalEntityCount }}
+						      &nbsp;
 						    <div class="mytooltiptext ttleft ttupper">
 							    Fetch all from database
 						    </div>
@@ -372,6 +365,17 @@ Vue.component('vw-panel-nodeSelector',{
 	    </div>
     </div>
   `
+})
+
+// ================= BOTTOMBAR/FOOTER ================= 
+
+Vue.component('vw-footer',{
+  template:
+`
+	<div id='graphexFooter'>
+        
+	</div>
+`
 })
 
 // ================= SIDEBARS & GRAPH ================= 
@@ -420,7 +424,7 @@ Vue.component('vw-info-modal',{
   },
   template:
 	`
-	<dialog class="inputModal" v-bind:id="modalId">
+	<dialog class="inputModal shadow" v-bind:id="modalId">
     <button v-if='canCancel' onclick='new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
 		<form class="form-group"> 
 			<h2>{{ strHeader }}</h2>
@@ -437,15 +441,16 @@ Vue.component('vw-info-modal',{
 Vue.component('vw-modal-user-confirm',{
   props: ['modal'],
   template: `
-	  <dialog class="inputModal" id="UserConfirm">
+	  <dialog class="inputModal shadow" id="UserConfirm">
       <button v-on:click="modal.ifCancelled()" class="pull-right">&times;</button>
 		  <div class="form-group"> 
 			  <h2>{{modal.header}}</h2>
 			  <div class="inputModal modalContent flexcroll"
 				  v-html="modal.content">
 			  </div>
-        <button v-on:click="modal.ifConfirmed()" class="pull-right">Yes</button>
+        
         <button v-on:click="modal.ifCancelled()" class="pull-right">Cancel</button>
+        <button v-on:click="modal.ifConfirmed()" class="pull-right">Yes</button>
 		  </div>
 	  </dialog>
   `
@@ -544,12 +549,6 @@ Vue.component('vw-formula-box',{
 						      </div>
                 </td>
 
-                <!--<td>
-						      <label>&nbsp</label>
-						      <div>
-                    <a href="../../../html/help/formulas.html" target="_blank">Graphex</a>
-						      </div>
-                </td>-->
 
               </tr>
             </table>
@@ -590,7 +589,7 @@ var consoleApp = new Vue({
       }
     },
     systemData:{
-      totalEntityCount: 0,
+      //totalEntityCount: 0,
       typeSelectors: [],
       getAllEntities: function(){
         new DataService().GetAllEntities();
@@ -606,14 +605,9 @@ var consoleApp = new Vue({
       }
     },
     // PUBLIC
-    refreshTypeSelectors: function(typeSelector){
-      this.systemData.totalEntityCount += 1;
-      this.systemData.typeSelectors = globals.labelsList.sort(sort_by('name', false, function(a){ if (a) {return a.toUpperCase()} }));
-      //this.systemData.typeSelectors.splice(0, 0, {name:"All", color: "green", instanceCount:totalCount} );
-      //if (this.systemData.typeSelectors.length == 0) 
-      //  this.systemData.typeSelectors.push({"name":"All", "instanceCount": 0, "color":"gray"});
-      //this.systemData.typeSelectors[0].instanceCount += Number(typeSelector.instanceCount);
-      //this.systemData.typeSelectors.push(typeSelector);
+    refreshTypeSelectors: function(){
+      //this.systemData.totalEntityCount++;
+      this.systemData.typeSelectors = globals.labelsList;
     },
     selectNode: function(node){
       this.selectedNode = node;
@@ -655,15 +649,19 @@ var consoleApp = new Vue({
             {
               caption: "Reset storage", 
               func: function(){new VueMenuHelper().ResetDatabase()}
-            },
-            {
-              caption: "Reset storage", 
-              func: null
             }
           ] 
-         }
-      ],
-
+         },
+         {
+           caption: "View", 
+           items:[
+              {
+                caption: "Arrange", 
+                func: function(){new VueMenuHelper().ArrangeNodes()}
+              }
+            ],
+          }
+        ]
 
     },
     // Indicator
@@ -934,13 +932,6 @@ function addToConfig(isActive,config,newConfig) {
   return jsonHelper.MergeJson(config,newConfig,"arrayId");
 }
 
-//    var inConfig = config;
-//    for (var i = 0; i < configElements; i++){
-//      inConfig = config[configElements];
-//    }
-//    inConfig = newValue;
-//}
-
 function VueMenuHelper(){
     this.ResetDatabase = function(){
       var consoleHelper = new VueConsoleHelper();
@@ -949,11 +940,22 @@ function VueMenuHelper(){
       consoleApp.modals.userConfirm.ifConfirmed = function(){
         consoleHelper.CloseGlobalInfoModal('UserConfirm');
         new DataService().DropDatabase();
+
+
+        refreshEntitySelectors();
+
+        consoleApp.refreshTypeSelectors();
         alert('Storage cleared');
+      };
+      consoleApp.modals.userConfirm.ifCancelled = function(){
+        consoleHelper.CloseGlobalInfoModal('UserConfirm');
       };
       consoleHelper.ShowGlobalInfoModal('UserConfirm');
     }
 
+  this.ArrangeNodes = function(){
+    arrangeBy2();
+  }
 }
 
 

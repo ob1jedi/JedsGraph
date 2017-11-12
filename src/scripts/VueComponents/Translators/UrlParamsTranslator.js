@@ -1,7 +1,7 @@
 ﻿
 function UrlParamsTranslator() {
 
-	this.Name = "Param Syntax";
+	this.Name = "Paramalactic";
 	this.Examples = [
 						"x--y",
             "x--y.x--z",
@@ -20,10 +20,12 @@ function UrlParamsTranslator() {
             <br/>Example:
             </br><span class ="inputModal code">n1--n2</span>
             <hr>
-						Create multiple pairs of linked nodes by separaing with a full-stop: <span class ="inputModal code"> . </span>
+						Separate node-pairs by using a full-stop: <span class ="inputModal code"> . </span>
             <br/>Nodes will link to previouse nodes by name.
             <br/>Example:
             </br><span class ="inputModal code">n1--n2.n2--n3</span>
+            <br/>Relationships live in-beteen two dashes:
+            </br><span class ="inputModal code">node1-relationship-node2</span>
 
 	`;
 					

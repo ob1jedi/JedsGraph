@@ -1,6 +1,6 @@
 ﻿
 var SimpleTranslator = function () {
-	this.Name = "Simple-XY";
+	this.Name = "Simply Graphex";
 	this.Examples = [
 						"x->y",
 						"Sam->John^->Bob",

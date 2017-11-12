@@ -3,7 +3,7 @@ function JsonTranslator() {
   var _graphRelations=[];
   var _jsonHelper=new JsonHelper;
 
-  this.Name="Json 1";
+  this.Name="Json-son";
   this.Examples=[
           '{"x":{"y":{}}}',
           '{"Sam":{"Bob":{"John":{}}}}'

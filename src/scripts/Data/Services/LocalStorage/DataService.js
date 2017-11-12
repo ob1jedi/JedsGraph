@@ -3,7 +3,7 @@
 
   this.DropDatabase = function(){
     dataDriver.ClearStorage();
-
+    window.location.reload();
   }
 
 	this.CreateConfigReturnId = function (configName, jsonConfig) {
@@ -192,7 +192,7 @@
 	{
 		var typeSelector = addEntityLabel(label, entityCount, entityConfig);
 		refreshEntitySelectors();
-    consoleApp.refreshTypeSelectors(typeSelector);
+    consoleApp.refreshTypeSelectors();
 	}
 
 	function stripDomainFromId(nodeId)
