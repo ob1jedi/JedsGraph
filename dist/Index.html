@@ -1,19 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+	<script type="text/javascript">
+		function graphexInitialize(){
+		  var browserHelper = new BrowserHelper();
+		  if (!browserHelper.IsChrome()){
+			window.location = "../html/browserSupport.html";
+			return;
+		  }
+		  graphexMain();
+		};
+	</script>
+
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-108035161-1"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
-		function gtag() { dataLayer.push(arguments); }
+		function gtag() { 
+			//dataLayer.push(arguments);  //-include arguments
+		}
 		gtag('js', new Date());
 		gtag('config', 'UA-108035161-1');
 	</script>
 
     <title>Graphex</title>
     <link rel="icon" href="nodes1.png">
-    
-    <!---------GULP SCRIPT INJECTOR --------------->
+
+    <!--------- INJECTED --------------->
     <!-- inject:css -->
     <!-- endinject -->
 
@@ -21,41 +35,39 @@
 	<!------------ Bootstrap ---------->
 	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
 	
-    <!---------GULP SCRIPT MINIFIER --------------->
+    <!--------- MINIFIED --------------->
     <link rel="stylesheet" href="scripts/styles.css">
     
     <script src="scripts/libs.js"></script>
 
     <!--<link href="html/help/formulas.html" rel="subresource">-->
+	<link href="html/help/formulas.html" rel="subresource">
+	<link href="html/home.html" rel="subresource">
+	<link href="html/browserSupport.html" rel="subresource">
 
-    <!---------GULP SCRIPT MINIFIER --------------->
-    <script src="scripts/initconfig.js"></script>
-
-    <!---------GULP SCRIPT MINIFIER --------------->
-    <script src="scripts/combined.js"></script>
+	<!--------- MINIFIED --------------->
+	<script src="scripts/initconfig.js"></script>
+	<!--------- MINIFIED --------------->
+	<script src="scripts/combined.js"></script>
 
 </head>
 
-<body onload="main()">
+<body onload="graphexInitialize()">
+
 
 	<div id="vue-app">
+		<!--Graph-->
 		<vw-graph></vw-graph>
-		<vw-topbar></vw-topbar>
+		<!--Console-->
 		<vw-formula-box v-bind:formulaprop="formulaToolbar"></vw-formula-box>
-		<vw-info-modal v-bind:formulaprop="formulaToolbar"></vw-info-modal>
-		<vw-left-sidebar></vw-left-sidebar>
+		<vw-left-sidebar v-bind:sysdata="systemData"></vw-left-sidebar>
 		<vw-right-sidebar v-bind:tabs="tabs"></vw-right-sidebar>
 		<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>
-		<!--<vw-info-modal v-if="formulaToolbar.isInfoModalVisible" @close="formulaToolbar.isInfoModalVisible = false">
-			<h3 slot="header">custom header</h3>
-		</vw-info-modal>-->
-
+		<vw-topbar v-bind:topbar="topbar"></vw-topbar>
+		<!--Modals-->
+		<vw-info-modal v-bind:formulaprop="formulaToolbar"></vw-info-modal>
+		<vw-modal-user-confirm v-bind:modal="modals.userConfirm"></vw-modal-user-confirm>
 	</div>
-
-	<!--div id="nodeOptions">
-		<button onclick='relateSelectedToNode()'>Relate entity</button>
-		<button onclick='GetRelatedEntityGraph()'>Delete entity</button>
-	</div-->
 
 	<div class="nodeFlyout" id="panel.node">
 		<ul>
@@ -66,36 +78,27 @@
 		<button onclick="closeDialog('myDialog')">Close</button>
 	</div>
 
-	<dialog class="dialog" id="myDialog">
-		<textarea id="myDialogText"></textarea>
-		<button onclick="closeDialog('myDialog')">Close</button>
 
-	</dialog>
 
-	<dialog class="dialog" id="json2GraphDlg">
-		<textarea id="dlg.text.json"></textarea>
-		<button onclick="submitJsonForGraph()">Submit</button>
-		<button onclick="closeDialog('json2GraphDlg')">Cancel</button>
-	</dialog>
 
-	
-    <!---------GULP SCRIPT INJECTOR --------------->
+
+	<!---------GULP SCRIPT INJECTOR --------------->
 	<!-- inject:js -->
 	<!-- endinject -->
-
-    <!---------GULP SCRIPT MINIFIER --------------->
-    <script src="scripts/combined2.js"></script>
+	<!---------GULP SCRIPT MINIFIER --------------->
+	<script src="scripts/combined2.js"></script>
 </body>
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 
+
 <div id="noColumn">
 
-	<div class="labelSelectorDisplay toolPanel flexcroll" id="panel.labelselectors">
+	<!--<div class="labelSelectorDisplay toolPanel flexcroll" id='panel.labelselectors'>
 		<div class="panelHead">Node Types</div>
 		<table id="selectorLabels" class="label"></table>
-	</div>
+	</div>-->
 
 	<div class="toolPanel" id="panel.config">
 		<div class="panelHead">Configuration:</div>
@@ -178,12 +181,12 @@
 	</div-->
 	<!--button id="toggle" style="position:absolute; top: 120px;">Toggle</button-->
 
-	<div class="toolPanel labelSelectorDisplay" id="panel.monitoring">
-		<div id="newNode">
+	<!--<div class='toolPanel' id='panel.monitoring'>
+		<div id='newNode'>
 			<div class="panelHead">Monitored Nodes</div>
-			<table id="nodelist.monitored"></table>
+			<table id='nodelist.monitored'></table>
 		</div>
-	</div>
+	</div>-->
 
 	<div class="toolPanel" id="panel.entity.create">
 		<div class="panelHead">Entity Management</div>
@@ -340,7 +343,7 @@
 		</div>
 	</div>
 
-
+	
 
 
 </div>

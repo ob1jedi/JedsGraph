@@ -118,7 +118,7 @@ gulp.task('copy-assets', copyAssets);
 gulp.task('compress', compress);
 gulp.task('serve-live', serveLive);
 
-gulp.task('deploy', gulp.series(
+gulp.task('build', gulp.series(
   'clean',
   'copy-dependencies', 
   'copy-fonts', 
