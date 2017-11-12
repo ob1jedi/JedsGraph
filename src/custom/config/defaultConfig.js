@@ -69,10 +69,10 @@ configManager.configs.push( {
 		prefetchLabelSelectors: false,
 		prefetchCounts: true,
 		panels: [
-			//{name:"PANEL.NAME", parent:""/"leftColumn"/"rightColumn"/"topBar", visible:BOOL, icon:"bootstrap glyph icon"}
+			//{name:"PANEL.NAME", parent:""/"leftSidebar"/"rightSidebar"/"topBar", visible:BOOL, icon:"bootstrap glyph icon"}
 			{
 				"name": "panel.labelselectors",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": true,
 				"icon": "glyphicon glyphicon-indent-right",
@@ -80,7 +80,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.functions",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": true,
 				"icon": "glyphicon glyphicon-th-large",
@@ -88,7 +88,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.config",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": false,
 				"visible": false,
 				"icon": "glyphicon glyphicon-adjust",
@@ -96,7 +96,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.selection",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-ok-sign",
@@ -104,7 +104,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.nodedetails",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-dashboard",
@@ -112,7 +112,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.linkdetails",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-sort-by-order",
@@ -120,7 +120,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.simplequery",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": false,
 				"visible": false,
 				"icon": "glyphicon glyphicon-search",
@@ -128,7 +128,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.bulkactions",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": true,
 				"icon": "glyphicon glyphicon-list",
@@ -144,7 +144,7 @@ configManager.configs.push( {
 			//},
 			{
 				"name": "panel.monitoring",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": false,
 				"visible": false,
 				"icon": "glyphicon glyphicon-asterisk",
@@ -152,7 +152,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.entity.create",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-plus-sign",
@@ -160,7 +160,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.relationship.create",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-registration-mark",
@@ -168,7 +168,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.appearance",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-certificate",
@@ -176,7 +176,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.highlight",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-eye-open",
@@ -184,7 +184,7 @@ configManager.configs.push( {
 			},
 			{
 				"name": "panel.navigation",
-				"parent": "leftColumn",
+				"parent": "leftSidebar",
 				"available": true,
 				"visible": false,
 				"icon": "glyphicon glyphicon-hand-up",

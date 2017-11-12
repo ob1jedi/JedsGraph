@@ -2,8 +2,12 @@
 var LocalStorageDataDriver = function () {
 
 
-
     //----PUBLIC----------------------------------------------------------
+
+  this.ClearStorage = function(){
+    localStorage.clear();
+  }
+
 
 	this.UpdateConfigInDb = function (name, configJson) {
 		writeConfigToStorage(name, configJson);
@@ -107,19 +111,19 @@ var LocalStorageDataDriver = function () {
 
 	this.GetNextNewConfigId = function () {
     //debugger;
-		var nextIndex = GetNextIndexForCounter('NEXT_CONFIG_ID');
+		var nextIndex = getNextIndexForCounter('NEXT_CONFIG_ID');
 		return nextIndex;
 	}
 
 	this.GetNextNewEntityId = function () {
-		return GetNextIndexForCounter('NEXT_NODE_ID');
+		return getNextIndexForCounter('NEXT_NODE_ID');
 	}
 
 	this.GetNextNewRelationId = function () {
-		return GetNextIndexForCounter('NEXT_LINK_ID');
+		return getNextIndexForCounter('NEXT_LINK_ID');
 	}
 
-	function GetNextIndexForCounter(CounterName) {
+	function getNextIndexForCounter(CounterName) {
 		
 		var nextId = localStorage.getItem(CounterName);
 		if (nextId === null) {

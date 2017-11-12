@@ -519,24 +519,36 @@ div.tabcontent {
 }
 /*---------------------------------------------*/
 
-#leftColumn {
+#leftSidebar {
 	background-color: #1a1a1a;
 	/*left:10px;*/
 	top: 50px;
 	width: 200px;
 	margin: 0px;
+	padding: 0px;
 	padding-bottom: 10px;
 	border-radius: 2px;
 	max-height: 92%;
 	min-height: 0px;
 	position: fixed;
 	opacity: 0.9;
-	resize:horizontal;
+	resize:vertical;
 	overflow: auto;
 }
 
+#leftSidebar div.container{
+	width: 200px;
+	margin: 0px;
+	max-height: 80%;
+}
+#leftSidebar div.grabber{
+	height: 50px;
+	margin-bottom:0px;
+	color:green;
+}
 
-#rightColumn {
+
+#rightSidebar {
 	background-color: #1a1a1a;
 	top: 50px;
 	right: 0px;
@@ -582,28 +594,6 @@ div.tabcontent {
 
 #noColumn {
 	visibility: hidden;
-}
-
-#topBar {
-	top:0px;
-	position:fixed;
-	margin-top: 0px;
-	/*right: 100px;*/
-	height: 50px;
-	/*margin-right: 20px;
-	margin-left: 10px;*/
-	padding-left: 5px;
-	padding-top: 4px;
-	border-style: solid;
-	border-width: 2px;
-	border-color: #8c8c8c;
-	color: deepskyblue;
-	background-color: #737373;
-	/*border-radius: 2px;*/
-	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-	font-size: 12px;
-	letter-spacing: 0px;
-	opacity: 0.9;
 }
 
 #graphexTopBar {
@@ -659,38 +649,6 @@ div.tabcontent {
 #graphexTopBar span.menuButton:hover{
 	background-color: rgba(75,80,81,0.3);
 }
-
-
-#floatingMenu{
-	background-color:gray;
-	float:right;
-}
-/*.topbar-shadow:after {
-    content:"";
-    position:absolute;
-    width:100%;
-    bottom:1px;
-    z-index:-1;
-    transform:scale(.9);
-    box-shadow: 0px 0px 8px 2px #000000;
-}*/
-
-
-#secondBar {
-	margin-top: 0px;
-	margin-left: 200px;
-	margin-right: 200px;
-	height: 30px;
-	padding-left: 5px;
-	padding-top: 4px;
-	border-style: solid;
-	border-width: 2px;
-	border-color: #8c8c8c;
-	color: deepskyblue;
-	background-color: #737373;
-	opacity: 0.9;
-}
-
 
 #formulaBox {
 	top:50px;
@@ -1014,31 +972,7 @@ button:hover {
 	text-decoration: underline;
 }
 
-dialog {
-	width: 400px;
-	height: 200px;
-	padding: 10px;
-	border-style: solid;
-	border-width: 2px;
-	border-color: #0d0d0d;
-	color: deepskyblue;
-	background-color: #4d4d4d;
-	border-radius: 10px;
-	opacity: 0.8;
-	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-	font-size: 12px;
-	letter-spacing: 0px;
-}
 
-
-	dialog textarea {
-		resize: none;
-		border-radius: 5px;
-		background-color: #4d4d4d;
-		color: white;
-		width: 98%;
-		height: 85%;
-	}
 
 
 .inputModal {

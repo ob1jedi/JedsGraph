@@ -24,7 +24,7 @@ gulp.task('default', function() {
 gulp.task('index', function () {
   var target = gulp.src('./src/index.html');
   // It's not necessary to read the files (will speed up things), we're only after their paths:
-  var sources = gulp.src(['./src/js/**/*.js'], {read: false});
+  var sources = gulp.src(['./src/scripts/**/*.js'], {read: false});
  
   return target.pipe(inject(sources))
     .pipe(gulp.dest('./src'));
@@ -53,8 +53,8 @@ gulp.task('sync', function () {
 
 //import through from'through2';
 gulp.task('build', function() {
-  //gulp.src('src/*.js')
-  gulp.src(['./src/js/**/*.js', 
+  //gulp.src('src/*.scripts')
+  gulp.src(['./src/scripts/**/*.js', 
 			'./src/**/*.html', 
 			'./src/**/*.css',
 			'./src/**/*.svg'])

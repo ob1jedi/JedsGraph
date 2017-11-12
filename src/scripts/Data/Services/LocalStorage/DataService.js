@@ -1,6 +1,11 @@
 ﻿var DataService = function () {
 	var dataDriver = new LocalStorageDataDriver();
 
+  this.DropDatabase = function(){
+    dataDriver.ClearStorage();
+
+  }
+
 	this.CreateConfigReturnId = function (configName, jsonConfig) {
 		if (dataDriver.ConfigExists(configName))
 	        throw "A config by that name already exists";

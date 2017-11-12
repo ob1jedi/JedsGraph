@@ -285,7 +285,11 @@ Vue.component('vw-topbar',{
           <div class="logo">GRAPH≡X</div>
         </td>
         <td>
-            <vw-dropdown-menu v-for="item in topbar.items" v-bind:name="item.caption" v-bind:menuitems="item.items"></vw-dropdown-menu>
+            <vw-dropdown-menu 
+              v-for="item in topbar.items" 
+              v-bind:name="item.caption" 
+              v-bind:menuitems="item.items">
+            </vw-dropdown-menu>
         </td>
       </tr>
 
@@ -301,15 +305,12 @@ Vue.component('vw-dropdown-menu',{
     <span class="dropdown">
       <button class="dropbtn">{{name}}</button>
       <div class="dropdown-content">
-        <a href="#" v-for="item in menuitems">{{ item.caption }}</a>
+        <a href="#" 
+          v-for="item in menuitems"
+          v-on:click="item.func()"
+          >{{ item.caption }}</a>
       </div>
     </span>
-
-    <!--<span class="menuButton" v-for="item in topbar.items">-->
-    <!--<div id="floatingMenu" class="list-group">
-      <a href="#" v-for="item in menuitems" class="list-group-item list-group-item-action">{{ item.caption }}
-      </a>
-    </div>-->
 		`
 })
 
@@ -364,43 +365,31 @@ Vue.component('vw-graph',{
 		`
 })
 
-Vue.component('vw-panel',{
-  template: ``
-})
-
-
-
-
-Vue.component('vw-secondbar',{
-  template:
-`
-	<div id='secondBar'>
-        <!--<vw-formula-box></vw-formula-box>-->
-	</div>
-`
-})
-
 Vue.component('vw-left-sidebar',{
   props: ['sysdata'],
   template: `
-		  <div id='leftColumn' class ="flexcroll">
-        <vw-panel-nodeSelector v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
-		  </div>
+      <div id='leftSidebar' class ="flexcroll">
+        <div class="container">
+          <vw-panel-nodeSelector v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
+        </div>
+        <div class="grabber">
+        </div>
+      </div>
 		`
 })
 
 Vue.component('vw-right-sidebar',{
   props: ['tabs'],
   template: `
-		<div id='rightColumn' class ="flexcroll">
-			<vw-panel-nodeEditor v-bind:tabsprop="tabs"></vw-panel-nodeEditor>
+		<div id='rightSidebar' class ="flexcroll">
+        <vw-panel-nodeEditor v-bind:tabsprop="tabs"></vw-panel-nodeEditor>
 		</div>
 		`
 })
 
 
 
-// ================= INFO MODAL ================= 
+// ================= MODALS ================= 
 
 Vue.component('vw-info-modal',{
   props: {
@@ -416,7 +405,7 @@ Vue.component('vw-info-modal',{
   template:
 	`
 	<dialog class="inputModal" v-bind:id="modalId">
-    <button v-if='canCancel' onclick='CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
+    <button v-if='canCancel' onclick='new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
 		<form class="form-group"> 
 			<h2>{{ strHeader }}</h2>
 			<div class="inputModal modalContent flexcroll"
@@ -427,6 +416,24 @@ Vue.component('vw-info-modal',{
 		</form>
 	</dialog>
 	`
+})
+
+Vue.component('vw-modal-user-confirm',{
+  props: ['modal'],
+  template: `
+	  <dialog class="inputModal" id="UserConfirm">
+      <button v-on:click="modal.ifCancelled()" class="pull-right">&times;</button>
+		  <div class="form-group"> 
+			  <h2>{{modal.header}}</h2>
+			  <div class="inputModal modalContent flexcroll"
+				  v-html="modal.content">
+			  </div>
+        <button v-on:click="modal.ifConfirmed()" class="pull-right">Yes</button>
+        <button v-on:click="modal.ifCancelled()" class="pull-right">Cancel</button>
+		  </div>
+	  </dialog>
+  `
+
 })
 
 // ================= MODE INDICTAOR ================= 
@@ -509,7 +516,7 @@ Vue.component('vw-formula-box',{
 						      <label for="cmdInfo">&nbsp</label>
 						      <div>
 							      <button id="cmdInfo"
-								      onclick="ShowGlobalInfoModal('TranslatorInfo')"
+								      onclick="new VueConsoleHelper().ShowGlobalInfoModal('TranslatorInfo')"
 							      ><i class ="glyphicon glyphicon-question-sign"></i></button>
 						      </div>
                 </td>
@@ -558,6 +565,14 @@ var consoleApp = new Vue({
   components: ['vw-panel-nodeEditor'],
   el: '#vue-app',
   data: {
+    modals: {
+      userConfirm:{
+        header: "",
+        content: "<p></p>",
+        ifConfirmed: function(){},
+        ifCancelled: function(){}
+      }
+    },
     systemData:{
       typeSelectors: [],
       getEntitiesByType:function(entityTypeName, index){
@@ -611,19 +626,26 @@ var consoleApp = new Vue({
     // PRIVATE
     selectedNode: null,
     topbar:{
-
+      resetStorage:function(){
+ 
+      },
       items: [
-         {caption: "File", items:[
-            {caption: "Reset storage", func: this.resetStorage},
-            {caption: "Reset storage", func: this.resetStorage}
-        ] }
+         {
+           caption: "File", 
+           items:[
+            {
+              caption: "Reset storage", 
+              func: function(){new VueMenuHelper().ResetDatabase()}
+            },
+            {
+              caption: "Reset storage", 
+              func: null
+            }
+          ] 
+         }
       ],
 
-      resetStorage:function(){
-        var dataService = new DataService();
-        console.log('resetting storage');
-        dataService.dropDatabase();
-      }
+
     },
     // Indicator
     indicator: {
@@ -669,7 +691,7 @@ var consoleApp = new Vue({
         translator.Translate(this.selectedExample);
       },
       importFromUrl(url) {
-        ShowGlobalInfoModal('WaitingModal1')
+        new VueConsoleHelper().ShowGlobalInfoModal('WaitingModal1')
         console.log('IMPORTING...');
         var translator=this.currentTranslator;
         var httpClient=new HttpClient();
@@ -681,14 +703,14 @@ var consoleApp = new Vue({
         httpClient.get(finalUrl,function(response) {
           console.log('response',response);
           translator.Translate(response);
-          CloseGlobalInfoModal('WaitingModal1')
+          new VueConsoleHelper().CloseGlobalInfoModal('WaitingModal1')
         });
       },
       generatedGraphLink:"", 
       generateLink: function(){
         var encodedFormula = new StringHelper().ReplaceEachOfCharSet(btoa(this.formulaValue), '+/=','._-');
         this.generatedGraphLink = "http://www.graphex.io/?trans='Simple'&grenc=" + encodedFormula;
-        ShowGlobalInfoModal('GenerateLink')
+        new VueConsoleHelper().ShowGlobalInfoModal('GenerateLink')
       }
     },
     tabs: {
@@ -879,23 +901,6 @@ var consoleApp = new Vue({
       reset: function() {
         // TODO
       }
-
-      //styleTabs: ['vw-panel-nodeEditor-tabs-styles', 'vw-panel-nodeEditor-tabs-effects', 'vw-panel-nodeEditor-tabs-behaviours'],
-      //// Declare all variables
-      //var i, tabcontent, tablinks;
-      //// Get all elements with class="tabcontent" and hide them
-      //tabcontent = document.getElementsByClassName("tabcontent");
-      //for (i = 0; i < tabcontent.length; i++) {
-      //	tabcontent[i].style.display = "none";
-      //}
-      //// Get all elements with class="tablinks" and remove the class "active"
-      //tablinks = document.getElementsByClassName("tablinks");
-      //for (i = 0; i < tablinks.length; i++) {
-      //	tablinks[i].className = tablinks[i].className.replace(" active", "");
-      //}
-      //// Show the current tab, and add an "active" class to the button that opened the tab
-      //document.getElementById(cityName).style.display = "block";
-      //evt.currentTarget.className += " active";
     }
   }
 })
@@ -917,21 +922,40 @@ function addToConfig(isActive,config,newConfig) {
 //    inConfig = newValue;
 //}
 
-function ShowInfoModal() {
-  var nodeFlyout=document.getElementById('InfoModal');
-  nodeFlyout.showModal();
-}
-function CloseInfoModal() {
-  var nodeFlyout=document.getElementById('InfoModal');
-  nodeFlyout.close();
+function VueMenuHelper(){
+    this.ResetDatabase = function(){
+      var consoleHelper = new VueConsoleHelper();
+      consoleApp.modals.userConfirm.header = 'Are you sure?';
+      consoleApp.modals.userConfirm.content = "This will remove all the data that you've accumulated so far";
+      consoleApp.modals.userConfirm.ifConfirmed = function(){
+        consoleHelper.CloseGlobalInfoModal('UserConfirm');
+        new DataService().DropDatabase();
+        alert('Storage cleared');
+      };
+      consoleHelper.ShowGlobalInfoModal('UserConfirm');
+    }
+
 }
 
-function ShowGlobalInfoModal(modalId) {
-  var nodeFlyout=document.getElementById(modalId);
-  nodeFlyout.showModal();
-}
-function CloseGlobalInfoModal(modalId) {
-  var nodeFlyout=document.getElementById(modalId);
-  nodeFlyout.close();
+
+function VueConsoleHelper(){
+
+  this.ShowGlobalInfoModal = function(modalId) {
+    showGlobalInfoModal(modalId);
+  }
+  this.CloseGlobalInfoModal = function(modalId) {
+    closeGlobalInfoModal(modalId);
+  }
+
+  function showGlobalInfoModal(modalId) {
+    var dialogElement=document.getElementById(modalId);
+    dialogElement.showModal();
+  }
+  function closeGlobalInfoModal(modalId) {
+    var dialogElement=document.getElementById(modalId);
+    dialogElement.close();
+  }
+
+  
 }
 
