@@ -207,6 +207,12 @@ svg, #graphContainer, #schemaContainer {
 	color: #b3ffff;
 }
 
+.labelSelectorDisplay {
+	overflow-y: auto;
+	overflow-x: hidden;
+	max-height: 200px;
+}
+
 .clearfix {
 }
 
@@ -315,11 +321,7 @@ svg, #graphContainer, #schemaContainer {
 	color: #ffc299;
 }
 
-.labelSelectorDisplay {
-	overflow-y: auto;
-	overflow-x: hidden;
-	/*max-height: 200px;*/
-}
+
 
 /*-- Mod Panel -------------------------------------------*/
 .modPanel {
@@ -336,7 +338,7 @@ svg, #graphContainer, #schemaContainer {
 	/*font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;*/
 	font-size: 12px;
 	letter-spacing: 0px;
-	opacity: 0.9;
+	opacity: 1;
 	/*transform: scaleY(0);
 	-webkit-transform: scaleY(0);*/
 }
@@ -531,21 +533,17 @@ div.tabcontent {
 	max-height: 92%;
 	min-height: 0px;
 	position: fixed;
-	opacity: 0.9;
-	resize:vertical;
-	overflow: auto;
+	opacity: 1;
+	
+    border: solid;
+    border-color: #0d0d0d;
+    border-width: 2px;
+	/*resize:vertical;*/
+    /*overflow: auto;*/
+
 }
 
-#leftSidebar div.container{
-	width: 200px;
-	margin: 0px;
-	max-height: 80%;
-}
-#leftSidebar div.grabber{
-	height: 50px;
-	margin-bottom:0px;
-	color:green;
-}
+
 
 
 #rightSidebar {
@@ -559,6 +557,9 @@ div.tabcontent {
 	overflow: auto;
 	max-height: 92%;
 	position: fixed;
+    border: solid;
+    border-color: #0d0d0d;
+    border-width: 2px;
 }
 
 #modeIndicator {
@@ -663,9 +664,8 @@ div.tabcontent {
 	border-width: 0px;
 	/*border-color: #8c8c8c;*/
 	background-color: #0d0d0d;
-	opacity: 0.8;
+	opacity: 0.9;
 	position:relative;
-	z-index:0;
 }
 
 	#formulaBox input {
@@ -748,6 +748,7 @@ div.tabcontent {
 .flexcroll {
 	/*width:400px;*/
 	/*max-height: 92%;*/
+    padding-bottom: 10px;
 	overflow: auto;
 }
 

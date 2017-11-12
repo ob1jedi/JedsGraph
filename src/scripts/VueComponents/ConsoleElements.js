@@ -369,11 +369,7 @@ Vue.component('vw-left-sidebar',{
   props: ['sysdata'],
   template: `
       <div id='leftSidebar' class ="flexcroll">
-        <div class="container">
-          <vw-panel-nodeSelector v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
-        </div>
-        <div class="grabber">
-        </div>
+        <vw-panel-nodeSelector v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
       </div>
 		`
 })
