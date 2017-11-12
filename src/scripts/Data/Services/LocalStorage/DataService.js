@@ -192,7 +192,7 @@
 	{
 		var typeSelector = addEntityLabel(label, entityCount, entityConfig);
 		refreshEntitySelectors();
-    consoleApp.updateTypeSelectors(typeSelector);
+    consoleApp.refreshTypeSelectors(typeSelector);
 	}
 
 	function stripDomainFromId(nodeId)

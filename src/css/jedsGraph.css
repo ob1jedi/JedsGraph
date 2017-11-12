@@ -168,19 +168,20 @@ svg, #graphContainer, #schemaContainer {
 	opacity: 1;
 }
 
-.label {
+.labelSelectorText {
 	font-size: 12px;
 	font-family: Verdana;
 	font-weight: bold;
-	cursor: pointer;
-	
+	cursor: pointer;	
+
 }
 
-
-.labelSelectorPanel {
+.labelSelectorItem {
 	max-width: 115px;
+    height: 20px;
 	margin:2px;
-	padding: 5px;
+    padding:2px;
+	line-height:20px;
 	color: #1a1a1a;
 	background-color: gray;
 	border-top-right-radius: 15px;
@@ -188,7 +189,7 @@ svg, #graphContainer, #schemaContainer {
 	text-align:left;
 	overflow:hidden;
 }
-.labelSelectorPanel:hover {
+.labelSelectorItem:hover {
 	color: #b3ffff;
 	background-color: #555a63;
 }
@@ -196,9 +197,10 @@ svg, #graphContainer, #schemaContainer {
 	/*text-align: center;*/
 	margin: 2px;
 	color: #ccc;
+    line-height:20px;
+    text-align:center;
 	height: 20px;
 	min-width: 20px;
-	padding: 4px 2px 2px 2px;
 	border-radius: 10px;
 	right: 0px;
 }

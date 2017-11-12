@@ -463,7 +463,7 @@ function refreshEntitySelectors(){
 	var color = 'gray';
 	var button_onclick = "globals.dataService.GetEntitiesByType(false, '')";
 	var fetchButton = '<div id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="' + button_onclick + '"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></div>'
-	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorPanel" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
+	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorItem" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
 	if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML = '<option value=""></option>';}
 			
 	globals.labelsList.forEach(function (nodeLabel, index) {
@@ -473,7 +473,7 @@ function refreshEntitySelectors(){
 		labelSelectorHtml += `
 			<tr>
 				<td>
-					<div onclick="highlightLabel(` + index + `)" class="labelSelectorPanel" style="background-color:` + color + `;" > `
+					<div onclick="highlightLabel(` + index + `)" class="labelSelectorItem" style="background-color:` + color + `;" > `
 						+ nodeLabel.name + `
 					</div>
 				</td>

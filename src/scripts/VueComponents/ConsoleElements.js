@@ -329,10 +329,30 @@ Vue.component('vw-panel-nodeSelector',{
 			<div class="panelHead">Type Selector<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
       
       <div class="labelSelectorDisplay flexcroll" id='labelSelectorsPanel'>
-        <table class="label">
+        <table class="labelSelectorText">
+        
+        <tr>
+				    <td>
+					    <div v-on:click="sysdata.highlightAllNodes()" class="labelSelectorItem"> 
+                All &nbsp;
+					    </div>
+				    </td>
+				    <td>
+					    <div id="labelSelector.fetcher" 
+                  class="forlabelselector mytooltip pull-right"
+                  v-on:click="sysdata.getAllEntities()"
+                  v-bind:style="{ 'background-color': 'gray' }">
+						    {{ sysdata.totalEntityCount }}
+						    <div class="mytooltiptext ttleft ttupper">
+							    Fetch all from database
+						    </div>
+					    </div>
+				    </td>
+			    </tr>
+
           <tr v-for="(selector, index) in sysdata.typeSelectors">
 				    <td>
-					    <div v-on:click="sysdata.highlightNodesByType(index)" class="labelSelectorPanel"> 
+					    <div v-on:click="sysdata.highlightNodesByType(index)" class="labelSelectorItem"> 
                 {{ selector.name }} &nbsp;
 					    </div>
 				    </td>
@@ -570,27 +590,30 @@ var consoleApp = new Vue({
       }
     },
     systemData:{
+      totalEntityCount: 0,
       typeSelectors: [],
+      getAllEntities: function(){
+        new DataService().GetAllEntities();
+      },
       getEntitiesByType:function(entityTypeName, index){
-        var dataService = new DataService();
-        if (index == 0)
-          dataService.GetAllEntities();
-        else
-          dataService.GetEntitiesByType(entityTypeName);
+        new DataService().GetEntitiesByType(entityTypeName);
+      },
+      highlightAllNodes: function(){
+        highlightLabel()
       },
       highlightNodesByType:function(index){
-        if (index == 0)
-          highlightLabel();
-        else
           highlightLabel(index);
       }
     },
     // PUBLIC
-    updateTypeSelectors: function(typeSelector){
-      if (this.systemData.typeSelectors.length == 0) 
-        this.systemData.typeSelectors.push({"name":"All", "instanceCount": 0, "color":"gray"});
-      this.systemData.typeSelectors[0].instanceCount += Number(typeSelector.instanceCount);
-      this.systemData.typeSelectors.push(typeSelector);
+    refreshTypeSelectors: function(typeSelector){
+      this.systemData.totalEntityCount += 1;
+      this.systemData.typeSelectors = globals.labelsList.sort(sort_by('name', false, function(a){ if (a) {return a.toUpperCase()} }));
+      //this.systemData.typeSelectors.splice(0, 0, {name:"All", color: "green", instanceCount:totalCount} );
+      //if (this.systemData.typeSelectors.length == 0) 
+      //  this.systemData.typeSelectors.push({"name":"All", "instanceCount": 0, "color":"gray"});
+      //this.systemData.typeSelectors[0].instanceCount += Number(typeSelector.instanceCount);
+      //this.systemData.typeSelectors.push(typeSelector);
     },
     selectNode: function(node){
       this.selectedNode = node;
