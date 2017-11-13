@@ -282,7 +282,7 @@ Vue.component('vw-topbar',{
     <table>
       <tr>
         <td>
-          <div class="logo">GRAPH≡X</div>
+          <div class="logo">GRAPH<i class="glyphicon glyphicon-menu-hamburger"></i>X</div>
         </td>
         <td>
             <vw-dropdown-menu 
@@ -292,7 +292,7 @@ Vue.component('vw-topbar',{
             </vw-dropdown-menu>
         </td>
       </tr>
-
+      <!--<vw-mode-indicator v-bind:indicatorprop="topbar.indicator"></vw-mode-indicator>-->
     </table>
         
 	</div>
@@ -639,9 +639,6 @@ var consoleApp = new Vue({
     // PRIVATE
     selectedNode: null,
     topbar:{
-      resetStorage:function(){
- 
-      },
       items: [
          {
            caption: "File", 
@@ -661,14 +658,13 @@ var consoleApp = new Vue({
               }
             ],
           }
-        ]
+        ],
+      indicator: {
+        title: "",
+        image: "../custom/assets/binoculars.svg"
+      }
+    },
 
-    },
-    // Indicator
-    indicator: {
-      title: "view",
-      image: "../custom/assets/binoculars.svg"
-    },
     // Formula toolbar
     formulaToolbar: {
       //modalHeader: "",
