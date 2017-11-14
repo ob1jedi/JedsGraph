@@ -21,19 +21,20 @@ function graphexMain() {
 		// Start monitoring timeout elements
 		checkTimeoutElements() 
 
-		// UNIT TESTS...
-		if (window.location.href.startsWith("http://localhost:9090/")){
-		//if (localStorage.getItem('testMode') === "true") {
-			//var unitTestSets = [];
-			//unitTestSets.push(new LocalStorageDataDriver_Tests);
-			//unitTestSets.push(new Config_Tests);
+    runUnitTests();
+    processParameters();
+	}
 
+  function runUnitTests(){
+    // UNIT TESTS...
+		if (window.location.href.startsWith("http://localhost:9090/")){
 			var unitTestFramework = new UnitTestFramework();
-			// RUN UNIT TESTS...
 			unitTestFramework.runAllUnitTests(globals.allUnitTests);
 		}
+  }
 
-    // PARAMETERS
+  function processParameters(){
+        // PARAMETERS
     //extract commands from URL:
     var urlHelper  = new UrlHelper();
     //debugger;
@@ -51,12 +52,10 @@ function graphexMain() {
         var translator = new SimpleTranslator();
         translator.Translate(decodedData);
       }
-
-
     });
-
-	}
+  }
 
 }
+
 
 

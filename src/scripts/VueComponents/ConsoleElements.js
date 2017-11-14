@@ -683,9 +683,23 @@ var consoleApp = new Vue({
                 func: function(){new VueMenuHelper().ArrangeNodes("top-to-bottom")}
               },
               {
+                caption: "Center graph", 
+                func: function(){new VueMenuHelper().CenterGraph()}
+              },
+              {
                 caption: "Clear stage", 
                 func: function(){new VueMenuHelper().ClearStage()}
               }
+            ],
+          },
+          {
+           caption: "Tools", 
+           items:[
+              {
+                caption: "Unpin all", 
+                func: function(){new VueMenuHelper().UnpinAll()}
+              },
+
             ],
           },
           {
@@ -990,7 +1004,14 @@ function VueMenuHelper(){
   this.ArrangeNodes = function(_orientation){
     new SimpleArranger().Arrange(_orientation);
   }
-
+  this.UnpinAll = function(){
+    unPinAllNodes();
+  }
+  this.CenterGraph = function(){
+    var browserHelper = new BrowserHelper();
+    var size = browserHelper.GetWindowSize();
+    globals.graphics.graphCenterChanged(size.width/2, size.height/2);
+  }
   this.ShowAboutModal = function(){
     var header = "About";
     var content = `
