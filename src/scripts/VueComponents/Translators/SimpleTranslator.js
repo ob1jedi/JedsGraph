@@ -139,6 +139,7 @@ var SimpleTranslator = function () {
   }
   
   function createEntityAddToGraphReturnNodes(labels, properties){
+    var dataSvc = new DataService();
     var idAndLabelArray = labels[0].split(_r);
     var label = idAndLabelArray[0].trim();
     var id = null;
