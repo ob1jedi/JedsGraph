@@ -45,6 +45,7 @@
 			   if (linkUI) {
 				   if (!link.data.checked) {
 						link.data.UI.pathUI.attr('stroke', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)
+            link.data.UI.toMarkerUI.attr('fill', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)
 					}
 			   }
 		   });
@@ -61,7 +62,10 @@
 				descendantNode.data.toLinks.forEach(function(link){
 					var linkUI = globals.graphics.getLinkUI(link.id);
 					if (linkUI) {
-						if (!link.data.checked) {link.data.UI.pathUI.attr('stroke', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)}
+						if (!link.data.checked) {
+              link.data.UI.pathUI.attr('stroke', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)
+              link.data.UI.toMarkerUI.attr('fill', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)
+            }
 					}
 				});
 				
@@ -83,7 +87,10 @@
 				ancestorNode.data.fromLinks.forEach(function(link){
 					var linkUI = globals.graphics.getLinkUI(link.id);
 					if (linkUI) {
-						if (!link.data.checked) {link.data.UI.pathUI.attr('stroke', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)}
+						if (!link.data.checked) {
+              link.data.UI.pathUI.attr('stroke', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)
+              link.data.UI.toMarkerUI.attr('fill', isOn ? globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor : link.data.color)
+            }
 					}
 				});
 				ancestorNode.data.fromNodes.forEach(function (node){
@@ -96,7 +103,10 @@
 		function checkLink(link){
 				showLinkData(link);
 				link.data.UI.pathUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness * 2);
+        link.data.UI.toMarkerUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness * 2);
+
 				link.data.UI.pathUI.attr('stroke', '#99ff33');
+        link.data.UI.toMarkerUI.attr("fill", '#99ff33');
 				link.data.checked = true;
 				globals.checkedLinks.push(link);
 		}
@@ -104,7 +114,10 @@
 		function uncheckLink(link){
 				hideLinkData(link);
 				link.data.UI.pathUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness);
+        link.data.UI.toMarkerUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness);
+
 				link.data.UI.pathUI.attr('stroke', link.data.color);
+        link.data.UI.toMarkerUI.attr("fill", link.data.color);
 				link.data.checked = false;
 				globals.checkedLinks.map(function(l,index){if (l.data.id == link.data.id){globals.checkedLinks.splice(index,1);}})
 		}
@@ -126,14 +139,14 @@
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		function highlightLink(link) { //...for mouse-hover only
 			showLinkData(link);
-			link.data.UI.pathUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness * 2);
+			//link.data.UI.pathUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness * 2);
 			//link.data.UI.pathUI.attr('stroke', 'red');
 		}
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		function unHighlightLink(link) { //...for mouse-hover only
 			if (!link.data.checked){
 				hideLinkData(link);
-				link.data.UI.pathUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness);
+				//link.data.UI.pathUI.attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness);
 			}
 			//link.data.UI.pathUI.attr('stroke', link.data.color);
 		}

@@ -20,6 +20,7 @@ function defineLinkObjects()
 					.attr('refY', "0")
 					.attr('markerWidth', "500")
 					.attr('markerHeight', "100")
+          .attr('fill',link.data.color)
 					.attr('markerUnits', "userSpaceOnUse")
 					.attr('orient', "auto");
 				
@@ -32,14 +33,13 @@ function defineLinkObjects()
 					.attr('refY', "0")
 					.attr('markerWidth', "50")
 					.attr('markerHeight', "100")
+          .attr('fill',link.data.color)
 					.attr('markerUnits', "userSpaceOnUse")
 					.attr('orient', "auto");
 					
 				var endArrow =  Viva.Graph.svg('path')
-					.attr('stroke-width',0)
-					.attr('d', 'M 0 -0.7 L 2 0 L 0 0.7 z')
-					.attr('fill',link.data.color);
-					if (!link.data.sourceConfig.displaySettings.opaque) {endArrow.attr('opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
+					.attr('d', 'M 0 -0.7 L 2 0 L 0 0.7 z');
+					//if (!link.data.sourceConfig.displaySettings.opaque) {endArrow.attr('opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
 					//markerTraingle.append(markerArrow)
 				/*var markerLabel = Viva.Graph.svg('text')
 						.attr('class','markertextlabel')
