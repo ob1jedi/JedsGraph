@@ -15,12 +15,26 @@
     return newString;
   }
 
-  function replaceAll (inputString, replaceStr, withStr){
+  this.SplitOr = function(inputString, searchStrings)
+  {
+    var results = [];
+    searchStrings.forEach(function(str){ 
+      var res = inputString.split(str);
+      if (res.length > 1);
+        results = results.concat(res.slice(1));
+    });
+    if (results.length ==0)
+      return [inputString];
+    return results;
+  }
+
+  this.ReplaceAll = function(inputString, replaceStr, withStr){
     var strI = inputString.indexOf(replaceStr);
     while (strI > -1){
       inputString = inputString.substr(0, strI) + withStr + inputString.slice(strI + replaceStr.length);
       strI = inputString.indexOf(replaceStr, strI + withStr.length);
     }
+    return inputString;
   }
 
   this.IsImage = function(value){
