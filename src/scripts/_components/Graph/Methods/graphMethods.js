@@ -504,7 +504,7 @@ function removeNodeFromStage(nodeID)
 		//globals.GRAPH.removeLink(link.id);
 	});
 
-	var allNodeLists = globals.nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
+	//var allNodeLists = globals.nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
 	var i = -1;
 	while (++i < globals.nodeList.length) 
 		if (globals.nodeList[i].id == nodeID) 

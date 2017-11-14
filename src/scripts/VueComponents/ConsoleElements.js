@@ -958,13 +958,30 @@ function VueMenuHelper(){
     new SimpleArranger().Arrange();
   }
   this.ClearStage = function(){
-    debugger;
-    for (var i = 0; i < globals.nodeList.length; i++)
-      removeNodeFromGraph(globals.nodeList[i].id);
+    var overflow = globals.nodeList.length + 1;;
+    var counter = 0;
+    while (globals.nodeList.length > 0 && ++counter < overflow){
+			removeNodeFromGraph(globals.nodeList[0].id);
+    }
+    globals.selectedNodeData = undefined;
+    globals.selectedNodeID = undefined;
+    globals.selectedNodeID = undefined;
+    globals.animUpdateNodes = [];
+    globals.animUpdateLinks = [];
+    globals.bPlanRelate = false;
+    globals.brelate = false;
+    globals.checkedLinks = [];
+    globals.checkedNodes = [];
+    globals.labelsList = [];
     globals.nodeList = [];
-    globals.linkList = [];
+    globals.monitoredLinks = [];
+    globals.monitoredNodes = [];
+    globals.selectedLink = '';
+    globals.selectedNode = '';
+    globals.selectedNodeData = '';
+    globals.selectedNodeID = '';
+    globals.selectedNodeUI = '';
   }
-
 
   this.createFormulaFromGraph = function(){
 

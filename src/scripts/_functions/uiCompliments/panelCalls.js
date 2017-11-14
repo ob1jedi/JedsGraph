@@ -251,8 +251,4 @@ function panelRemoveKeyValue(panelId) {
 	panel.children[0].children[panel.children[0].children.length - 1].remove();
 }
 
-function removeLastElement() {
-	var ui = globals.selectedNodeUI.children[globals.selectedNodeUI.children.length - 1];
-	globals.selectedNode.data.UI.focusUI.remove();
-}
 

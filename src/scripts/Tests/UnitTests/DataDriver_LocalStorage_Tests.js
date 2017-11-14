@@ -422,6 +422,7 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_Expec
 	var node2 = {};
 	node1.labels = ["HELLO"];
 	node2.labels = ["WORLD"];
+  //debugger;
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
