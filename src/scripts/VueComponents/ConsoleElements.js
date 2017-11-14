@@ -454,7 +454,21 @@ Vue.component('vw-modal-user-confirm',{
 		  </div>
 	  </dialog>
   `
+})
 
+Vue.component('vw-modal-info',{
+  props: ['modal'],
+  template: `
+	  <dialog class="inputModal shadow" id="UserInfo">
+      <button  onclick='new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
+		  <div class="form-group"> 
+			  <h2>{{modal.header}}</h2>
+			  <div class="inputModal modalContent flexcroll"
+				  v-html="modal.content">
+			  </div>
+		  </div>
+	  </dialog>
+  `
 })
 
 // ================= MODE INDICTAOR ================= 
@@ -586,6 +600,10 @@ var consoleApp = new Vue({
         content: "<p></p>",
         ifConfirmed: function(){},
         ifCancelled: function(){}
+      },
+      userInfo:{
+        header: "",
+        content: "<p></p>"
       }
     },
     systemData:{
@@ -669,7 +687,17 @@ var consoleApp = new Vue({
                 func: function(){new VueMenuHelper().ClearStage()}
               }
             ],
+          },
+          {
+           caption: "Help", 
+           items:[
+              {
+                caption: "About", 
+                func: function(){new VueMenuHelper().ShowAboutModal()}
+              }
+            ]
           }
+
         ],
       indicator: {
         title: "",
@@ -945,7 +973,7 @@ function VueMenuHelper(){
     this.ResetDatabase = function(){
       var consoleHelper = new VueConsoleHelper();
       consoleApp.modals.userConfirm.header = 'Are you sure?';
-      consoleApp.modals.userConfirm.content = "This will remove all the data that you've accumulated so far";
+      consoleApp.modals.userConfirm.content = "This will remove all the data and settings that you've accumulated so far";
       consoleApp.modals.userConfirm.ifConfirmed = function(){
         consoleHelper.CloseGlobalInfoModal('UserConfirm');
         new DataService().DropDatabase();
@@ -960,9 +988,20 @@ function VueMenuHelper(){
     }
 
   this.ArrangeNodes = function(_orientation){
-    //debugger;
     new SimpleArranger().Arrange(_orientation);
   }
+
+  this.ShowAboutModal = function(){
+    var header = "About";
+    var content = `
+        Hi there, we hope you are enjoying the use of this tool.
+        It is still under development, but we welcome any suggestions that you may have.
+        <br>If you would like to contact us for any reason, you can get hold of us at:
+        <br><a href="mailto:suggest@graphex.io?Subject=I have a suggestion" target="_top">suggest@graphex.io</a>
+    `;
+    new VueConsoleHelper().ShowModal(header, content);
+  }
+
   this.ClearStage = function(){
     var overflow = globals.nodeList.length + 1;;
     var counter = 0;
@@ -994,6 +1033,12 @@ function VueMenuHelper(){
 
 
 function VueConsoleHelper(){
+
+  this.ShowModal = function(header, content){
+      consoleApp.modals.userInfo.header = header;
+      consoleApp.modals.userInfo.content = content;
+      showGlobalInfoModal('UserInfo');
+  }
 
   this.ShowGlobalInfoModal = function(modalId) {
     showGlobalInfoModal(modalId);
