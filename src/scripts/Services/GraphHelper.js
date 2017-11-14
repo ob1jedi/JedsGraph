@@ -51,6 +51,32 @@
     }
   }
 
-
-
 }
+
+
+function SimpleArranger(){
+  this.Arrange = function(){
+    var types = [];
+    var typesCount = {};
+    globals.nodeList.forEach(function(node){
+      var type = node.data.labels[0];
+      types.push(type);
+      if (!typesCount[type])
+        typesCount[type] = [node];
+      else
+        typesCount[type].push(node);
+    });
+
+    var y = 0;
+    for (var type in typesCount){
+      y += 100;
+      var x = 0;
+      typesCount[type].forEach(function(node){
+        x += 100;
+        globals.layout.pinNode(node, true);
+        globals.layout.setNodePosition(node.id, x, y);
+      });
+    }
+  }
+}
+
