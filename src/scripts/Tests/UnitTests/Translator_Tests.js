@@ -143,3 +143,47 @@
     return true
 	});
 
+
+	//[Test]
+	globals.allUnitTests.push(function ParseTreeTranslator_givenExpression_expectDictioneryOfSubExpressions() {
+    // Arrange
+    var expression = "a - (b*a) + (z * (s * d)) - p - (o * d)";
+    var translator = new ParseTreeTranslator();
+    
+    // Act
+    var result = translator.GetNormalizedDictioneryFromExpression(expression);
+    
+    // Assert
+    if (result['%1'] != "b*a") return result;
+    if (result['%2'] != "s * d") return result;
+    if (result['%3'] != "o * d") return result;
+    if (result['%4'] != "z * %2") return result;
+    return true
+	});
+
+	//[Test]
+	globals.allUnitTests.push(function ParseTreeTranslator_givenExpression_expectNormalizedExpression() {
+    // Arrange
+    var expression = "a * (b*a) * (z * (s*d)) * p * (o * d)";
+    var translator = new ParseTreeTranslator();
+    
+    // Act
+    var result = translator.GetNormalizedExpression(expression);
+
+    // Assert
+    if (result != "a * %1 * %4 * p * %3") return result;
+    return true
+	});
+
+	//[Test]
+	globals.allUnitTests.push(function ParseTreeTranslator_givenExpression_expectGraph() {
+    // Arrange    
+    var expression = "a && (b && c) -> (d -> (e || f)) ^ ~(g || h)";
+    var translator = new ParseTreeTranslator();
+    
+    // Act
+    var result = translator.Translate(expression);
+
+    // Assert
+    return true
+	});

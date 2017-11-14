@@ -654,7 +654,11 @@ var consoleApp = new Vue({
            items:[
               {
                 caption: "Arrange", 
-                func: function(){new VueMenuHelper().ArrangeNodes()}
+                func: function(){new VueMenuHelper().ArrangeNodesV1()}
+              },
+              {
+                caption: "Clear stage", 
+                func: function(){new VueMenuHelper().ClearStage()}
               }
             ],
           }
@@ -676,7 +680,8 @@ var consoleApp = new Vue({
       translators: [
 				new SimpleTranslator(),
 				new JsonTranslator(),
-        new UrlParamsTranslator()
+        new UrlParamsTranslator(),
+        new ParseTreeTranslator()
       ],
       selectedTranslatorName: new SimpleTranslator().Name,
       currentTranslator: new SimpleTranslator(),
@@ -936,10 +941,7 @@ function VueMenuHelper(){
       consoleApp.modals.userConfirm.ifConfirmed = function(){
         consoleHelper.CloseGlobalInfoModal('UserConfirm');
         new DataService().DropDatabase();
-
-
         refreshEntitySelectors();
-
         consoleApp.refreshTypeSelectors();
         alert('Storage cleared');
       };
@@ -949,8 +951,23 @@ function VueMenuHelper(){
       consoleHelper.ShowGlobalInfoModal('UserConfirm');
     }
 
-  this.ArrangeNodes = function(){
+  this.ArrangeNodesV1 = function(){
     arrangeBy2();
+  }
+  this.ArrangeNodesV2 = function(){
+    new SimpleArranger().Arrange();
+  }
+  this.ClearStage = function(){
+    debugger;
+    for (var i = 0; i < globals.nodeList.length; i++)
+      removeNodeFromGraph(globals.nodeList[i].id);
+    globals.nodeList = [];
+    globals.linkList = [];
+  }
+
+
+  this.createFormulaFromGraph = function(){
+
   }
 }
 
