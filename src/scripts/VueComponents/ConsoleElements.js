@@ -653,8 +653,16 @@ var consoleApp = new Vue({
            caption: "View", 
            items:[
               {
-                caption: "Arrange", 
-                func: function(){new VueMenuHelper().ArrangeNodesV1()}
+                caption: "Arrange as tree", 
+                func: function(){new VueMenuHelper().ArrangeNodes("bottom-to-top")}
+              },
+              {
+                caption: "Arrange as list", 
+                func: function(){new VueMenuHelper().ArrangeNodes("left-to-right")}
+              },
+              {
+                caption: "Arrange as roots", 
+                func: function(){new VueMenuHelper().ArrangeNodes("top-to-bottom")}
               },
               {
                 caption: "Clear stage", 
@@ -951,11 +959,9 @@ function VueMenuHelper(){
       consoleHelper.ShowGlobalInfoModal('UserConfirm');
     }
 
-  this.ArrangeNodesV1 = function(){
-    arrangeBy2();
-  }
-  this.ArrangeNodesV2 = function(){
-    new SimpleArranger().Arrange();
+  this.ArrangeNodes = function(_orientation){
+    //debugger;
+    new SimpleArranger().Arrange(_orientation);
   }
   this.ClearStage = function(){
     var overflow = globals.nodeList.length + 1;;
@@ -963,24 +969,22 @@ function VueMenuHelper(){
     while (globals.nodeList.length > 0 && ++counter < overflow){
 			removeNodeFromGraph(globals.nodeList[0].id);
     }
-    globals.selectedNodeData = undefined;
-    globals.selectedNodeID = undefined;
-    globals.selectedNodeID = undefined;
+    globals.labelsList = [];
+    globals.nodeList = [];
+    globals.checkedLinks = [];
+    globals.checkedNodes = [];
+    globals.monitoredLinks = [];
+    globals.monitoredNodes = [];
     globals.animUpdateNodes = [];
     globals.animUpdateLinks = [];
     globals.bPlanRelate = false;
-    globals.brelate = false;
-    globals.checkedLinks = [];
-    globals.checkedNodes = [];
-    globals.labelsList = [];
-    globals.nodeList = [];
-    globals.monitoredLinks = [];
-    globals.monitoredNodes = [];
+    globals.bRelate = false;
     globals.selectedLink = '';
     globals.selectedNode = '';
     globals.selectedNodeData = '';
     globals.selectedNodeID = '';
     globals.selectedNodeUI = '';
+    globals.timeoutElements = [];
   }
 
   this.createFormulaFromGraph = function(){

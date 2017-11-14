@@ -52,7 +52,7 @@ function ParseTreeTranslator() {
   this.GetNormalizedExpression = function(expression){
     return normalizeExpression(expression);
   }
-  this.GetNormalizedDictioneryFromExpression = function(expression){
+  this.GetNormalizedDictionaryFromExpression = function(expression){
     normalizeExpression(expression);
     return _dictionery;
   }
@@ -64,11 +64,11 @@ function ParseTreeTranslator() {
         expression = _stringSvc.ReplaceAll(expression, alt, op);
       });
     }  
-    expression = createDictioneryAndNormalizeSubStructures(expression);
+    expression = createDictionaryAndNormalizeSubStructures(expression);
     return expression;
   }
 
-  function createDictioneryAndNormalizeSubStructures(expression){
+  function createDictionaryAndNormalizeSubStructures(expression){
         var dictIndex = 0;
     var encapsulationRegex = new RegExp(/(\((?:\(??[^\(]*?\)))/g);
     
@@ -86,7 +86,7 @@ function ParseTreeTranslator() {
   }
 
   function TopEvaluate(expression){
-    var exp = getExpressionFromDictionery(expression);
+    var exp = getExpressionFromDictionary(expression);
     for (var op in _precedence){
       var node = getNodeOfOperatorIfAny(exp, op);
       if (node)
@@ -95,7 +95,7 @@ function ParseTreeTranslator() {
     return translatorCreateNode(exp, 'atom');
   }
 
-  function getExpressionFromDictionery(expKey)
+  function getExpressionFromDictionary(expKey)
   {
     for (var key in _dictionery)
       if (key == expKey)

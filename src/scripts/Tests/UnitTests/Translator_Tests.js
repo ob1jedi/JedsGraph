@@ -145,13 +145,13 @@
 
 
 	//[Test]
-	globals.allUnitTests.push(function ParseTreeTranslator_givenExpression_expectDictioneryOfSubExpressions() {
+	globals.allUnitTests.push(function ParseTreeTranslator_givenExpression_expectDictionaryOfSubExpressions() {
     // Arrange
     var expression = "a - (b*a) + (z * (s * d)) - p - (o * d)";
     var translator = new ParseTreeTranslator();
     
     // Act
-    var result = translator.GetNormalizedDictioneryFromExpression(expression);
+    var result = translator.GetNormalizedDictionaryFromExpression(expression);
     
     // Assert
     if (result['%1'] != "b*a") return result;

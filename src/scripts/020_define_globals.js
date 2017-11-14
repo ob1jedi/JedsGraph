@@ -61,6 +61,4 @@ function Globals(){
 		this.dataService = new DataService();
 
 		this.allUnitTests = [];
-
-		this.Translators = [];
 }
