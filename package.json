@@ -20,9 +20,12 @@
   },
   "homepage": "https://github.com/ob1jedi/JedsGraph#readme",
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "browser-sync": "^2.18.13",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-4.0.build": "^4.0.0-build.a271520",
+    "gulp-babel": "^7.0.0",
     "gulp-build": "^0.5.3",
     "gulp-clean": "^0.3.2",
     "gulp-html-minifier": "^0.1.8",
