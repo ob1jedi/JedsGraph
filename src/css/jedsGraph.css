@@ -653,7 +653,7 @@ div.tabcontent {
 }
 
 
-#formulaBox {
+#vueFormulaBox {
 	top:50px;
 	margin-top: 0px;
 	margin-left: 200px;
@@ -672,7 +672,7 @@ div.tabcontent {
 	position:relative;
 }
 
-	#formulaBox input {
+	#vueFormulaBox input {
 		/*width: 80px;*/
 		height: 20px;
 		margin: 2px;
@@ -681,7 +681,7 @@ div.tabcontent {
 		font-size: 12px;
 	}
 
-	#formulaBox select {
+	#vueFormulaBox select {
 		height: 20px;
 		margin: 2px;
 		border-radius: 3px;
@@ -690,17 +690,17 @@ div.tabcontent {
 		max-width: 200px;
 	}
 
-	#formulaBox table {
+	#vueFormulaBox table {
 		font-size: small;
 		line-height: normal;
 	}
 
-		#formulaBox table tr td {
+		#vueFormulaBox table tr td {
 			padding-left: 5px;
 			height: 5px;
 		}
 
-	#formulaBox label {
+	#vueFormulaBox label {
 		margin: 1px;
 		padding: 1px;
 		color: slategrey;
@@ -708,11 +708,11 @@ div.tabcontent {
 		font-size: 10px;
 	}
 
-	#formulaBox table span {
+	#vueFormulaBox table span {
 		font-size: 0px;
 	}
 
-	#formulaBox button {
+	#vueFormulaBox button {
 		background-color: #4d4d4d;
 		color: oldlace;
 		height: 20px;

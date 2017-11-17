@@ -602,7 +602,114 @@
 </div>
 
 
+<div id="MyVueComponents">
 
+    <div v-if="panels.formulaBar.show" id='vueFormulaBox'>
+        <table>
+            <tr>
+                <td>
+                    <label for="txtFormulaInput">Formula</label>
+                    <br />
+                    <input class="dynamic3" id="txtFormulaInput"
+                           v-on:keyup.enter="formulaprop.executeFormula()"
+                           v-model='formulaprop.formulaValue'
+                           datalist="formulaHistory">
+                    </input>
+                    <datalist id="formulaHistory">
+                        <option v-for="formula in formulaprop.formulaHistory" v-bind:value="formula.formula">{{formula.formula}}</option>
+                    </datalist>
+                </td>
+                <td>
+                    <label for="cmdFormulaGenerate">&nbsp</label>
+                    <div>
+                        <button class="mybutton" id="cmdFormulaGenerate"
+                                v-on:click="formulaprop.executeFormula(formulaprop.formulaValue)">
+                            generate
+                        </button>
+                    </div>
+                </td>
+                <td>
+                    <label for="cboFormulaTranslator">Translator</label>
+                    <br />
+                    <select id="cboFormulaTranslator"
+                            v-model="formulaprop.selectedTranslatorName"
+                            v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslatorName)">
+                        <option v-for="item in formulaprop.translators"
+                                v-bind:value="item.Name"
+                                v-bind:key="item.Name">
+                            {{item.Name}}
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <label for="cboFormulaExamples">Examples</label>
+                    <br />
+                    <select class="halfbox" id="cboFormulaExamples" name="formulaExample"
+                            v-model="formulaprop.selectedExample"
+                            v-on:change="formulaprop.executeExampleFormula()">
+                        <option v-for="example in formulaprop.currentTranslator.Examples"
+                                v-bind:value="example">
+                            {{example}}
+                        </option>
+                    </select>
+                </td>
+
+                <td v-show="(formulaprop.currentTranslator.ImportExamples && formulaprop.currentTranslator.ImportExamples.length>0)">
+                    <label for="cboFormulaImports">Imports</label>
+                    <br />
+                    <select id="cboFormulaImports"
+                            v-model="formulaprop.selectedImport"
+                            v-on:change="formulaprop.importFromUrl(formulaprop.selectedImport.value)">
+                        <option v-for="importExample in formulaprop.currentTranslator.ImportExamples"
+                                v-bind:value="importExample">
+                            {{importExample.name}}
+                        </option>
+                    </select>
+                </td>
+
+                <td>
+                    <label for="cmdInfo">&nbsp</label>
+                    <br />
+                    <div>
+                        <button id="cmdInfo"
+                                onclick="new VueConsoleHelper().ShowGlobalInfoModal('TranslatorInfo')">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                        </button>
+                    </div>
+                </td>
+
+                <td>
+                    <label for="cmdTest">&nbsp</label>
+                    <br />
+                    <div>
+                        <button id="cmdTest" v-on:click="formulaprop.generateLink()">Create Link</button>
+                    </div>
+                </td>
+
+            </tr>
+        </table>
+
+        <vw-info-modal modalId='TranslatorInfo'
+                       v-bind:canCancel='true'
+                       v-bind:strHeader='formulaprop.currentTranslator.Name'
+                       v-bind:htmlContent='formulaprop.currentTranslator.ReferenceContent'>
+        </vw-info-modal>
+
+        <vw-info-modal modalId='GenerateLink'
+                       strHeader='Formula link'
+                       v-bind:htmlContent='formulaprop.generatedGraphLink'>
+            button1Caption='Copy Link'
+            v-bind:button1Function='formulaprop.copyLink(formulaprop.generatedGraphLink)'
+        </vw-info-modal>
+
+        <vw-info-modal modalId='WaitingModal1'
+                       v-bind:canCancel='false'
+                       strHeader='Loading'
+                       htmlContent='Please wait...'>
+        </vw-info-modal>
+    </div>
+
+</div>
 
 <!--<dialog class='nodeFlyout' id="panel.node">
 	<textarea id="myDialogText"></textarea>
