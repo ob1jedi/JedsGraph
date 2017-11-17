@@ -11,6 +11,6 @@ function renderGraph()
 	//var renderer2 = Viva.Graph.View.globals.renderer(graph, {
 	//  container : document.getElementById('schemaContainer')
 	//});
-	
+	globals.renderer = renderer;
 	renderer.run();
 }
