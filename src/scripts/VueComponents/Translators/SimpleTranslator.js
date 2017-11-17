@@ -12,14 +12,14 @@ var SimpleTranslator = function () {
 	this.Name = "Simply Graphex";
 	this.Examples = [
 						"x->y",
-						`Sam->John${_a}->Bob`,
+						"Sam->John"+_a+"->Bob",
 						"-->Product->3",
 						"Diana-MotherOf->William&Harry",
 						"Fe(name: Iron)",
 						"C(name: Carbon, weight: 12.011)",
 						"Oxygen->Hydrogen(1) & Hydrogen(2)",
-            `Mother${_r}M->Father${_r}F; ${_r}F->${_r}M; ${_r}M->Son; ${_r}F->Son; Son->Grandson`,
-            `Sun${_r}S->Earth${_r}E; ${_r}S->Mars${_r}M; ${_r}E->Moon; ${_r}M->Phobos;`
+            "Mother"+_r+"M->Father"+_r+"F; "+_r+"F->"+_r+"M; "+_r+"M->Son; "+_r+"F->Son; Son->Grandson",
+            "Sun"+_r+"S->Earth"+_r+"E; "+_r+"S->Mars"+_r+"M; "+_r+"E->Moon; "+_r+"M->Phobos;"
 	];
 	this.ReferenceContent = `
 						Type any word to create a node, eg. <span class ="inputModal code">John</span>
@@ -53,17 +53,29 @@ var SimpleTranslator = function () {
 	
   this.TranslateGraphToFormula = function()
   {
-    for (var n = 0; n < globals.nodeList.length; n++){
-      var node = globals.nodeList[i];
+    var statements = [];
+    //debugger;
+    globals.nodeList.forEach(function(node){
+      var props = JSON.stringify(node.data.propertiesObject).gxTrimBrackets();
+      var label = node.data.labels[0];
+      var statement = `${label} #${node.id}` + ((node.data.properties.length > 0)?`(${props})`:``) + `;`;
+      statements.push(statement);
+    });
 
-      var nodeProps = node.properties;
-      for (var l = 0; l < node.links.length; l++){
-        var link = node.links.length[l];
-        var linkProps = link.properties;
-        //formula = 
-        //TO DO: finish this
+    globals.linkList.forEach(function(link){
+      var fromNode = "#" + link.fromId;
+      var toNode = "#" + link.toId;
+      var props = JSON.stringify(link.data.propertiesObject).gxTrimBrackets();
+      var label = link.data.name[0];
+      var linkDetails = `${label}` + ((link.data.properties.length > 0)?`(${props})`:``);
+      if (link.data.name.length == 0){
+        statements.push(`${fromNode}->${toNode};`);
       }
-    }
+      else{
+        statements.push(`${fromNode}-${linkDetails}->${toNode};`);
+      }    
+    });
+    return statements.join('');
   }
 
 	this.Translate = function (expression) {
@@ -116,14 +128,14 @@ var SimpleTranslator = function () {
           if (nextNodes.length == 0)      
             nextNodes = createEntityAddToGraphReturnNodes(nextEntity.labels, nextEntity.properties);
 					if (mustSelectNode(subElement)){
-						nextNodes.forEach((nextNode) => highlightSelectedNode(nextNode.id));
+						nextNodes.forEach(function(nextNode) {highlightSelectedNode(nextNode.id)});
           }
 					applyPopoutEffectToNode(nextNodes[0], currentNodes[0].id);
 				}
 
         //Create relationship
-        currentNodes.forEach((currentNode) => {
-				  nextNodes.forEach((nextNode) => {
+        currentNodes.forEach(function(currentNode) {
+				  nextNodes.forEach(function(nextNode) {
             var link = dataSvc.CreateRelation_AddToGraph_ReturnLink(
 					    currentNode.id,
 					    nextNode.id,
@@ -141,8 +153,9 @@ var SimpleTranslator = function () {
   function createEntityAddToGraphReturnNodes(labels, properties){
     var dataSvc = new DataService();
     var idAndLabelArray = labels[0].split(_r);
-    var label = idAndLabelArray[0].trim();
+    var label = idAndLabelArray[0].trim().gxTrimQuotes();
     var id = null;
+
     if (idAndLabelArray.length > 1){      
       id = idAndLabelArray[1].trim();
     }
@@ -226,7 +239,7 @@ var SimpleTranslator = function () {
 		var nodeLabel = getElementLabel(nodePart);
 		var nodeProperties = getElementProperties(nodePart);
 		return {
-			labels: [nodeLabel.trim()],
+			labels: [nodeLabel.trim().gxTrimQuotes()],
 			properties: nodeProperties
 		}
 	}
@@ -237,7 +250,7 @@ var SimpleTranslator = function () {
 		var linkLabel = getElementLabel(linkPart);
 		var linkProperties = getElementProperties(linkPart);
 		return {
-			labels: [linkLabel.trim()],
+			labels: [linkLabel.trim().gxTrimQuotes()],
 			properties: linkProperties
 		}
 	}
@@ -263,12 +276,13 @@ var SimpleTranslator = function () {
 		var actualPropertiesObject = {};
 		nodeProps.forEach(function (keyValuePair) {
 			var propElements = keyValuePair.split(':');
-			var propName = propElements[0].trim();
-			var propValue = "";
-			if (propElements.length > 1)
-				propValue = propElements[1].trim();
+			var propName = propElements[0].trim().gxTrimQuotes();
+			var propValue = (propElements.length > 1)? propElements[1].trim().gxTrimQuotes(): "";
+			//if (propElements.length > 1)
+			//	propValue = propElements[1].trim().graphexTrimQuotes();
 			actualPropertiesObject[propName] = propValue;
 		});
 		return actualPropertiesObject
 	}
+
 }
