@@ -4,12 +4,17 @@
 
 	<script type="text/javascript">
 		function graphexInitialize() {
-			var browserHelper=new BrowserHelper();
-			if(!browserHelper.IsChrome()) {
-				window.location="../html/browserSupport.html";
-				return;
+			if (!window.location.href.substr(0,17) == "http://localhost:"){
+				if(!IsChrome()) {
+					window.location="../html/browserSupport.html";
+					return;
+				}
 			}
 			graphexMain();
+			// Chrome 1+
+			function IsChrome(){
+				return !!window.chrome //&& !!window.chrome.webstore;
+			}
 		};
 	</script>
 
