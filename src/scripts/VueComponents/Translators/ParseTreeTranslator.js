@@ -8,24 +8,24 @@ function ParseTreeTranslator() {
 	this.ReferenceContent = `
     </br>
       Implication
-      <span class ="inputModal code">→</span> 
+      <span class ="inputModal code">Implies</span> 
       <span class ="inputModal code">-></span> 
     </br>
       Conjuntion
-      <span class ="inputModal code">∧</span> 
+      <span class ="inputModal code">And</span> 
       <span class ="inputModal code">&</span> 
       <span class ="inputModal code">&&</span> 
       <span class ="inputModal code">^</span> 
       <span class ="inputModal code">.</span> 
     </br>
       Disjunction
-      <span class ="inputModal code">∨</span> 
+      <span class ="inputModal code">Or</span> 
       <span class ="inputModal code">||</span> 
       <span class ="inputModal code">V</span> 
       <span class ="inputModal code">+</span> 
     </br>
       Negation
-      <span class ="inputModal code">¬</span> 
+      <span class ="inputModal code">Not</span> 
       <span class ="inputModal code">~</span> 
       <span class ="inputModal code">!</span> 
       <span class ="inputModal code">-</span> 
@@ -35,10 +35,10 @@ function ParseTreeTranslator() {
 	var _stringSvc = new StringHelper();
   var _dictionery = [];
   var _precedence = {
-    '→':["->"],
-    '∧' :["&", "&&", '^', '.'],
-    '∨' :['||', 'V', '+'],
-    '¬' :['~', '!', '-'],
+    'Implies':["Implies", "->"],
+    'And' :["And", "&", "&&", '^', '.'],
+    'Or' :["Or", '||', 'V', '+'],
+    'Not' :["Not", '~', '!', '-'],
   }
 	
   
