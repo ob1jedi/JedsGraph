@@ -525,33 +525,7 @@ div.tabcontent {
 
 #leftSidebar {
 	background-color: #1a1a1a;
-	/*left:10px;*/
 	top: 50px;
-	width: 200px;
-	margin: 0px;
-	padding: 0px;
-	padding-bottom: 10px;
-	border-radius: 2px;
-	max-height: 92%;
-	min-height: 0px;
-	position: fixed;
-	opacity: 1;
-	
-    border: solid;
-    border-color: #0d0d0d;
-    border-width: 2px;
-	/*resize:vertical;*/
-    /*overflow: auto;*/
-
-}
-
-
-
-
-#rightSidebar {
-	background-color: #1a1a1a;
-	top: 50px;
-	right: 0px;
 	width: 200px;
 	margin: 0px;
 	padding: 0px;
@@ -562,6 +536,21 @@ div.tabcontent {
     border: solid;
     border-color: #0d0d0d;
     border-width: 2px;
+}
+#rightSidebar {
+	background-color: #1a1a1a;
+	top: 50px;
+	width: 200px;
+	margin: 0px;
+	padding: 0px;
+	border-width: 0px;
+	overflow: auto;
+	max-height: 92%;
+	position: fixed;
+    border: solid;
+    border-color: #0d0d0d;
+    border-width: 2px;
+	right: 0px;
 }
 
 #modeIndicator {
@@ -675,6 +664,8 @@ div.tabcontent {
 	padding-top: 4px;
 	border-style: solid;
 	border-width: 0px;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
 	/*border-color: #8c8c8c;*/
 	background-color: #0d0d0d;
 	opacity: 0.9;
@@ -743,7 +734,7 @@ div.tabcontent {
 }
 
 #graphPanel {
-	top: 0px;
+	top: 50px;
 	left: 0px;
 	width: 100%;
 	height: 100%;
@@ -1036,7 +1027,6 @@ button:hover {
 		color: black;
         padding:5px;
 		border: none;
-		text-align: top;
 		text-decoration: none;
 		display: inline-block;
 		font-size: 15px;
@@ -1051,6 +1041,13 @@ button:hover {
 		color: white;
 	}
 
+	
+	.inputModal input {
+		color: #000;
+		width: 310px;
+		resize:vertical;
+		/*overflow:visible;*/
+	}
 
 .nodeFlyout {
 	position: absolute;
