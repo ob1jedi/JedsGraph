@@ -60,9 +60,9 @@
 		<!--Graph-->
 		<vw-graph></vw-graph>
 		<!--Console-->
-		<vw-formula-box v-bind:formulaprop="formulaToolbar"></vw-formula-box>
-		<vw-left-sidebar v-bind:sysdata="systemData"></vw-left-sidebar>
-		<vw-right-sidebar v-bind:tabs="tabs"></vw-right-sidebar>
+		<vw-formula-box v-bind:formulaprop="formulaToolbar" v-bind:panels="panels"></vw-formula-box>
+		<vw-left-sidebar v-bind:sysdata="systemData" v-bind:panels="panels"></vw-left-sidebar>
+		<vw-right-sidebar v-bind:tabs="tabs" v-bind:panels="panels"></vw-right-sidebar>
 		<!--<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>-->
 		<vw-topbar v-bind:topbar="topbar"></vw-topbar>
 		<!--Modals-->

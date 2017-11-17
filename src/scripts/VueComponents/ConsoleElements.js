@@ -390,19 +390,19 @@ Vue.component('vw-graph',{
 })
 
 Vue.component('vw-left-sidebar',{
-  props: ['sysdata'],
+  props: ['sysdata', 'panels'],
   template: `
-      <div id='leftSidebar' class ="flexcroll">
-        <vw-panel-nodeSelector v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
+      <div v-if="panels.nodeTypeSelector.show" id='leftSidebar' class ="flexcroll">
+        <vw-panel-nodeSelector v-if="panels.nodeTypeSelector.show" v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
       </div>
 		`
 })
 
 Vue.component('vw-right-sidebar',{
-  props: ['tabs'],
+  props: ['tabs', 'panels'],
   template: `
-		<div id='rightSidebar' class ="flexcroll">
-        <vw-panel-nodeEditor v-bind:tabsprop="tabs"></vw-panel-nodeEditor>
+		<div v-if="panels.nodeTypeEditor.show" id='rightSidebar' class ="flexcroll">
+        <vw-panel-nodeEditor v-if="panels.nodeTypeEditor.show" v-bind:tabsprop="tabs"></vw-panel-nodeEditor>
 		</div>
 		`
 })
@@ -486,13 +486,14 @@ Vue.component('vw-mode-indicator',{
 
 // ================= FORMULA BOX ================= 
 Vue.component('vw-formula-box',{
-  props: ['formulaprop'],
+  props: ['formulaprop', 'panels'],
   template: `
-        <div id='formulaBox'>
+        <div v-if="panels.formulaBar.show" id='formulaBox'>
             <table>
               <tr>
                 <td>
 						      <label for="txtFormulaInput">Formula</label>
+                  <br/>
                   <input class="dynamic3" id="txtFormulaInput"
 							      v-on:keyup.enter="formulaprop.executeFormula()"
 							      v-model='formulaprop.formulaValue'
@@ -512,7 +513,8 @@ Vue.component('vw-formula-box',{
 						      </div>
                 </td>
 					      <td>
-						      <label for="cboFormulaTranslator">Translator</label>
+						        <label for="cboFormulaTranslator">Translator</label>
+                    <br/>
                     <select id="cboFormulaTranslator"
 							      v-model="formulaprop.selectedTranslatorName"
                     v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslatorName)"
@@ -525,6 +527,7 @@ Vue.component('vw-formula-box',{
                 </td>
 					      <td>
 						      <label for="cboFormulaExamples">Examples</label>
+                  <br/>
 						      <select class="halfbox" id="cboFormulaExamples" name="formulaExample"
 							      v-model="formulaprop.selectedExample"
 							      v-on:change="formulaprop.executeExampleFormula()"
@@ -536,8 +539,9 @@ Vue.component('vw-formula-box',{
 					      </td>
 
                 <td v-show="(formulaprop.currentTranslator.ImportExamples && formulaprop.currentTranslator.ImportExamples.length>0)">
-                <label for="cboFormulaImports">Imports</label>
-						      <select id="cboFormulaImports"
+                  <label for="cboFormulaImports">Imports</label>
+						      <br/>
+                  <select id="cboFormulaImports"
 							      v-model="formulaprop.selectedImport"
 							      v-on:change="formulaprop.importFromUrl(formulaprop.selectedImport.value)"
 							      ><option
@@ -549,7 +553,8 @@ Vue.component('vw-formula-box',{
 
 					      <td>
 						      <label for="cmdInfo">&nbsp</label>
-						      <div>
+						      <br/>
+                  <div>
 							      <button id="cmdInfo"
 								      onclick="new VueConsoleHelper().ShowGlobalInfoModal('TranslatorInfo')"
 							      ><i class ="glyphicon glyphicon-question-sign"></i></button>
@@ -558,11 +563,11 @@ Vue.component('vw-formula-box',{
 
                 <td>
 						      <label for="cmdTest">&nbsp</label>
-						      <div>
+						      <br/>
+                  <div>
 							      <button id="cmdTest" v-on:click="formulaprop.generateLink()">Create Link</button>
 						      </div>
                 </td>
-
 
               </tr>
             </table>
@@ -594,6 +599,11 @@ var consoleApp = new Vue({
   components: ['vw-panel-nodeEditor'],
   el: '#vue-app',
   data: {
+    panels:{
+      nodeTypeEditor: {show:false},
+      nodeTypeSelector: {show:false},
+      formulaBar:{show:true}
+    },
     modals: {
       userConfirm:{
         header: "",
