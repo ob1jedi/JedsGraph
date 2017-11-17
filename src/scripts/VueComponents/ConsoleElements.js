@@ -439,18 +439,17 @@ Vue.component('vw-info-modal',{
 })
 
 Vue.component('vw-modal-user-confirm',{
-  props: ['modal'],
+  props: ['userconfirm'],
   template: `
 	  <dialog class="inputModal shadow" id="UserConfirm">
-      <button v-on:click="modal.ifCancelled()" class="pull-right">&times;</button>
+      <button v-on:click="userconfirm.ifCancelled()" class="pull-right">&times;</button>
 		  <div class="form-group"> 
-			  <h2>{{modal.header}}</h2>
+			  <h2>{{userconfirm.header}}</h2>
 			  <div class="inputModal modalContent flexcroll"
-				  v-html="modal.content">
+				  v-html="userconfirm.content">
 			  </div>
-        
-        <button v-on:click="modal.ifCancelled()" class="pull-right">Cancel</button>
-        <button v-on:click="modal.ifConfirmed()" class="pull-right">Yes</button>
+        <button v-on:click="userconfirm.ifCancelled()" class="pull-right">{{userconfirm.cancelCaption}}</button>
+        <button v-on:click="userconfirm.ifConfirmed()" class="pull-right">{{userconfirm.confirmCaption}}</button>
 		  </div>
 	  </dialog>
   `
@@ -608,6 +607,8 @@ var consoleApp = new Vue({
       userConfirm:{
         header: "",
         content: "<p></p>",
+        cancelCaption: "Cancel",
+        confirmCaption: "Yes",
         ifConfirmed: function(){},
         ifCancelled: function(){}
       },
@@ -1039,7 +1040,7 @@ function VueMenuHelper(){
         <br>If you would like to contact us for any reason, you can get hold of us at:
         <br><a href="mailto:suggest@graphex.io?Subject=I have a suggestion" target="_top">suggest@graphex.io</a>
     `;
-    new VueConsoleHelper().ShowModal(header, content);
+    new VueConsoleHelper().ShowInfoModal(header, content);
   }
 
   this.ClearStage = function(){
@@ -1069,15 +1070,44 @@ function VueMenuHelper(){
   this.createFormulaFromGraph = function(){
 
   }
+  function displayConfirmModal (header, content, confirmFunction, _confirmCaption, _cancelCaption){
+    var modalId = 'UserConfirm';
+    var consoleHelper = new VueConsoleHelper();
+    consoleApp.modals.userConfirm.header = header;
+    consoleApp.modals.userConfirm.content = content;
+    if (_confirmCaption)
+      consoleApp.modals.userConfirm.confirmCaption = _confirmCaption;
+    if (_cancelCaption)
+      consoleApp.modals.userConfirm.cancelCaption = _cancelCaption;    
+    // Confirm click...
+    consoleApp.modals.userConfirm.ifConfirmed = function(){
+      confirmFunction();
+      consoleHelper.CloseGlobalInfoModal(modalId);
+    };
+    // Cancel click...
+    consoleApp.modals.userConfirm.ifCancelled = function(){
+      consoleHelper.CloseGlobalInfoModal(modalId);
+    };
+    consoleHelper.ShowGlobalInfoModal(modalId);
+  }
+
+
+
 }
 
 
 function VueConsoleHelper(){
 
-  this.ShowModal = function(header, content){
+  this.ShowInfoModal = function(header, content){
       consoleApp.modals.userInfo.header = header;
       consoleApp.modals.userInfo.content = content;
       showGlobalInfoModal('UserInfo');
+  }
+
+  this.ShowCopyModal = function(header, content){
+      consoleApp.modals.userInfo.header = header;
+      consoleApp.modals.userInfo.content = content;
+      showGlobalInfoModal('CopyInfo');
   }
 
   this.ShowGlobalInfoModal = function(modalId) {
