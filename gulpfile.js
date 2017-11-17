@@ -16,6 +16,7 @@ var uglifyes = require('uglify-es');
 var composer = require('gulp-uglify/composer');
 var minifyes = composer(uglifyes, console);
 var obfuscate = require('gulp-obfuscate');
+const babel = require('gulp-babel');
 
 gulp.task('default', function() {
 	gulp.start('serve');
@@ -86,11 +87,22 @@ function copyFonts() {
       .pipe(gulp.dest('dist/fonts'))
 };
 
+function copySupportContent() {
+  return gulp.src('./src/html/*')
+      .pipe(gulp.dest('dist/html'))
+};
+
 function copyAssets() {
   return gulp.src('./src/custom/assets/*')
       .pipe(gulp.dest('dist/custom/assets'))
 
 };
+
+function transpile(){
+	return gulp.src('./src/scripts/**/*.js')
+		.pipe(babel())
+}
+
 gulp.task('clean', function () {
   return gulp.src('dist/*', {read: false})
 	  .pipe(clean())
@@ -100,10 +112,11 @@ function compress (callback) {
   pump([
         gulp.src('./src/Index.html'),
 		useref(),
-		gulpif('*.js', minifyes()),
-    //gulpif('*.js', obfuscate()),
-    gulpif('*.css', uglifycss()),
-    gulpif('*.html', htmlminifier()),
+		gulpif('*.js', babel()),
+		//gulpif('*.js', minifyes()),
+		//gulpif('*.js', obfuscate()),
+		gulpif('*.css', uglifycss()),
+		gulpif('*.html', htmlminifier()),
 		gulp.dest('dist')
     ],
     callback
@@ -115,6 +128,8 @@ function compress (callback) {
 gulp.task('copy-dependencies', copyDependencies);
 gulp.task('copy-fonts', copyFonts);
 gulp.task('copy-assets', copyAssets);
+gulp.task('copy-support-content', copySupportContent);
+gulp.task('transpile', transpile);
 gulp.task('compress', compress);
 gulp.task('serve-live', serveLive);
 
@@ -123,6 +138,14 @@ gulp.task('build', gulp.series(
   'copy-dependencies', 
   'copy-fonts', 
   'copy-assets', 
-  'compress', 
+  'copy-support-content',
+  'compress',
   'serve-live'
 ));
+
+
+gulp.task('default', () =>
+    gulp.src('src/app.js')
+        
+        .pipe(gulp.dest('dist'))
+);
