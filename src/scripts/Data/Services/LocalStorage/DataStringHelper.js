@@ -220,9 +220,9 @@ var DataStringHelper = function () {
 			|| string[0] !== '|'
 			|| string[string.length - 1] !== '|'
 			|| string.length === 0
-			|| string == '||')
-			
-			throw "Invalid data-string";
+			|| string == '||'){
+			  throw "Invalid data-string";
+      }
 	}
 	function character1IsBeforeCharacter2(character1, character2) {
 		return character1.charCodeAt(0) < character2.charCodeAt(0);

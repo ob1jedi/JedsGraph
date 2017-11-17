@@ -20,7 +20,7 @@
 
   function getRootNodes(){
     var rootNodes = [];
-    globals.nodeList.forEach(n => {
+    globals.nodeList.forEach(function(n) {
       if (n.data.fromNodes.length == 0) rootNodes.push(n)
     });
     return rootNodes;
@@ -29,7 +29,7 @@
   function createAndInitializeNodeGridDictionary(rootNodes){
     var gridDict = {};  
     // Initialize dictionery for all nodes...
-    globals.nodeList.forEach(node => {
+    globals.nodeList.forEach(function(node) {
       //gridDict[node.id] = {row: ++rowIndex, col:0}
       gridDict[node.id] = {row: -1, col:-1}
     }); 
@@ -38,7 +38,7 @@
   function populateNodeGridDictionary(gridDict, rootNodes){
    
     // Iterate through root nodes...
-    rootNodes.forEach(fromNode => {     
+    rootNodes.forEach( function(fromNode) {     
       var nodeRegister = {};
       // Set cell of root node to the currently highest row index...
       gridDict[fromNode.id] = {row: ++_totalRows, col:0}
@@ -53,7 +53,7 @@
 
   function setColOfNodes(fromNode, gridDict, matrix, nodeRegister){
     var minRow = _totalRows;
-    fromNode.data.toNodes.forEach(toNode =>{   
+    fromNode.data.toNodes.forEach( function(toNode){   
       if (nodeRegister[toNode.id]) // ... Node has already been registered in this tree, do not process it again (occurs in circular dependency trees).
         return;
       nodeRegister[toNode.id] = 1;// ... Register node for this tree.
@@ -85,7 +85,7 @@
     // Draw Nodes...
     
     var circularDependants = [];
-    globals.nodeList.forEach(n => {
+    globals.nodeList.forEach(function(n) {
       if (gridDict[n.id].col == -1 && gridDict[n.id].row == -1){
         //debugger;
         circularDependants.push(n);
@@ -96,21 +96,23 @@
 
   function drawNodes(gridDict, orientation){
     // Draw Nodes...
-    globals.nodeList.forEach(n => {
+    var graphDistanceFactor = 100;
+    var centerOffset = _totalCols/2 * graphDistanceFactor
+    globals.nodeList.forEach(function(n) {
       globals.layout.pinNode(n, true);
       switch (orientation || "top-to-bottom")
       {
         case "left-to-right":
-          globals.layout.setNodePosition(n.id, gridDict[n.id].col * 100, gridDict[n.id].row * 100);
+          globals.layout.setNodePosition(n.id, gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
           break;
         case "right-to-left":
-          globals.layout.setNodePosition(n.id, -gridDict[n.id].col * 100, gridDict[n.id].row * 100);
+          globals.layout.setNodePosition(n.id, -gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
           break;
         case "top-to-bottom":
-          globals.layout.setNodePosition(n.id, gridDict[n.id].row * 100, gridDict[n.id].col * 100);
+          globals.layout.setNodePosition(n.id, gridDict[n.id].row * graphDistanceFactor, gridDict[n.id].col * graphDistanceFactor);
           break;
         case "bottom-to-top":
-          globals.layout.setNodePosition(n.id, gridDict[n.id].row * 100, -gridDict[n.id].col * 100);
+          globals.layout.setNodePosition(n.id, gridDict[n.id].row * graphDistanceFactor, -gridDict[n.id].col * graphDistanceFactor + centerOffset);
           break;
       }
     });

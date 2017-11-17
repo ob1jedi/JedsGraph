@@ -46,7 +46,7 @@ function UrlParamsTranslator() {
       
       for (var e = 0; e < entities.length; e++){
         var entityName = entities[e];
-        newNode = nodes.find((s)=>s.data.labels[0]===entityName);
+        newNode = nodes.find(function(s){s.data.labels[0]===entityName});
         if (!newNode){
           newNode = dataSvc.CreateEntity_AddToGraph_ReturnNode([entityName]);
           nodes.push(newNode);

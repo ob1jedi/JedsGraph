@@ -39,7 +39,7 @@ function graphexMain() {
     var urlHelper  = new UrlHelper();
     //debugger;
     var params = urlHelper.GetAllParams();
-    params.forEach((param)=>{
+    params.forEach(function(param){
       if (param.key == "graph"){
         var translator = new UrlParamsTranslator();
         translator.Translate(param.value);

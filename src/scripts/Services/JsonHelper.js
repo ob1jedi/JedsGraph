@@ -77,7 +77,7 @@
     if(!idFieldName)
       throw "JSONMERGE ERROR: No discriminator specified";
     var returnArray = [];
-    baseArray.map((e)=>returnArray.push(e));
+    baseArray.map(function(e){returnArray.push(e)});
     for(var n=0;n<newArray.length;n++) {
       var matchFound=false;
       for(var b=0;b<baseArray.length;b++) {
