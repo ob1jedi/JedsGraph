@@ -8569,7 +8569,6 @@ function prepareGraph() {
 
 	// Custom physics... (include/exclude in the 'globals.renderer' at the bottom of the script)
 	var idealLength = 150;
-
 	globals.layout = Viva.Graph.Layout.forceDirected(graph, {
 		springLength: idealLength,
 		springCoeff: 0.00008,
@@ -8584,11 +8583,6 @@ function prepareGraph() {
 
 	globals.graphics = Viva.Graph.View.svgGraphics();
 	globals.GRAPH = graph;
-
-	globals.utils = Viva.Graph.Utils;
-	globals.centrality = Viva.Graph.centrality;
-	//globals.rect = Viva.Graph.Rect;
-	//globals.operations = Viva.Graph.operations;
 }
 
 //====== NODE VISUAL DEFINITIONS ========================================================================================================
