@@ -1,4 +1,24 @@
-﻿function StringHelper(){
+﻿String.prototype.gxTrimQuotes = function(){
+    var str = this;
+    str = str.replace(/^"+|"+$/g, '');
+    str = str.replace(/^'+|'+$/g, '');
+    str = str.replace(/^`+|`+$/g, '');
+  return str;
+}
+
+String.prototype.gxTrimBrackets = function(){
+    var str = this;
+    str = str.replace(/^\(+|\)+$/g, '');
+    str = str.replace(/^<+|>+$/g, '');
+    str = str.replace(/^\[+|\]+$/g, '');
+    str = str.replace(/^\{+|\}+$/g, '');
+  return str;
+}
+//String.prototype.trim = function () {
+//    return this.replace(/^\s+|\s+$/g, "");
+//};
+
+function StringHelper(){
 
   this.ReplaceEachOfCharSet= function(inputString, replaceChars, withChars){
     if (replaceChars.length !== replaceChars.length)
@@ -14,6 +34,8 @@
     }
     return newString;
   }
+
+
 
   this.SplitOr = function(inputString, searchStrings)
   {
