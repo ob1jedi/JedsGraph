@@ -1,0 +1,41 @@
+Institution->MUSEUM #1 & PLANETORIUM #2; #1->Mummy; #2->Earth
+
+Sun->Mercury &Venus &Earth#E &Mars &Jupiter#J &Saturn#S &Uranus &Neptune
+
+Star(Name:Sun)->	
+		  Planet(Name:Mercury) 
+		& Planet(Name:Venus) 
+		& Planet #E (Name:Earth) 
+		& Planet #M (Name:Mars) 
+		& Planet #J (Name:Jupiter) 
+		& Planet #S(Name:Saturn) 
+		& Planet(Name:Uranus) 
+		& Planet(Name:Neptune);
+#M->Moon(Name:Phobos) & Moon(Name:Deimos);
+#E->Moon(Name:Moon);
+#J->Moon(Name:Io) & Moon(Name:Europa) & Moon(Name:Ganymede) & Moon(Name:Callisto);
+#S->Moon(Name:Iapetus) & Moon(Name:Titan) & Moon(Name:Rhea) & Moon(Name:Dione)
+
+"Star"   #1(Name:"Sun");	
+"Planet" #10("Name":"Mercury");
+"Planet" #11(Name:Venus);
+#1-orbits->#10;
+#1-orbits->#11;
+
+Planet #12 ('Name':Earth); 
+Planet #13 (Name:Mars); 
+Planet #14 (Name:Jupiter); 
+Moon #100(Name:Phobos);
+Moon #101(Name:Deimos);
+#1-orbits->#10;
+#1-orbits->#11;
+#1-orbits->#12;
+#1-orbits->#13;
+#1-orbits->#14;
+#14-orbits->#100;
+#14-orbits->#101;
+
+#M->Moon(Name:Phobos) & Moon(Name:Deimos);
+#E->Moon(Name:Moon);
+#J->Moon(Name:Io) & Moon(Name:Europa) & Moon(Name:Ganymede) & Moon(Name:Callisto);
+#S->Moon(Name:Iapetus) & Moon(Name:Titan) & Moon(Name:Rhea) & Moon(Name:Dione)

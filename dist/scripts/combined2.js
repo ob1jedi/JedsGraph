@@ -1,1 +1,1123 @@
-function addToConfig(t,e,n){if(console.log("isActive",t),!t)return e;var o=new JsonHelper;return console.log("creating new config..."),o.MergeJson(e,n,"arrayId")}function VueMenuHelper(){this.ResetDatabase=function(){var t=new VueConsoleHelper;consoleApp.modals.userConfirm.header="Are you sure?",consoleApp.modals.userConfirm.content="This will remove all the data and settings that you've accumulated so far",consoleApp.modals.userConfirm.ifConfirmed=function(){t.CloseGlobalInfoModal("UserConfirm"),(new DataService).DropDatabase(),refreshEntitySelectors(),consoleApp.refreshTypeSelectors(),alert("Storage cleared")},consoleApp.modals.userConfirm.ifCancelled=function(){t.CloseGlobalInfoModal("UserConfirm")},t.ShowGlobalInfoModal("UserConfirm")},this.ArrangeNodes=function(t){(new SimpleArranger).Arrange(t)},this.ShowAboutModal=function(){(new VueConsoleHelper).ShowModal("About",'\n        Hi there, we hope you are enjoying the use of this tool.\n        It is still under development, but we welcome any suggestions that you may have.\n        <br>If you would like to contact us for any reason, you can get hold of us at:\n        <br><a href="mailto:suggest@graphex.io?Subject=I have a suggestion" target="_top">suggest@graphex.io</a>\n    ')},this.ClearStage=function(){for(var t=globals.nodeList.length+1,e=0;globals.nodeList.length>0&&++e<t;)removeNodeFromGraph(globals.nodeList[0].id);globals.labelsList=[],globals.nodeList=[],globals.checkedLinks=[],globals.checkedNodes=[],globals.monitoredLinks=[],globals.monitoredNodes=[],globals.animUpdateNodes=[],globals.animUpdateLinks=[],globals.bPlanRelate=!1,globals.bRelate=!1,globals.selectedLink="",globals.selectedNode="",globals.selectedNodeData="",globals.selectedNodeID="",globals.selectedNodeUI="",globals.timeoutElements=[]},this.createFormulaFromGraph=function(){}}function VueConsoleHelper(){function t(t){document.getElementById(t).showModal()}this.ShowModal=function(e,n){consoleApp.modals.userInfo.header=e,consoleApp.modals.userInfo.content=n,t("UserInfo")},this.ShowGlobalInfoModal=function(e){t(e)},this.CloseGlobalInfoModal=function(t){!function(t){document.getElementById(t).close()}(t)}}Vue.component("vw-panel-nodeEditor",{props:["tabsprop"],template:'\n\n\t\t<div class=\'modPanel\' id=\'nodeEditor\'>\n\t\t\t<div class="panelHead">Node Type Editor<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>\n\n\t\t\t<div class ="tab">\n\t\t\t  <button class ="tablinks" v-on:click="tabsprop.selectedMatchingTab=\'NEW\'" v-bind:class="{ active: tabsprop.selectedMatchingTab===\'NEW\'}">Match</button>\n\t\t\t</div>\n\t\t\t<div>\n\t\t\t\t<vw-panel-nodeEditor-matching v-show="tabsprop.selectedMatchingTab===\'NEW\'" v-bind:tabs="tabsprop"></vw-panel-nodeEditor-matching>\n\t\t\t</div>\n\n\t\t\t<div class ="tab">\n\t\t\t  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab=\'STYLES\'" v-bind:class="{ active: tabsprop.selectedStyleTab===\'STYLES\'}">Style</button>\n\t\t\t  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab=\'EFFECTS\'" v-bind:class="{ active: tabsprop.selectedStyleTab===\'EFFECTS\'}">Effects</button>\n\t\t\t  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab=\'BEHAVIOURS\'" v-bind:class="{ active: tabsprop.selectedStyleTab===\'BEHAVIOURS\'}">Binding</button>\n\t\t\t</div>\n\t\t\t<div>\n\t\t\t\t<vw-panel-nodeEditor-styles v-show="tabsprop.selectedStyleTab===\'STYLES\'" v-bind:styles="tabsprop.styles"></vw-panel-nodeEditor-styles>\n\t\t\t\t<vw-panel-nodeEditor-effects v-show="tabsprop.selectedStyleTab===\'EFFECTS\'" v-bind:effects="tabsprop.effects"></vw-panel-nodeEditor-effects>\n\t\t\t\t<vw-panel-nodeEditor-behaviours v-show="tabsprop.selectedStyleTab===\'BEHAVIOURS\'" v-bind:behaviours="tabsprop.behaviours"></vw-panel-nodeEditor-behaviours>\n\t\t\t</div>\n\n\t\t\t<div class ="tab">\n\t\t\t  <button class ="tablinks" v-on:click="tabsprop.saveMatch()">Save</button>\n\t\t\t  <button class ="tablinks" v-on:click="tabsprop.reset()">Reset</button>\n\t\t\t</div>\n\n\t\t\t\x3c!--<div class ="tabcontent">\n\t\t\t\t<vw-graph></vw-graph>\n\t\t\t</div>--\x3e\n\t\t</div>\n\n\t'}),Vue.component("vw-panel-nodeEditor-matching",{props:["tabs"],template:'\n\t\t<div class ="tabcontent">\n\n      <label class="canCheck"\n        v-on:click="(tabs.newMatching.bExistingConfig=false); (tabs.newMatching.selectedConfig=null)"\n        v-bind:class="{ active: tabs.newMatching.bExistingConfig }">Existing Config:</label>\n      <select class ="fullbox" v-model=\'tabs.newMatching.selectedConfig\'\n          v-bind:class="{ active: tabs.newMatching.bExistingConfig }"\n          v-on:change="tabs.selectExisting(tabs.newMatching.selectedConfig); tabs.newMatching.bExistingConfig=true">\n\t\t\t\t<option v-for="config in tabs.newMatching.masterEntityConfigs" v-bind:value="config">{{config.configName}}</option>\n\t\t\t</select>\n\n\n\n      <label class="active">Node type of: </label>\n\t\t\t<input class="active" v-model.lazy=\'tabs.newMatching.selectedNodeType\' v-bind:value="tabs.newMatching.selectedNodeType"></input>\n\n      <label v-bind:class="{ active: tabs.newMatching.bHasProperties }">With properties:\n        <span v-on:click="tabs.newMatching.addProperty(); tabs.newMatching.bHasProperties=true;" class ="btn btn-sm"><i class ="glyphicon glyphicon-plus"></i></span>\n      </label>\n\n\t\t\t<hr/>\n\t\t\t<table>\n\t\t\t\t<th><label>Name  </label></th>\n\t\t\t\t<th><label>Value </label></th>\n\t\t\t\t<tr v-for="property in tabs.newMatching.properties">\n\t\t\t\t\t<td><input v-bind:value="property.key" class="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>\n\t\t\t\t\t<td><input v-bind:value="property.value" class ="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>\n\t\t\t\t</tr>\n\t\t\t</table>\n\t\t</div>\n\t\t'}),Vue.component("vw-panel-nodeEditor-existing",{props:["tabs"],template:'\n\t\t<div class ="tabcontent">\n\n    \t<table class="table">\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck active">Config:</label></td>\n\t\t\t\t\t<td>\n\t\t\t      <select class ="pull-right active" v-model=\'tabs.existingMatching.selectedConfig\'\n                v-on:change="tabs.selectExisting(tabs.existingMatching.selectedConfig)">\n\t\t\t\t      <option v-for="config in tabs.existingMatching.masterEntityConfigs" v-bind:value="config">\n                {{config.configName}}\n              </option>\n\t\t\t      </select>\n  \t      </td>\n        </tr>\n      </table>\n\n    </div>\n\t\t'}),Vue.component("vw-panel-nodeEditor-styles",{props:["styles"],template:'\n\t\t<div class ="tabcontent">\n\n\t\t\t<table class="table">\n\t\t\t\t<tr>\n\t\t\t\t\t<td>\n            <label class="canCheck"\n              v-on:click="(styles.bNodeColor=!styles.bNodeColor)"\n              v-bind:class="{ active: styles.bNodeColor }">Background Col:</label></td>\n\t\t\t\t\t<td>\n\t\t\t\t\t\t<input type="color" class="tinybox pull-right"\n              v-bind:class="{ active: styles.bNodeColor }"\n\t\t\t\t\t\t\tv-model.lazy="styles.selectedNodeColor"\n\t\t\t\t\t\t\tv-on:change="styles.updateNodeBackgroundColor(); styles.bNodeColor=true">\n\t\t\t\t\t\t</input>\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck"\n              v-on:click="(styles.bNodeBorderColor=!styles.bNodeBorderColor)"\n              v-bind:class="{ active: styles.bNodeBorderColor }">Border Color:</label></td>\n\t\t\t\t\t<td>\n\t\t\t\t\t\t<input type="color" class ="tinybox pull-right"\n              v-bind:class="{ active: styles.bNodeBorderColor }"\n\t\t\t\t\t\t\tv-model.lazy="styles.selectedNodeBorderColor"\n\t\t\t\t\t\t\tv-on:change="styles.updateNodeBorderColor(); styles.bNodeBorderColor=true">\n\t\t\t\t\t\t</input>\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck"\n              v-on:click="(styles.bNodeTextColor=!styles.bNodeTextColor)"\n              v-bind:class="{ active: styles.bNodeTextColor }">Text Color:</label></td>\n\t\t\t\t\t<td>\n\t\t\t\t\t\t<input type="color" class="tinybox pull-right"\n              v-bind:class="{ active: styles.bNodeTextColor }"\n\t\t\t\t\t\t\tv-model.lazy="styles.selectedNodeTextColor"\n\t\t\t\t\t\t\tv-on:change="styles.updateNodeTextColor(); styles.bNodeTextColor=true">\n\t\t\t\t\t\t</input>\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck"\n              v-on:click="(styles.bNodeCircleTextColor=!styles.bNodeCircleTextColor)"\n              v-bind:class="{ active: styles.bNodeCircleTextColor }">Circle Text Color: </label></td>\n\t\t\t\t\t<td>\n\t\t\t\t\t\t<input type="color" class="tinybox pull-right"\n              v-bind:class="{ active: styles.bNodeCircleTextColor }"\n\t\t\t\t\t\t\tv-model.lazy="styles.selectedNodeCircleTextColor"\n\t\t\t\t\t\t\tv-on:change="styles.updateNodeCircleTextColor(); styles.bNodeCircleTextColor=true">\n\t\t\t\t\t\t</input>\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck"\n              v-on:click="(styles.bNodeSize=!styles.bNodeSize)"\n              v-bind:class="{ active: styles.bNodeSize }">Size: </label></td>\n\t\t\t\t\t<td>\n\t\t\t\t\t\t<input class ="tinybox pull-right" type="number" value="25"\n              v-bind:class="{ active: styles.bNodeSize }"\n\t\t\t\t\t\t\tv-model.lazy=\'styles.selectedNodeSize\'\n\t\t\t\t\t\t\tv-on:change="styles.updateNodeSize(styles.selectedNodeSize); styles.bNodeSize=true">\n\t\t\t\t\t\t</input>\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck"\n              v-on:click="(styles.bNodeShape=!styles.bNodeShape)"\n              v-bind:class="{ active: styles.bNodeShape }">Shape: </label></td>\n\t\t\t\t\t<td>\n\t\t\t\t\t\t<select class ="pull-right"\n              v-bind:class="{ active: styles.bNodeShape }"\n\t\t\t\t\t\t\tv-model=\'styles.selectedNodeShape\'\n\t\t\t\t\t\t\tv-on:change="styles.updateNodeShape(); styles.bNodeShape=true">>\n\t\t\t\t\t\t\t<option v-for="shape in styles.shapes" v-bind:value="shape.value">{{shape.key}}</option>\n\t\t\t\t\t\t</select>\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t</table>\n\t\t\t<label class="canCheck"\n        v-on:click="(styles.bNodeImageUrl=!styles.bNodeImageUrl)"\n        v-bind:class="{ active: styles.bNodeImageUrl }">Image URL: </label>\n\t\t\t<input\n        v-bind:class="{ active: styles.bNodeImageUrl }"\n\t\t\t\tv-model.lazy=\'styles.selectedNodeImageUrl\'\n\t\t\t\tv-on:change="styles.updateNodeImage(styles.selectedNodeImageUrl); styles.bNodeImageUrl=true">\n\t\t\t</input>\n\t\t</div>\n\t\t'}),Vue.component("vw-panel-nodeEditor-effects",{props:["effects"],template:'\n\t\t<div class ="tabcontent">\n\t\t\t<table class ="table">\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck"\n              v-on:click="(effects.activateEffectHaze=!effects.activateEffectHaze)"\n              v-bind:class="{ active: effects.activateEffectHaze }">Haze: </label></td>\n\t\t\t\t\t<td><input type="checkbox" v-model="effects.hasEffectHaze" v-on:change="effects.activateEffectHaze=true" value="false" v-bind:class="{ active: effects.activateEffectHaze }"></input></td>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck"\n              v-on:click="(effects.activateEffectShadow=!effects.activateEffectShadow)"\n              v-bind:class="{ active: effects.activateEffectShadow }">Shadow: </label></td>\n\t\t\t\t\t<td><input type="checkbox" v-model="effects.hasEffectShadow" v-on:change="effects.activateEffectShadow=true" value="false" v-bind:class="{ active: effects.activateEffectShadow }"></input></td>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck"\n              v-on:click="(effects.activateEffectGlass=!effects.activateEffectGlass)"\n              v-bind:class="{ active: effects.activateEffectGlass }">Glass: </label></td>\n\t\t\t\t\t<td><input type="checkbox" v-model="effects.hasEffectGlass" v-on:change="effects.activateEffectGlass=true" value="false" v-bind:class="{ active: effects.activateEffectGlass }"></input></td>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td><label class="canCheck"\n              v-on:click="(effects.activateEffectRounded=!effects.activateEffectRounded)"\n              v-bind:class="{ active: effects.activateEffectRounded }">Rounded: </label></td>\n\t\t\t\t\t<td><input type="checkbox" v-model="effects.hasEffectRounded" v-on:change="effects.activateEffectRounded=true" value="false" v-bind:class="{ active: effects.activateEffectRounded }"></input></td>\n\t\t\t\t</tr>\n\n\t\t\t</table>\n\t\t</div>\n\t\t'}),Vue.component("vw-panel-nodeEditor-behaviours",{props:["behaviours"],template:'\n\t\t<div class ="tabcontent">\n\n      <label class="canCheck" v-on:click="(behaviours.bDisplayText=!behaviours.bDisplayText)" v-bind:class="{ active: behaviours.bDisplayText }"> Center text: </label>\n      <table>\n        <tr>\n          <td>\n            <select class ="halfbox pull-right"\n                v-model="behaviours.selectedDisplayTextType"\n                v-bind:class="{ active: behaviours.bDisplayText }"\n                v-on:change="behaviours.bDisplayText=true">\n              <option v-for="type in [\'type\',\'property\',\'static\',\'first\']" v-bind:value="type">\n                {{type}}\n              </option>\n            </select>\n          </td>\n          <td> <input class ="halfbox pull-right" v-model="behaviours.selectedDisplayField" v-bind:class="{ active: behaviours.bDisplayText }"></input> </td>\n        </tr>\n      </table>\n\n      <label class="canCheck" v-on:click="(behaviours.bDisplayImage=!behaviours.bDisplayImage)" v-bind:class="{ active: behaviours.bDisplayImage }"> Image URL: </label>\n      <table>\n        <tr>\n          <td>\n            <select class ="halfbox pull-right"\n                v-model="behaviours.selectedNodeImageType"\n                v-bind:class="{ active: behaviours.bDisplayImage }"\n                v-on:change="behaviours.bDisplayImage=true">\n              <option v-for="type in [\'property\',\'static\']" v-bind:value="type">\n                {{type}}\n              </option>\n            </select>\n          </td>\n          <td> <input class ="halfbox pull-right" v-model="behaviours.selectedNodeImageValue" v-bind:class="{ active: behaviours.bDisplayImage }"></input> </td>\n        </tr>\n      </table>\n\n\n\t\t\t<hr>\n\n\t\t</div>\n\t\t'}),Vue.component("vw-topbar",{props:["topbar"],template:'\n\t<div id=\'graphexTopBar\'>\n    <table>\n      <tr>\n        <td>\n          <div class="logo">GRAPH<i class="glyphicon glyphicon-menu-hamburger"></i>X</div>\n        </td>\n        <td>\n            <vw-dropdown-menu \n              v-for="item in topbar.items" \n              v-bind:name="item.caption" \n              v-bind:menuitems="item.items">\n            </vw-dropdown-menu>\n        </td>\n      </tr>\n      \x3c!--<vw-mode-indicator v-bind:indicatorprop="topbar.indicator"></vw-mode-indicator>--\x3e\n    </table>\n        \n\t</div>\n'}),Vue.component("vw-dropdown-menu",{props:["name","menuitems"],template:'\n    <span class="dropdown">\n      <button class="dropbtn">{{name}}</button>\n      <div class="dropdown-content">\n        <a href="#" \n          v-for="item in menuitems"\n          v-on:click="item.func()"\n          >{{ item.caption }}</a>\n      </div>\n    </span>\n\t\t'}),Vue.component("vw-panel-nodeSelector",{props:["sysdata"],template:'\n    <div class=\'modPanel\' id=\'typeSelectors\'>\n\t\t\t<div class="panelHead">Type Selector<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>\n      \n      <div class="labelSelectorDisplay flexcroll" id=\'labelSelectorsPanel\'>\n        <table class="labelSelectorText">\n        \n        <tr>\n\t\t\t\t    <td>\n\t\t\t\t\t    <div v-on:click="sysdata.highlightAllNodes()" class="labelSelectorItem"> \n                All &nbsp;\n\t\t\t\t\t    </div>\n\t\t\t\t    </td>\n\t\t\t\t    <td>\n\t\t\t\t\t    <div id="labelSelector.fetcher" \n                  class="forlabelselector mytooltip pull-right"\n                  v-on:click="sysdata.getAllEntities()"\n                  v-bind:style="{ \'background-color\': \'gray\' }">\n\t\t\t\t\t\t      &nbsp;\n\t\t\t\t\t\t    <div class="mytooltiptext ttleft ttupper">\n\t\t\t\t\t\t\t    Fetch all from database\n\t\t\t\t\t\t    </div>\n\t\t\t\t\t    </div>\n\t\t\t\t    </td>\n\t\t\t    </tr>\n\n          <tr v-for="(selector, index) in sysdata.typeSelectors">\n\t\t\t\t    <td>\n\t\t\t\t\t    <div v-on:click="sysdata.highlightNodesByType(index)" class="labelSelectorItem"> \n                {{ selector.name }} &nbsp;\n\t\t\t\t\t    </div>\n\t\t\t\t    </td>\n\t\t\t\t    <td>\n\t\t\t\t\t    <div id="labelSelector.fetcher" \n                  class="forlabelselector mytooltip pull-right"\n                  v-on:click="sysdata.getEntitiesByType(selector.name, index)"\n                  v-bind:style="{ \'background-color\': selector.color }">\n\t\t\t\t\t\t    {{ selector.instanceCount }}\n\t\t\t\t\t\t    <div class="mytooltiptext ttleft ttupper">\n\t\t\t\t\t\t\t    Fetch from database\n\t\t\t\t\t\t    </div>\n\t\t\t\t\t    </div>\n\t\t\t\t    </td>\n\t\t\t    </tr>\n        </table>\n\t    </div>\n    </div>\n  '}),Vue.component("vw-footer",{template:"\n\t<div id='graphexFooter'>\n        \n\t</div>\n"}),Vue.component("vw-graph",{template:"\n\t\t<div id='graphPanel'>\n\t\t\t<div id='graphContainer'></div>\n\t\t</div>\n\t\t"}),Vue.component("vw-left-sidebar",{props:["sysdata"],template:'\n      <div id=\'leftSidebar\' class ="flexcroll">\n        <vw-panel-nodeSelector v-bind:sysdata="sysdata"></vw-panel-nodeSelector>\n      </div>\n\t\t'}),Vue.component("vw-right-sidebar",{props:["tabs"],template:'\n\t\t<div id=\'rightSidebar\' class ="flexcroll">\n        <vw-panel-nodeEditor v-bind:tabsprop="tabs"></vw-panel-nodeEditor>\n\t\t</div>\n\t\t'}),Vue.component("vw-info-modal",{props:{modalId:{type:String},canCancel:{type:Boolean,default:!0},strHeader:{type:String},htmlContent:{type:String},button1Caption:{type:String},button1Function:{type:String},button2Caption:{type:String},button2Function:{type:String}},template:'\n\t<dialog class="inputModal shadow" v-bind:id="modalId">\n    <button v-if=\'canCancel\' onclick=\'new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)\' class="pull-right">&times;</button>\n\t\t<form class="form-group"> \n\t\t\t<h2>{{ strHeader }}</h2>\n\t\t\t<div class="inputModal modalContent flexcroll"\n\t\t\t\tv-html="htmlContent">\n\t\t\t</div>\n      <button v-show=\'button1Caption\' v-on:click="button1Function||null" class="pull-right">{{ button1Caption }}</button>\n      <button v-show=\'button2Caption\' v-on:click="button2Function||null" class="pull-right">{{ button2Caption }}</button>\n\t\t</form>\n\t</dialog>\n\t'}),Vue.component("vw-modal-user-confirm",{props:["modal"],template:'\n\t  <dialog class="inputModal shadow" id="UserConfirm">\n      <button v-on:click="modal.ifCancelled()" class="pull-right">&times;</button>\n\t\t  <div class="form-group"> \n\t\t\t  <h2>{{modal.header}}</h2>\n\t\t\t  <div class="inputModal modalContent flexcroll"\n\t\t\t\t  v-html="modal.content">\n\t\t\t  </div>\n        \n        <button v-on:click="modal.ifCancelled()" class="pull-right">Cancel</button>\n        <button v-on:click="modal.ifConfirmed()" class="pull-right">Yes</button>\n\t\t  </div>\n\t  </dialog>\n  '}),Vue.component("vw-modal-info",{props:["modal"],template:'\n\t  <dialog class="inputModal shadow" id="UserInfo">\n      <button  onclick=\'new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)\' class="pull-right">&times;</button>\n\t\t  <div class="form-group"> \n\t\t\t  <h2>{{modal.header}}</h2>\n\t\t\t  <div class="inputModal modalContent flexcroll"\n\t\t\t\t  v-html="modal.content">\n\t\t\t  </div>\n\t\t  </div>\n\t  </dialog>\n  '}),Vue.component("vw-mode-indicator",{props:["indicatorprop"],template:'\n        <div id=\'modeIndicator\'>\n            <img :src="indicatorprop.image" class ="modeIndicatorImage"/>\n            <span class ="modeIndicatorLabel">{{indicatorprop.title}}</span>\n        </div>\n\t\t'}),Vue.component("vw-formula-box",{props:["formulaprop"],template:'\n        <div id=\'formulaBox\'>\n            <table>\n              <tr>\n                <td>\n\t\t\t\t\t\t      <label for="txtFormulaInput">Formula</label>\n                  <input class="dynamic3" id="txtFormulaInput"\n\t\t\t\t\t\t\t      v-on:keyup.enter="formulaprop.executeFormula()"\n\t\t\t\t\t\t\t      v-model=\'formulaprop.formulaValue\'\n                    datalist="formulaHistory">\n\t\t\t\t\t\t      </input>\n                  <datalist id="formulaHistory">\n                    <option v-for="formula in formulaprop.formulaHistory" v-bind:value="formula.formula">{{formula.formula}}</option>\n                  </datalist>\n                </td>\n                <td>\n\t\t\t\t\t\t      <label for="cmdFormulaGenerate">&nbsp</label>\n\t\t\t\t\t\t      <div>\n\t\t\t\t\t\t\t      <button class ="mybutton" id="cmdFormulaGenerate"\n\t\t\t\t\t\t\t\t      v-on:click="formulaprop.executeFormula(formulaprop.formulaValue)">\n\t\t\t\t\t\t\t\t      generate\n\t\t\t\t\t\t\t      </button>\n\t\t\t\t\t\t      </div>\n                </td>\n\t\t\t\t\t      <td>\n\t\t\t\t\t\t      <label for="cboFormulaTranslator">Translator</label>\n                    <select id="cboFormulaTranslator"\n\t\t\t\t\t\t\t      v-model="formulaprop.selectedTranslatorName"\n                    v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslatorName)"\n\t\t\t\t\t\t\t      ><option\n\t\t\t\t\t\t\t\t      v-for="item in formulaprop.translators"\n\t\t\t\t\t\t\t\t      v-bind:value="item.Name"\n\t\t\t\t\t\t\t\t      v-bind:key="item.Name"\n\t\t\t\t\t\t\t      >{{item.Name}}</option>\n\t\t\t\t\t\t      </select>\n                </td>\n\t\t\t\t\t      <td>\n\t\t\t\t\t\t      <label for="cboFormulaExamples">Examples</label>\n\t\t\t\t\t\t      <select class="halfbox" id="cboFormulaExamples" name="formulaExample"\n\t\t\t\t\t\t\t      v-model="formulaprop.selectedExample"\n\t\t\t\t\t\t\t      v-on:change="formulaprop.executeExampleFormula()"\n\t\t\t\t\t\t\t      ><option\n\t\t\t\t\t\t\t\t      v-for="example in formulaprop.currentTranslator.Examples"\n\t\t\t\t\t\t\t\t      v-bind:value="example"\n\t\t\t\t\t\t\t      >{{example}}</option>\n\t\t\t\t\t\t      </select>\n\t\t\t\t\t      </td>\n\n                <td v-show="(formulaprop.currentTranslator.ImportExamples && formulaprop.currentTranslator.ImportExamples.length>0)">\n                <label for="cboFormulaImports">Imports</label>\n\t\t\t\t\t\t      <select id="cboFormulaImports"\n\t\t\t\t\t\t\t      v-model="formulaprop.selectedImport"\n\t\t\t\t\t\t\t      v-on:change="formulaprop.importFromUrl(formulaprop.selectedImport.value)"\n\t\t\t\t\t\t\t      ><option\n\t\t\t\t\t\t\t\t      v-for="importExample in formulaprop.currentTranslator.ImportExamples"\n\t\t\t\t\t\t\t\t      v-bind:value="importExample"\n\t\t\t\t\t\t\t      >{{importExample.name}}</option>\n\t\t\t\t\t\t      </select>\n\t\t\t\t\t      </td>\n\n\t\t\t\t\t      <td>\n\t\t\t\t\t\t      <label for="cmdInfo">&nbsp</label>\n\t\t\t\t\t\t      <div>\n\t\t\t\t\t\t\t      <button id="cmdInfo"\n\t\t\t\t\t\t\t\t      onclick="new VueConsoleHelper().ShowGlobalInfoModal(\'TranslatorInfo\')"\n\t\t\t\t\t\t\t      ><i class ="glyphicon glyphicon-question-sign"></i></button>\n\t\t\t\t\t\t      </div>\n                </td>\n\n                <td>\n\t\t\t\t\t\t      <label for="cmdTest">&nbsp</label>\n\t\t\t\t\t\t      <div>\n\t\t\t\t\t\t\t      <button id="cmdTest" v-on:click="formulaprop.generateLink()">Create Link</button>\n\t\t\t\t\t\t      </div>\n                </td>\n\n\n              </tr>\n            </table>\n            \n            <vw-info-modal \n              modalId=\'TranslatorInfo\' \n              v-bind:canCancel=\'true\' \n              v-bind:strHeader=\'formulaprop.currentTranslator.Name\' \n              v-bind:htmlContent=\'formulaprop.currentTranslator.ReferenceContent\'>\n            </vw-info-modal>\n            \n            <vw-info-modal modalId=\'GenerateLink\' \n              strHeader=\'Formula link\' \n              v-bind:htmlContent=\'formulaprop.generatedGraphLink\'>\n              button1Caption=\'Copy Link\'\n              v-bind:button1Function=\'formulaprop.copyLink(formulaprop.generatedGraphLink)\'\n            </vw-info-modal>\n            \n            <vw-info-modal modalId=\'WaitingModal1\' \n              v-bind:canCancel=\'false\' \n              strHeader=\'Loading\' \n              htmlContent=\'Please wait...\'>\n            </vw-info-modal>\n        </div>\n\t\t'});var consoleApp=new Vue({components:["vw-panel-nodeEditor"],el:"#vue-app",data:{modals:{userConfirm:{header:"",content:"<p></p>",ifConfirmed:function(){},ifCancelled:function(){}},userInfo:{header:"",content:"<p></p>"}},systemData:{typeSelectors:[],getAllEntities:function(){(new DataService).GetAllEntities()},getEntitiesByType:function(t,e){(new DataService).GetEntitiesByType(t)},highlightAllNodes:function(){highlightLabel()},highlightNodesByType:function(t){highlightLabel(t)}},refreshTypeSelectors:function(){this.systemData.typeSelectors=globals.labelsList},selectNode:function(t){this.selectedNode=t;var e=t.data.entityConfig.config;this.tabs.newMatching.selectedNodeType=t.data.labels[0],this.tabs.newMatching.properties=t.data.properties||[],this.tabs.styles.selectedNodeColor=e.attributes["background-color"],this.tabs.styles.selectedNodeBorderColor=e.attributes["border-color"],this.tabs.styles.selectedNodeTextColor=e.attributes.labelText.color,this.tabs.styles.selectedNodeCircleTextColor=e.attributes.circleText.color,this.tabs.styles.selectedNodeShape=e.attributes.shape,this.tabs.styles.selectedNodeSize=e.attributes.radius,this.tabs.styles.selectedNodeImageUrl=e.attributes.img.url,this.tabs.effects.hasEffectHaze=e.effects.haze,this.tabs.effects.hasEffectShadow=e.effects.shadow,this.tabs.effects.hasEffectGlass=e.effects.glass,this.tabs.effects.hasEffectRounded=e.effects.rounded,this.tabs.behaviours.selectedDisplayTextType=e.attributes.labelText.displayData.key,this.tabs.behaviours.selectedDisplayField=e.attributes.labelText.displayData.value,this.tabs.behaviours.selectedNodeImageType=e.attributes.img.displayData.key,this.tabs.behaviours.selectedNodeImageValue=e.attributes.img.displayData.value},selectedNode:null,topbar:{items:[{caption:"File",items:[{caption:"Reset storage",func:function(){(new VueMenuHelper).ResetDatabase()}}]},{caption:"View",items:[{caption:"Arrange as tree",func:function(){(new VueMenuHelper).ArrangeNodes("bottom-to-top")}},{caption:"Arrange as list",func:function(){(new VueMenuHelper).ArrangeNodes("left-to-right")}},{caption:"Arrange as roots",func:function(){(new VueMenuHelper).ArrangeNodes("top-to-bottom")}},{caption:"Clear stage",func:function(){(new VueMenuHelper).ClearStage()}}]},{caption:"Help",items:[{caption:"About",func:function(){(new VueMenuHelper).ShowAboutModal()}}]}],indicator:{title:"",image:"../custom/assets/binoculars.svg"}},formulaToolbar:{formulaValue:"",formulaHistory:[],translators:[new SimpleTranslator,new JsonTranslator,new UrlParamsTranslator,new ParseTreeTranslator],selectedTranslatorName:(new SimpleTranslator).Name,currentTranslator:new SimpleTranslator,selectedExample:(new SimpleTranslator).Examples&&(new SimpleTranslator).Examples.length>0?"example: "+(new SimpleTranslator).Examples[0]:"",selectedImport:null,selectTranslator:function(t){var e=this;this.translators.forEach(function(n){if(n.Name===t)return e.currentTranslator=n,e.selectedTranslatorName=n.Name,void console.log("translator",e.currentTranslator)})},executeFormula:function(){this.currentTranslator.Translate(this.formulaValue),this.formulaHistory.push({formula:this.formulaValue,translator:this.currentTranslator}),this.formulaValue=""},executeExampleFormula:function(){this.currentTranslator.Translate(this.selectedExample)},importFromUrl(t){(new VueConsoleHelper).ShowGlobalInfoModal("WaitingModal1"),console.log("IMPORTING...");var e=this.currentTranslator,n=new HttpClient,o=t;o=(o=(o=o.replace("$day",("0"+(new Date).getDate()).slice(-2))).replace("$month",("0"+((new Date).getMonth()+1)).slice(-2))).replace("$year",2e3),console.log("URL",o),n.get(o,function(t){console.log("response",t),e.Translate(t),(new VueConsoleHelper).CloseGlobalInfoModal("WaitingModal1")})},generatedGraphLink:"",generateLink:function(){var t=(new StringHelper).ReplaceEachOfCharSet(btoa(this.formulaValue),"+/=","._-");this.generatedGraphLink="http://www.graphex.io/?trans='Simple'&grenc="+t,(new VueConsoleHelper).ShowGlobalInfoModal("GenerateLink")}},tabs:{selectedMatchingTab:"NEW",newMatching:{bExistingConfig:null,selectedConfig:null,masterEntityConfigs:[],selectedNodeType:"",bHasProperties:!1,properties:[],addProperty:function(){this.properties.push({key:"",value:""})}},existingMatching:{},selectExisting:function(t){var e=new JsonHelper;this.styles.selectedNodeColor=e.GetValueWithPath(t,"config/attributes/background-color")||null,this.styles.bNodeColor=!!e.GetValueWithPath(t,"config/attributes/background-color"),this.styles.selectedNodeBorderColor=e.GetValueWithPath(t,"config/attributes/border-color")||null,this.styles.bNodeBorderColor=!!e.GetValueWithPath(t,"config/attributes/border-color"),this.styles.selectedNodeTextColor=e.GetValueWithPath(t,"config/attributes/labelText/color")||null,this.styles.bNodeTextColor=!!e.GetValueWithPath(t,"config/attributes/labelText/color"),this.styles.selectedNodeCircleTextColor=e.GetValueWithPath(t,"config/attributes/circleText/color")||null,this.styles.bNodeCircleTextColor=!!e.GetValueWithPath(t,"config/attributes/circleText/color"),this.styles.selectedNodeSize=e.GetValueWithPath(t,"config/attributes/radius")||null,this.styles.bNodeSize=!!e.GetValueWithPath(t,"config/attributes/radius"),this.styles.selectedNodeShape=e.GetValueWithPath(t,"config/attributes/shape")||null,this.styles.bNodeShape=!!e.GetValueWithPath(t,"config/attributes/shape"),this.styles.selectedNodeImageUrl=e.GetValueWithPath(t,"config/attributes/img/url")||null,this.styles.bNodeImageUrl=!!e.GetValueWithPath(t,"config/attributes/img/url"),this.newMatching.selectedNodeType=e.GetValueWithPath(t,"matchEntity/labels[0]")||null;var n=e.GetValueWithPath(t,"matchEntity/properties");if(this.newMatching.bHasProperties=!1,this.newMatching.properties=[],n){this.newMatching.bHasProperties=!0;for(var o in n)this.newMatching.properties.push({key:o,value:n[o]})}},selectedStyleTab:"STYLES",styles:{bNodeColor:!1,bNodeBorderColor:!1,bNodeTextColor:!1,bNodeCircleTextColor:!1,bNodeSize:!1,bNodeShape:!1,bNodeImageUrl:!1,selectedNodeColor:null,selectedNodeBorderColor:null,selectedNodeTextColor:null,selectedNodeCircleTextColor:null,selectedNodeShape:"circle",selectedNodeSize:25,selectedNodeImageUrl:null,shapes:[{key:"circle",value:"circle"}],updateNodeBackgroundColor:function(){this.bNodeColor=!0,console.log("this.selectedNodeColor",this.selectedNodeColor),globals.selectedNode&&(globals.selectedNode.data.UI.bodyUI.attributes.fill.nodeValue=this.selectedNodeColor)},updateNodeBorderColor:function(){globals.selectedNode&&(globals.selectedNode.data.UI.bodyUI.attributes.stroke.nodeValue=this.selectedNodeBorderColor)},updateNodeTextColor:function(){globals.selectedNode&&(globals.selectedNode.data.UI.displayTextUI.attributes.fill.nodeValue=this.selectedNodeTextColor)},updateNodeCircleTextColor:function(){globals.selectedNode&&(globals.selectedNode.data.UI.circleText.attributes.fill.nodeValue=this.selectedNodeCircleTextColor)},updateNodeSize:function(t){globals.selectedNode&&(globals.selectedNode.data.UI.bodyUI.attributes.r.nodeValue=t)},updateNodeShape:function(){globals.selectedNode&&(globals.selectedNode.data.UI.bodyUI.nodeName=this.selectedNodeShape)},updateNodeImage:function(t){globals.selectedNode&&(globals.selectedNode.data.UI.imageUI.href.baseVal=t)}},effects:{activateEffectHaze:!1,activateEffectShadow:!1,activateEffectGlass:!1,activateEffectRounded:!1,hasEffectHaze:null,hasEffectShadow:null,hasEffectGlass:null,hasEffectRounded:null},behaviours:{bDisplayText:!1,selectedDisplayTextType:null,selectedDisplayField:null,bDisplayImage:!1,selectedNodeImageType:null,selectedNodeImageValue:null},saveMatch:function(){console.log("Saving...");for(var t=new ConfigHelper,e={configName:"NEW"===this.selectedMatchingTab?this.newMatching.selectedNodeType:this.existingMatching.selectedConfig,configType:"entity",matchEntity:{labels:[this.newMatching.selectedNodeType]},config:{}},n=0;n<this.newMatching.properties.length;n++){var o=this.newMatching.properties[n];e.matchEntity.properties||(e.matchEntity.properties={}),o.key&&o.value&&(e.matchEntity.properties[o.key]=o.value)}var l=this.styles;e=addToConfig(l.bNodeColor,e,{config:{attributes:{"background-color":l.selectedNodeColor}}}),e=addToConfig(l.bNodeBorderColor,e,{config:{attributes:{"border-color":l.selectedNodeBorderColor}}}),e=addToConfig(l.bNodeShape,e,{config:{attributes:{shape:l.selectedNodeShape}}}),e=addToConfig(l.bNodeSize,e,{config:{attributes:{radius:l.selectedNodeSize}}}),e=addToConfig(l.bNodeTextColor,e,{config:{attributes:{labelText:{color:l.selectedNodeTextColor}}}}),e=addToConfig(l.bNodeCircleTextColor,e,{config:{attributes:{circleText:{color:l.selectedNodeCircleTextColor}}}}),e=addToConfig(l.bNodeImageUrl,e,{config:{attributes:{img:{url:l.selectedNodeImageUrl}}}});var a=this.behaviours;e=addToConfig(a.bDisplayText,e,{config:{attributes:{labelText:{displayData:{key:a.selectedDisplayTextType,value:a.selectedDisplayField}}}}}),e=addToConfig(a.bDisplayImage,e,{config:{attributes:{img:{displayData:{key:a.selectedNodeImageType,value:a.selectedNodeImageValue}}}}}),t.AddOrUpdateDynamicEntityConfigReturnId(e.configName,e),alert('Config Saved "'+e.configName+'"')},reset:function(){}}}});
+
+
+// ================= NODE EDITOR ================= 
+
+Vue.component('vw-panel-nodeEditor', {
+  props: ['tabsprop'],
+  template: `
+
+		<div class='modPanel' id='nodeEditor'>
+			<div class="panelHead">Node Type Editor<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
+
+			<div class ="tab">
+			  <button class ="tablinks" v-on:click="tabsprop.selectedMatchingTab='NEW'" v-bind:class="{ active: tabsprop.selectedMatchingTab==='NEW'}">Match</button>
+			</div>
+			<div>
+				<vw-panel-nodeEditor-matching v-show="tabsprop.selectedMatchingTab==='NEW'" v-bind:tabs="tabsprop"></vw-panel-nodeEditor-matching>
+			</div>
+
+			<div class ="tab">
+			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='STYLES'" v-bind:class="{ active: tabsprop.selectedStyleTab==='STYLES'}">Style</button>
+			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='EFFECTS'" v-bind:class="{ active: tabsprop.selectedStyleTab==='EFFECTS'}">Effects</button>
+			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='BEHAVIOURS'" v-bind:class="{ active: tabsprop.selectedStyleTab==='BEHAVIOURS'}">Binding</button>
+			</div>
+			<div>
+				<vw-panel-nodeEditor-styles v-show="tabsprop.selectedStyleTab==='STYLES'" v-bind:styles="tabsprop.styles"></vw-panel-nodeEditor-styles>
+				<vw-panel-nodeEditor-effects v-show="tabsprop.selectedStyleTab==='EFFECTS'" v-bind:effects="tabsprop.effects"></vw-panel-nodeEditor-effects>
+				<vw-panel-nodeEditor-behaviours v-show="tabsprop.selectedStyleTab==='BEHAVIOURS'" v-bind:behaviours="tabsprop.behaviours"></vw-panel-nodeEditor-behaviours>
+			</div>
+
+			<div class ="tab">
+			  <button class ="tablinks" v-on:click="tabsprop.saveMatch()">Save</button>
+			  <button class ="tablinks" v-on:click="tabsprop.reset()">Reset</button>
+			</div>
+
+			<!--<div class ="tabcontent">
+				<vw-graph></vw-graph>
+			</div>-->
+		</div>
+
+	`
+});
+
+Vue.component('vw-panel-nodeEditor-matching', {
+  props: ['tabs'],
+  template: `
+		<div class ="tabcontent">
+
+      <label class="canCheck"
+        v-on:click="(tabs.newMatching.bExistingConfig=false); (tabs.newMatching.selectedConfig=null)"
+        v-bind:class="{ active: tabs.newMatching.bExistingConfig }">Existing Config:</label>
+      <select class ="fullbox" v-model='tabs.newMatching.selectedConfig'
+          v-bind:class="{ active: tabs.newMatching.bExistingConfig }"
+          v-on:change="tabs.selectExisting(tabs.newMatching.selectedConfig); tabs.newMatching.bExistingConfig=true">
+				<option v-for="config in tabs.newMatching.masterEntityConfigs" v-bind:value="config">{{config.configName}}</option>
+			</select>
+
+
+
+      <label class="active">Node type of: </label>
+			<input class="active" v-model.lazy='tabs.newMatching.selectedNodeType' v-bind:value="tabs.newMatching.selectedNodeType"></input>
+
+      <label v-bind:class="{ active: tabs.newMatching.bHasProperties }">With properties:
+        <span v-on:click="tabs.newMatching.addProperty(); tabs.newMatching.bHasProperties=true;" class ="btn btn-sm"><i class ="glyphicon glyphicon-plus"></i></span>
+      </label>
+
+			<hr/>
+			<table>
+				<th><label>Name  </label></th>
+				<th><label>Value </label></th>
+				<tr v-for="property in tabs.newMatching.properties">
+					<td><input v-bind:value="property.key" class="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
+					<td><input v-bind:value="property.value" class ="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
+				</tr>
+			</table>
+		</div>
+		`
+});
+Vue.component('vw-panel-nodeEditor-existing', {
+  props: ['tabs'],
+  template: `
+		<div class ="tabcontent">
+
+    	<table class="table">
+				<tr>
+					<td><label class="canCheck active">Config:</label></td>
+					<td>
+			      <select class ="pull-right active" v-model='tabs.existingMatching.selectedConfig'
+                v-on:change="tabs.selectExisting(tabs.existingMatching.selectedConfig)">
+				      <option v-for="config in tabs.existingMatching.masterEntityConfigs" v-bind:value="config">
+                {{config.configName}}
+              </option>
+			      </select>
+  	      </td>
+        </tr>
+      </table>
+
+    </div>
+		`
+});
+
+Vue.component('vw-panel-nodeEditor-styles', {
+  props: ['styles'],
+  template: `
+		<div class ="tabcontent">
+
+			<table class="table">
+				<tr>
+					<td>
+            <label class="canCheck"
+              v-on:click="(styles.bNodeColor=!styles.bNodeColor)"
+              v-bind:class="{ active: styles.bNodeColor }">Background Col:</label></td>
+					<td>
+						<input type="color" class="tinybox pull-right"
+              v-bind:class="{ active: styles.bNodeColor }"
+							v-model.lazy="styles.selectedNodeColor"
+							v-on:change="styles.updateNodeBackgroundColor(); styles.bNodeColor=true">
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<td><label class="canCheck"
+              v-on:click="(styles.bNodeBorderColor=!styles.bNodeBorderColor)"
+              v-bind:class="{ active: styles.bNodeBorderColor }">Border Color:</label></td>
+					<td>
+						<input type="color" class ="tinybox pull-right"
+              v-bind:class="{ active: styles.bNodeBorderColor }"
+							v-model.lazy="styles.selectedNodeBorderColor"
+							v-on:change="styles.updateNodeBorderColor(); styles.bNodeBorderColor=true">
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<td><label class="canCheck"
+              v-on:click="(styles.bNodeTextColor=!styles.bNodeTextColor)"
+              v-bind:class="{ active: styles.bNodeTextColor }">Text Color:</label></td>
+					<td>
+						<input type="color" class="tinybox pull-right"
+              v-bind:class="{ active: styles.bNodeTextColor }"
+							v-model.lazy="styles.selectedNodeTextColor"
+							v-on:change="styles.updateNodeTextColor(); styles.bNodeTextColor=true">
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<td><label class="canCheck"
+              v-on:click="(styles.bNodeCircleTextColor=!styles.bNodeCircleTextColor)"
+              v-bind:class="{ active: styles.bNodeCircleTextColor }">Circle Text Color: </label></td>
+					<td>
+						<input type="color" class="tinybox pull-right"
+              v-bind:class="{ active: styles.bNodeCircleTextColor }"
+							v-model.lazy="styles.selectedNodeCircleTextColor"
+							v-on:change="styles.updateNodeCircleTextColor(); styles.bNodeCircleTextColor=true">
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<td><label class="canCheck"
+              v-on:click="(styles.bNodeSize=!styles.bNodeSize)"
+              v-bind:class="{ active: styles.bNodeSize }">Size: </label></td>
+					<td>
+						<input class ="tinybox pull-right" type="number" value="25"
+              v-bind:class="{ active: styles.bNodeSize }"
+							v-model.lazy='styles.selectedNodeSize'
+							v-on:change="styles.updateNodeSize(styles.selectedNodeSize); styles.bNodeSize=true">
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<td><label class="canCheck"
+              v-on:click="(styles.bNodeShape=!styles.bNodeShape)"
+              v-bind:class="{ active: styles.bNodeShape }">Shape: </label></td>
+					<td>
+						<select class ="pull-right"
+              v-bind:class="{ active: styles.bNodeShape }"
+							v-model='styles.selectedNodeShape'
+							v-on:change="styles.updateNodeShape(); styles.bNodeShape=true">>
+							<option v-for="shape in styles.shapes" v-bind:value="shape.value">{{shape.key}}</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<label class="canCheck"
+        v-on:click="(styles.bNodeImageUrl=!styles.bNodeImageUrl)"
+        v-bind:class="{ active: styles.bNodeImageUrl }">Image URL: </label>
+			<input
+        v-bind:class="{ active: styles.bNodeImageUrl }"
+				v-model.lazy='styles.selectedNodeImageUrl'
+				v-on:change="styles.updateNodeImage(styles.selectedNodeImageUrl); styles.bNodeImageUrl=true">
+			</input>
+		</div>
+		`
+});
+Vue.component('vw-panel-nodeEditor-effects', {
+  props: ['effects'],
+  template: `
+		<div class ="tabcontent">
+			<table class ="table">
+				<tr>
+					<td><label class="canCheck"
+              v-on:click="(effects.activateEffectHaze=!effects.activateEffectHaze)"
+              v-bind:class="{ active: effects.activateEffectHaze }">Haze: </label></td>
+					<td><input type="checkbox" v-model="effects.hasEffectHaze" v-on:change="effects.activateEffectHaze=true" value="false" v-bind:class="{ active: effects.activateEffectHaze }"></input></td>
+				</tr>
+				<tr>
+					<td><label class="canCheck"
+              v-on:click="(effects.activateEffectShadow=!effects.activateEffectShadow)"
+              v-bind:class="{ active: effects.activateEffectShadow }">Shadow: </label></td>
+					<td><input type="checkbox" v-model="effects.hasEffectShadow" v-on:change="effects.activateEffectShadow=true" value="false" v-bind:class="{ active: effects.activateEffectShadow }"></input></td>
+				</tr>
+				<tr>
+					<td><label class="canCheck"
+              v-on:click="(effects.activateEffectGlass=!effects.activateEffectGlass)"
+              v-bind:class="{ active: effects.activateEffectGlass }">Glass: </label></td>
+					<td><input type="checkbox" v-model="effects.hasEffectGlass" v-on:change="effects.activateEffectGlass=true" value="false" v-bind:class="{ active: effects.activateEffectGlass }"></input></td>
+				</tr>
+				<tr>
+					<td><label class="canCheck"
+              v-on:click="(effects.activateEffectRounded=!effects.activateEffectRounded)"
+              v-bind:class="{ active: effects.activateEffectRounded }">Rounded: </label></td>
+					<td><input type="checkbox" v-model="effects.hasEffectRounded" v-on:change="effects.activateEffectRounded=true" value="false" v-bind:class="{ active: effects.activateEffectRounded }"></input></td>
+				</tr>
+
+			</table>
+		</div>
+		`
+});
+Vue.component('vw-panel-nodeEditor-behaviours', {
+  props: ['behaviours'],
+  template: `
+		<div class ="tabcontent">
+
+      <label class="canCheck" v-on:click="(behaviours.bDisplayText=!behaviours.bDisplayText)" v-bind:class="{ active: behaviours.bDisplayText }"> Center text: </label>
+      <table>
+        <tr>
+          <td>
+            <select class ="halfbox pull-right"
+                v-model="behaviours.selectedDisplayTextType"
+                v-bind:class="{ active: behaviours.bDisplayText }"
+                v-on:change="behaviours.bDisplayText=true">
+              <option v-for="type in ['type','property','static','first']" v-bind:value="type">
+                {{type}}
+              </option>
+            </select>
+          </td>
+          <td> <input class ="halfbox pull-right" v-model="behaviours.selectedDisplayField" v-bind:class="{ active: behaviours.bDisplayText }"></input> </td>
+        </tr>
+      </table>
+
+      <label class="canCheck" v-on:click="(behaviours.bDisplayImage=!behaviours.bDisplayImage)" v-bind:class="{ active: behaviours.bDisplayImage }"> Image URL: </label>
+      <table>
+        <tr>
+          <td>
+            <select class ="halfbox pull-right"
+                v-model="behaviours.selectedNodeImageType"
+                v-bind:class="{ active: behaviours.bDisplayImage }"
+                v-on:change="behaviours.bDisplayImage=true">
+              <option v-for="type in ['property','static']" v-bind:value="type">
+                {{type}}
+              </option>
+            </select>
+          </td>
+          <td> <input class ="halfbox pull-right" v-model="behaviours.selectedNodeImageValue" v-bind:class="{ active: behaviours.bDisplayImage }"></input> </td>
+        </tr>
+      </table>
+
+
+			<hr>
+
+		</div>
+		`
+});
+
+// ================= TOPBAR ================= 
+
+Vue.component('vw-topbar', {
+  props: ['topbar'],
+  template: `
+	<div id='graphexTopBar'>
+    <table>
+      <tr>
+        <td>
+          <div class="logo">GRAPH<i class="glyphicon glyphicon-menu-hamburger"></i>X</div>
+        </td>
+        <td>
+            <vw-dropdown-menu 
+              v-for="item in topbar.items" 
+              v-bind:name="item.caption" 
+              v-bind:menuitems="item.items">
+            </vw-dropdown-menu>
+        </td>
+      </tr>
+      <!--<vw-mode-indicator v-bind:indicatorprop="topbar.indicator"></vw-mode-indicator>-->
+    </table>
+        
+	</div>
+`
+});
+
+Vue.component('vw-dropdown-menu', {
+  props: ['name', 'menuitems'],
+  template: `
+    <span class="dropdown">
+      <button class="dropbtn">{{name}}</button>
+      <div class="dropdown-content">
+        <a href="#" 
+          v-for="item in menuitems"
+          v-on:click="item.func()"
+          >{{ item.caption }}</a>
+      </div>
+    </span>
+		`
+});
+
+Vue.component('vw-panel-nodeSelector', {
+  props: ['sysdata'],
+  template: `
+    <div class='modPanel' id='typeSelectors'>
+			<div class="panelHead">Type Selector<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
+      
+      <div class="labelSelectorDisplay flexcroll" id='labelSelectorsPanel'>
+        <table class="labelSelectorText">
+        
+        <tr>
+				    <td>
+					    <div v-on:click="sysdata.highlightAllNodes()" class="labelSelectorItem"> 
+                All &nbsp;
+					    </div>
+				    </td>
+				    <td>
+					    <div id="labelSelector.fetcher" 
+                  class="forlabelselector mytooltip pull-right"
+                  v-on:click="sysdata.getAllEntities()"
+                  v-bind:style="{ 'background-color': 'gray' }">
+						      &nbsp;
+						    <div class="mytooltiptext ttleft ttupper">
+							    Fetch all from database
+						    </div>
+					    </div>
+				    </td>
+			    </tr>
+
+          <tr v-for="(selector, index) in sysdata.typeSelectors">
+				    <td>
+					    <div v-on:click="sysdata.highlightNodesByType(index)" class="labelSelectorItem"> 
+                {{ selector.name }} &nbsp;
+					    </div>
+				    </td>
+				    <td>
+					    <div id="labelSelector.fetcher" 
+                  class="forlabelselector mytooltip pull-right"
+                  v-on:click="sysdata.getEntitiesByType(selector.name, index)"
+                  v-bind:style="{ 'background-color': selector.color }">
+						    {{ selector.instanceCount }}
+						    <div class="mytooltiptext ttleft ttupper">
+							    Fetch from database
+						    </div>
+					    </div>
+				    </td>
+			    </tr>
+        </table>
+	    </div>
+    </div>
+  `
+});
+
+// ================= BOTTOMBAR/FOOTER ================= 
+
+Vue.component('vw-footer', {
+  template: `
+	<div id='graphexFooter'>
+        
+	</div>
+`
+});
+
+// ================= SIDEBARS & GRAPH ================= 
+
+Vue.component('vw-graph', {
+  template: `
+		<div id='graphPanel'>
+			<div id='graphContainer'></div>
+		</div>
+		`
+});
+
+Vue.component('vw-left-sidebar', {
+  props: ['sysdata', 'panels'],
+  template: `
+      <div v-if="panels.nodeTypeSelector.show" id='leftSidebar' class ="flexcroll">
+        <vw-panel-nodeSelector v-if="panels.nodeTypeSelector.show" v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
+      </div>
+		`
+});
+
+Vue.component('vw-right-sidebar', {
+  props: ['tabs', 'panels'],
+  template: `
+		<div v-if="panels.nodeTypeEditor.show" id='rightSidebar' class ="flexcroll">
+        <vw-panel-nodeEditor v-if="panels.nodeTypeEditor.show" v-bind:tabsprop="tabs"></vw-panel-nodeEditor>
+		</div>
+		`
+});
+
+// ================= MODALS ================= 
+
+Vue.component('vw-info-modal', {
+  props: {
+    modalId: { type: String },
+    canCancel: { type: Boolean, default: true },
+    strHeader: { type: String },
+    htmlContent: { type: String },
+    button1Caption: { type: String },
+    button1Function: { type: String },
+    button2Caption: { type: String },
+    button2Function: { type: String }
+  },
+  template: `
+	<dialog class="inputModal shadow" v-bind:id="modalId">
+    <button v-if='canCancel' onclick='new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
+		<form class="form-group"> 
+			<h2>{{ strHeader }}</h2>
+			<div class="inputModal modalContent flexcroll"
+				v-html="htmlContent">
+			</div>
+      <button v-show='button1Caption' v-on:click="button1Function||null" class="pull-right">{{ button1Caption }}</button>
+      <button v-show='button2Caption' v-on:click="button2Function||null" class="pull-right">{{ button2Caption }}</button>
+		</form>
+	</dialog>
+	`
+});
+
+Vue.component('vw-modal-user-confirm', {
+  props: ['userconfirm'],
+  template: `
+	  <dialog class="inputModal shadow" id="UserConfirm">
+      <button v-on:click="userconfirm.ifCancelled()" class="pull-right">&times;</button>
+		  <div class="form-group"> 
+			  <h2>{{userconfirm.header}}</h2>
+			  <div class="inputModal modalContent flexcroll"
+				  v-html="userconfirm.content">
+			  </div>
+        <button v-on:click="userconfirm.ifCancelled()" class="pull-right">{{userconfirm.cancelCaption}}</button>
+        <button v-on:click="userconfirm.ifConfirmed()" class="pull-right">{{userconfirm.confirmCaption}}</button>
+		  </div>
+	  </dialog>
+  `
+});
+
+Vue.component('vw-modal-info', {
+  props: ['modal'],
+  template: `
+	  <dialog class="inputModal shadow" id="UserInfo">
+      <button  onclick='new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
+		  <div class="form-group"> 
+			  <h2>{{modal.header}}</h2>
+			  <div class="inputModal modalContent flexcroll"
+				  v-html="modal.content">
+			  </div>
+		  </div>
+	  </dialog>
+  `
+});
+
+// ================= MODE INDICTAOR ================= 
+Vue.component('vw-mode-indicator', {
+  props: ['indicatorprop'],
+  template: `
+        <div id='modeIndicator'>
+            <img :src="indicatorprop.image" class ="modeIndicatorImage"/>
+            <span class ="modeIndicatorLabel">{{indicatorprop.title}}</span>
+        </div>
+		`
+});
+
+// ================= FORMULA BOX ================= 
+Vue.component('vw-formula-box', {
+  props: ['formulaprop', 'panels'],
+  template: `
+        <div v-if="panels.formulaBar.show" id='formulaBox'>
+            <table>
+              <tr>
+                <td>
+						      <label for="txtFormulaInput">Formula</label>
+                  <br/>
+                  <input class="dynamic3" id="txtFormulaInput"
+							      v-on:keyup.enter="formulaprop.executeFormula()"
+							      v-model='formulaprop.formulaValue'
+                    datalist="formulaHistory">
+						      </input>
+                  <datalist id="formulaHistory">
+                    <option v-for="formula in formulaprop.formulaHistory" v-bind:value="formula.formula">{{formula.formula}}</option>
+                  </datalist>
+                </td>
+                <td>
+						      <label for="cmdFormulaGenerate">&nbsp</label>
+						      <div>
+							      <button class ="mybutton" id="cmdFormulaGenerate"
+								      v-on:click="formulaprop.executeFormula(formulaprop.formulaValue)">
+								      generate
+							      </button>
+						      </div>
+                </td>
+					      <td>
+						        <label for="cboFormulaTranslator">Translator</label>
+                    <br/>
+                    <select id="cboFormulaTranslator"
+							      v-model="formulaprop.selectedTranslatorName"
+                    v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslatorName)"
+							      ><option
+								      v-for="item in formulaprop.translators"
+								      v-bind:value="item.Name"
+								      v-bind:key="item.Name"
+							      >{{item.Name}}</option>
+						      </select>
+                </td>
+					      <td>
+						      <label for="cboFormulaExamples">Examples</label>
+                  <br/>
+						      <select class="halfbox" id="cboFormulaExamples" name="formulaExample"
+							      v-model="formulaprop.selectedExample"
+							      v-on:change="formulaprop.executeExampleFormula()"
+							      ><option
+								      v-for="example in formulaprop.currentTranslator.Examples"
+								      v-bind:value="example"
+							      >{{example}}</option>
+						      </select>
+					      </td>
+
+                <td v-show="(formulaprop.currentTranslator.ImportExamples && formulaprop.currentTranslator.ImportExamples.length>0)">
+                  <label for="cboFormulaImports">Imports</label>
+						      <br/>
+                  <select id="cboFormulaImports"
+							      v-model="formulaprop.selectedImport"
+							      v-on:change="formulaprop.importFromUrl(formulaprop.selectedImport.value)"
+							      ><option
+								      v-for="importExample in formulaprop.currentTranslator.ImportExamples"
+								      v-bind:value="importExample"
+							      >{{importExample.name}}</option>
+						      </select>
+					      </td>
+
+					      <td>
+						      <label for="cmdInfo">&nbsp</label>
+						      <br/>
+                  <div>
+							      <button id="cmdInfo"
+								      onclick="new VueConsoleHelper().ShowGlobalInfoModal('TranslatorInfo')"
+							      ><i class ="glyphicon glyphicon-question-sign"></i></button>
+						      </div>
+                </td>
+
+                <td>
+						      <label for="cmdTest">&nbsp</label>
+						      <br/>
+                  <div>
+							      <button id="cmdTest" v-on:click="formulaprop.generateLink()">Create Link</button>
+						      </div>
+                </td>
+
+              </tr>
+            </table>
+            
+            <vw-info-modal 
+              modalId='TranslatorInfo' 
+              v-bind:canCancel='true' 
+              v-bind:strHeader='formulaprop.currentTranslator.Name' 
+              v-bind:htmlContent='formulaprop.currentTranslator.ReferenceContent'>
+            </vw-info-modal>
+            
+            <vw-info-modal modalId='GenerateLink' 
+              strHeader='Formula link' 
+              v-bind:htmlContent='formulaprop.generatedGraphLink'>
+              button1Caption='Copy Link'
+              v-bind:button1Function='formulaprop.copyLink(formulaprop.generatedGraphLink)'
+            </vw-info-modal>
+            
+            <vw-info-modal modalId='WaitingModal1' 
+              v-bind:canCancel='false' 
+              strHeader='Loading' 
+              htmlContent='Please wait...'>
+            </vw-info-modal>
+        </div>
+		`
+});
+
+var consoleApp = new Vue({
+  components: ['vw-panel-nodeEditor'],
+  el: '#vue-app',
+  data: {
+    panels: {
+      nodeTypeEditor: { show: false },
+      nodeTypeSelector: { show: false },
+      formulaBar: { show: true }
+    },
+    modals: {
+      userConfirm: {
+        header: "",
+        content: "<p></p>",
+        cancelCaption: "Cancel",
+        confirmCaption: "Yes",
+        ifConfirmed: function () {},
+        ifCancelled: function () {}
+      },
+      userInfo: {
+        header: "",
+        content: "<p></p>"
+      }
+    },
+    systemData: {
+      //totalEntityCount: 0,
+      typeSelectors: [],
+      getAllEntities: function () {
+        new DataService().GetAllEntities();
+      },
+      getEntitiesByType: function (entityTypeName, index) {
+        new DataService().GetEntitiesByType(entityTypeName);
+      },
+      highlightAllNodes: function () {
+        highlightLabel();
+      },
+      highlightNodesByType: function (index) {
+        highlightLabel(index);
+      }
+    },
+    // PUBLIC
+    refreshTypeSelectors: function () {
+      //this.systemData.totalEntityCount++;
+      this.systemData.typeSelectors = globals.labelsList;
+    },
+    selectNode: function (node) {
+      this.selectedNode = node;
+      var nodeConfig = node.data.entityConfig.config;
+
+      this.tabs.newMatching.selectedNodeType = node.data.labels[0];
+      this.tabs.newMatching.properties = node.data.properties || [];
+
+      this.tabs.styles.selectedNodeColor = nodeConfig.attributes["background-color"];
+      this.tabs.styles.selectedNodeBorderColor = nodeConfig.attributes["border-color"];
+      //debugger;
+      this.tabs.styles.selectedNodeTextColor = nodeConfig.attributes.labelText["color"];
+      this.tabs.styles.selectedNodeCircleTextColor = nodeConfig.attributes.circleText["color"];
+      this.tabs.styles.selectedNodeShape = nodeConfig.attributes["shape"];
+      this.tabs.styles.selectedNodeSize = nodeConfig.attributes["radius"];
+      this.tabs.styles.selectedNodeImageUrl = nodeConfig.attributes.img["url"];
+
+      this.tabs.effects.hasEffectHaze = nodeConfig.effects["haze"];
+      this.tabs.effects.hasEffectShadow = nodeConfig.effects["shadow"];
+      this.tabs.effects.hasEffectGlass = nodeConfig.effects["glass"];
+      this.tabs.effects.hasEffectRounded = nodeConfig.effects["rounded"];
+
+      this.tabs.behaviours.selectedDisplayTextType = nodeConfig.attributes.labelText.displayData["key"];
+      this.tabs.behaviours.selectedDisplayField = nodeConfig.attributes.labelText.displayData["value"];;
+      this.tabs.behaviours.selectedNodeImageType = nodeConfig.attributes.img.displayData["key"];
+      this.tabs.behaviours.selectedNodeImageValue = nodeConfig.attributes.img.displayData["value"];;;
+    },
+    // PRIVATE
+    selectedNode: null,
+    topbar: {
+      items: [{
+        caption: "File",
+        items: [{
+          caption: "Reset storage",
+          func: function () {
+            new VueMenuHelper().ResetDatabase();
+          }
+        }, {
+          caption: "Export graph",
+          func: function () {
+            new VueMenuHelper().ExportGraph();
+          }
+        }]
+      }, {
+        caption: "View",
+        items: [{
+          caption: "Node Type Editor",
+          func: function () {
+            consoleApp.panels.nodeTypeEditor.show = !consoleApp.panels.nodeTypeEditor.show;
+          }
+        }, {
+          caption: "Node Type Selector",
+          func: function () {
+            consoleApp.panels.nodeTypeSelector.show = !consoleApp.panels.nodeTypeSelector.show;
+          }
+        }, {
+          caption: "Formula bar",
+          func: function () {
+            consoleApp.panels.formulaBar.show = !consoleApp.panels.nodeTypeSelector.show;
+          }
+        }]
+      }, {
+        caption: "Tools",
+        items: [{
+          caption: "Unpin all",
+          func: function () {
+            new VueMenuHelper().UnpinAll();
+          }
+        }, {
+          caption: "Arrange as tree",
+          func: function () {
+            new VueMenuHelper().ArrangeNodes("bottom-to-top");
+          }
+        }, {
+          caption: "Arrange as list",
+          func: function () {
+            new VueMenuHelper().ArrangeNodes("left-to-right");
+          }
+        }, {
+          caption: "Arrange as roots",
+          func: function () {
+            new VueMenuHelper().ArrangeNodes("top-to-bottom");
+          }
+        }, {
+          caption: "Center graph",
+          func: function () {
+            new VueMenuHelper().CenterGraph();
+          }
+        }, {
+          caption: "Clear stage",
+          func: function () {
+            new VueMenuHelper().ClearStage();
+          }
+        }]
+      }, {
+        caption: "Help",
+        items: [{
+          caption: "About",
+          func: function () {
+            new VueMenuHelper().ShowAboutModal();
+          }
+        }]
+      }],
+      indicator: {
+        title: "",
+        image: "../custom/assets/binoculars.svg"
+      }
+    },
+
+    // Formula toolbar
+    formulaToolbar: {
+      //modalHeader: "",
+      //modalContent: "",
+      //modalButtonCaption: "Close",
+
+      formulaValue: "",
+      formulaHistory: [],
+      translators: [new SimpleTranslator(), new JsonTranslator(), new UrlParamsTranslator(), new ParseTreeTranslator()],
+      selectedTranslatorName: new SimpleTranslator().Name,
+      currentTranslator: new SimpleTranslator(),
+      selectedExample: new SimpleTranslator().Examples && new SimpleTranslator().Examples.length > 0 ? 'example: ' + new SimpleTranslator().Examples[0] : "",
+      selectedImport: null,
+      selectTranslator: function (value) {
+        var currentScope = this;
+        this.translators.forEach(function (trans) {
+          if (trans.Name === value) {
+            currentScope.currentTranslator = trans;
+            currentScope.selectedTranslatorName = trans.Name;
+            console.log('translator', currentScope.currentTranslator);
+            return;
+          }
+        });
+      },
+      executeFormula: function () {
+        var translator = this.currentTranslator;
+        translator.Translate(this.formulaValue);
+        this.formulaHistory.push({ "formula": this.formulaValue, "translator": this.currentTranslator });
+        this.formulaValue = "";
+      },
+      executeExampleFormula: function () {
+        var translator = this.currentTranslator;
+        translator.Translate(this.selectedExample);
+      },
+      importFromUrl(url) {
+        new VueConsoleHelper().ShowGlobalInfoModal('WaitingModal1');
+        console.log('IMPORTING...');
+        var translator = this.currentTranslator;
+        var httpClient = new HttpClient();
+        var finalUrl = url;
+        finalUrl = finalUrl.replace('$day', ("0" + new Date().getDate()).slice(-2));
+        finalUrl = finalUrl.replace('$month', ("0" + (new Date().getMonth() + 1)).slice(-2));
+        finalUrl = finalUrl.replace('$year', 2000);
+        console.log('URL', finalUrl);
+        httpClient.get(finalUrl, function (response) {
+          console.log('response', response);
+          translator.Translate(response);
+          new VueConsoleHelper().CloseGlobalInfoModal('WaitingModal1');
+        });
+      },
+      generatedGraphLink: "",
+      generateLink: function () {
+        var encodedFormula = new StringHelper().ReplaceEachOfCharSet(btoa(this.formulaValue), '+/=', '._-');
+        this.generatedGraphLink = "http://www.graphex.io/?trans='Simple'&grenc=" + encodedFormula;
+        new VueConsoleHelper().ShowGlobalInfoModal('GenerateLink');
+      }
+    },
+    tabs: {
+      // Matching Tabs...
+      selectedMatchingTab: 'NEW',
+      newMatching: {
+        bExistingConfig: null,
+        selectedConfig: null,
+        masterEntityConfigs: [],
+
+        selectedNodeType: '',
+
+        bHasProperties: false,
+        properties: [],
+        addProperty: function () {
+          this.properties.push({ key: '', value: '' });
+        }
+      },
+      existingMatching: {},
+      selectExisting: function (selectedConfig) {
+        var jsonHelper = new JsonHelper();
+        //debugger;
+        this.styles.selectedNodeColor = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/background-color") || null;
+        this.styles.bNodeColor = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/background-color") ? true : false;
+
+        this.styles.selectedNodeBorderColor = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/border-color") || null;
+        this.styles.bNodeBorderColor = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/border-color") ? true : false;
+
+        this.styles.selectedNodeTextColor = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/labelText/color") || null;
+        this.styles.bNodeTextColor = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/labelText/color") ? true : false;
+
+        this.styles.selectedNodeCircleTextColor = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/circleText/color") || null;
+        this.styles.bNodeCircleTextColor = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/circleText/color") ? true : false;
+
+        this.styles.selectedNodeSize = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/radius") || null;
+        this.styles.bNodeSize = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/radius") ? true : false;
+
+        this.styles.selectedNodeShape = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/shape") || null;
+        this.styles.bNodeShape = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/shape") ? true : false;
+
+        this.styles.selectedNodeImageUrl = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/img/url") || null;
+        this.styles.bNodeImageUrl = jsonHelper.GetValueWithPath(selectedConfig, "config/attributes/img/url") ? true : false;
+
+        this.newMatching.selectedNodeType = jsonHelper.GetValueWithPath(selectedConfig, "matchEntity/labels[0]") || null;
+        var properties = jsonHelper.GetValueWithPath(selectedConfig, "matchEntity/properties");
+        this.newMatching.bHasProperties = false;
+        this.newMatching.properties = [];
+        if (properties) {
+          this.newMatching.bHasProperties = true;
+          for (var keyName in properties) this.newMatching.properties.push({ "key": keyName, "value": properties[keyName] });
+        }
+      },
+      // Style tabs...
+      selectedStyleTab: `STYLES`,
+      styles: {
+        bNodeColor: false,
+        bNodeBorderColor: false,
+        bNodeTextColor: false,
+        bNodeCircleTextColor: false,
+        bNodeSize: false,
+        bNodeShape: false,
+        bNodeImageUrl: false,
+
+        selectedNodeColor: null,
+        selectedNodeBorderColor: null,
+        selectedNodeTextColor: null,
+        selectedNodeCircleTextColor: null,
+        selectedNodeShape: 'circle',
+        selectedNodeSize: 25,
+        selectedNodeImageUrl: null,
+        //shapes: [{ key: 'circle', value: 'circle' }, { key: 'rectangle', value: "rect" }, { key: 'triangle', value: "path" }],
+        shapes: [{ key: 'circle', value: 'circle' }],
+        updateNodeBackgroundColor: function () {
+          this.bNodeColor = true;
+          console.log('this.selectedNodeColor', this.selectedNodeColor);
+          if (globals.selectedNode) globals.selectedNode.data.UI.bodyUI.attributes["fill"].nodeValue = this.selectedNodeColor;
+        },
+        updateNodeBorderColor: function () {
+          if (globals.selectedNode) globals.selectedNode.data.UI.bodyUI.attributes["stroke"].nodeValue = this.selectedNodeBorderColor;
+        },
+        updateNodeTextColor: function () {
+          if (globals.selectedNode) globals.selectedNode.data.UI.displayTextUI.attributes["fill"].nodeValue = this.selectedNodeTextColor;
+        },
+        updateNodeCircleTextColor: function () {
+          if (globals.selectedNode) globals.selectedNode.data.UI.circleText.attributes["fill"].nodeValue = this.selectedNodeCircleTextColor;
+        },
+        updateNodeSize: function (size) {
+          if (globals.selectedNode) globals.selectedNode.data.UI.bodyUI.attributes["r"].nodeValue = size;
+        },
+        updateNodeShape: function () {
+          if (globals.selectedNode) globals.selectedNode.data.UI.bodyUI.nodeName = this.selectedNodeShape;
+        },
+        updateNodeImage: function (URL) {
+          if (globals.selectedNode) globals.selectedNode.data.UI.imageUI.href.baseVal = URL;
+        }
+
+      },
+      effects: {
+        activateEffectHaze: false,
+        activateEffectShadow: false,
+        activateEffectGlass: false,
+        activateEffectRounded: false,
+
+        hasEffectHaze: null,
+        hasEffectShadow: null,
+        hasEffectGlass: null,
+        hasEffectRounded: null
+      },
+      behaviours: {
+        bDisplayText: false,
+        selectedDisplayTextType: null,
+        selectedDisplayField: null,
+
+        bDisplayImage: false,
+        selectedNodeImageType: null,
+        selectedNodeImageValue: null
+      },
+      saveMatch: function () {
+        console.log('Saving...');
+        var configHelper = new ConfigHelper();
+
+        var tempConfig = {
+          configName: this.selectedMatchingTab === 'NEW' ? this.newMatching.selectedNodeType : this.existingMatching.selectedConfig,
+          configType: "entity",
+          matchEntity: {
+            "labels": [this.newMatching.selectedNodeType]
+          },
+          config: {}
+        };
+        // Add properties to matching criteria...
+        for (var i = 0; i < this.newMatching.properties.length; i++) {
+          var property = this.newMatching.properties[i];
+          if (!tempConfig.matchEntity.properties) tempConfig.matchEntity.properties = {};
+          if (property.key && property.value) tempConfig.matchEntity.properties[property.key] = property.value;
+        }
+
+        var s = this.styles;
+        tempConfig = addToConfig(s.bNodeColor, tempConfig, { "config": { "attributes": { "background-color": s.selectedNodeColor } } });
+        tempConfig = addToConfig(s.bNodeBorderColor, tempConfig, { "config": { "attributes": { "border-color": s.selectedNodeBorderColor } } });
+        tempConfig = addToConfig(s.bNodeShape, tempConfig, { "config": { "attributes": { "shape": s.selectedNodeShape } } });
+        tempConfig = addToConfig(s.bNodeSize, tempConfig, { "config": { "attributes": { "radius": s.selectedNodeSize } } });
+        tempConfig = addToConfig(s.bNodeTextColor, tempConfig, { "config": { "attributes": { "labelText": { "color": s.selectedNodeTextColor } } } });
+        tempConfig = addToConfig(s.bNodeCircleTextColor, tempConfig, { "config": { "attributes": { "circleText": { "color": s.selectedNodeCircleTextColor } } } });
+        tempConfig = addToConfig(s.bNodeImageUrl, tempConfig, { config: { attributes: { "img": { "url": s.selectedNodeImageUrl } } } });
+
+        var b = this.behaviours;
+        tempConfig = addToConfig(b.bDisplayText, tempConfig, {
+          "config": {
+            "attributes": {
+              "labelText": {
+                "displayData": { "key": b.selectedDisplayTextType, "value": b.selectedDisplayField }
+              }
+            }
+          }
+        });
+
+        tempConfig = addToConfig(b.bDisplayImage, tempConfig, {
+          "config": {
+            "attributes": {
+              "img": {
+                "displayData": { "key": b.selectedNodeImageType, "value": b.selectedNodeImageValue }
+              }
+            }
+          }
+        });
+        // Save config...
+        configHelper.AddOrUpdateDynamicEntityConfigReturnId(tempConfig.configName, tempConfig);
+        alert('Config Saved "' + tempConfig.configName + '"');
+      },
+
+      reset: function () {
+        // TODO
+      }
+    }
+  }
+});
+
+function addToConfig(isActive, config, newConfig) {
+  console.log('isActive', isActive);
+  if (!isActive) return config;
+  var jsonHelper = new JsonHelper();
+  //return $.extend(true, {}, config, newConfig);
+  console.log('creating new config...');
+  return jsonHelper.MergeJson(config, newConfig, "arrayId");
+}
+
+function VueMenuHelper() {
+  this.ResetDatabase = function () {
+    var header = 'Are you sure?';
+    var content = "This will remove all the data and settings that you've accumulated so far";
+    var ifConfirmed = function () {
+      resetDatabase();
+      alert('Storage cleared');
+    };
+    displayConfirmModal(header, content, ifConfirmed, 'Yes', 'Cancel');
+  };
+
+  this.ExportGraph = function () {
+    var blob = new SimpleTranslator().TranslateGraphToFormula();
+    //blob = new StringHelper().ReplaceAll(blob, '"', '');
+    var content = "<input id='exportGraphTextArea' value='" + blob + "'>";
+    displayConfirmModal('Export Data', content, ifConfirmed, 'Copy', 'Exit');
+    function ifConfirmed() {
+      var text = document.getElementById('exportGraphTextArea');
+      text.select();
+      document.execCommand("Copy");
+      alert('Copied to clipboard');
+    };
+  };
+
+  this.ArrangeNodes = function (_orientation) {
+    new SimpleArranger().Arrange(_orientation);
+    this.CenterGraph();
+  };
+  this.UnpinAll = function () {
+    unPinAllNodes();
+  };
+  this.CenterGraph = function () {
+    globals.layout.step();
+    var browserHelper = new BrowserHelper();
+    var windowSize = browserHelper.GetWindowSize();
+    var graphBounds = globals.layout.getGraphRect();
+    var graphSize = {
+      width: Math.abs(graphBounds.x2 - graphBounds.x1),
+      height: Math.abs(graphBounds.y2 - graphBounds.y1)
+    };
+    var zoom = globals.graphics.scale(1, { x: 0, y: 0 });
+    var moveX = windowSize.width / 2 - graphSize.width / 2 * zoom;
+    var moveY = windowSize.height / 2 - graphSize.height / 2 * zoom;
+
+    globals.graphics.graphCenterChanged(moveX, moveY);
+  }, this.OtherFunctions = function () {
+    //TODO:
+    // Double the size of the graph..
+    //globals.graphics.scale(2,{x:1,y:1})
+    // Half the size of the graph
+    //globals.graphics.scale(0.5,{x:1,y:1})
+  };
+  this.ShowAboutModal = function () {
+    var header = "About";
+    var content = `
+        Hi there, we hope you are enjoying the use of this tool.
+        It is still under development, but we welcome any suggestions that you may have.
+        <br>If you would like to contact us for any reason, you can get hold of us at:
+        <br><a href="mailto:suggest@graphex.io?Subject=I have a suggestion" target="_top">suggest@graphex.io</a>
+    `;
+    new VueConsoleHelper().ShowInfoModal(header, content);
+  };
+
+  this.ClearStage = function () {
+    var overflow = globals.nodeList.length + 1;;
+    var counter = 0;
+    while (globals.nodeList.length > 0 && ++counter < overflow) {
+      removeNodeFromGraph(globals.nodeList[0].id);
+    }
+    globals.labelsList = [];
+    globals.nodeList = [];
+    globals.checkedLinks = [];
+    globals.checkedNodes = [];
+    globals.monitoredLinks = [];
+    globals.monitoredNodes = [];
+    globals.animUpdateNodes = [];
+    globals.animUpdateLinks = [];
+    globals.bPlanRelate = false;
+    globals.bRelate = false;
+    globals.selectedLink = '';
+    globals.selectedNode = '';
+    globals.selectedNodeData = '';
+    globals.selectedNodeID = '';
+    globals.selectedNodeUI = '';
+    globals.timeoutElements = [];
+  };
+
+  this.createFormulaFromGraph = function () {};
+
+  function resetDatabase() {
+    new DataService().DropDatabase();
+    refreshEntitySelectors();
+    consoleApp.refreshTypeSelectors();
+  }
+
+  function displayConfirmModal(header, content, confirmFunction, _confirmCaption, _cancelCaption) {
+    var modalId = 'UserConfirm';
+    var consoleHelper = new VueConsoleHelper();
+    consoleApp.modals.userConfirm.header = header;
+    consoleApp.modals.userConfirm.content = content;
+    if (_confirmCaption) consoleApp.modals.userConfirm.confirmCaption = _confirmCaption;
+    if (_cancelCaption) consoleApp.modals.userConfirm.cancelCaption = _cancelCaption;
+    // Confirm click...
+    consoleApp.modals.userConfirm.ifConfirmed = function () {
+      confirmFunction();
+      consoleHelper.CloseGlobalInfoModal(modalId);
+    };
+    // Cancel click...
+    consoleApp.modals.userConfirm.ifCancelled = function () {
+      consoleHelper.CloseGlobalInfoModal(modalId);
+    };
+    consoleHelper.ShowGlobalInfoModal(modalId);
+  }
+}
+
+function VueConsoleHelper() {
+
+  this.ShowInfoModal = function (header, content) {
+    consoleApp.modals.userInfo.header = header;
+    consoleApp.modals.userInfo.content = content;
+    showGlobalInfoModal('UserInfo');
+  };
+
+  this.ShowCopyModal = function (header, content) {
+    consoleApp.modals.userInfo.header = header;
+    consoleApp.modals.userInfo.content = content;
+    showGlobalInfoModal('CopyInfo');
+  };
+
+  this.ShowGlobalInfoModal = function (modalId) {
+    showGlobalInfoModal(modalId);
+  };
+  this.CloseGlobalInfoModal = function (modalId) {
+    closeGlobalInfoModal(modalId);
+  };
+
+  function showGlobalInfoModal(modalId) {
+    var dialogElement = document.getElementById(modalId);
+    dialogElement.showModal();
+  }
+  function closeGlobalInfoModal(modalId) {
+    var dialogElement = document.getElementById(modalId);
+    dialogElement.close();
+  }
+}
