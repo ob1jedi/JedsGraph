@@ -681,6 +681,27 @@ var consoleApp = new Vue({
            caption: "View", 
            items:[
               {
+                caption: "Node Type Editor", 
+                func: function(){consoleApp.panels.nodeTypeEditor.show = !consoleApp.panels.nodeTypeEditor.show}
+              },
+              {
+                caption: "Node Type Selector", 
+                func: function(){consoleApp.panels.nodeTypeSelector.show = !consoleApp.panels.nodeTypeSelector.show}
+              },
+              {
+                caption: "Formula bar", 
+                func: function(){consoleApp.panels.formulaBar.show = !consoleApp.panels.nodeTypeSelector.show}
+              },
+            ],
+          },
+          {
+           caption: "Tools", 
+           items:[
+              {
+                caption: "Unpin all", 
+                func: function(){new VueMenuHelper().UnpinAll()}
+              },
+              {
                 caption: "Arrange as tree", 
                 func: function(){new VueMenuHelper().ArrangeNodes("bottom-to-top")}
               },
@@ -700,16 +721,6 @@ var consoleApp = new Vue({
                 caption: "Clear stage", 
                 func: function(){new VueMenuHelper().ClearStage()}
               }
-            ],
-          },
-          {
-           caption: "Tools", 
-           items:[
-              {
-                caption: "Unpin all", 
-                func: function(){new VueMenuHelper().UnpinAll()}
-              },
-
             ],
           },
           {
@@ -806,8 +817,6 @@ var consoleApp = new Vue({
         addProperty: function() {
           this.properties.push({ key: '',value: '' });
         },
-
-
       },
       existingMatching: {
 
