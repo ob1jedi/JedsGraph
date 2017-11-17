@@ -675,6 +675,10 @@ var consoleApp = new Vue({
             {
               caption: "Reset storage", 
               func: function(){new VueMenuHelper().ResetDatabase()}
+            },
+            {
+              caption: "Export graph", 
+              func: function(){new VueMenuHelper().ExportGraph()}
             }
           ] 
          },
@@ -1004,33 +1008,58 @@ function addToConfig(isActive,config,newConfig) {
 }
 
 function VueMenuHelper(){
-    this.ResetDatabase = function(){
-      var consoleHelper = new VueConsoleHelper();
-      consoleApp.modals.userConfirm.header = 'Are you sure?';
-      consoleApp.modals.userConfirm.content = "This will remove all the data and settings that you've accumulated so far";
-      consoleApp.modals.userConfirm.ifConfirmed = function(){
-        consoleHelper.CloseGlobalInfoModal('UserConfirm');
-        new DataService().DropDatabase();
-        refreshEntitySelectors();
-        consoleApp.refreshTypeSelectors();
-        alert('Storage cleared');
-      };
-      consoleApp.modals.userConfirm.ifCancelled = function(){
-        consoleHelper.CloseGlobalInfoModal('UserConfirm');
-      };
-      consoleHelper.ShowGlobalInfoModal('UserConfirm');
-    }
+  this.ResetDatabase = function(){
+    var header = 'Are you sure?';
+    var content = "This will remove all the data and settings that you've accumulated so far";
+    var ifConfirmed = function(){
+      resetDatabase();
+      alert('Storage cleared');
+    };
+    displayConfirmModal(header, content, ifConfirmed, 'Yes', 'Cancel');
+  }
+
+  this.ExportGraph = function(){
+    var blob = new SimpleTranslator().TranslateGraphToFormula();
+    //blob = new StringHelper().ReplaceAll(blob, '"', '');
+    var content = "<input id='exportGraphTextArea' value='" + blob + "'>";
+    displayConfirmModal('Export Data', content, ifConfirmed, 'Copy', 'Exit');
+    function ifConfirmed(){
+      var text = document.getElementById('exportGraphTextArea');
+      text.select();
+      document.execCommand("Copy");
+      alert('Copied to clipboard');
+    };
+  }
 
   this.ArrangeNodes = function(_orientation){
     new SimpleArranger().Arrange(_orientation);
+    this.CenterGraph();
   }
   this.UnpinAll = function(){
     unPinAllNodes();
   }
   this.CenterGraph = function(){
+    globals.layout.step();
     var browserHelper = new BrowserHelper();
-    var size = browserHelper.GetWindowSize();
-    globals.graphics.graphCenterChanged(size.width/2, size.height/2);
+    var windowSize = browserHelper.GetWindowSize();
+    var graphBounds = globals.layout.getGraphRect();
+    var graphSize = ({
+      width: Math.abs(graphBounds.x2-graphBounds.x1),
+      height: Math.abs(graphBounds.y2-graphBounds.y1),
+    })
+    var zoom = globals.graphics.scale(1,{x:0,y:0});
+    var moveX = (windowSize.width/2) - (graphSize.width/2 * zoom);
+    var moveY = (windowSize.height/2) - (graphSize.height/2 * zoom);
+
+    globals.graphics.graphCenterChanged(moveX, moveY);
+  },
+
+  this.OtherFunctions = function(){
+  //TODO:
+    // Double the size of the graph..
+    //globals.graphics.scale(2,{x:1,y:1})
+    // Half the size of the graph
+    //globals.graphics.scale(0.5,{x:1,y:1})
   }
   this.ShowAboutModal = function(){
     var header = "About";
@@ -1070,6 +1099,13 @@ function VueMenuHelper(){
   this.createFormulaFromGraph = function(){
 
   }
+
+  function resetDatabase(){
+      new DataService().DropDatabase();
+      refreshEntitySelectors();
+      consoleApp.refreshTypeSelectors();
+  }
+
   function displayConfirmModal (header, content, confirmFunction, _confirmCaption, _cancelCaption){
     var modalId = 'UserConfirm';
     var consoleHelper = new VueConsoleHelper();
