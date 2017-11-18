@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<body>
+    <div id="developerCustomForms">
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="newWorkflowModel">
+            <form class="form-group">
+                <h2>Create Workflow</h2>
+                <br />
+                <label class="label" for="txtName">Name</label>
+                <input class="form-control" if="txtName" type="text" placeholder="Enter name">
+            </form>
+            <button onclick="globals.nodeFunctions.add_workflow()" class="btn btn-default pull-right">Submit</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="updateWorkflowModel">
+            <form class="form-group">
+                <h2>Update Workflow</h2>
+                <br />
+                <label class="label" for="txtName">Name</label>
+                <input class="form-control" if="txtName" type="text" placeholder="Enter name">
+            </form>
+            <button onclick="globals.nodeFunctions.update_workflow()" class="btn btn-default pull-right">Save</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="removeWorkflowModel">
+            <form class="form-group">
+                <h2>Remove Workflow</h2>
+                Are you sure you want to remove this workflow?
+            </form>
+            <button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+        </dialog>
+
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="addContentModal">
+            <form class="form-group">
+                <h2>Add content fetcher</h2>
+                <br />
+                <label class="label" for="selector">Fetch from: </label>
+                <select class="form-control" id="selector">
+                    <option value="Local">By Request</option>
+                    <option value="Local">Local Path</option>
+                    <option value="Repo">Repository</option>
+                    <option value="URI">URI</option>
+                </select>
+            </form>
+            <button onclick="globals.nodeFunctions.add_content()" class="btn btn-default pull-right">Submit</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="updateContentModel">
+            <form class="form-group">
+                <h2>Send to content</h2>
+                <br />
+                <label class="label" for="selector">Content</label>
+                <select class="form-control" id="selector">
+                    <option value="Echo">Echo</option>
+                    <option value="Gamma">Gamma</option>
+                    <option value="Texture Packer">Texture Packer</option>
+                    <option value="Sparta">Sparta</option>
+                </select>
+            </form>
+            <button onclick="globals.nodeFunctions.update_content()" class="btn btn-default pull-right">Submit</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="removeContent">
+            <form class="form-group">
+                <h2>Remove Workflow</h2>
+                Are you sure you want to remove this content?
+            </form>
+            <button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="addToolModal">
+            <form class="form-group">
+                <h2>Send to tool</h2>
+                <br />
+                <label class="label" for="selector">Tool</label>
+                <select class="form-control" id="selector">
+                    <option value="Echo">Echo</option>
+                    <option value="Gamma">Gamma</option>
+                    <option value="Texture Packer">Texture Packer</option>
+                    <option value="Sparta">Sparta</option>
+                </select>
+            </form>
+            <button onclick="globals.nodeFunctions.add_tool()" class="btn btn-default pull-right">Submit</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="updateToolModel">
+            <form class="form-group">
+                <h2>Send to tool</h2>
+                <br />
+                <label class="label" for="selector">Tool</label>
+                <select class="form-control" id="selector">
+                    <option value="Echo">Echo</option>
+                    <option value="Gamma">Gamma</option>
+                    <option value="Texture Packer">Texture Packer</option>
+                    <option value="Sparta">Sparta</option>
+                </select>
+            </form>
+            <button onclick="globals.nodeFunctions.update_tool()" class="btn btn-default pull-right">Submit</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="removeTool">
+            <form class="form-group">
+                <h2>Remove Workflow</h2>
+                Are you sure you want to remove this tool?
+            </form>
+            <button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="addCollectorModal">
+            <form class="form-group">
+                <h2>Send to collector</h2>
+                <br />
+                <label class="label" for="selector">Collector</label>
+                <select class="form-control" id="selector">
+                    <option value="Echo">Echo</option>
+                    <option value="Gamma">Gamma</option>
+                    <option value="Texture Packer">Texture Packer</option>
+                    <option value="Sparta">Sparta</option>
+                </select>
+            </form>
+            <button onclick="globals.nodeFunctions.add_collector()" class="btn btn-default pull-right">Submit</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="updateCollectorModel">
+            <form class="form-group">
+                <h2>Send to collector</h2>
+                <br />
+                <label class="label" for="selector">Collector</label>
+                <select class="form-control" id="selector">
+                    <option value="Echo">Echo</option>
+                    <option value="Gamma">Gamma</option>
+                    <option value="Texture Packer">Texture Packer</option>
+                    <option value="Sparta">Sparta</option>
+                </select>
+            </form>
+            <button onclick="globals.nodeFunctions.update_collector()" class="btn btn-default pull-right">Submit</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+        <dialog class="inputModal" id="removeCollector">
+            <form class="form-group">
+                <h2>Remove Workflow</h2>
+                Are you sure you want to remove this collector?
+            </form>
+            <button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
+        </dialog>
+        <!-------------------------------------------------------------------->
+    </div>
+
+</body>
+</html>

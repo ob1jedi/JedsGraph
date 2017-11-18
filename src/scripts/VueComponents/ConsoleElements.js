@@ -486,7 +486,7 @@ Vue.component('vw-mode-indicator',{
 // ================= FORMULA BOX ================= 
 Vue.component('vw-formula-box',{
   props: ['formulaprop', 'panels'],
-  template: '#vueFormulaBar'
+  template: '#vueFormulaBar-template'
 })
 
 var consoleApp = new Vue({

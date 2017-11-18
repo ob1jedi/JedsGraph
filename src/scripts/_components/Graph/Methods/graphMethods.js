@@ -330,7 +330,7 @@ function addDataNode(nodeId, nodeData, _sourceConfig)
 	}
 				
 	thisNodeData = nodeData;
-	thisIsNewNode = newNode;
+	thisIsNewNode = isNewNode;
 	this_sourceConfig = _sourceConfig;
 
 	//set display attributes based on config...

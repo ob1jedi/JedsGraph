@@ -7,7 +7,7 @@
 			$elButton = document.getElementById('toolbar.'+ panel.name);
 			$elPanel = document.getElementById(panel.name);
 			$parentContainer = document.getElementById(panel.parent);
-			$hiddenParent = document.getElementById('noColumn');
+			$hiddenParent = document.getElementById('invisibleElements');
 			if ($parentContainer && $elPanel && $elButton){
 				var isShowing = $elButton.classList.contains('showicon');
 				if(isShowing){ //hide...

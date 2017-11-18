@@ -30,13 +30,13 @@ function initializeConfiguration(callback_setupGraph) {
 		});
 
 		//Update the config selector on the UI...
-		var selectorElement = document.getElementById("configSelector");
+		//var selectorElement = document.getElementById("configSelector");
 		globals.masterConfigs.forEach(function (cnf) {
-			if (configManager.defaultConfig = cnf.prefix) { DefaultConfig = cnf }
-			selectorElement.innerHTML += '<option value="' + cnf.configName + '">' + cnf.configName + '</option>';
+			if (configManager.defaultConfig = cnf.prefix) { 
+        DefaultConfig = cnf;
+      }
+			//selectorElement.innerHTML += '<option value="' + cnf.configName + '">' + cnf.configName + '</option>';
 		});
-
-
 
 		callback_setupGraph(DefaultConfig);
 	});

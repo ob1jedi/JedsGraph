@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<body>
+    <!--<div class="labelSelectorDisplay toolPanel flexcroll" id='panel.labelselectors'>
+        <div class="panelHead">Node Types</div>
+        <table id="selectorLabels" class="label"></table>
+    </div>-->
+
+    <div class='toolPanel' id='panel.config'>
+        <div class="panelHead">Configuration:</div>
+        Configuration: <select onchange="changeConfig()" id="configSelector"></select>
+
+        <ol>
+            <!-- Create an instance of the todo-item component -->
+            <todo-item></todo-item>
+        </ol>
+    </div>
+
+    <div class='panel toolPanel' id='panel.nodedetails'>
+        <div id='selectedNode'></div>
+        <hr>
+        <div id='nodeDetails'>
+        </div>
+    </div>
+
+    <div class='panel toolPanel' id='panel.linkdetails'>
+        <div id='selectedLink'></div>
+        <hr>
+        <div id='linkDetails'>
+        </div>
+    </div>
+
+    <div class='toolPanel' id='panel.simplequery'>
+        <div class="panelHead">Build Query:</div>
+        <table>
+            <tr>
+                <td>from entity:</td>
+                <td>
+                    <select onchange="globals.dataService.Qbuilder('qbuilder.from.entity')" id="qbuilder.from.entity"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>where:</td>
+                <td>
+                    <input class="dynamic2" onfocus="globals.dataService.Qbuilder('qbuilder.from.property')" onchange="globals.dataService.Qbuilder('qbuilder.from.property')" id="qbuilder.from.property" type="text" name="" list="qbuilder.from.selectproperty">
+                    <datalist id="qbuilder.from.selectproperty"></datalist>
+
+                </td>
+            </tr>
+            <tr>
+                <td>is:</td>
+                <td>
+                    <!--select onchange="qbuilder('qbuilder.from.value')" id="qbuilder.from.value"></select-->
+                    <input class="dynamic2" onfocus="globals.dataService.Qbuilder_ClearValue('qbuilder.from.value')" onchange="globals.dataService.Qbuilder('qbuilder.from.value')" id="qbuilder.from.value" type="text" name="" list="qbuilder.from.selectvalue">
+                    <datalist id="qbuilder.from.selectvalue"></datalist>
+
+                </td>
+            </tr>
+        </table>
+        <button onclick='ButtonSimpleSearch()'>Search</button>
+        <!--button onclick='Neo4jQueryRecursiveSearch()'>Tree Search</button-->
+    </div>
+
+    <div class='toolPanel' id='panel.functions'>
+        <div class="panelHead">Functions:</div>
+        <button onclick='createJsonFromSelectedNodes()'>Create Json</button>
+        <!--<button class="popup">
+            Monitor
+            <div class="popuptext">
+                <div id="hovertext" onclick="monitorCheckedItems()">Monitor checked</div>
+                <div id="hovertext" onclick="clearAllMonitored()">Clear all</div>
+            </div>
+        </button>-->
+        <button onclick='animateTest()'>Add Indicator</button>
+        <!--<button onclick='json2GraphDlg.showModal()'>Create from json</button>-->
+        <button onclick='increaseNodeDepth()'>IncNodeDepth</button>
+        <!--button onclick='testFunction()'>Test2</button-->
+
+    </div>
+
+    <!--div id="slider" draggable="true" class="toolPanel slide-in">
+        <ul>
+            <li>Lorem</li>
+            <li>Ipsum</li>
+            <li>Dolor</li>
+        </ul>
+    </div-->
+    <!--button id="toggle" style="position:absolute; top: 120px;">Toggle</button-->
+    <!--<div class='toolPanel' id='panel.monitoring'>
+        <div id='newNode'>
+            <div class="panelHead">Monitored Nodes</div>
+            <table id='nodelist.monitored'></table>
+        </div>
+    </div>-->
+
+    <div class='toolPanel' id='panel.entity.create'>
+        <div class="panelHead">Entity Management</div>
+        <table>
+            <tr>
+                <td>entity name:</td>
+                <td> <input id='new.entity.name' value=''></input></td>
+            </tr>
+        </table>
+        <hr>
+        <table>
+            <tr>
+                <td><button class="paneloption mytooltip" onclick="panelAddKeyValue('panel.entity.props', 'new.entity')">V<div class="mytooltiptext ttright ttupper">Add property</div></button></td>
+                <td><button class="paneloption mytooltip" onclick="panelRemoveKeyValue('panel.entity.props', 'new.entity')">X<div class="mytooltiptext ttright ttupper">Remove property</div></button></td>
+            </tr>
+        </table>
+        <hr>
+        <table id='panel.entity.props'>
+            <tbody></tbody>
+        </table>
+        <hr>
+        <button onclick='submitNewEntity()'>Create New Entity</button>
+        <button onclick='submitUpdateEntity()'>Update Selected</button>
+        <button onclick='GetRelatedEntityGraph()'>Delete Selected</button>
+    </div>
+
+
+    <div class='toolPanel' id='panel.relationship.create'>
+        <div class="panelHead">Create Relationship</div>
+        <table>
+            <tr>
+                <td>relation name:</td>
+                <td> <input id='new.relation.name' value=''></input></td>
+            </tr>
+        </table>
+        <hr style="border-color:#262626;">
+        <table>
+            <tr>
+                <td><button class="paneloption mytooltip" onclick="panelAddKeyValue('panel.relation.props', 'new.relation')">V<div class="mytooltiptext ttright ttupper">Add property</div></button></td>
+                <td><button class="paneloption mytooltip" onclick="panelRemoveKeyValue('panel.relation.props', 'new.relation')">X<div class="mytooltiptext ttright ttupper">Remove property</div></button></td>
+            </tr>
+        </table>
+        <hr style="border-color:#262626;">
+        <table id='panel.relation.props'>
+            <tbody></tbody>
+        </table>
+        <hr style="border-color:#262626;">
+        <button onclick='relateSelectedToNode()'>Create Relation To...</button>
+        <button onclick='planRelateSelectedToNode()'>Plan Relation To...</button>
+        <button onclick='deleteLink()'>Delete selected</button>
+    </div>
+
+    <div class='toolPanel' id='panel.bulkactions'>
+        <div>
+            <div class="panelHead">Apply to ALL</div>
+            <button class="popup">
+                Check
+                <div class="popuptext">
+                    <div id="hovertext" onclick='uncheckAll()'>Uncheck all</div>
+                    <div id="hovertext" onclick='checkAll()'>Check all</div>
+                </div>
+            </button>
+            <button onclick='globals.dataService.GetAllEntities()'>Fetch</button>
+            <button onclick='unPinAllNodes()'>Unpin</button>
+            <button onclick='arrangeBy2()'>Arrange</button>
+        </div>
+    </div>
+
+
+
+    <div class='toolPanel' id='panel.appearance'>
+        <div class="panelHead">Appearance</div>
+        <button class="popup">
+            Node
+            <div class="popuptext">
+                <div id="hovertext" onclick='unPinSelectedNode()'>Unpin</div>
+                <div id="hovertext" onclick='refreshNodeAppearance()'>Refresh Visual</div>
+                <div id="hovertext" onclick='increaseNodeSize()'>Increase Size</div>
+                <div id="hovertext" onclick='decreaseNodeSize()'>Decrease Size</div>
+                <div id="hovertext" onclick='increaseNodeMass()'>Increase Mass</div>
+                <div id="hovertext" onclick='decreaseNodeMass()'>Decrease Mass</div>
+                <div id="hovertext" onclick='increaseNodeSprings()'>Increase Spring</div>
+                <div id="hovertext" onclick='decreaseNodeSprings()'>Decrease Spring</div>
+                <div id="hovertext" onclick='increaseNodeDepth()'>Increase Depth</div>
+                <div id="hovertext" onclick='decreaseNodeDepth()'>Decrease Depth</div>
+            </div>
+        </button>
+
+        <button class="popup">
+            Font
+            <div class="popuptext">
+                <div id="hovertext" onclick='fontGrow()'>Increase font size</div>
+                <div id="hovertext" onclick='fontShrink()'>Decrease font size</div>
+                <div id="hovertext" onclick='fontUp()'>Move text up</div>
+                <div id="hovertext" onclick='fontDown()'>Move text down</div>
+            </div>
+        </button>
+        <button onclick='removeNodeFromStage()'>Hide Entity</button>
+    </div>
+    <!--div class='toolPanel' id='panelData'>
+        <div class="panelHead">Data</div>
+        <input id="nodeLabel" type="text" name="lname">
+        <button onclick='getEntityNode()'>Get Entity</button>
+    </div-->
+    <!--div class='toolPanel'>
+        <div>
+            <div class="panelHead">Planning</div>
+            <button onclick='planEntity()'>create entity</button>
+            <button onclick='unPinAllNodes()'>create relation</button>
+            <button onclick='arrangeBy()'>Arrange</button>
+        </div>
+    </div-->
+
+    <div class='toolPanel' id='panel.selection'>
+        <div id='newNode'>
+            <div class="panelHead">Selection Options:</div>
+            <input class="check" id="vo.ch" onclick="updateInteractionOptions()" type="checkbox" name="descendants" value=""> Multi Select<br>
+            <form action="">
+                <input class="check" id="vo.dd" onclick="setScreenDragType('flat')" type="radio" name="related" value="" checked="true"> Flat<br>
+                <input class="check" id="vo.df" onclick="setScreenDragType('depth')" type="radio" name="related" value=""> Depth<br>
+            </form>
+        </div>
+    </div>
+
+    <div class='toolPanel' id='panel.highlight'>
+        <div id='newNode'>
+            <div class="panelHead">Entity Hover</div>
+            <form action="">
+                <input class="check" id="vo.hr" onclick="updateViewOptions()" type="radio" name="related" value="" checked="true"> Highlight Related<br>
+                <input class="check" id="vo.ha" onclick="updateViewOptions()" type="radio" name="related" value=""> Highlight Ancestors<br>
+                <input class="check" id="vo.hd" onclick="updateViewOptions()" type="radio" name="related" value=""> Highlight Descendants<br>
+            </form>
+        </div>
+    </div>
+
+    <div class='toolPanel' id='panel.dragOption'>
+        <div id='newNode'>
+            <div class="panelHead">Drag Options:</div>
+            <form action="">
+                <input class="check" id="do.flat" onclick="updateDragOptions()" type="radio" name="related" value="" checked="true"> Flat<br>
+                <input class="check" id="do.depth" onclick="updateDragOptions()" type="radio" name="related" value=""> Depth<br>
+            </form>
+        </div>
+    </div>
+
+    <div class='toolPanel' id='panel.navigation'>
+        <div id='newNode'>
+            <div class="panelHead">Entity Fetch Options</div>
+            <form action="">
+                <input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('parent')" type="radio" name="related" value=""> fetch parents<br>
+                <input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('child')" type="radio" name="related" value=""> fetch children<br>
+                <input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('both')" type="radio" name="related" value="" checked> fetch both<br>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
