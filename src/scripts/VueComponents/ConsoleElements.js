@@ -5,406 +5,70 @@
 
 Vue.component('vw-panel-nodeEditor',{
   props: ['tabsprop'],
-  template: `
-
-		<div class='modPanel' id='nodeEditor'>
-			<div class="panelHead">Node Type Editor<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
-
-			<div class ="tab">
-			  <button class ="tablinks" v-on:click="tabsprop.selectedMatchingTab='NEW'" v-bind:class="{ active: tabsprop.selectedMatchingTab==='NEW'}">Match</button>
-			</div>
-			<div>
-				<vw-panel-nodeEditor-matching v-show="tabsprop.selectedMatchingTab==='NEW'" v-bind:tabs="tabsprop"></vw-panel-nodeEditor-matching>
-			</div>
-
-			<div class ="tab">
-			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='STYLES'" v-bind:class="{ active: tabsprop.selectedStyleTab==='STYLES'}">Style</button>
-			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='EFFECTS'" v-bind:class="{ active: tabsprop.selectedStyleTab==='EFFECTS'}">Effects</button>
-			  <button class ="tablinks" v-on:click="tabsprop.selectedStyleTab='BEHAVIOURS'" v-bind:class="{ active: tabsprop.selectedStyleTab==='BEHAVIOURS'}">Binding</button>
-			</div>
-			<div>
-				<vw-panel-nodeEditor-styles v-show="tabsprop.selectedStyleTab==='STYLES'" v-bind:styles="tabsprop.styles"></vw-panel-nodeEditor-styles>
-				<vw-panel-nodeEditor-effects v-show="tabsprop.selectedStyleTab==='EFFECTS'" v-bind:effects="tabsprop.effects"></vw-panel-nodeEditor-effects>
-				<vw-panel-nodeEditor-behaviours v-show="tabsprop.selectedStyleTab==='BEHAVIOURS'" v-bind:behaviours="tabsprop.behaviours"></vw-panel-nodeEditor-behaviours>
-			</div>
-
-			<div class ="tab">
-			  <button class ="tablinks" v-on:click="tabsprop.saveMatch()">Save</button>
-			  <button class ="tablinks" v-on:click="tabsprop.reset()">Reset</button>
-			</div>
-
-			<!--<div class ="tabcontent">
-				<vw-graph></vw-graph>
-			</div>-->
-		</div>
-
-	`
+  template: '#vueTemplate-panel-nodeEditor'
 })
 
 
 Vue.component('vw-panel-nodeEditor-matching',{
   props: ['tabs'],
-  template: `
-		<div class ="tabcontent">
-
-      <label class="canCheck"
-        v-on:click="(tabs.newMatching.bExistingConfig=false); (tabs.newMatching.selectedConfig=null)"
-        v-bind:class="{ active: tabs.newMatching.bExistingConfig }">Existing Config:</label>
-      <select class ="fullbox" v-model='tabs.newMatching.selectedConfig'
-          v-bind:class="{ active: tabs.newMatching.bExistingConfig }"
-          v-on:change="tabs.selectExisting(tabs.newMatching.selectedConfig); tabs.newMatching.bExistingConfig=true">
-				<option v-for="config in tabs.newMatching.masterEntityConfigs" v-bind:value="config">{{config.configName}}</option>
-			</select>
-
-
-
-      <label class="active">Node type of: </label>
-			<input class="active" v-model.lazy='tabs.newMatching.selectedNodeType' v-bind:value="tabs.newMatching.selectedNodeType"></input>
-
-      <label v-bind:class="{ active: tabs.newMatching.bHasProperties }">With properties:
-        <span v-on:click="tabs.newMatching.addProperty(); tabs.newMatching.bHasProperties=true;" class ="btn btn-sm"><i class ="glyphicon glyphicon-plus"></i></span>
-      </label>
-
-			<hr/>
-			<table>
-				<th><label>Name  </label></th>
-				<th><label>Value </label></th>
-				<tr v-for="property in tabs.newMatching.properties">
-					<td><input v-bind:value="property.key" class="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
-					<td><input v-bind:value="property.value" class ="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
-				</tr>
-			</table>
-		</div>
-		`
+  template: '#vueTemplate-panel-nodeEditor-matching'
 })
 Vue.component('vw-panel-nodeEditor-existing',{
   props: ['tabs'],
-  template: `
-		<div class ="tabcontent">
-
-    	<table class="table">
-				<tr>
-					<td><label class="canCheck active">Config:</label></td>
-					<td>
-			      <select class ="pull-right active" v-model='tabs.existingMatching.selectedConfig'
-                v-on:change="tabs.selectExisting(tabs.existingMatching.selectedConfig)">
-				      <option v-for="config in tabs.existingMatching.masterEntityConfigs" v-bind:value="config">
-                {{config.configName}}
-              </option>
-			      </select>
-  	      </td>
-        </tr>
-      </table>
-
-    </div>
-		`
+  template: '#vueTemplate-panel-nodeEditor-existing'
 })
 
 Vue.component('vw-panel-nodeEditor-styles',{
   props: ['styles'],
-  template: `
-		<div class ="tabcontent">
-
-			<table class="table">
-				<tr>
-					<td>
-            <label class="canCheck"
-              v-on:click="(styles.bNodeColor=!styles.bNodeColor)"
-              v-bind:class="{ active: styles.bNodeColor }">Background Col:</label></td>
-					<td>
-						<input type="color" class="tinybox pull-right"
-              v-bind:class="{ active: styles.bNodeColor }"
-							v-model.lazy="styles.selectedNodeColor"
-							v-on:change="styles.updateNodeBackgroundColor(); styles.bNodeColor=true">
-						</input>
-					</td>
-				</tr>
-				<tr>
-					<td><label class="canCheck"
-              v-on:click="(styles.bNodeBorderColor=!styles.bNodeBorderColor)"
-              v-bind:class="{ active: styles.bNodeBorderColor }">Border Color:</label></td>
-					<td>
-						<input type="color" class ="tinybox pull-right"
-              v-bind:class="{ active: styles.bNodeBorderColor }"
-							v-model.lazy="styles.selectedNodeBorderColor"
-							v-on:change="styles.updateNodeBorderColor(); styles.bNodeBorderColor=true">
-						</input>
-					</td>
-				</tr>
-				<tr>
-					<td><label class="canCheck"
-              v-on:click="(styles.bNodeTextColor=!styles.bNodeTextColor)"
-              v-bind:class="{ active: styles.bNodeTextColor }">Text Color:</label></td>
-					<td>
-						<input type="color" class="tinybox pull-right"
-              v-bind:class="{ active: styles.bNodeTextColor }"
-							v-model.lazy="styles.selectedNodeTextColor"
-							v-on:change="styles.updateNodeTextColor(); styles.bNodeTextColor=true">
-						</input>
-					</td>
-				</tr>
-				<tr>
-					<td><label class="canCheck"
-              v-on:click="(styles.bNodeCircleTextColor=!styles.bNodeCircleTextColor)"
-              v-bind:class="{ active: styles.bNodeCircleTextColor }">Circle Text Color: </label></td>
-					<td>
-						<input type="color" class="tinybox pull-right"
-              v-bind:class="{ active: styles.bNodeCircleTextColor }"
-							v-model.lazy="styles.selectedNodeCircleTextColor"
-							v-on:change="styles.updateNodeCircleTextColor(); styles.bNodeCircleTextColor=true">
-						</input>
-					</td>
-				</tr>
-				<tr>
-					<td><label class="canCheck"
-              v-on:click="(styles.bNodeSize=!styles.bNodeSize)"
-              v-bind:class="{ active: styles.bNodeSize }">Size: </label></td>
-					<td>
-						<input class ="tinybox pull-right" type="number" value="25"
-              v-bind:class="{ active: styles.bNodeSize }"
-							v-model.lazy='styles.selectedNodeSize'
-							v-on:change="styles.updateNodeSize(styles.selectedNodeSize); styles.bNodeSize=true">
-						</input>
-					</td>
-				</tr>
-				<tr>
-					<td><label class="canCheck"
-              v-on:click="(styles.bNodeShape=!styles.bNodeShape)"
-              v-bind:class="{ active: styles.bNodeShape }">Shape: </label></td>
-					<td>
-						<select class ="pull-right"
-              v-bind:class="{ active: styles.bNodeShape }"
-							v-model='styles.selectedNodeShape'
-							v-on:change="styles.updateNodeShape(); styles.bNodeShape=true">>
-							<option v-for="shape in styles.shapes" v-bind:value="shape.value">{{shape.key}}</option>
-						</select>
-					</td>
-				</tr>
-			</table>
-			<label class="canCheck"
-        v-on:click="(styles.bNodeImageUrl=!styles.bNodeImageUrl)"
-        v-bind:class="{ active: styles.bNodeImageUrl }">Image URL: </label>
-			<input
-        v-bind:class="{ active: styles.bNodeImageUrl }"
-				v-model.lazy='styles.selectedNodeImageUrl'
-				v-on:change="styles.updateNodeImage(styles.selectedNodeImageUrl); styles.bNodeImageUrl=true">
-			</input>
-		</div>
-		`
+  template: '#vueTemplate-panel-nodeEditor-styles'
 })
 Vue.component('vw-panel-nodeEditor-effects',{
   props: ['effects'],
-  template: `
-		<div class ="tabcontent">
-			<table class ="table">
-				<tr>
-					<td><label class="canCheck"
-              v-on:click="(effects.activateEffectHaze=!effects.activateEffectHaze)"
-              v-bind:class="{ active: effects.activateEffectHaze }">Haze: </label></td>
-					<td><input type="checkbox" v-model="effects.hasEffectHaze" v-on:change="effects.activateEffectHaze=true" value="false" v-bind:class="{ active: effects.activateEffectHaze }"></input></td>
-				</tr>
-				<tr>
-					<td><label class="canCheck"
-              v-on:click="(effects.activateEffectShadow=!effects.activateEffectShadow)"
-              v-bind:class="{ active: effects.activateEffectShadow }">Shadow: </label></td>
-					<td><input type="checkbox" v-model="effects.hasEffectShadow" v-on:change="effects.activateEffectShadow=true" value="false" v-bind:class="{ active: effects.activateEffectShadow }"></input></td>
-				</tr>
-				<tr>
-					<td><label class="canCheck"
-              v-on:click="(effects.activateEffectGlass=!effects.activateEffectGlass)"
-              v-bind:class="{ active: effects.activateEffectGlass }">Glass: </label></td>
-					<td><input type="checkbox" v-model="effects.hasEffectGlass" v-on:change="effects.activateEffectGlass=true" value="false" v-bind:class="{ active: effects.activateEffectGlass }"></input></td>
-				</tr>
-				<tr>
-					<td><label class="canCheck"
-              v-on:click="(effects.activateEffectRounded=!effects.activateEffectRounded)"
-              v-bind:class="{ active: effects.activateEffectRounded }">Rounded: </label></td>
-					<td><input type="checkbox" v-model="effects.hasEffectRounded" v-on:change="effects.activateEffectRounded=true" value="false" v-bind:class="{ active: effects.activateEffectRounded }"></input></td>
-				</tr>
-
-			</table>
-		</div>
-		`
+  template: '#vueTemplate-panel-nodeEditor-effects'
 })
 Vue.component('vw-panel-nodeEditor-behaviours',{
   props: ['behaviours'],
-  template: `
-		<div class ="tabcontent">
-
-      <label class="canCheck" v-on:click="(behaviours.bDisplayText=!behaviours.bDisplayText)" v-bind:class="{ active: behaviours.bDisplayText }"> Center text: </label>
-      <table>
-        <tr>
-          <td>
-            <select class ="halfbox pull-right"
-                v-model="behaviours.selectedDisplayTextType"
-                v-bind:class="{ active: behaviours.bDisplayText }"
-                v-on:change="behaviours.bDisplayText=true">
-              <option v-for="type in ['type','property','static','first']" v-bind:value="type">
-                {{type}}
-              </option>
-            </select>
-          </td>
-          <td> <input class ="halfbox pull-right" v-model="behaviours.selectedDisplayField" v-bind:class="{ active: behaviours.bDisplayText }"></input> </td>
-        </tr>
-      </table>
-
-      <label class="canCheck" v-on:click="(behaviours.bDisplayImage=!behaviours.bDisplayImage)" v-bind:class="{ active: behaviours.bDisplayImage }"> Image URL: </label>
-      <table>
-        <tr>
-          <td>
-            <select class ="halfbox pull-right"
-                v-model="behaviours.selectedNodeImageType"
-                v-bind:class="{ active: behaviours.bDisplayImage }"
-                v-on:change="behaviours.bDisplayImage=true">
-              <option v-for="type in ['property','static']" v-bind:value="type">
-                {{type}}
-              </option>
-            </select>
-          </td>
-          <td> <input class ="halfbox pull-right" v-model="behaviours.selectedNodeImageValue" v-bind:class="{ active: behaviours.bDisplayImage }"></input> </td>
-        </tr>
-      </table>
-
-
-			<hr>
-
-		</div>
-		`
+  template: '#vueTemplate-panel-nodeEditor-behaviours'
 })
 
 // ================= TOPBAR ================= 
 
 Vue.component('vw-topbar',{
   props: ['topbar'],
-  template:
-`
-	<div id='graphexTopBar'>
-    <table>
-      <tr>
-        <td>
-          <div class="logo">GRAPH<i class="glyphicon glyphicon-menu-hamburger"></i>X</div>
-        </td>
-        <td>
-            <vw-dropdown-menu 
-              v-for="item in topbar.items" 
-              v-bind:name="item.caption" 
-              v-bind:menuitems="item.items">
-            </vw-dropdown-menu>
-        </td>
-      </tr>
-      <!--<vw-mode-indicator v-bind:indicatorprop="topbar.indicator"></vw-mode-indicator>-->
-    </table>
-        
-	</div>
-`
+  template:'#vueTemplate-topbar'
 })
 
 Vue.component('vw-dropdown-menu',{
   props: ['name', 'menuitems'],
-  template: `
-    <span class="dropdown">
-      <button class="dropbtn">{{name}}</button>
-      <div class="dropdown-content">
-        <a href="#" 
-          v-for="item in menuitems"
-          v-on:click="item.func()"
-          >{{ item.caption }}</a>
-      </div>
-    </span>
-		`
+  template: '#vueTemplate-dropdown-menu'
 })
 
 
 Vue.component('vw-panel-nodeSelector',{
   props: ['sysdata'],
-  template: `
-    <div class='modPanel' id='typeSelectors'>
-			<div class="panelHead">Type Selector<i class ="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
-      
-      <div class="labelSelectorDisplay flexcroll" id='labelSelectorsPanel'>
-        <table class="labelSelectorText">
-        
-        <tr>
-				    <td>
-					    <div v-on:click="sysdata.highlightAllNodes()" class="labelSelectorItem"> 
-                All &nbsp;
-					    </div>
-				    </td>
-				    <td>
-					    <div id="labelSelector.fetcher" 
-                  class="forlabelselector mytooltip pull-right"
-                  v-on:click="sysdata.getAllEntities()"
-                  v-bind:style="{ 'background-color': 'gray' }">
-						      &nbsp;
-						    <div class="mytooltiptext ttleft ttupper">
-							    Fetch all from database
-						    </div>
-					    </div>
-				    </td>
-			    </tr>
-
-          <tr v-for="(selector, index) in sysdata.typeSelectors">
-				    <td>
-					    <div v-on:click="sysdata.highlightNodesByType(index)" class="labelSelectorItem"> 
-                {{ selector.name }} &nbsp;
-					    </div>
-				    </td>
-				    <td>
-					    <div id="labelSelector.fetcher" 
-                  class="forlabelselector mytooltip pull-right"
-                  v-on:click="sysdata.getEntitiesByType(selector.name, index)"
-                  v-bind:style="{ 'background-color': selector.color }">
-						    {{ selector.instanceCount }}
-						    <div class="mytooltiptext ttleft ttupper">
-							    Fetch from database
-						    </div>
-					    </div>
-				    </td>
-			    </tr>
-        </table>
-	    </div>
-    </div>
-  `
+  template: '#vueTemplate-panel-nodeSelector'
 })
 
 // ================= BOTTOMBAR/FOOTER ================= 
 
 Vue.component('vw-footer',{
-  template:
-`
-	<div id='graphexFooter'>
-        
-	</div>
-`
+  template:'#vueTemplate-footer'
 })
 
 // ================= SIDEBARS & GRAPH ================= 
 
 Vue.component('vw-graph',{
-  template:
-        `
-		<div id='graphPanel'>
-			<div id='graphContainer'></div>
-		</div>
-		`
+  template:'#vueTemplate-graph'
 })
 
 Vue.component('vw-left-sidebar',{
   props: ['sysdata', 'panels'],
-  template: `
-      <div v-if="panels.nodeTypeSelector.show" id='leftSidebar' class ="flexcroll">
-        <vw-panel-nodeSelector v-if="panels.nodeTypeSelector.show" v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
-      </div>
-		`
+  template: '#vueTemplate-left-sidebar'
 })
 
 Vue.component('vw-right-sidebar',{
   props: ['tabs', 'panels'],
-  template: `
-		<div v-if="panels.nodeTypeEditor.show" id='rightSidebar' class ="flexcroll">
-        <vw-panel-nodeEditor v-if="panels.nodeTypeEditor.show" v-bind:tabsprop="tabs"></vw-panel-nodeEditor>
-		</div>
-		`
+  template: '#vueTemplate-right-sidebar'
 })
 
 
@@ -422,63 +86,23 @@ Vue.component('vw-info-modal',{
     button2Caption: {type: String},
     button2Function: {type: String}
   },
-  template:
-	`
-	<dialog class="inputModal shadow" v-bind:id="modalId">
-    <button v-if='canCancel' onclick='new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
-		<form class="form-group"> 
-			<h2>{{ strHeader }}</h2>
-			<div class="inputModal modalContent flexcroll"
-				v-html="htmlContent">
-			</div>
-      <button v-show='button1Caption' v-on:click="button1Function||null" class="pull-right">{{ button1Caption }}</button>
-      <button v-show='button2Caption' v-on:click="button2Function||null" class="pull-right">{{ button2Caption }}</button>
-		</form>
-	</dialog>
-	`
+  template:'#vueTemplate-info-modal'
 })
 
 Vue.component('vw-modal-user-confirm',{
   props: ['userconfirm'],
-  template: `
-	  <dialog class="inputModal shadow" id="UserConfirm">
-      <button v-on:click="userconfirm.ifCancelled()" class="pull-right">&times;</button>
-		  <div class="form-group"> 
-			  <h2>{{userconfirm.header}}</h2>
-			  <div class="inputModal modalContent flexcroll"
-				  v-html="userconfirm.content">
-			  </div>
-        <button v-on:click="userconfirm.ifCancelled()" class="pull-right">{{userconfirm.cancelCaption}}</button>
-        <button v-on:click="userconfirm.ifConfirmed()" class="pull-right">{{userconfirm.confirmCaption}}</button>
-		  </div>
-	  </dialog>
-  `
+  template: '#vueTemplate-modal-user-confirm'
 })
 
 Vue.component('vw-modal-info',{
   props: ['modal'],
-  template: `
-	  <dialog class="inputModal shadow" id="UserInfo">
-      <button  onclick='new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
-		  <div class="form-group"> 
-			  <h2>{{modal.header}}</h2>
-			  <div class="inputModal modalContent flexcroll"
-				  v-html="modal.content">
-			  </div>
-		  </div>
-	  </dialog>
-  `
+  template: '#vueTemplate-modal-info'
 })
 
 // ================= MODE INDICTAOR ================= 
 Vue.component('vw-mode-indicator',{
   props: ['indicatorprop'],
-  template: `
-        <div id='modeIndicator'>
-            <img :src="indicatorprop.image" class ="modeIndicatorImage"/>
-            <span class ="modeIndicatorLabel">{{indicatorprop.title}}</span>
-        </div>
-		`
+  template: '#vueTemplate-mode-indicator'
 })
 
 
@@ -486,7 +110,7 @@ Vue.component('vw-mode-indicator',{
 // ================= FORMULA BOX ================= 
 Vue.component('vw-formula-box',{
   props: ['formulaprop', 'panels'],
-  template: '#vueFormulaBar-template'
+  template: '#vueTemplate-formula-box'
 })
 
 var consoleApp = new Vue({
