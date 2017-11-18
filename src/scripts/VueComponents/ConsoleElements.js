@@ -214,7 +214,7 @@ var consoleApp = new Vue({
               },
               {
                 caption: "Formula bar", 
-                func: function(){consoleApp.panels.formulaBar.show = !consoleApp.panels.nodeTypeSelector.show}
+                func: function(){consoleApp.panels.formulaBar.show = !consoleApp.panels.formulaBar.show}
               },
             ],
           },
