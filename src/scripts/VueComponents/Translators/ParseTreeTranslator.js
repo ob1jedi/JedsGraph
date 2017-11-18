@@ -1,6 +1,6 @@
 ﻿
 function ParseTreeTranslator() {
-
+  var _dataSvc = new DataService();
 	this.Name = "Logic Parse Tree";
 	this.Examples = [
     "a & (b & c) -> (d -> (e V f)) & !(g || h)"
@@ -117,12 +117,11 @@ function ParseTreeTranslator() {
   }
   
   function translatorCreateRelation(fromNode, toNode){
-    dataSvc.CreateRelation_AddToGraph_ReturnLink(fromNode.id, toNode.id);
+    _dataSvc.CreateRelation_AddToGraph_ReturnLink(fromNode.id, toNode.id);
   }
 
   function translatorCreateNode(label, type){
-    var dataSvc = new DataService();
-    return dataSvc.CreateEntity_AddToGraph_ReturnNode([type], {"Name":label});
+    return _dataSvc.CreateEntity_AddToGraph_ReturnNode([type], {"Name":label});
   }
 
 }
