@@ -268,7 +268,7 @@ function highlightSelectedNode(nodeId) {
 
 	loadNodePopout(node, node.data.sourceConfig);
 
-	showNodeDetailsInToolPanel(node);	
+	//showNodeDetailsInToolPanel(node);	
 
 	//show sub nodes...
 	if (globals.config_ext.viewOptions.subnodes.relations=="ifany"){
@@ -341,71 +341,71 @@ function loadNodePopout(node, config)
 }
 		
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function showNodeDetailsInToolPanel(node)
-{
-	var processingElement = document.getElementById('selectedNode');
-	var labellist = ''
-	var html = '<div class="panelHead"><p>Selected Entity:</p></div>';
-	//html += '<br/><a class="panelheader">Entity type</a>:<br/>' //+ labellist;
-	html += '<table>'
-	node.data.labels.forEach(function (nodeLabel, index) {
-		if (index!=0){labellist += ', ';}
-		//var button_onclick = 'globals.dataService.DeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
-		html += '<tr>';
-		html += '  <td>';
-		html += '    <p class="dataNameLabel">Entity Number:</p>';
-		html += '  </td>';
-		html += '  <td>';
-		html += '    <p class="dataValueLabel">' + globals.selectedNodeID + '</p>';
-		html += '  </td>';
-		html += '</tr>';
+//function showNodeDetailsInToolPanel(node)
+//{
+	//var processingElement = document.getElementById('selectedNode');
+	//var labellist = ''
+	//var html = '<div class="panelHead"><p>Selected Entity:</p></div>';
+	////html += '<br/><a class="panelheader">Entity type</a>:<br/>' //+ labellist;
+	//html += '<table>'
+	//node.data.labels.forEach(function (nodeLabel, index) {
+	//	if (index!=0){labellist += ', ';}
+	//	//var button_onclick = 'globals.dataService.DeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
+	//	html += '<tr>';
+	//	html += '  <td>';
+	//	html += '    <p class="dataNameLabel">Entity Number:</p>';
+	//	html += '  </td>';
+	//	html += '  <td>';
+	//	html += '    <p class="dataValueLabel">' + globals.selectedNodeID + '</p>';
+	//	html += '  </td>';
+	//	html += '</tr>';
 
-		html += '<tr>';
-		//html += '  <td>';
-		//html += '    <button class="paneloption mytooltip" onclick="' + button_onclick + '" >X';
-		//html += '		<div class="mytooltiptext">delete label</div>';
-		//html += '    </button>';
-		//html += '  </td>';
-		html += '  <td>';
-		html += '    <p class="dataNameLabel">Entity Type:</p>';
-		html += '  </td>';
-		html += '  <td>';
-		html += '    <p class="dataValueLabel">' + nodeLabel + '</p>';
-		html += '  </td>';
-		html += '</tr>';
+	//	html += '<tr>';
+	//	//html += '  <td>';
+	//	//html += '    <button class="paneloption mytooltip" onclick="' + button_onclick + '" >X';
+	//	//html += '		<div class="mytooltiptext">delete label</div>';
+	//	//html += '    </button>';
+	//	//html += '  </td>';
+	//	html += '  <td>';
+	//	html += '    <p class="dataNameLabel">Entity Type:</p>';
+	//	html += '  </td>';
+	//	html += '  <td>';
+	//	html += '    <p class="dataValueLabel">' + nodeLabel + '</p>';
+	//	html += '  </td>';
+	//	html += '</tr>';
 
 
 
-	});
-	html += '</table>'
+	//});
+	//html += '</table>'
 			
 			
-	processingElement.innerHTML = html;
+	//processingElement.innerHTML = html;
 			
-	html = '<div class="panelHead"><p>Properties:</p></div>';
-	html += '<table>'
-	var processingElement = document.getElementById('nodeDetails');
-	node.data.properties.forEach(function(property, index){
-		html += '<tr>'
-		var button_onclick = 'showOnNode(\'' + node.id + '\', \'' + property.value + '\')';
-		html += '  <td>';
-		html += '    <button class="paneloption mytooltip" onclick="' + button_onclick + '">';
-		html += '      <i class="glyphicon glyphicon-eye-open sm"></i>';
-		html += '      <div class="mytooltiptext ttupper">display in node</div>';
-		html += '    </button>';
-		html += '  </td>';
-		html += '  <td> ';
-		html += '    <p class="dataNameLabel">' + property.key + '</p>';
-		html += '  </td>';
-		html += '  <td>';
-		html += '    <p class="dataValueLabel"> ' + property.value + '</p>';
-		html += '  </td>';
-		html += '</tr>'
-	});
-	html += '</table>'
-	processingElement.innerHTML = html;
+	//html = '<div class="panelHead"><p>Properties:</p></div>';
+	//html += '<table>'
+	//var processingElement = document.getElementById('nodeDetails');
+	//node.data.properties.forEach(function(property, index){
+	//	html += '<tr>'
+	//	var button_onclick = 'showOnNode(\'' + node.id + '\', \'' + property.value + '\')';
+	//	html += '  <td>';
+	//	html += '    <button class="paneloption mytooltip" onclick="' + button_onclick + '">';
+	//	html += '      <i class="glyphicon glyphicon-eye-open sm"></i>';
+	//	html += '      <div class="mytooltiptext ttupper">display in node</div>';
+	//	html += '    </button>';
+	//	html += '  </td>';
+	//	html += '  <td> ';
+	//	html += '    <p class="dataNameLabel">' + property.key + '</p>';
+	//	html += '  </td>';
+	//	html += '  <td>';
+	//	html += '    <p class="dataValueLabel"> ' + property.value + '</p>';
+	//	html += '  </td>';
+	//	html += '</tr>'
+	//});
+	//html += '</table>'
+	//processingElement.innerHTML = html;
 			
-	UiShow_EditEntity(node);
+	//UiShow_EditEntity(node);
 	//node.data.properties.forEach(function(property, index){
 	//	html += '<tr>'
 	//	var button_onclick = 'showOnNode(' + node.id + ', \'' + property.value + '\')';
@@ -413,21 +413,21 @@ function showNodeDetailsInToolPanel(node)
 	//	html += '</tr>'
 	//});
 			
-}
+//}
 		
-function UiShow_EditEntity(node){
-	var updateElement = document.getElementById('new.entity.name');
-	var panel = document.getElementById('panel.entity.props');
-	panel.children[0].innerHTML = '';
+//function UiShow_EditEntity(node){
+//	var updateElement = document.getElementById('new.entity.name');
+//	var panel = document.getElementById('panel.entity.props');
+//	panel.children[0].innerHTML = '';
 		    
-	node.data.properties.forEach(function(prop){
-		panelAddKeyValue('panel.entity.props', 'new.entity', prop.key, prop.value, prop.datatype);
-	});
-	if (updateElement)
-	{
-		updateElement.value = node.data.labels[0];
-	}
-}
+//	node.data.properties.forEach(function(prop){
+//		panelAddKeyValue('panel.entity.props', 'new.entity', prop.key, prop.value, prop.datatype);
+//	});
+//	if (updateElement)
+//	{
+//		updateElement.value = node.data.labels[0];
+//	}
+//}
 
 function refreshNodeAppearance(nodeId){
 	var node = globals.GRAPH.getNode(nodeId?nodeId:globals.selectedNodeID);
