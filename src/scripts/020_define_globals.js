@@ -2,14 +2,15 @@
 var globals = new Globals();
 
 function Globals(){
-		//const UI_SHADOW_INDEX = 0;
+	  this.browser = null;	
+    //const UI_SHADOW_INDEX = 0;
 		this.binaryToggle = true;
 		//.....Functional variables.......
 		this.labelsList = []; //list of "neoLabelType" objects
 		this.nodeList = []; //list of "node" objects
     
     this.entityTypeDefs = []; 
-
+    
 
 		this.monitoredNodes = [];//list of "node" objects
 		this.toolPanels = [];

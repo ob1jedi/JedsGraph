@@ -5,6 +5,7 @@ function graphexMain() {
 	initializeConfiguration(setupGraph); //get config, setup common UI
 
 	function setupGraph(DefaultConfig) {
+    setBrowser();
 		var configHelper = new ConfigHelper();
 		configHelper.setConfigSettings(DefaultConfig);
 		configHelper.runStartupProcedures();
@@ -33,6 +34,9 @@ function graphexMain() {
 		}
   }
 
+  function setBrowser(){
+    globals.browser = new BrowserHelper().getBrowser();
+  }
   function processParameters(){
         // PARAMETERS
     //extract commands from URL:
