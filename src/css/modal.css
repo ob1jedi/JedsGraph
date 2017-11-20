@@ -1,0 +1,112 @@
+﻿/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+
+
+
+.inputModal {
+    overflow: auto;
+    margin: 15% auto auto auto; /* 15% from the top and centered */
+    /*width: 80%;*/ /* Could be more or less, depending on screen size */
+
+	width: 400px;
+	/*height: auto;*/
+	padding: 10px;
+	border-style: solid;
+	border-width: 0px;
+	border-color: #0d0d0d;
+	color: deepskyblue;
+	background-color: #141414;
+	border-radius: 3px;
+	opacity: 0.9;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	letter-spacing: 0px;
+}
+
+    .inputModal.shadow {
+        -webkit-box-shadow: inset 0 0 6px white;
+    }
+	.inputModal h2 {
+		margin: 0px;
+	}
+
+	.inputModal.modalContent{
+		padding: 10px;
+		width: 350px;
+        margin-top:0px;
+		/*max-height: 400px;*/
+		color: #FFFFFF;
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 12px;
+		overflow-y:scroll;
+	}
+
+	.inputModal.code {
+		background-color: #000;
+		color: #b3ffff;
+		border: 1px solid #999;
+		font-family: monospace;
+		padding: 1px;
+	}
+
+	.inputModal button {
+		/*background-color: #b3b3b3;*/
+        padding:5px;
+		border: none;
+        width: 100px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 15px;
+        /*line-height:15px;*/
+		margin: 3px 1px;
+		-webkit-transition-duration: 0.4s; /* Safari */
+		transition-duration: 0.4s;
+		cursor: pointer;
+		resize: none;
+		border-radius: 0px;
+		background-color: #4d4d4d;
+		color: white;
+        float: right;
+	}
+    .inputModal button:hover{
+		/*background-color: #b3b3b3;*/
+        background-color: #b3ffff;
+		color: black;
+        -webkit-transition-duration: 0.4s; /* Safari */
+		transition-duration: 0.4s;
+	}
+
+	.inputModal input {
+		color: #000;
+		width: 310px;
+		resize:vertical;
+		/*overflow:visible;*/
+	}
+
+/* The Close Button */
+.close {
+
+    color: #aaa;
+    
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: deepskyblue;
+    text-decoration: none;
+    cursor: pointer;
+}

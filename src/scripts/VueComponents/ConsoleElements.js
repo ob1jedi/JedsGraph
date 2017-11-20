@@ -13,6 +13,7 @@ Vue.component('vw-panel-nodeEditor-matching',{
   props: ['tabs'],
   template: '#vueTemplate-panel-nodeEditor-matching'
 })
+
 Vue.component('vw-panel-nodeEditor-existing',{
   props: ['tabs'],
   template: '#vueTemplate-panel-nodeEditor-existing'
@@ -75,28 +76,33 @@ Vue.component('vw-right-sidebar',{
 
 // ================= MODALS ================= 
 
-Vue.component('vw-info-modal',{
-  props: {
-    modalId: {type: String},
-    canCancel:{type: Boolean, default:true},
-    strHeader: {type: String}, 
-    htmlContent: {type: String}, 
-    button1Caption: {type: String},
-    button1Function: {type: String},
-    button2Caption: {type: String},
-    button2Function: {type: String}
-  },
-  template:'#vueTemplate-info-modal'
-})
+//Vue.component('vw-info-modal',{
+//  props: {
+//    modalId: {type: String},
+//    canCancel:{type: Boolean, default:true},
+//    strHeader: {type: String}, 
+//    htmlContent: {type: String}, 
+//    button1Caption: {type: String},
+//    button1Function: {type: String},
+//    button2Caption: {type: String},
+//    button2Function: {type: String}
+//  },
+//  template:'#vueTemplate-info-modal'
+//})
 
-Vue.component('vw-modal-user-confirm',{
-  props: ['userconfirm'],
-  template: '#vueTemplate-modal-user-confirm'
-})
+//Vue.component('vw-modal-user-confirm',{
+//  props: ['userconfirm'],
+//  template: '#vueTemplate-modal-user-confirm'
+//})
 
-Vue.component('vw-modal-info',{
+//Vue.component('vw-modal-info',{
+//  props: ['modal'],
+//  template: '#vueTemplate-modal-info'
+//})
+
+Vue.component('vw-modal',{
   props: ['modal'],
-  template: '#vueTemplate-modal-info'
+  template: '#vueTemplate-modal'
 })
 
 // ================= MODE INDICTAOR ================= 
@@ -116,6 +122,9 @@ Vue.component('vw-formula-box',{
 var consoleApp = new Vue({
   components: ['vw-panel-nodeEditor'],
   el: '#vue-app',
+  created: function () {
+    new VueConsoleHelper().RegisterWindowsEvents();
+  },
   data: {
     panels:{
       nodeTypeEditor: {show:false},
@@ -123,17 +132,12 @@ var consoleApp = new Vue({
       formulaBar:{show:true}
     },
     modals: {
-      userConfirm:{
-        header: "",
-        content: "<p></p>",
-        cancelCaption: "Cancel",
-        confirmCaption: "Yes",
-        ifConfirmed: function(){},
-        ifCancelled: function(){}
-      },
-      userInfo:{
-        header: "",
-        content: "<p></p>"
+      commonModal:{
+        header:"",
+        htmlContent:"",
+        buttons:[
+          {caption:"ok", onclick: new VueConsoleHelper().CloseGlobalInfoModal}
+        ]
       }
     },
     systemData:{
@@ -304,7 +308,7 @@ var consoleApp = new Vue({
         translator.Translate(this.selectedExample);
       },
       importFromUrl(url) {
-        new VueConsoleHelper().ShowGlobalInfoModal('WaitingModal1')
+        new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
         console.log('IMPORTING...');
         var translator=this.currentTranslator;
         var httpClient=new HttpClient();
@@ -316,15 +320,29 @@ var consoleApp = new Vue({
         httpClient.get(finalUrl,function(response) {
           console.log('response',response);
           translator.Translate(response);
-          new VueConsoleHelper().CloseGlobalInfoModal('WaitingModal1')
+          new VueConsoleHelper().CloseGlobalInfoModal()
         });
       },
-      generatedGraphLink:"", 
       generateLink: function(){
+        if ((this.formulaValue||'').trim().length == 0){ alert('Please enter a formula'); return;}
+        console.log('this.formulaValue', this.formulaValue);
         var encodedFormula = new StringHelper().ReplaceEachOfCharSet(btoa(this.formulaValue), '+/=','._-');
-        this.generatedGraphLink = "http://www.graphex.io/?trans='Simple'&grenc=" + encodedFormula;
-        new VueConsoleHelper().ShowGlobalInfoModal('GenerateLink')
+        console.log('encodedFormula', encodedFormula);
+        var blob = "http://www.graphex.io/?trans=Simple&grenc=" + encodedFormula;
+        var content = "<input id='exportGraphTextArea' value='" + blob + "'>";
+        new VueConsoleHelper().DisplayConfirmModal('Sharable Link', content, ifConfirmed, 'Copy', 'Exit');
+        function ifConfirmed(){
+          var text = document.getElementById('exportGraphTextArea');
+          text.select();
+          document.execCommand("Copy");
+          alert('Copied to clipboard');
+        };
+
+      },
+      displayInfoModal: function(){
+        new VueConsoleHelper().DisplayInfoModal(this.currentTranslator.Name, this.currentTranslator.ReferenceContent);
       }
+
     },
     tabs: {
       // Matching Tabs...
@@ -534,14 +552,14 @@ function VueMenuHelper(){
       resetDatabase();
       alert('Storage cleared');
     };
-    displayConfirmModal(header, content, ifConfirmed, 'Yes', 'Cancel');
+    new VueConsoleHelper().DisplayConfirmModal(header, content, ifConfirmed, 'Yes', 'Cancel');
   }
 
   this.ExportGraph = function(){
     var blob = new SimpleTranslator().TranslateGraphToFormula();
     //blob = new StringHelper().ReplaceAll(blob, '"', '');
     var content = "<input id='exportGraphTextArea' value='" + blob + "'>";
-    displayConfirmModal('Export Data', content, ifConfirmed, 'Copy', 'Exit');
+    new VueConsoleHelper().DisplayConfirmModal('Export Data', content, ifConfirmed, 'Copy', 'Exit');
     function ifConfirmed(){
       var text = document.getElementById('exportGraphTextArea');
       text.select();
@@ -625,27 +643,6 @@ function VueMenuHelper(){
       consoleApp.refreshTypeSelectors();
   }
 
-  function displayConfirmModal (header, content, confirmFunction, _confirmCaption, _cancelCaption){
-    var modalId = 'UserConfirm';
-    var consoleHelper = new VueConsoleHelper();
-    consoleApp.modals.userConfirm.header = header;
-    consoleApp.modals.userConfirm.content = content;
-    if (_confirmCaption)
-      consoleApp.modals.userConfirm.confirmCaption = _confirmCaption;
-    if (_cancelCaption)
-      consoleApp.modals.userConfirm.cancelCaption = _cancelCaption;    
-    // Confirm click...
-    consoleApp.modals.userConfirm.ifConfirmed = function(){
-      confirmFunction();
-      consoleHelper.CloseGlobalInfoModal(modalId);
-    };
-    // Cancel click...
-    consoleApp.modals.userConfirm.ifCancelled = function(){
-      consoleHelper.CloseGlobalInfoModal(modalId);
-    };
-    consoleHelper.ShowGlobalInfoModal(modalId);
-  }
-
 
 
 }
@@ -653,32 +650,68 @@ function VueMenuHelper(){
 
 function VueConsoleHelper(){
 
+  this.DisplayConfirmModal = function (header, content, confirmFunction, _confirmCaption, _cancelCaption){
+    consoleApp.modals.commonModal.buttons = [];
+    consoleApp.modals.commonModal.header = header;
+    consoleApp.modals.commonModal.htmlContent = content;
+    consoleApp.modals.commonModal.buttons.push({caption:_confirmCaption||"yes", onclick:confirmFunction});
+    consoleApp.modals.commonModal.buttons.push({caption:_cancelCaption||"cancel", onclick:new VueConsoleHelper().CloseGlobalInfoModal})
+    showGlobalInfoModal();
+  }
+
+  this.DisplayInfoModal = function (header, content){
+    consoleApp.modals.commonModal.buttons = [];
+    consoleApp.modals.commonModal.header = header;
+    consoleApp.modals.commonModal.htmlContent = content;
+    showGlobalInfoModal();
+  }
+
   this.ShowInfoModal = function(header, content){
-      consoleApp.modals.userInfo.header = header;
-      consoleApp.modals.userInfo.content = content;
-      showGlobalInfoModal('UserInfo');
+      consoleApp.modals.commonModal.buttons = [];
+      consoleApp.modals.commonModal.header = header;
+      consoleApp.modals.commonModal.htmlContent = content;
+      showGlobalInfoModal();
   }
 
   this.ShowCopyModal = function(header, content){
-      consoleApp.modals.userInfo.header = header;
-      consoleApp.modals.userInfo.content = content;
-      showGlobalInfoModal('CopyInfo');
+      consoleApp.modals.commonModal.buttons = [];
+      consoleApp.modals.commonModal.header = header;
+      consoleApp.modals.commonModal.htmlContent = content;
+      showGlobalInfoModal();
   }
 
-  this.ShowGlobalInfoModal = function(modalId) {
-    showGlobalInfoModal(modalId);
-  }
-  this.CloseGlobalInfoModal = function(modalId) {
-    closeGlobalInfoModal(modalId);
+  this.ShowGlobalInfoModal = function() {
+    showGlobalInfoModal();
   }
 
-  function showGlobalInfoModal(modalId) {
-    var dialogElement=document.getElementById(modalId);
-    dialogElement.showModal();
+  this.CloseGlobalInfoModal = function() {
+    closeGlobalInfoModal();
   }
-  function closeGlobalInfoModal(modalId) {
-    var dialogElement=document.getElementById(modalId);
-    dialogElement.close();
+
+  this.RegisterWindowsEvents = function(){
+    console.log('Registering window events');
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      // Get the modal
+      var modal = document.getElementById('myModal');
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+    }
+  }
+
+  function showGlobalInfoModal() {
+    var dialogElement = document.getElementById('myModal');
+    dialogElement.style.display = "block";
+    //var dialogElement=document.getElementById(modalId);
+    //dialogElement.showModal();
+  }
+  function closeGlobalInfoModal() {
+    var dialogElement = document.getElementById('myModal');
+    console.log('closing dialog');
+    dialogElement.style.display = "none";
+    //var dialogElement=document.getElementById(modalId);
+    //dialogElement.close();
   }
 
   

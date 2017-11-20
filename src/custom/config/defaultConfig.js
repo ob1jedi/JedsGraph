@@ -211,7 +211,7 @@ configManager.configs.push( {
 		} /*The 4bit rgb range from which nodeLabel colors can be automatically generated.*/
 		,
 		"entityLabelColor": "black",
-		"entityBorderColor": null, /*null=auto-color*/
+		"entityBorderColor": "black", /*null=auto-color*/
 		//"entityCircleTextColor": "red",
 
 		"entityOpacity": 1,
@@ -233,12 +233,12 @@ configManager.configs.push( {
 
 		/*effects...*/
 		,
-		"haze": true /*...outer node haze*/
+		"haze": false /*...outer node haze*/
 		//,textHaze:true /*...node text haze*/
 		,
 		"glass": false /*...node text haze*/
 		,
-		"highlightHaze": true /*...outer node haze*/
+		"highlightHaze": false /*...outer node haze*/
 		,
 		"shadow": false /*...outer node shadow*/
 		,
@@ -248,9 +248,9 @@ configManager.configs.push( {
 
 		//node data...
 		,
-		"showLabels": true,
+		"showLabels": false,
 		"loadNodePopouts": false,
-		"showCircleText": true
+		"showCircleText": false
 
 		//link data
 		,

@@ -41,9 +41,9 @@
     <!--------- MINIFIED --------------->
     <!-- build:css scripts/styles.css -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
     <link href="css/jedsGraph.css" rel="stylesheet">
     <link href="css/dropdownMenu.css" rel="stylesheet">
+    <link href="css/modal.css" rel="stylesheet">
     <!-- endbuild -->
     <!-- build:js scripts/libs.js -->
     <!--------- JQuery --------->
@@ -156,8 +156,6 @@
 
 <body onload='graphexInitialize()'>
 
-
-
     <div id="vue-app">
         <!--Graph-->
         <vw-graph></vw-graph>
@@ -168,9 +166,7 @@
         <!--<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>-->
         <vw-topbar v-bind:topbar="topbar"></vw-topbar>
         <!--Modals-->
-        <vw-info-modal v-bind:formulaprop="formulaToolbar"></vw-info-modal>
-        <vw-modal-user-confirm v-bind:userconfirm="modals.userConfirm"></vw-modal-user-confirm>
-        <vw-modal-info v-bind:modal="modals.userInfo"></vw-modal-info>
+        <vw-modal v-bind:modal="modals.commonModal"></vw-modal>
     </div>
 
     <div class="nodeFlyout" id='panel.node'>
@@ -181,6 +177,7 @@
         </ul>
         <button onclick="closeDialog('myDialog')">Close</button>
     </div>
+
 
     <!---------COMPONENT TEMPLATES --------------->
     <script type="text/x-template" id="vueTemplate-panel-nodeEditor">
@@ -210,9 +207,6 @@
                 <button class="tablinks" v-on:click="tabsprop.reset()">Reset</button>
             </div>
 
-            <!--<div class ="tabcontent">
-            <vw-graph></vw-graph>
-        </div>-->
         </div>
     </script>
 
@@ -240,8 +234,10 @@
 
             <hr />
             <table>
-                <th><label>Name  </label></th>
-                <th><label>Value </label></th>
+                <tr>
+                    <th><label>Name  </label></th>
+                    <th><label>Value </label></th>
+                <tr>
                 <tr v-for="property in tabs.newMatching.properties">
                     <td><input v-bind:value="property.key" class="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
                     <td><input v-bind:value="property.value" class="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
@@ -285,7 +281,6 @@
                                v-bind:class="{ active: styles.bNodeColor }"
                                v-model.lazy="styles.selectedNodeColor"
                                v-on:change="styles.updateNodeBackgroundColor(); styles.bNodeColor=true">
-                        </input>
                     </td>
                 </tr>
                 <tr>
@@ -299,7 +294,7 @@
                                v-bind:class="{ active: styles.bNodeBorderColor }"
                                v-model.lazy="styles.selectedNodeBorderColor"
                                v-on:change="styles.updateNodeBorderColor(); styles.bNodeBorderColor=true">
-                        </input>
+
                     </td>
                 </tr>
                 <tr>
@@ -313,7 +308,7 @@
                                v-bind:class="{ active: styles.bNodeTextColor }"
                                v-model.lazy="styles.selectedNodeTextColor"
                                v-on:change="styles.updateNodeTextColor(); styles.bNodeTextColor=true">
-                        </input>
+                      
                     </td>
                 </tr>
                 <tr>
@@ -327,7 +322,7 @@
                                v-bind:class="{ active: styles.bNodeCircleTextColor }"
                                v-model.lazy="styles.selectedNodeCircleTextColor"
                                v-on:change="styles.updateNodeCircleTextColor(); styles.bNodeCircleTextColor=true">
-                        </input>
+                    
                     </td>
                 </tr>
                 <tr>
@@ -341,7 +336,7 @@
                                v-bind:class="{ active: styles.bNodeSize }"
                                v-model.lazy='styles.selectedNodeSize'
                                v-on:change="styles.updateNodeSize(styles.selectedNodeSize); styles.bNodeSize=true">
-                        </input>
+                
                     </td>
                 </tr>
                 <tr>
@@ -355,7 +350,6 @@
                                 v-bind:class="{ active: styles.bNodeShape }"
                                 v-model='styles.selectedNodeShape'
                                 v-on:change="styles.updateNodeShape(); styles.bNodeShape=true">
-                            >
                             <option v-for="shape in styles.shapes" v-bind:value="shape.value">{{shape.key}}</option>
                         </select>
                     </td>
@@ -367,7 +361,6 @@
             <input v-bind:class="{ active: styles.bNodeImageUrl }"
                    v-model.lazy='styles.selectedNodeImageUrl'
                    v-on:change="styles.updateNodeImage(styles.selectedNodeImageUrl); styles.bNodeImageUrl=true">
-            </input>
         </div>
     </script>
 
@@ -475,14 +468,14 @@
     </script>
 
     <script type="text/x-template" id="vueTemplate-dropdown-menu">
-        <span class="dropdown">
+        <div class="dropdown">
             <button class="dropbtn">{{name}}</button>
             <div class="dropdown-content">
                 <a href="#"
                    v-for="item in menuitems"
                    v-on:click="item.func()">{{ item.caption }}</a>
             </div>
-        </span>
+        </div>
     </script>
 
     <script type="text/x-template" id="vueTemplate-panel-nodeSelector">
@@ -558,45 +551,26 @@
         </div>
     </script>
 
-    <script type="text/x-template" id="vueTemplate-info-modal">
-        <dialog class="inputModal shadow" v-bind:id="modalId">
-            <button v-if='canCancel' onclick='new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
-            <form class="form-group">
-                <h2>{{ strHeader }}</h2>
-                <div class="inputModal modalContent flexcroll"
-                     v-html="htmlContent">
-                </div>
-                <button v-show='button1Caption' v-on:click="button1Function||null" class="pull-right">{{ button1Caption }}</button>
-                <button v-show='button2Caption' v-on:click="button2Function||null" class="pull-right">{{ button2Caption }}</button>
-            </form>
-        </dialog>
-    </script>
-
-    <script type="text/x-template" id="vueTemplate-modal-user-confirm">
-        <dialog class="inputModal shadow" id="UserConfirm">
-            <button v-on:click="userconfirm.ifCancelled()" class="pull-right">&times;</button>
-            <div class="form-group">
-                <h2>{{userconfirm.header}}</h2>
-                <div class="inputModal modalContent flexcroll"
-                     v-html="userconfirm.content">
-                </div>
-                <button v-on:click="userconfirm.ifCancelled()" class="pull-right">{{userconfirm.cancelCaption}}</button>
-                <button v-on:click="userconfirm.ifConfirmed()" class="pull-right">{{userconfirm.confirmCaption}}</button>
-            </div>
-        </dialog>
-    </script>
-
-    <script type="text/x-template" id="vueTemplate-modal-info">
-        <dialog class="inputModal shadow" id="UserInfo">
-            <button onclick='new VueConsoleHelper().CloseGlobalInfoModal(this.parentElement.id)' class="pull-right">&times;</button>
-            <div class="form-group">
+    <script type="text/x-template" id="vueTemplate-modal">
+        <div id="myModal" class="modal">
+            <div class="inputModal shadow">
+                <span class="close"
+                      onclick="new VueConsoleHelper().CloseGlobalInfoModal()">
+                    &times;
+                </span>
                 <h2>{{modal.header}}</h2>
                 <div class="inputModal modalContent flexcroll"
-                     v-html="modal.content">
+                     v-html="modal.htmlContent">
                 </div>
+                <button v-for="button in modal.buttons"
+                        v-on:click="button.onclick"
+                        class="">
+                    {{button.caption}}
+                </button>
             </div>
-        </dialog>
+        </div>
     </script>
+
 
     <script type="text/x-template" id="vueTemplate-mode-indicator">
         <div id='modeIndicator'>
@@ -617,7 +591,6 @@
                                v-on:keyup.enter="formulaprop.executeFormula()"
                                v-model='formulaprop.formulaValue'
                                datalist="formulaHistory">
-                        </input>
                         <datalist id="formulaHistory">
                             <option v-for="formula in formulaprop.formulaHistory" v-bind:value="formula.formula">{{formula.formula}}</option>
                         </datalist>
@@ -675,7 +648,7 @@
                         <br />
                         <div>
                             <button id="cmdInfo"
-                                    onclick="new VueConsoleHelper().ShowGlobalInfoModal('TranslatorInfo')">
+                                    v-on:click="formulaprop.displayInfoModal()">
                                 <i class="glyphicon glyphicon-question-sign"></i>
                             </button>
                         </div>
@@ -692,24 +665,6 @@
                 </tr>
             </table>
 
-            <vw-info-modal modalId='TranslatorInfo'
-                           v-bind:canCancel='true'
-                           v-bind:strHeader='formulaprop.currentTranslator.Name'
-                           v-bind:htmlContent='formulaprop.currentTranslator.ReferenceContent'>
-            </vw-info-modal>
-
-            <vw-info-modal modalId='GenerateLink'
-                           strHeader='Formula link'
-                           v-bind:htmlContent='formulaprop.generatedGraphLink'>
-                button1Caption='Copy Link'
-                v-bind:button1Function='formulaprop.copyLink(formulaprop.generatedGraphLink)'
-            </vw-info-modal>
-
-            <vw-info-modal modalId='WaitingModal1'
-                           v-bind:canCancel='false'
-                           strHeader='Loading'
-                           htmlContent='Please wait...'>
-            </vw-info-modal>
         </div>
 
     </script>
@@ -725,24 +680,10 @@
     <!-- endbuild -->
 
 
+
+
 </body>
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------->
-
-
-
-<div id='invisibleElements'>
-
-</div>
-
-
-
-<!--<dialog class='nodeFlyout' id="panel.node">
-    <textarea id="myDialogText"></textarea>
-    <button onclick="closeDialog('myDialog')">Close</button>
-</dialog>-->
-
-
-
 
 </html>

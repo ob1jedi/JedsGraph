@@ -210,7 +210,7 @@ function panelAddKeyValue(panelId, panelScope, _sKey, _sValue, _sDatatype) {
 
 	var nextIndex = 0;
 	var newHtml = '';
-	for (var i = 0; i < $panel.children[0].children.length; i++) {
+	for (var i = 0; i < $panel.childNodes[0].childNodes.length; i++) {
 		var currval = document.getElementById(panelScope + '.property.value.' + i).value;
 		var currkey = document.getElementById(panelScope + '.property.key.' + i).value;
 		var dataType = document.getElementById(panelScope + '.property.type.' + i).value;
@@ -219,7 +219,7 @@ function panelAddKeyValue(panelId, panelScope, _sKey, _sValue, _sDatatype) {
 	}
 
 	newHtml = addRow(nextIndex, _sKey, _sValue, _sDatatype, newHtml);
-	$panel.children[0].innerHTML = newHtml;
+	$panel.childNodes[0].innerHTML = newHtml;
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -247,8 +247,8 @@ function panelCyclePropertyType(panelId) {
 
 function panelRemoveKeyValue(panelId) {
 	var panel = document.getElementById(panelId);
-	if (panel.children[0].children.length == 0) { return; }
-	panel.children[0].children[panel.children[0].children.length - 1].remove();
+	if (panel.childNodes[0].childNodes.length == 0) { return; }
+	panel.childNodes[0].childNodes[panel.childNodes[0].childNodes.length - 1].remove();
 }
 
 

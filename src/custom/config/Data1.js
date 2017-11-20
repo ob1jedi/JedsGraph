@@ -3,9 +3,9 @@ configManager.configs.push( {
 	prefix: "LOC", /*mandatory field, must be unique among other configs*/
 	neo4jconnection: {
 		sourceName: "local",
-		server: "http://localhost:7474",
-		username: "neo4j",
-		password: "Password@123456"
+		server: "",
+		username: "",
+		password: ""
 	},
 	startupOptions: {
 		//defaultConnection:"local", //used unless source is otherwise specified.
@@ -145,7 +145,7 @@ configManager.configs.push( {
 	},
 	"displaySettings": {
 		"selectorColor": "gray",
-		"graphBackground": "linear-gradient(black, #323a39)", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
+		"graphBackground": "white", //"linear-gradient(#002533, #00384d)", //"#0e1a25",
 
 		"entityShape": "circle",
 		"entityRgbRange": {
@@ -153,7 +153,7 @@ configManager.configs.push( {
 			"max": 200
 		}, /*The 4bit rgb range from which nodeLabel colors can be automatically generated.*/
 		"entityLabelColor": "black",
-		"entityBorderColor": null, /*null=auto-color*/
+		"entityBorderColor": "black", /*null=auto-color*/
 		"entityOpacity": 1,
 
 		"linkColor": "grey", /*...html/hex color*/
@@ -174,7 +174,7 @@ configManager.configs.push( {
 		"rounded": false, /*...inner node shadow*/
 
 		//node data...
-		"showLabels": true,
+		"showLabels": false,
 		"loadNodePopouts": false,
 
 		//link data

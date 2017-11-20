@@ -151,30 +151,8 @@ function dataNode_OnMouseDown(node,x, y) {
 
   highlightSelectedNode(node.id);
 	globals.nodeFunctions = NodeFunctionsFactory.createNew(node);
-	//console.log('globals.nodeFunctions', globals.nodeFunctions);
 	globals.layout.pinNode(node, true);
 	node.data.isPinned = true;
-
-
-	//
-	//
-	//
-
-	//nodeFlyout.show();
-
-	//addSubNode(node, 'Create_X', 'blue', 'X');
-	//addSubNode(node, 'Create_Y', 'red', 'Y');
-	//addSubNode(node, 'Create_Z', 'green', 'Z');
-	//var svgContainer = globals.graphics.getGraphicsRoot().children[0];
-	//var canvas = document.getElementById('globals.graphContainer');
-	//var context = svgContainer.getContext('2d');
-	//context.beginPath();
-	//context.rect(x, y, x+200, y+100);
-	//context.fillStyle = 'yellow';
-	//context.fill();
-	//context.lineWidth = 7;
-	//context.strokeStyle = 'black';
-	//context.stroke();
 
 }
 
@@ -220,7 +198,7 @@ function subNode_OnMouseDown(node, x, y) {
 
 function subNode_OnMouseUp(node, x, y) {
 	node.data.UI.fullUI.attr('dragging', 'false');
-	node.data.UI.fullUI.children[0].attr('r', Number(node.data.entityConfig.config.attributes["radius"]));
+	node.data.UI.fullUI.childNodes[0].attr('r', Number(node.data.entityConfig.config.attributes["radius"]));
 	fixTextWidth4Node(node, x, y);
 }
 
@@ -234,7 +212,7 @@ function subNode_OnDrag(node, x, y) {
 	if (eventsHelper.distancePassedThreshold(distance))
 		nodeEvent('SubNodePulledOut', node);
 
-	nodeUI.children[0].attr('r', distance / 5);
+	nodeUI.childNodes[0].attr('r', distance / 5);
 	//nodeUI.children[1].text(Math.ceil(distance/5)+'%');
 	fixTextWidth4Node(globals.GRAPH.getNode(nodeid));
 }
@@ -335,7 +313,7 @@ NodeFunctionsFactory.show_removeCollectorModal = function () {
 // Workflow functions
 NodeFunctionsFactory.add_workflow = function () {
 	var modal = document.getElementById('newWorkflowModel');
-	var nameFieldValue = modal.children[0].children[3].value;
+	var nameFieldValue = modal.childNodes[0].childNodes[3].value;
 	var nodeProperties = [];
 	// Types can be string, number, array, other
 	nodeProperties.push({ key: "workflowName", value: parseDataType(nameFieldValue, 'string') });
@@ -345,7 +323,7 @@ NodeFunctionsFactory.add_workflow = function () {
 
 NodeFunctionsFactory.update_workflow = function () {
 	var modal = document.getElementById('updateWorkflowModel');
-	var nameFieldValue = modal.children[0].children[3].value;
+	var nameFieldValue = modal.childNodes[0].childNodes[3].value;
 	console.log('update_workflow for node:', this.node);
 	this.node.data.properties.forEach(function (property) {
 		if (property.key = "workflowName")
@@ -365,7 +343,7 @@ NodeFunctionsFactory.remove_workflow = function () {
 // Tool functions
 NodeFunctionsFactory.add_tool = function () {
 	var modal = document.getElementById('addToolModal');
-	var nameFieldValue = modal.children[0].children[3].value;
+	var nameFieldValue = modal.childNodes[0].childNodes[3].value;
 	var nodeProperties = [];
 	nodeProperties.push({ key: "toolName", value: parseDataType(nameFieldValue, 'string') });
 	createChildNode(this.node.id, "TOOL", nodeProperties, 'SEND_TO', []);
@@ -374,7 +352,7 @@ NodeFunctionsFactory.add_tool = function () {
 
 NodeFunctionsFactory.update_tool = function () {
 	var modal = document.getElementById('updateToolModel');
-	var nameFieldValue = modal.children[0].children[3].value;
+	var nameFieldValue = modal.childNodes[0].childNodes[3].value;
 	this.node.data.properties.forEach(function (property) {
 		if (property.key = "toolName")
 			property.value = nameFieldValue;

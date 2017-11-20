@@ -57,10 +57,10 @@
 			if (searchedIndex > -1) {
 				globals.monitoredNodes.splice(searchedIndex, 1);
 				var vislist = document.getElementById('nodelist.monitored');
-				for (var i = 0; i < vislist.children.length; i++ ){
-					if (vislist.children[i].children[0].children[2].innerHTML == nodeid
-					&& vislist.children[i].children[0].children[1].innerHTML == 'node:'){
-						vislist.children[i].remove();
+				for (var i = 0; i < vislist.childNodes.length; i++ ){
+					if (vislist.childNodes[i].childNodes[0].childNodes[2].innerHTML == nodeid
+					&& vislist.childNodes[i].childNodes[0].childNodes[1].innerHTML == 'node:'){
+						vislist.childNodes[i].remove();
 					}
 				}
 			}	
@@ -73,10 +73,10 @@
 			if (searchedIndex > -1) {
 				globals.monitoredLinks.splice(searchedIndex, 1);
 				var vislist = document.getElementById('nodelist.monitored');
-				for (var i = 0; i < vislist.children.length; i++ ){
-					if (vislist.children[i].children[0].children[2].innerHTML == linkid
-					&& vislist.children[i].children[0].children[1].innerHTML == 'link:'){
-						vislist.children[i].remove();
+				for (var i = 0; i < vislist.childNodes.length; i++ ){
+					if (vislist.childNodes[i].childNodes[0].childNodes[2].innerHTML == linkid
+					&& vislist.childNodes[i].childNodes[0].childNodes[1].innerHTML == 'link:'){
+						vislist.childNodes[i].remove();
 					}
 				}
 			}	

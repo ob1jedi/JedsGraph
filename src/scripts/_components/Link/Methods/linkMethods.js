@@ -8,8 +8,10 @@
 				if(link.data.UI.subTextUI){
 					var i = 0;
 					var boxWidth = link.data.UI.subTextUI.getBBox().width;
-					while (link.data.UI.subTextUI.children[i]){
-						$(link.data.UI.subTextUI.children[i]).attr('x', -boxWidth/2);
+					
+          while (link.data.UI.subTextUI.childNodes[i]){
+            //debugger;
+						$(link.data.UI.subTextUI.childNodes[i]).attr('x', -boxWidth/2);
 						i++;
 					}
 				}

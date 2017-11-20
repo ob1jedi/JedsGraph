@@ -13,7 +13,8 @@ function defineNodeDrawing(){
     //OVERRIDE drag drawing...
     globals.graphics.translateRel = function (dx, dy) {
         var svgRoot = globals.graphics.getSvgRoot();
-        var svgContainer = globals.graphics.getGraphicsRoot().children[0];
+        var svgContainer = globals.graphics.getGraphicsRoot().childNodes[0];
+        //var svgContainer = globals.graphics.getGraphicsRoot().children[0];
 
         var p = svgRoot.createSVGPoint(),
             t = svgContainer.getCTM(),
@@ -41,6 +42,7 @@ function defineNodeDrawing(){
 	
     function applyDepthOffset(offset)
     {
+
         globals.GRAPH.forEachNode(function (node, index) {
             globals.layout.pinNode(node, true);
             var pos = globals.layout.getNodePosition(node.id);
@@ -52,9 +54,4 @@ function defineNodeDrawing(){
 
         });
     }
-
-
-    //globals.graphics.getNodeUI = function (nodeId) {
-    //    return .allNodes[nodeId];
-    //}
 }

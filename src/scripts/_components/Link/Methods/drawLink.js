@@ -17,20 +17,19 @@ function defineLinkDrawing(){
 		var curvex = (to.x)/2; //...the middle point x
 		var curvey = (to.y)/2 + skew;//...the middle point y
 		linkUI.attr('transform','translate(' +fromPos.x + ',' + fromPos.y + ')');
-
-		var linkPath = linkUI.children[linkUI.attr('linkPathIndex')];
-
-		for (var i = 0; i < linkUI.children.length; i++)
+		
+    linkPath = linkUI.childNodes[linkUI.attr('linkPathIndex')];
+		for (var i = 0; i < linkUI.childNodes.length; i++)
 		{
-			var child = linkUI.children[i];
+			var child = linkUI.childNodes[i];
 			if (!child) continue;
 			if (!child.attr) continue;
 			if (!child.attr('refx')) continue;
 			child.attr('x',curvex - child.attr('refx'));
 			child.attr('y',curvey - child.attr('refy'));
-			for (var h = 0; h < child.children.length; h++)
+			for (var h = 0; h < child.childNodes.length; h++)
 			{
-				if (!child.children[h]) continue;
+				if (!child.childNodes[h]) continue;
 			}
 		}
 

@@ -26,7 +26,7 @@ function fixTextWidth4Node(node)
 	//adjust display text...
 	if (node.data.UI.bodyUI && node.data.UI.displayTextUI)
 	{
-		if (!node.data.sourceConfig.displaySettings.showLabels) {return;}
+		//if (!node.data.sourceConfig.displaySettings.showLabels) {return;}
 		var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]); //UI.fullUI.attr('r');//nodeUI.attr('r');
 		var widthOfNode = Number(node.data.UI.bodyUI.getBBox().width);
 		var minWidth = widthOfNode - widthOfNode * 0.1;
@@ -107,7 +107,7 @@ function fixTextWidth4Node(node)
 	{	
 		var boxheight = 0;
 		var boxwidth = 0;
-		if (node.data.UI.popoutTextUI && node.data.UI.popoutTextUI.children.length > 0){
+		if (node.data.UI.popoutTextUI && node.data.UI.popoutTextUI.childNodes.length > 0){
 			boxheight = Number(node.data.UI.popoutTextUI.getBBox().height + 20);
 			boxwidth = Number(node.data.UI.popoutTextUI.getBBox().width + 30);
 		}
@@ -418,7 +418,7 @@ function loadNodePopout(node, config)
 //function UiShow_EditEntity(node){
 //	var updateElement = document.getElementById('new.entity.name');
 //	var panel = document.getElementById('panel.entity.props');
-//	panel.children[0].innerHTML = '';
+//	panel.childNodes[0].innerHTML = '';
 		    
 //	node.data.properties.forEach(function(prop){
 //		panelAddKeyValue('panel.entity.props', 'new.entity', prop.key, prop.value, prop.datatype);
