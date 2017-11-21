@@ -307,7 +307,7 @@ var consoleApp = new Vue({
         var translator=this.currentTranslator;
         translator.Translate(this.selectedExample);
       },
-      importFromUrl(url) {
+      importFromUrl: function(url) {
         new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
         console.log('IMPORTING...');
         var translator=this.currentTranslator;
