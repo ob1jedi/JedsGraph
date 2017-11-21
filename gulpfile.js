@@ -16,7 +16,7 @@ var uglifyes = require('uglify-es');
 var composer = require('gulp-uglify/composer');
 var minifyes = composer(uglifyes, console);
 var obfuscate = require('gulp-obfuscate');
-const babel = require('gulp-babel');
+var babel = require('gulp-babel');
 
 gulp.task('default', function() {
 	gulp.start('serve');
@@ -112,7 +112,7 @@ function compress (callback) {
   pump([
         gulp.src('./src/Index.html'),
 		useref(),
-		gulpif('*.js', babel()),
+		//gulpif('*.js', babel()),
 		//gulpif('*.js', minifyes()),
 		//gulpif('*.js', obfuscate()),
 		gulpif('*.css', uglifycss()),
