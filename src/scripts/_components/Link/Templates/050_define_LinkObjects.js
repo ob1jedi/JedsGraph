@@ -146,15 +146,15 @@ function defineLinkObjects()
 			$(linkPath).hover(function() { // MOUSE HOVER
 				//markerLabel.attr('fill', 'yellow');
 				if (link.data.checked){}
-				//highlightLink(link);
+				//new LinkHelper().HighlightLink(link);
 			}, function() { // mouse out
-				//unHighlightLink(link);
+				//new LinkHelper().UnHighlightLink(link);
 			});
 			
 			$(linkPath).click(function() { // MOUSE CLICK
 			    globals.selectedLink = link;
-			    showLinkDetails(link);
-				toggleLink(link);
+			    new LinkHelper().ShowLinkDetails(link);
+				new LinkHelper().ToggleLink(link);
 			});
 
 			link.data.UI.fullUI = ui;

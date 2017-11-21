@@ -223,7 +223,7 @@ function highlightSelectedNode(nodeId) {
 			//Remove previous selections visuals
 			var relevantLinks = globals.selectedNode.data.toLinks.concat(globals.selectedNode.data.fromLinks);
 			relevantLinks.forEach(function(link){
-				unHighlightLink(link,false);
+				new LinkHelper().UnHighlightLink(link,false);
 			});
 		}
    
@@ -261,8 +261,12 @@ function highlightSelectedNode(nodeId) {
 	}
 		   
 	//Display relationship details...
-	node.data.toLinks.forEach(function(l){highlightLink(l,true)});
-	node.data.fromLinks.forEach(function(l){highlightLink(l,true)});
+	node.data.toLinks.forEach(function(l){
+    new LinkHelper().HighlightLink(l,true)
+  });
+	node.data.fromLinks.forEach(function(l){
+    new LinkHelper().HighlightLink(l,true)
+  });
 
 	addSelectionGraphic(node);
 

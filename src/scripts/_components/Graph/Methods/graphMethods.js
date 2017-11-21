@@ -17,7 +17,7 @@ function uncheckAll(){
 	});
 	//check links
 	globals.linkList.forEach(function(link){
-		uncheckLink(link);
+		new LinkHelper().UncheckLink(link);
 	});
 }
 
@@ -28,7 +28,7 @@ function checkAll(){
 	});
 	//check links
 	globals.linkList.forEach(function(link){
-		checkLink(link);
+		new LinkHelper().checkLink(link);
 	});
 }
 		
@@ -205,7 +205,7 @@ function addDataLink(fromNodeID, toNodeID, linkData, _sourceConfig)
 		link.data.toNodeID = toNodeID;
 		link.data.displayLabel = linkData.name;
 		globals.linkList.push(link); 
-		fixLinkIndexes(fromNodeID, toNodeID);
+		new LinkHelper().FixLinkIndexes(fromNodeID, toNodeID);
 	}
 
 	var toNode = globals.GRAPH.getNode(toNodeID);
@@ -223,7 +223,7 @@ function addDataLink(fromNodeID, toNodeID, linkData, _sourceConfig)
 			link.data.displayLabel = propertyValue ? propertyValue : ' ';
 		}			
 	});
-	refreshLinkVisual(link);
+	new LinkHelper().RefreshLinkVisual(link);
 
 	if (bIsNew)
 	{
@@ -233,47 +233,12 @@ function addDataLink(fromNodeID, toNodeID, linkData, _sourceConfig)
 		fromNode.data.toNodes.push(toNode);
 	}
 			
-	fixTextWidth4Link(link);
+	new LinkHelper().FixTextWidth4Link(link);
 
 	return link;
 }
 		
-function fixLinkIndexes(fromNodeID, toNodeID){ //Get sibling details...
-	var totalSiblings = 0;
-	var leftSiblings = 0;
-	var rightSiblings = 0;
-	//get sibling information
-	globals.linkList.forEach(function (link){
-		if (link.toId == toNodeID && link.fromId == fromNodeID){
-			totalSiblings++;
-			leftSiblings++
-		}
-		else if (link.toId == fromNodeID && link.fromId == toNodeID){
-			totalSiblings++;
-			rightSiblings++
-		}
-	});
-			
-	globals.linkList.forEach(function (link){
-		if (link.toId == toNodeID && link.fromId == fromNodeID){
-			//this is a left sibling
-			if (totalSiblings == 1){ //there is only one sibling so its position will be center 
-				link.data.UI.fullUI.attr('linkPos',0);
-			}else{
-				//add the position of the sibling, (counting down so that widest is always underneath)
-				link.data.UI.fullUI.attr('linkPos', leftSiblings--);
-			}
-		}
-		else if (link.toId == fromNodeID && link.fromId == toNodeID){
-			if (totalSiblings == 1){ //there is only one sibling so its position will be center 
-				link.data.UI.fullUI.attr('linkPos',0);
-			}else{
-				//add the position of the sibling, (counting down so that widest is always underneath)
-				link.data.UI.fullUI.attr('linkPos', rightSiblings--);
-			}
-		}
-	});
-}
+
 
 function addDataNode(nodeId, nodeData, _sourceConfig)
 {
@@ -545,7 +510,7 @@ function removeNodeFromStage(nodeID)
 function removeLinkFromStage(linkID) {
 	if (!linkID) { linkID = globals.selectedLink.data.id; }
 
-	var link = getLinkById(linkID);
+	var link = new LinkHelper().GetLinkById(linkID);
 	var i = -1;
 	while (++i < globals.linkList.length) 
 		if (globals.linkList[i].id == linkID) 

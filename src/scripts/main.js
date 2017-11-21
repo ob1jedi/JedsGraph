@@ -13,9 +13,11 @@ function graphexMain() {
 		prepareGraph();
 		defineNodes();
 		defineNodeDrawing();
-		defineLinkObjectsCommonAssets();
-		defineLinkObjects();
-		defineLinkDrawing();
+		if (globals.browser.name == "Chrome"){
+      defineLinkObjectsCommonAssets();
+		  defineLinkObjects();
+      defineLinkDrawing();
+    }
 		renderGraph();
 		initUi();
 

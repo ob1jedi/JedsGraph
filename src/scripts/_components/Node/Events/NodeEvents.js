@@ -136,12 +136,15 @@ function node_OnDrag(node, x, y) {
 //---- Node Specific: Data Nodes -------------------------------------------------------------
 
 function dataNode_OnMouseEnter(node, x, y) {
-	if (globals.viewOptions.highlightRelated) 
-		highlightRelatedNodes(node.id, true);
-	if (globals.viewOptions.highlightdescendants) 
-		highlightDescendantNodes(node.id, true);
-	if (globals.viewOptions.highlightAncestors) 
-		highlightAncestorNodes(node.id, true);
+	if (globals.viewOptions.highlightRelated) {
+		new LinkHelper().HighlightRelatedNodes(node.id, true);
+  }
+	if (globals.viewOptions.highlightdescendants) {
+    new LinkHelper().HighlightDescendantNodes(node.id, true);
+  }
+	if (globals.viewOptions.highlightAncestors) {
+    new LinkHelper().HighlightAncestorNodes(node.id, true);
+  }
 
 }
 
@@ -166,12 +169,15 @@ function dataNode_OnMouseDblClick(node, x, y) {
 }
 
 function dataNode_OnMouseLeave(node, x, y) {
-	if (globals.viewOptions.highlightRelated) 
-		highlightRelatedNodes(node.id, false);
-	if (globals.viewOptions.highlightdescendants) 
-		highlightDescendantNodes(node.id, false);
-	if (globals.viewOptions) 
-		highlightAncestorNodes(node.id, false);
+	if (globals.viewOptions.highlightRelated) {
+    new LinkHelper().HighlightRelatedNodes(node.id, false);
+  }
+	if (globals.viewOptions.highlightdescendants){ 
+    new LinkHelper().HighlightDescendantNodes(node.id, false);
+    }
+	if (globals.viewOptions){ 
+    new LinkHelper().HighlightAncestorNodes(node.id, false);
+    }
 }
 
 function dataNode_OnDrag(node, x, y) {
