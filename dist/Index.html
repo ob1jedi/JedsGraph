@@ -4,17 +4,14 @@
 
 	<script type="text/javascript">
 		function graphexInitialize() {
-			if (!window.location.href.substr(0,17) == "http://localhost:"){
-				if(!IsChrome()) {
-					window.location="../html/browserSupport.html";
-					return;
-				}
-			}
+			//if(!window.location.href.substr(0,17)=="http://localhost:") {
+			//  var b = new BrowserHelper();
+			//	if(!b.IsChrome() && !b.IsFirefox() && !b.IsIE()) {
+			//		window.location="../html/browserSupport.html";
+			//		return;
+			//	}
+			//}
 			graphexMain();
-			// Chrome 1+
-			function IsChrome(){
-				return !!window.chrome //&& !!window.chrome.webstore;
-			}
 		};
 	</script>
 
@@ -55,7 +52,6 @@
 
 <body onload="graphexInitialize()">
 
-
 	<div id="vue-app">
 		<!--Graph-->
 		<vw-graph></vw-graph>
@@ -66,9 +62,7 @@
 		<!--<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>-->
 		<vw-topbar v-bind:topbar="topbar"></vw-topbar>
 		<!--Modals-->
-		<vw-info-modal v-bind:formulaprop="formulaToolbar"></vw-info-modal>
-		<vw-modal-user-confirm v-bind:userconfirm="modals.userConfirm"></vw-modal-user-confirm>
-		<vw-modal-info v-bind:modal="modals.userInfo"></vw-modal-info>
+		<vw-modal v-bind:modal="modals.commonModal"></vw-modal>
 	</div>
 
 	<div class="nodeFlyout" id="panel.node">
@@ -81,7 +75,495 @@
 	</div>
 
 
+	<!---------COMPONENT TEMPLATES --------------->
+	<script type="text/x-template" id="vueTemplate-panel-nodeEditor">
+		<div class='modPanel' id='nodeEditor'>
+			<div class="panelHead">Node Type Editor<i class="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
 
+			<div class="tab">
+				<button class="tablinks" v-on:click="tabsprop.selectedMatchingTab='NEW'" v-bind:class="{ active: tabsprop.selectedMatchingTab==='NEW'}">Match</button>
+			</div>
+			<div>
+				<vw-panel-nodeEditor-matching v-show="tabsprop.selectedMatchingTab==='NEW'" v-bind:tabs="tabsprop"></vw-panel-nodeEditor-matching>
+			</div>
+
+			<div class="tab">
+				<button class="tablinks" v-on:click="tabsprop.selectedStyleTab='STYLES'" v-bind:class="{ active: tabsprop.selectedStyleTab==='STYLES'}">Style</button>
+				<button class="tablinks" v-on:click="tabsprop.selectedStyleTab='EFFECTS'" v-bind:class="{ active: tabsprop.selectedStyleTab==='EFFECTS'}">Effects</button>
+				<button class="tablinks" v-on:click="tabsprop.selectedStyleTab='BEHAVIOURS'" v-bind:class="{ active: tabsprop.selectedStyleTab==='BEHAVIOURS'}">Binding</button>
+			</div>
+			<div>
+				<vw-panel-nodeEditor-styles v-show="tabsprop.selectedStyleTab==='STYLES'" v-bind:styles="tabsprop.styles"></vw-panel-nodeEditor-styles>
+				<vw-panel-nodeEditor-effects v-show="tabsprop.selectedStyleTab==='EFFECTS'" v-bind:effects="tabsprop.effects"></vw-panel-nodeEditor-effects>
+				<vw-panel-nodeEditor-behaviours v-show="tabsprop.selectedStyleTab==='BEHAVIOURS'" v-bind:behaviours="tabsprop.behaviours"></vw-panel-nodeEditor-behaviours>
+			</div>
+
+			<div class="tab">
+				<button class="tablinks" v-on:click="tabsprop.saveMatch()">Save</button>
+				<button class="tablinks" v-on:click="tabsprop.reset()">Reset</button>
+			</div>
+
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-panel-nodeEditor-matching">
+		<div class="tabcontent">
+
+			<label class="canCheck"
+				   v-on:click="(tabs.newMatching.bExistingConfig=false); (tabs.newMatching.selectedConfig=null)"
+				   v-bind:class="{ active: tabs.newMatching.bExistingConfig }">Existing Config:</label>
+			<select class="fullbox" v-model='tabs.newMatching.selectedConfig'
+					v-bind:class="{ active: tabs.newMatching.bExistingConfig }"
+					v-on:change="tabs.selectExisting(tabs.newMatching.selectedConfig); tabs.newMatching.bExistingConfig=true">
+				<option v-for="config in tabs.newMatching.masterEntityConfigs" v-bind:value="config">{{config.configName}}</option>
+			</select>
+
+
+
+			<label class="active">Node type of: </label>
+			<input class="active" v-model.lazy='tabs.newMatching.selectedNodeType' v-bind:value="tabs.newMatching.selectedNodeType"></input>
+
+			<label v-bind:class="{ active: tabs.newMatching.bHasProperties }">
+				With properties:
+				<span v-on:click="tabs.newMatching.addProperty(); tabs.newMatching.bHasProperties=true;" class="btn btn-sm"><i class="glyphicon glyphicon-plus"></i></span>
+			</label>
+
+			<hr />
+			<table>
+				<tr>
+					<th><label>Name  </label></th>
+					<th><label>Value </label></th>
+				<tr>
+				<tr v-for="property in tabs.newMatching.properties">
+					<td><input v-bind:value="property.key" class="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
+					<td><input v-bind:value="property.value" class="halfbox" v-bind:class="{ active: tabs.newMatching.bHasProperties }"></input></td>
+				</tr>
+			</table>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-panel-nodeEditor-existing">
+		<div class="tabcontent">
+
+			<table class="table">
+				<tr>
+					<td><label class="canCheck active">Config:</label></td>
+					<td>
+						<select class="pull-right active" v-model='tabs.existingMatching.selectedConfig'
+								v-on:change="tabs.selectExisting(tabs.existingMatching.selectedConfig)">
+							<option v-for="config in tabs.existingMatching.masterEntityConfigs" v-bind:value="config">
+								{{config.configName}}
+							</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-panel-nodeEditor-styles">
+		<div class="tabcontent">
+
+			<table class="table">
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(styles.bNodeColor=!styles.bNodeColor)"
+							   v-bind:class="{ active: styles.bNodeColor }">Background Col:</label>
+					</td>
+					<td>
+						<input type="color" class="tinybox pull-right"
+							   v-bind:class="{ active: styles.bNodeColor }"
+							   v-model.lazy="styles.selectedNodeColor"
+							   v-on:change="styles.updateNodeBackgroundColor(); styles.bNodeColor=true">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(styles.bNodeBorderColor=!styles.bNodeBorderColor)"
+							   v-bind:class="{ active: styles.bNodeBorderColor }">Border Color:</label>
+					</td>
+					<td>
+						<input type="color" class="tinybox pull-right"
+							   v-bind:class="{ active: styles.bNodeBorderColor }"
+							   v-model.lazy="styles.selectedNodeBorderColor"
+							   v-on:change="styles.updateNodeBorderColor(); styles.bNodeBorderColor=true">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(styles.bNodeTextColor=!styles.bNodeTextColor)"
+							   v-bind:class="{ active: styles.bNodeTextColor }">Text Color:</label>
+					</td>
+					<td>
+						<input type="color" class="tinybox pull-right"
+							   v-bind:class="{ active: styles.bNodeTextColor }"
+							   v-model.lazy="styles.selectedNodeTextColor"
+							   v-on:change="styles.updateNodeTextColor(); styles.bNodeTextColor=true">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(styles.bNodeCircleTextColor=!styles.bNodeCircleTextColor)"
+							   v-bind:class="{ active: styles.bNodeCircleTextColor }">Circle Text Color:</label>
+					</td>
+					<td>
+						<input type="color" class="tinybox pull-right"
+							   v-bind:class="{ active: styles.bNodeCircleTextColor }"
+							   v-model.lazy="styles.selectedNodeCircleTextColor"
+							   v-on:change="styles.updateNodeCircleTextColor(); styles.bNodeCircleTextColor=true">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(styles.bNodeSize=!styles.bNodeSize)"
+							   v-bind:class="{ active: styles.bNodeSize }">Size:</label>
+					</td>
+					<td>
+						<input class="tinybox pull-right" type="number" value="25"
+							   v-bind:class="{ active: styles.bNodeSize }"
+							   v-model.lazy='styles.selectedNodeSize'
+							   v-on:change="styles.updateNodeSize(styles.selectedNodeSize); styles.bNodeSize=true">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(styles.bNodeShape=!styles.bNodeShape)"
+							   v-bind:class="{ active: styles.bNodeShape }">Shape:</label>
+					</td>
+					<td>
+						<select class="pull-right"
+								v-bind:class="{ active: styles.bNodeShape }"
+								v-model='styles.selectedNodeShape'
+								v-on:change="styles.updateNodeShape(); styles.bNodeShape=true">
+							<option v-for="shape in styles.shapes" v-bind:value="shape.value">{{shape.key}}</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<label class="canCheck"
+				   v-on:click="(styles.bNodeImageUrl=!styles.bNodeImageUrl)"
+				   v-bind:class="{ active: styles.bNodeImageUrl }">Image URL:</label>
+			<input v-bind:class="{ active: styles.bNodeImageUrl }"
+				   v-model.lazy='styles.selectedNodeImageUrl'
+				   v-on:change="styles.updateNodeImage(styles.selectedNodeImageUrl); styles.bNodeImageUrl=true">
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-panel-nodeEditor-effects">
+		<div class="tabcontent">
+			<table class="table">
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(effects.activateEffectHaze=!effects.activateEffectHaze)"
+							   v-bind:class="{ active: effects.activateEffectHaze }">Haze:</label>
+					</td>
+					<td><input type="checkbox" v-model="effects.hasEffectHaze" v-on:change="effects.activateEffectHaze=true" value="false" v-bind:class="{ active: effects.activateEffectHaze }"></input></td>
+				</tr>
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(effects.activateEffectShadow=!effects.activateEffectShadow)"
+							   v-bind:class="{ active: effects.activateEffectShadow }">Shadow:</label>
+					</td>
+					<td><input type="checkbox" v-model="effects.hasEffectShadow" v-on:change="effects.activateEffectShadow=true" value="false" v-bind:class="{ active: effects.activateEffectShadow }"></input></td>
+				</tr>
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(effects.activateEffectGlass=!effects.activateEffectGlass)"
+							   v-bind:class="{ active: effects.activateEffectGlass }">Glass:</label>
+					</td>
+					<td><input type="checkbox" v-model="effects.hasEffectGlass" v-on:change="effects.activateEffectGlass=true" value="false" v-bind:class="{ active: effects.activateEffectGlass }"></input></td>
+				</tr>
+				<tr>
+					<td>
+						<label class="canCheck"
+							   v-on:click="(effects.activateEffectRounded=!effects.activateEffectRounded)"
+							   v-bind:class="{ active: effects.activateEffectRounded }">Rounded:</label>
+					</td>
+					<td><input type="checkbox" v-model="effects.hasEffectRounded" v-on:change="effects.activateEffectRounded=true" value="false" v-bind:class="{ active: effects.activateEffectRounded }"></input></td>
+				</tr>
+
+			</table>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-panel-nodeEditor-behaviours">
+		<div class="tabcontent">
+
+			<label class="canCheck" v-on:click="(behaviours.bDisplayText=!behaviours.bDisplayText)" v-bind:class="{ active: behaviours.bDisplayText }"> Center text: </label>
+			<table>
+				<tr>
+					<td>
+						<select class="halfbox pull-right"
+								v-model="behaviours.selectedDisplayTextType"
+								v-bind:class="{ active: behaviours.bDisplayText }"
+								v-on:change="behaviours.bDisplayText=true">
+							<option v-for="type in ['type','property','static','first']" v-bind:value="type">
+								{{type}}
+							</option>
+						</select>
+					</td>
+					<td> <input class="halfbox pull-right" v-model="behaviours.selectedDisplayField" v-bind:class="{ active: behaviours.bDisplayText }"></input> </td>
+				</tr>
+			</table>
+
+			<label class="canCheck" v-on:click="(behaviours.bDisplayImage=!behaviours.bDisplayImage)" v-bind:class="{ active: behaviours.bDisplayImage }"> Image URL: </label>
+			<table>
+				<tr>
+					<td>
+						<select class="halfbox pull-right"
+								v-model="behaviours.selectedNodeImageType"
+								v-bind:class="{ active: behaviours.bDisplayImage }"
+								v-on:change="behaviours.bDisplayImage=true">
+							<option v-for="type in ['property','static']" v-bind:value="type">
+								{{type}}
+							</option>
+						</select>
+					</td>
+					<td> <input class="halfbox pull-right" v-model="behaviours.selectedNodeImageValue" v-bind:class="{ active: behaviours.bDisplayImage }"></input> </td>
+				</tr>
+			</table>
+
+
+			<hr>
+
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-topbar">
+		<div id='graphexTopBar'>
+			<table>
+				<tr>
+					<td>
+						<div class="logo">GRAPH<i class="glyphicon glyphicon-menu-hamburger"></i>X</div>
+					</td>
+					<td>
+						<vw-dropdown-menu v-for="item in topbar.items"
+										  v-bind:name="item.caption"
+										  v-bind:menuitems="item.items">
+						</vw-dropdown-menu>
+					</td>
+				</tr>
+				<!--<vw-mode-indicator v-bind:indicatorprop="topbar.indicator"></vw-mode-indicator>-->
+			</table>
+
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-dropdown-menu">
+		<div class="dropdown">
+			<button class="dropbtn">{{name}}</button>
+			<div class="dropdown-content">
+				<a href="#"
+				   v-for="item in menuitems"
+				   v-on:click="item.func()">{{ item.caption }}</a>
+			</div>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-panel-nodeSelector">
+		<div class='modPanel' id='typeSelectors'>
+			<div class="panelHead">Type Selector<i class="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
+
+			<div class="labelSelectorDisplay flexcroll" id='labelSelectorsPanel'>
+				<table class="labelSelectorText">
+
+					<tr>
+						<td>
+							<div v-on:click="sysdata.highlightAllNodes()" class="labelSelectorItem">
+								All &nbsp;
+							</div>
+						</td>
+						<td>
+							<div id="labelSelector.fetcher"
+								 class="forlabelselector mytooltip pull-right"
+								 v-on:click="sysdata.getAllEntities()"
+								 v-bind:style="{ 'background-color': 'gray' }">
+								&nbsp;
+								<div class="mytooltiptext ttleft ttupper">
+									Fetch all from database
+								</div>
+							</div>
+						</td>
+					</tr>
+
+					<tr v-for="(selector, index) in sysdata.typeSelectors">
+						<td>
+							<div v-on:click="sysdata.highlightNodesByType(index)" class="labelSelectorItem">
+								{{ selector.name }} &nbsp;
+							</div>
+						</td>
+						<td>
+							<div id="labelSelector.fetcher"
+								 class="forlabelselector mytooltip pull-right"
+								 v-on:click="sysdata.getEntitiesByType(selector.name, index)"
+								 v-bind:style="{ 'background-color': selector.color }">
+								{{ selector.instanceCount }}
+								<div class="mytooltiptext ttleft ttupper">
+									Fetch from database
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-footer">
+		<div id='graphexFooter'>
+
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-graph">
+		<div id='graphPanel'>
+			<div id='graphContainer'></div>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-left-sidebar">
+		<div v-if="panels.nodeTypeSelector.show" id='leftSidebar' class="flexcroll">
+			<vw-panel-nodeSelector v-if="panels.nodeTypeSelector.show" v-bind:sysdata="sysdata"></vw-panel-nodeSelector>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-right-sidebar">
+		<div v-if="panels.nodeTypeEditor.show" id='rightSidebar' class="flexcroll">
+			<vw-panel-nodeEditor v-if="panels.nodeTypeEditor.show" v-bind:tabsprop="tabs"></vw-panel-nodeEditor>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-modal">
+		<div id="myModal" class="modal">
+			<div class="inputModal shadow">
+				<span class="close"
+					  onclick="new VueConsoleHelper().CloseGlobalInfoModal()">
+					&times;
+				</span>
+				<h2>{{modal.header}}</h2>
+				<div class="inputModal modalContent flexcroll"
+					 v-html="modal.htmlContent">
+				</div>
+				<button v-for="button in modal.buttons"
+						v-on:click="button.onclick"
+						class="">
+					{{button.caption}}
+				</button>
+			</div>
+		</div>
+	</script>
+
+
+	<script type="text/x-template" id="vueTemplate-mode-indicator">
+		<div id='modeIndicator'>
+			<img src="indicatorprop.image" class="modeIndicatorImage" />
+			<span class="modeIndicatorLabel">{{indicatorprop.title}}</span>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-formula-box">
+
+		<div v-if="panels.formulaBar.show" id='vueFormulaBox'>
+			<table>
+				<tr>
+					<td>
+						<label for="txtFormulaInput">Formula</label>
+						<br />
+						<input class="dynamic3" id="txtFormulaInput"
+							   v-on:keyup.enter="formulaprop.executeFormula()"
+							   v-model='formulaprop.formulaValue'
+							   datalist="formulaHistory">
+						<datalist id="formulaHistory">
+							<option v-for="formula in formulaprop.formulaHistory" v-bind:value="formula.formula">{{formula.formula}}</option>
+						</datalist>
+					</td>
+					<td>
+						<label for="cmdFormulaGenerate">&nbsp</label>
+						<div>
+							<button class="mybutton" id="cmdFormulaGenerate"
+									v-on:click="formulaprop.executeFormula(formulaprop.formulaValue)">
+								generate
+							</button>
+						</div>
+					</td>
+					<td>
+						<label for="cboFormulaTranslator">Translator</label>
+						<br />
+						<select id="cboFormulaTranslator"
+								v-model="formulaprop.selectedTranslatorName"
+								v-on:change="formulaprop.selectTranslator(formulaprop.selectedTranslatorName)">
+							<option v-for="item in formulaprop.translators"
+									v-bind:value="item.Name"
+									v-bind:key="item.Name">
+								{{item.Name}}
+							</option>
+						</select>
+					</td>
+					<td>
+						<label for="cboFormulaExamples">Examples</label>
+						<br />
+						<select class="halfbox" id="cboFormulaExamples" name="formulaExample"
+								v-model="formulaprop.selectedExample"
+								v-on:change="formulaprop.executeExampleFormula()">
+							<option v-for="example in formulaprop.currentTranslator.Examples"
+									v-bind:value="example">
+								{{example}}
+							</option>
+						</select>
+					</td>
+
+					<td v-show="(formulaprop.currentTranslator.ImportExamples && formulaprop.currentTranslator.ImportExamples.length>0)">
+						<label for="cboFormulaImports">Imports</label>
+						<br />
+						<select id="cboFormulaImports"
+								v-model="formulaprop.selectedImport"
+								v-on:change="formulaprop.importFromUrl(formulaprop.selectedImport.value)">
+							<option v-for="importExample in formulaprop.currentTranslator.ImportExamples"
+									v-bind:value="importExample">
+								{{importExample.name}}
+							</option>
+						</select>
+					</td>
+
+					<td>
+						<label for="cmdInfo">&nbsp</label>
+						<br />
+						<div>
+							<button id="cmdInfo"
+									v-on:click="formulaprop.displayInfoModal()">
+								<i class="glyphicon glyphicon-question-sign"></i>
+							</button>
+						</div>
+					</td>
+
+					<td>
+						<label for="cmdTest">&nbsp</label>
+						<br />
+						<div>
+							<button id="cmdTest" v-on:click="formulaprop.generateLink()">Create Link</button>
+						</div>
+					</td>
+
+				</tr>
+			</table>
+
+		</div>
+
+	</script>
 
 
 	<!---------GULP SCRIPT INJECTOR --------------->
@@ -89,423 +571,12 @@
 	<!-- endinject -->
 	<!---------GULP SCRIPT MINIFIER --------------->
 	<script src="scripts/combined2.js"></script>
+
+
+
+
 </body>
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------->
-
-
-
-<div id="noColumn">
-
-	<!--<div class="labelSelectorDisplay toolPanel flexcroll" id='panel.labelselectors'>
-		<div class="panelHead">Node Types</div>
-		<table id="selectorLabels" class="label"></table>
-	</div>-->
-
-	<div class="toolPanel" id="panel.config">
-		<div class="panelHead">Configuration:</div>
-		Configuration: <select onchange="changeConfig()" id="configSelector"></select>
-
-		<ol>
-			<!-- Create an instance of the todo-item component -->
-			<todo-item></todo-item>
-		</ol>
-	</div>
-
-	<div class="panel toolPanel" id="panel.nodedetails">
-		<div id="selectedNode"></div>
-		<hr>
-		<div id="nodeDetails">
-		</div>
-	</div>
-
-	<div class="panel toolPanel" id="panel.linkdetails">
-		<div id="selectedLink"></div>
-		<hr>
-		<div id="linkDetails">
-		</div>
-	</div>
-
-	<div class="toolPanel" id="panel.simplequery">
-		<div class="panelHead">Build Query:</div>
-		<table>
-			<tr>
-				<td>from entity:</td>
-				<td>
-					<select onchange="globals.dataService.Qbuilder('qbuilder.from.entity')" id="qbuilder.from.entity"></select>
-				</td>
-			</tr>
-			<tr>
-				<td>where:</td>
-				<td>
-					<input class="dynamic2" onfocus="globals.dataService.Qbuilder('qbuilder.from.property')" onchange="globals.dataService.Qbuilder('qbuilder.from.property')" id="qbuilder.from.property" type="text" name="" list="qbuilder.from.selectproperty">
-					<datalist id="qbuilder.from.selectproperty"></datalist>
-
-				</td>
-			</tr>
-			<tr>
-				<td>is:</td>
-				<td>
-					<!--select onchange="qbuilder('qbuilder.from.value')" id="qbuilder.from.value"></select-->
-					<input class="dynamic2" onfocus="globals.dataService.Qbuilder_ClearValue('qbuilder.from.value')" onchange="globals.dataService.Qbuilder('qbuilder.from.value')" id="qbuilder.from.value" type="text" name="" list="qbuilder.from.selectvalue">
-					<datalist id="qbuilder.from.selectvalue"></datalist>
-
-				</td>
-			</tr>
-		</table>
-		<button onclick="ButtonSimpleSearch()">Search</button>
-		<!--button onclick='Neo4jQueryRecursiveSearch()'>Tree Search</button-->
-	</div>
-
-	<div class="toolPanel" id="panel.functions">
-		<div class="panelHead">Functions:</div>
-		<button onclick="createJsonFromSelectedNodes()">Create Json</button>
-		<!--<button class="popup">
-			Monitor
-			<div class="popuptext">
-				<div id="hovertext" onclick="monitorCheckedItems()">Monitor checked</div>
-				<div id="hovertext" onclick="clearAllMonitored()">Clear all</div>
-			</div>
-		</button>-->
-		<button onclick="animateTest()">Add Indicator</button>
-		<!--<button onclick='json2GraphDlg.showModal()'>Create from json</button>-->
-		<button onclick="increaseNodeDepth()">IncNodeDepth</button>
-		<!--button onclick='testFunction()'>Test2</button-->
-
-	</div>
-
-	<!--div id="slider" draggable="true" class="toolPanel slide-in">
-		<ul>
-			<li>Lorem</li>
-			<li>Ipsum</li>
-			<li>Dolor</li>
-		</ul>
-	</div-->
-	<!--button id="toggle" style="position:absolute; top: 120px;">Toggle</button-->
-	<!--<div class='toolPanel' id='panel.monitoring'>
-		<div id='newNode'>
-			<div class="panelHead">Monitored Nodes</div>
-			<table id='nodelist.monitored'></table>
-		</div>
-	</div>-->
-
-	<div class="toolPanel" id="panel.entity.create">
-		<div class="panelHead">Entity Management</div>
-		<table>
-			<tr>
-				<td>entity name:</td>
-				<td> <input id="new.entity.name" value=""></td>
-			</tr>
-		</table>
-		<hr>
-		<table>
-			<tr>
-				<td><button class="paneloption mytooltip" onclick="panelAddKeyValue('panel.entity.props', 'new.entity')">V<div class="mytooltiptext ttright ttupper">Add property</div></button></td>
-				<td><button class="paneloption mytooltip" onclick="panelRemoveKeyValue('panel.entity.props', 'new.entity')">X<div class="mytooltiptext ttright ttupper">Remove property</div></button></td>
-			</tr>
-		</table>
-		<hr>
-		<table id="panel.entity.props">
-			<tbody></tbody>
-		</table>
-		<hr>
-		<button onclick="submitNewEntity()">Create New Entity</button>
-		<button onclick="submitUpdateEntity()">Update Selected</button>
-		<button onclick="GetRelatedEntityGraph()">Delete Selected</button>
-	</div>
-
-
-	<div class="toolPanel" id="panel.relationship.create">
-		<div class="panelHead">Create Relationship</div>
-		<table>
-			<tr>
-				<td>relation name:</td>
-				<td> <input id="new.relation.name" value=""></td>
-			</tr>
-		</table>
-		<hr style="border-color:#262626">
-		<table>
-			<tr>
-				<td><button class="paneloption mytooltip" onclick="panelAddKeyValue('panel.relation.props', 'new.relation')">V<div class="mytooltiptext ttright ttupper">Add property</div></button></td>
-				<td><button class="paneloption mytooltip" onclick="panelRemoveKeyValue('panel.relation.props', 'new.relation')">X<div class="mytooltiptext ttright ttupper">Remove property</div></button></td>
-			</tr>
-		</table>
-		<hr style="border-color:#262626">
-		<table id="panel.relation.props">
-			<tbody></tbody>
-		</table>
-		<hr style="border-color:#262626">
-		<button onclick="relateSelectedToNode()">Create Relation To...</button>
-		<button onclick="planRelateSelectedToNode()">Plan Relation To...</button>
-		<button onclick="deleteLink()">Delete selected</button>
-	</div>
-
-	<div class="toolPanel" id="panel.bulkactions">
-		<div>
-			<div class="panelHead">Apply to ALL</div>
-			<button class="popup">
-				Check
-				<div class="popuptext">
-					<div id="hovertext" onclick="uncheckAll()">Uncheck all</div>
-					<div id="hovertext" onclick="checkAll()">Check all</div>
-				</div>
-			</button>
-			<button onclick="globals.dataService.GetAllEntities()">Fetch</button>
-			<button onclick="unPinAllNodes()">Unpin</button>
-			<button onclick="arrangeBy2()">Arrange</button>
-		</div>
-	</div>
-
-
-
-	<div class="toolPanel" id="panel.appearance">
-		<div class="panelHead">Appearance</div>
-		<button class="popup">
-			Node
-			<div class="popuptext">
-				<div id="hovertext" onclick="unPinSelectedNode()">Unpin</div>
-				<div id="hovertext" onclick="refreshNodeAppearance()">Refresh Visual</div>
-				<div id="hovertext" onclick="increaseNodeSize()">Increase Size</div>
-				<div id="hovertext" onclick="decreaseNodeSize()">Decrease Size</div>
-				<div id="hovertext" onclick="increaseNodeMass()">Increase Mass</div>
-				<div id="hovertext" onclick="decreaseNodeMass()">Decrease Mass</div>
-				<div id="hovertext" onclick="increaseNodeSprings()">Increase Spring</div>
-				<div id="hovertext" onclick="decreaseNodeSprings()">Decrease Spring</div>
-				<div id="hovertext" onclick="increaseNodeDepth()">Increase Depth</div>
-				<div id="hovertext" onclick="decreaseNodeDepth()">Decrease Depth</div>
-			</div>
-		</button>
-
-		<button class="popup">
-			Font
-			<div class="popuptext">
-				<div id="hovertext" onclick="fontGrow()">Increase font size</div>
-				<div id="hovertext" onclick="fontShrink()">Decrease font size</div>
-				<div id="hovertext" onclick="fontUp()">Move text up</div>
-				<div id="hovertext" onclick="fontDown()">Move text down</div>
-			</div>
-		</button>
-		<button onclick="removeNodeFromStage()">Hide Entity</button>
-	</div>
-	<!--div class='toolPanel' id='panelData'>
-		<div class="panelHead">Data</div>
-		<input id="nodeLabel" type="text" name="lname">
-		<button onclick='getEntityNode()'>Get Entity</button>
-	</div-->
-	<!--div class='toolPanel'>
-		<div>
-			<div class="panelHead">Planning</div>
-			<button onclick='planEntity()'>create entity</button>
-			<button onclick='unPinAllNodes()'>create relation</button>
-			<button onclick='arrangeBy()'>Arrange</button>
-		</div>
-	</div-->
-
-	<div class="toolPanel" id="panel.selection">
-		<div id="newNode">
-			<div class="panelHead">Selection Options:</div>
-			<input class="check" id="vo.ch" onclick="updateInteractionOptions()" type="checkbox" name="descendants" value=""> Multi Select<br>
-			<form action="">
-				<input class="check" id="vo.dd" onclick="setScreenDragType('flat')" type="radio" name="related" value="" checked="true"> Flat<br>
-				<input class="check" id="vo.df" onclick="setScreenDragType('depth')" type="radio" name="related" value=""> Depth<br>
-			</form>
-		</div>
-	</div>
-
-	<div class="toolPanel" id="panel.highlight">
-		<div id="newNode">
-			<div class="panelHead">Entity Hover</div>
-			<form action="">
-				<input class="check" id="vo.hr" onclick="updateViewOptions()" type="radio" name="related" value="" checked="true"> Highlight Related<br>
-				<input class="check" id="vo.ha" onclick="updateViewOptions()" type="radio" name="related" value=""> Highlight Ancestors<br>
-				<input class="check" id="vo.hd" onclick="updateViewOptions()" type="radio" name="related" value=""> Highlight Descendants<br>
-			</form>
-		</div>
-	</div>
-
-	<div class="toolPanel" id="panel.dragOption">
-		<div id="newNode">
-			<div class="panelHead">Drag Options:</div>
-			<form action="">
-				<input class="check" id="do.flat" onclick="updateDragOptions()" type="radio" name="related" value="" checked="true"> Flat<br>
-				<input class="check" id="do.depth" onclick="updateDragOptions()" type="radio" name="related" value=""> Depth<br>
-			</form>
-		</div>
-	</div>
-
-	<div class="toolPanel" id="panel.navigation">
-		<div id="newNode">
-			<div class="panelHead">Entity Fetch Options</div>
-			<form action="">
-				<input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('parent')" type="radio" name="related" value=""> fetch parents<br>
-				<input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('child')" type="radio" name="related" value=""> fetch children<br>
-				<input class="check" id="vo.nav.direction" onclick="updateViewOptions_Nav('both')" type="radio" name="related" value="" checked="checked"> fetch both<br>
-			</form>
-		</div>
-	</div>
-
-
-
-
-</div>
-
-
-<div id="developerCustomForms">
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="newWorkflowModel">
-		<form class="form-group">
-			<h2>Create Workflow</h2>
-			<br>
-			<label class="label" for="txtName">Name</label>
-			<input class="form-control" if="txtName" type="text" placeholder="Enter name">
-		</form>
-		<button onclick="globals.nodeFunctions.add_workflow()" class="btn btn-default pull-right">Submit</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="updateWorkflowModel">
-		<form class="form-group">
-			<h2>Update Workflow</h2>
-			<br>
-			<label class="label" for="txtName">Name</label>
-			<input class="form-control" if="txtName" type="text" placeholder="Enter name">
-		</form>
-		<button onclick="globals.nodeFunctions.update_workflow()" class="btn btn-default pull-right">Save</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="removeWorkflowModel">
-		<form class="form-group">
-			<h2>Remove Workflow</h2>
-			Are you sure you want to remove this workflow?
-		</form>
-		<button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
-	</dialog>
-
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="addContentModal">
-		<form class="form-group">
-			<h2>Add content fetcher</h2>
-			<br>
-			<label class="label" for="selector">Fetch from: </label>
-			<select class="form-control" id="selector">
-				<option value="Local">By Request</option>
-				<option value="Local">Local Path</option>
-				<option value="Repo">Repository</option>
-				<option value="URI">URI</option>
-			</select>
-		</form>
-		<button onclick="globals.nodeFunctions.add_content()" class="btn btn-default pull-right">Submit</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="updateContentModel">
-		<form class="form-group">
-			<h2>Send to content</h2>
-			<br>
-			<label class="label" for="selector">Content</label>
-			<select class="form-control" id="selector">
-				<option value="Echo">Echo</option>
-				<option value="Gamma">Gamma</option>
-				<option value="Texture Packer">Texture Packer</option>
-				<option value="Sparta">Sparta</option>
-			</select>
-		</form>
-		<button onclick="globals.nodeFunctions.update_content()" class="btn btn-default pull-right">Submit</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="removeContent">
-		<form class="form-group">
-			<h2>Remove Workflow</h2>
-			Are you sure you want to remove this content?
-		</form>
-		<button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="addToolModal">
-		<form class="form-group">
-			<h2>Send to tool</h2>
-			<br>
-			<label class="label" for="selector">Tool</label>
-			<select class="form-control" id="selector">
-				<option value="Echo">Echo</option>
-				<option value="Gamma">Gamma</option>
-				<option value="Texture Packer">Texture Packer</option>
-				<option value="Sparta">Sparta</option>
-			</select>
-		</form>
-		<button onclick="globals.nodeFunctions.add_tool()" class="btn btn-default pull-right">Submit</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="updateToolModel">
-		<form class="form-group">
-			<h2>Send to tool</h2>
-			<br>
-			<label class="label" for="selector">Tool</label>
-			<select class="form-control" id="selector">
-				<option value="Echo">Echo</option>
-				<option value="Gamma">Gamma</option>
-				<option value="Texture Packer">Texture Packer</option>
-				<option value="Sparta">Sparta</option>
-			</select>
-		</form>
-		<button onclick="globals.nodeFunctions.update_tool()" class="btn btn-default pull-right">Submit</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="removeTool">
-		<form class="form-group">
-			<h2>Remove Workflow</h2>
-			Are you sure you want to remove this tool?
-		</form>
-		<button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="addCollectorModal">
-		<form class="form-group">
-			<h2>Send to collector</h2>
-			<br>
-			<label class="label" for="selector">Collector</label>
-			<select class="form-control" id="selector">
-				<option value="Echo">Echo</option>
-				<option value="Gamma">Gamma</option>
-				<option value="Texture Packer">Texture Packer</option>
-				<option value="Sparta">Sparta</option>
-			</select>
-		</form>
-		<button onclick="globals.nodeFunctions.add_collector()" class="btn btn-default pull-right">Submit</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="updateCollectorModel">
-		<form class="form-group">
-			<h2>Send to collector</h2>
-			<br>
-			<label class="label" for="selector">Collector</label>
-			<select class="form-control" id="selector">
-				<option value="Echo">Echo</option>
-				<option value="Gamma">Gamma</option>
-				<option value="Texture Packer">Texture Packer</option>
-				<option value="Sparta">Sparta</option>
-			</select>
-		</form>
-		<button onclick="globals.nodeFunctions.update_collector()" class="btn btn-default pull-right">Submit</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-	<dialog class="inputModal" id="removeCollector">
-		<form class="form-group">
-			<h2>Remove Workflow</h2>
-			Are you sure you want to remove this collector?
-		</form>
-		<button onclick="globals.nodeFunctions.remove_entity()" class="btn btn-default pull-right">Save</button>
-	</dialog>
-	<!-------------------------------------------------------------------->
-</div>
-
-
-
-
-<!--<dialog class='nodeFlyout' id="panel.node">
-	<textarea id="myDialogText"></textarea>
-	<button onclick="closeDialog('myDialog')">Close</button>
-</dialog>-->
-
-
-
 
 </html>
