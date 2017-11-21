@@ -64,7 +64,7 @@ var DataStringHelper = function () {
 		if (!elementExists(dataElementIndex)) {
 			// Element doesnt exist yet.
 			// Get Data String
-			var insertionIndex = Math.trunc(dataElementIndex);
+			var insertionIndex = Math.floor(dataElementIndex);
 			var newDataString = dataString.slice(0, insertionIndex) + newElement + '|' + dataString.slice(insertionIndex);
 			
 			return newDataString;
@@ -91,7 +91,7 @@ var DataStringHelper = function () {
 		
 		if (elementExists(dataElementIndex)) {
 			// Element exists.
-			var startIndex = Math.trunc(dataElementIndex);
+			var startIndex = Math.floor(dataElementIndex);
 			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
 			var dataString = dataString.slice(0, startIndex - 1) + dataString.slice(endIndex);
 		}

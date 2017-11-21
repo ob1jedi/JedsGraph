@@ -2,7 +2,6 @@
     var str = this;
     str = str.replace(/^"+|"+$/g, '');
     str = str.replace(/^'+|'+$/g, '');
-    str = str.replace(/^`+|`+$/g, '');
   return str;
 }
 

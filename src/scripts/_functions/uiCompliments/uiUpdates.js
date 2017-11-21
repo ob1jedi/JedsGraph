@@ -4,14 +4,14 @@
 		}
 		
 		
-		function applyConfigUpdates(_sourceConfig)
-		{
-			globals.graphContainer = document.getElementById('graphContainer');
-			globals.graphContainer.style.background=_sourceConfig.displaySettings.graphBackground;
-			if (_sourceConfig.displaySettings.backgroundImage!=null){
-				globals.graphContainer.style['background-image'] =  'url('+_sourceConfig.displaySettings.backgroundImage+')'
-			};
-		}
+		//function applyConfigUpdates(_sourceConfig)
+		//{
+		//	globals.graphContainer = document.getElementById('graphContainer');
+		//	globals.graphContainer.style.background=_sourceConfig.displaySettings.graphBackground;
+		//	if (_sourceConfig.displaySettings.backgroundImage!=null){
+		//		globals.graphContainer.style['background-image'] =  'url('+_sourceConfig.displaySettings.backgroundImage+')'
+		//	};
+		//}
 		
 		function addValueToList(listElementId, col1, col2, col3)
 		{

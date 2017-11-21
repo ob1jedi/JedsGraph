@@ -5,33 +5,33 @@ function ParseTreeTranslator() {
 	this.Examples = [
     "a & (b & c) -> (d -> (e V f)) & !(g || h)"
   ];
-	this.ReferenceContent = `
-    </br>
-      Implication
-      <span class ="inputModal code">Implies</span> 
-      <span class ="inputModal code">-></span> 
-    </br>
-      Conjuntion
-      <span class ="inputModal code">And</span> 
-      <span class ="inputModal code">&</span> 
-      <span class ="inputModal code">&&</span> 
-      <span class ="inputModal code">^</span> 
-      <span class ="inputModal code">.</span> 
-    </br>
-      Disjunction
-      <span class ="inputModal code">Or</span> 
-      <span class ="inputModal code">||</span> 
-      <span class ="inputModal code">V</span> 
-      <span class ="inputModal code">+</span> 
-    </br>
-      Negation
-      <span class ="inputModal code">Not</span> 
-      <span class ="inputModal code">~</span> 
-      <span class ="inputModal code">!</span> 
-      <span class ="inputModal code">-</span> 
-    </br>
-      Parentheses<span class ="inputModal code">(...)</span> 
-    `;
+	this.ReferenceContent = ''
+    +'</br>'
+    +'  Implication'
+    +'  <span class ="inputModal code">Implies</span> '
+    +'  <span class ="inputModal code">-></span> '
+    +'</br>'
+    +'  Conjuntion'
+    +'  <span class ="inputModal code">And</span> '
+    +'  <span class ="inputModal code">&</span> '
+    +'  <span class ="inputModal code">&&</span> '
+    +'  <span class ="inputModal code">^</span> '
+    +'  <span class ="inputModal code">.</span> '
+    +'</br>'
+    +'  Disjunction'
+    +'  <span class ="inputModal code">Or</span> '
+    +'  <span class ="inputModal code">||</span> '
+    +'  <span class ="inputModal code">V</span> '
+    +'  <span class ="inputModal code">+</span> '
+    +'</br>'
+    +'  Negation'
+    +'  <span class ="inputModal code">Not</span> '
+    +'  <span class ="inputModal code">~</span> '
+    +'  <span class ="inputModal code">!</span> '
+    +'  <span class ="inputModal code">-</span> '
+    +'</br>'
+    +'  Parentheses<span class ="inputModal code">(...)</span> '
+    +'';
 	var _stringSvc = new StringHelper();
   var _dictionery = [];
   var _precedence = {

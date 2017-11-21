@@ -399,7 +399,7 @@ var consoleApp = new Vue({
 
       },
       // Style tabs...
-      selectedStyleTab: `STYLES`,
+      selectedStyleTab: 'STYLES',
       styles: {
         bNodeColor: false,
         bNodeBorderColor: false,
@@ -600,12 +600,11 @@ function VueMenuHelper(){
   }
   this.ShowAboutModal = function(){
     var header = "About";
-    var content = `
-        Hi there, we hope you are enjoying the use of this tool.
-        It is still under development, but we welcome any suggestions that you may have.
-        <br>If you would like to contact us for any reason, you can get hold of us at:
-        <br><a href="mailto:suggest@graphex.io?Subject=I have a suggestion" target="_top">suggest@graphex.io</a>
-    `;
+    var content = ''
+        +'Hi there, we hope you are enjoying the use of this tool.'
+        +'It is still under development, but we welcome any suggestions that you may have.'
+        +'<br>If you would like to contact us for any reason, you can get hold of us at:'
+        +'<br><a href="mailto:suggest@graphex.io?Subject=I have a suggestion" target="_top">suggest@graphex.io</a>';
     new VueConsoleHelper().ShowInfoModal(header, content);
   }
 

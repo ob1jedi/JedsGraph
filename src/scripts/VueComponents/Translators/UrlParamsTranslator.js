@@ -7,27 +7,25 @@ function UrlParamsTranslator() {
             "x--y.x--z",
             "x--y.y--z"
 	];
-	this.ReferenceContent = `
-            This format is safe to pass in your URL,
-            <br/> in the "graph" parameter.
-            <br/>Example: 
-						</br><span class ="inputModal code">http://www.graphex.io/?graph=x--y.y--z</span>
-						<hr>
-						Create a node with any alphanumric sequence of characters:
-						</br><span class ="inputModal code">MyNode1</span>
-						<hr>
-						Link two nodes with: <span class ="inputModal code">--</span>
-            <br/>Example:
-            </br><span class ="inputModal code">n1--n2</span>
-            <hr>
-						Separate node-pairs by using a full-stop: <span class ="inputModal code"> . </span>
-            <br/>Nodes will link to previouse nodes by name.
-            <br/>Example:
-            </br><span class ="inputModal code">n1--n2.n2--n3</span>
-            <br/>Relationships live in-beteen two dashes:
-            </br><span class ="inputModal code">node1-relationship-node2</span>
-
-	`;
+	this.ReferenceContent = ''
+            +'This format is safe to pass in your URL,'
+            +'<br/> in the "graph" parameter.'
+            +'<br/>Example: '
+						+'</br><span class ="inputModal code">http://www.graphex.io/?graph=x--y.y--z</span>'
+						+'<hr>'
+						+'Create a node with any alphanumric sequence of characters:'
+						+'</br><span class ="inputModal code">MyNode1</span>'
+						+'<hr>'
+						+'Link two nodes with: <span class ="inputModal code">--</span>'
+            +'<br/>Example:'
+            +'</br><span class ="inputModal code">n1--n2</span>'
+            +'<hr>'
+						+'Separate node-pairs by using a full-stop: <span class ="inputModal code"> . </span>'
+            +'<br/>Nodes will link to previouse nodes by name.'
+            +'<br/>Example:'
+            +'</br><span class ="inputModal code">n1--n2.n2--n3</span>'
+            +'<br/>Relationships live in-beteen two dashes:'
+            +'</br><span class ="inputModal code">node1-relationship-node2</span>';
 					
 
 	this.Translate = function (expression) {
@@ -46,7 +44,10 @@ function UrlParamsTranslator() {
       
       for (var e = 0; e < entities.length; e++){
         var entityName = entities[e];
-        newNode = nodes.find(function(s){s.data.labels[0]===entityName});
+        
+        newNode = null;
+        nodes.forEach(function(n){if (n.data.labels[0] === entityName) newNode = n});
+        
         if (!newNode){
           newNode = dataSvc.CreateEntity_AddToGraph_ReturnNode([entityName]);
           nodes.push(newNode);

@@ -435,22 +435,22 @@ function refreshEntitySelectors(){
 		color = nodeLabel.data.sourceConfig.config.attributes.selector["background-color"];
 		button_onclick = "globals.dataService.GetEntitiesByType('" + nodeLabel.name + "', '')";
 		
-		labelSelectorHtml += `
-			<tr>
-				<td>
-					<div onclick="highlightLabel(` + index + `)" class="labelSelectorItem" style="background-color:` + color + `;" > `
-						+ nodeLabel.name + `
-					</div>
-				</td>
-				<td>
-					<div id="labelSelector.fetcher.` + nodeLabel.name + `" class="forlabelselector mytooltip pull-right" style="background-color:` +nodeLabel.color + `" onclick= "` +button_onclick + `" > `
-						+ nodeLabel.instanceCount + `
-						<div class="mytooltiptext ttleft ttupper">
-							Fetch from database
-						</div>
-					</div>
-				</td>
-			</tr>`;
+		labelSelectorHtml += ''
+			+'<tr>'
+			+'	<td>'
+			+'		<div onclick="highlightLabel(' + index + ')" class="labelSelectorItem" style="background-color:' + color + ';" > '
+			+ 			  nodeLabel.name
+			+'		</div>'
+			+'	</td>'
+			+'	<td>'
+			+'		<div id="labelSelector.fetcher.' + nodeLabel.name + '" class="forlabelselector mytooltip pull-right" style="background-color:' +nodeLabel.color + '" onclick= "' +button_onclick + '" > '
+			+			    nodeLabel.instanceCount
+			+'			<div class="mytooltiptext ttleft ttupper">'
+			+'				Fetch from database'
+			+'			</div>'
+			+'		</div>'
+			+'	</td>'
+			+'</tr>;'
 		if (qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML += '<option value="' + nodeLabel.name + '">' + nodeLabel.name + '</option>'; }
 	});
 	labelSelectorHtml += '</table>';

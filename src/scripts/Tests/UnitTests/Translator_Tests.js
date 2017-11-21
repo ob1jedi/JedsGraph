@@ -3,34 +3,34 @@
 	globals.allUnitTests.push(function JsonTranslate_GivenComplexObject_ExpectNodeStructure() {
 		// Arrange
     var sut=new JsonTranslator();
-    var jsonObject1=`{
-      "level1String": "level1String",
-      "level1Object": {
-        "level2String": "level2String",
-        "level2Object": {
-          "level3String": "level3String",
-          "level3Array": [
-            {
-              "arrayId": "0",
-              "level4ElementString": "level4ElementString_BaseObjectOnly"
-            },
-            { 
-              "arrayId": "1",
-              "level4ElementString": "level4ElementString" 
-            },
-            {
-              "arrayId": "2",
-              "level4ElementObject": {
-                "level5ElObjString": "level5ElObjString"
-              }
-            },
-            ["arrayId:1", 1],
-            ["arrayId:2", 2],
-            ["arrayId:4", {"arrayId":1, "level6Number":1}, {"arrayId":2, "level6Number":2}]
-          ]
-        }
-      }
-    }`
+    var jsonObject1='{'
+      +'"level1String": "level1String",'
+      +'"level1Object": {'
+      +'  "level2String": "level2String",'
+      +'  "level2Object": {'
+      +'    "level3String": "level3String",'
+      +'    "level3Array": ['
+      +'      {'
+      +'        "arrayId": "0",'
+      +'        "level4ElementString": "level4ElementString_BaseObjectOnly"'
+      +'      },'
+      +'      { '
+      +'        "arrayId": "1",'
+      +'        "level4ElementString": "level4ElementString" '
+      +'      },'
+      +'      {'
+      +'        "arrayId": "2",'
+      +'        "level4ElementObject": {'
+      +'          "level5ElObjString": "level5ElObjString"'
+      +'        }'
+      +'      },'
+      +'      ["arrayId:1", 1],'
+      +'      ["arrayId:2", 2],'
+      +'      ["arrayId:4", {"arrayId":1, "level6Number":1}, {"arrayId":2, "level6Number":2}]'
+      +'    ]'
+      +'  }'
+      +'}'
+      +'}'
 		
     // Act
 		var result = sut.Translate(jsonObject1);

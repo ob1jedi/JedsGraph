@@ -21,35 +21,33 @@ var SimpleTranslator = function () {
             "Mother"+_r+"M->Father"+_r+"F; "+_r+"F->"+_r+"M; "+_r+"M->Son; "+_r+"F->Son; Son->Grandson",
             "Sun"+_r+"S->Earth"+_r+"E; "+_r+"S->Mars"+_r+"M; "+_r+"E->Moon; "+_r+"M->Phobos;"
 	];
-	this.ReferenceContent = `
-						Type any word to create a node, eg. <span class ="inputModal code">John</span>
-						<hr>
-						Create a node with some attributes, eg.
-							</br><span class ="inputModal code">John(age: 30, sex: male)</span>
-						<hr>
-						Create a relationship between two nodes:
-							</br><span class ="inputModal code">node1->node2</span>
-						<hr>
-						Link multiple nodes in a chain:
-							</br><span class ="inputModal code">n1->n2->n3->n4</span>
-						<hr>
-						Link multiple nodes to one node:
-							</br><span class ="inputModal code">n1->n2 & n3 & n4</span>
-						<hr>
-						Alternative relationship syntax: <span class ="inputModal code">--></span>
-						<hr>
-						Create relationship with a name: <span class ="inputModal code">-name-></span>
-						<hr>
-						Create relationship with a name and some attributes:
-							</br><span class ="inputModal code">-owns(since: 2010) -></span>
-						<hr>
-						Select the node using the <span class ="inputModal code">${_a}</span> symbol:
-							</br><span class ="inputModal code">node1->node2 ${_a}</span>
-						<hr>
-            Create a temporary node reference using the <span class ="inputModal code">`+_r+ `</span> character:
-              </br><span class ="inputModal code">star ${_r}S->planet ${_r}P; ${_r}S->sun; ${_r}P->Earth</span>
-
-	`;
+	this.ReferenceContent = ''
+						+'Type any word to create a node, eg. <span class ="inputModal code">John</span>'
+						+'<hr>'
+						+'Create a node with some attributes, eg.'
+						+'	</br><span class ="inputModal code">John(age: 30, sex: male)</span>'
+						+'<hr>'
+						+'Create a relationship between two nodes:'
+						+'	</br><span class ="inputModal code">node1->node2</span>'
+						+'<hr>'
+						+'Link multiple nodes in a chain:'
+						+'	</br><span class ="inputModal code">n1->n2->n3->n4</span>'
+						+'<hr>'
+						+'Link multiple nodes to one node:'
+						+'	</br><span class ="inputModal code">n1->n2 & n3 & n4</span>'
+						+'<hr>'
+						+'Alternative relationship syntax: <span class ="inputModal code">--></span>'
+						+'<hr>'
+						+'Create relationship with a name: <span class ="inputModal code">-name-></span>'
+						+'<hr>'
+						+'Create relationship with a name and some attributes:'
+						+'	</br><span class ="inputModal code">-owns(since: 2010) -></span>'
+						+'<hr>'
+						+'Select the node using the <span class ="inputModal code">'+_a+'</span> symbol:'
+						+'	</br><span class ="inputModal code">node1->node2 '+_a+'</span>'
+						+'<hr>'
+            +'Create a temporary node reference using the <span class ="inputModal code">'+ _r+ '</span> character:'
+            +'  </br><span class ="inputModal code">star '+_r+'S->planet '+_r+'P; '+_r+'S->sun; '+_r+'P->Earth</span>';
 	
   this.TranslateGraphToFormula = function()
   {
@@ -58,7 +56,7 @@ var SimpleTranslator = function () {
     globals.nodeList.forEach(function(node){
       var props = JSON.stringify(node.data.propertiesObject).gxTrimBrackets();
       var label = node.data.labels[0];
-      var statement = `${label} #${node.id}` + ((node.data.properties.length > 0)?`(${props})`:``) + `;`;
+      var statement = label +'#'+ node.id + ((node.data.properties.length > 0)? ('(' + props + ')'):'') + ';';
       statements.push(statement);
     });
 
@@ -67,12 +65,12 @@ var SimpleTranslator = function () {
       var toNode = "#" + link.toId;
       var props = JSON.stringify(link.data.propertiesObject).gxTrimBrackets();
       var label = link.data.name[0];
-      var linkDetails = `${label}` + ((link.data.properties.length > 0)?`(${props})`:``);
+      var linkDetails = label + ((link.data.properties.length > 0)? ('(' + props + ')'):'');
       if (link.data.name.length == 0){
-        statements.push(`${fromNode}->${toNode};`);
+        statements.push(fromNode+'->'+toNode+';');
       }
       else{
-        statements.push(`${fromNode}-${linkDetails}->${toNode};`);
+        statements.push(fromNode + '-' + linkDetails + '->' +  toNode +';');
       }    
     });
     return statements.join('');
@@ -176,7 +174,7 @@ var SimpleTranslator = function () {
     for (var i = 0; i < _references.length ; i++)
       if (_references[i].id == id)
         return _references[i].nodes;
-    throw "Could not find node reference: '"+_r+""+ id + `'. A '${_r}ref' syntax is used to refer to an existing node, or to create a node reference. `;
+    throw "Could not find node reference: '"+_r+""+ id + '. A '+_r+'ref syntax is used to refer to an existing node, or to create a node reference. ';
   }
   function addToReferences(id, newNode){
     var existingReference = null;
@@ -222,7 +220,7 @@ var SimpleTranslator = function () {
   }
 	function mustSelectNode(element)
 	{
-		return element.includes(_a);
+		return (element.indexOf(_a) > -1);
 	}
 	function IsNodeSelected() {
 		if (!globals.selectedNode) {

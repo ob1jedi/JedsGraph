@@ -211,12 +211,12 @@
     if(!link.data.displayingData) {
       return;
     }
-    link.data.displayingData=false;
+    link.data.displayingData = false;
     if(link.data.UI.nameTextUI) {
-      link.data.UI.nameTextUI.remove();
+      removeUi(link.data.UI.nameTextUI);
     }
     if(link.data.UI.subTextUI) {
-      link.data.UI.subTextUI.remove();
+      removeUi(link.data.UI.subTextUI);
     }
     $(link.data.UI.fullUI).hide().show();
     //drawLink(link.data.UI.fullUI, {x:0,y:0}, {x:0,y:0});
@@ -224,7 +224,12 @@
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   function setUi(ui,attrName,attrValue) {
     if(!ui) return;
-    ui.attr(attrName,attrValue);
+    ui.attr( attrName, attrValue );
+  }
+  function removeUi(ui) {
+    if(!ui) return;
+    if(!ui.remove) return;
+    ui.remove();
   }
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   this.GetLinkById = function(linkId) { getLinkById(linkId) }

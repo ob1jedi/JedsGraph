@@ -16,14 +16,13 @@ function JsonTranslator() {
     }
   ];
 
-  this.ReferenceContent=`
-						Objects are nodes, eg. <span class ="inputModal code">{"John":{}}</span>
-						<hr>
-						Nodes start from the properties of the root node.
-						The root node is never materialized.
-						<hr>
-						Arrays will become nodes by the name of the parent property.
-	`;
+  this.ReferenceContent=''
+						+'Objects are nodes, eg. <span class ="inputModal code">{"John":{}}</span>'
+						+'<hr>'
+						+'Nodes start from the properties of the root node.'
+						+'The root node is never materialized.'
+						+'<hr>'
+						+'Arrays will become nodes by the name of the parent property.';
 
   this.Translate=function(expression, _baseObjectName) {
     var translator=new JsonTranslator();

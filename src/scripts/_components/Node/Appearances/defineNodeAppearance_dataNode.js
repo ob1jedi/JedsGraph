@@ -133,11 +133,11 @@
 		var r = Number(_cnf.attributes["radius"]) + 5;
 		var circleTextPath = Viva.Graph.svg('path')
 			.attr('id', 'npath_' + this.node.data.id)
-			.attr('d', `
-				M 0, 0
-				m -${r}, 0
-				a ${r}, ${r} 0 1, 0 ${r*2}, 0
-				a ${r}, ${r} 0 1, 0 -${r*2}, 0`)
+			.attr('d', ''
+				+'M 0, 0'
+				+'m -'+r+', 0'
+				+'a '+r+', '+r+' 0 1, 0 '+r*2+', 0'
+				+'a '+r+', '+r+' 0 1, 0 -'+r*2+', 0')
 			.attr('fill', 'transparent')
 			.attr('style', "transform:rotate(" + 90 + "deg);")
 		this.node.data.UI.circleTextPath = circleTextPath;
@@ -162,7 +162,7 @@
 	}
 	
 	this.addEffect = function (name, definition) {
-		this.nodeEffects.push({ name: name, definition, definition });
+		this.nodeEffects.push({ name: name, definition:definition });
 	}
 
 
@@ -231,24 +231,23 @@ function defineNodeAppearance_dataNode(node, ui) {
 	nodeAppearance.addEffect("shadowEffect",
 		'<filter id="shadowEffect" x="-1" y="-1" width="300%" height="300%"><feOffset result="offOut" in="SourceAlpha" dx="20" dy="20" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>'
 	);
-	nodeAppearance.addEffect("gradGlass", `
-		<linearGradient id="gradGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%">
-			<stop offset="0%" stop-color="#606768" stop-opacity="0.3"/>
-			<stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/>
-			<stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/>
-			<stop offset="28%" stop-color="#000000" stop-opacity="0.3"/>
-			<stop offset="73%" stop-color="#000000" stop-opacity="0.3"/>
-			<stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/>
-			<stop offset="97%" stop-color="#000000" stop-opacity="0.3"/>
-			<stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>
-		</linearGradient>`
+	nodeAppearance.addEffect("gradGlass", ''
+		+'<linearGradient id="gradGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%">'
+		+'	<stop offset="0%" stop-color="#606768" stop-opacity="0.3"/>'
+		+'	<stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/>'
+		+'	<stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/>'
+		+'	<stop offset="28%" stop-color="#000000" stop-opacity="0.3"/>'
+		+'	<stop offset="73%" stop-color="#000000" stop-opacity="0.3"/>'
+		+'	<stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/>'
+		+'	<stop offset="97%" stop-color="#000000" stop-opacity="0.3"/>'
+		+'	<stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>'
+		+'</linearGradient>'
 	);
-	nodeAppearance.addEffect("gradShine", `
-		<linearGradient id="gradShine" x1="0%" y1="0%" x2="100%" y2="100%">
-			<stop offset="0%"   stop-color="white" stop-opacity="0.7"/>
-			<stop offset="100%"  stop-color="purple" stop-opacity="0"/>
-		</linearGradient>
-	`
+	nodeAppearance.addEffect("gradShine", ''
+		+'<linearGradient id="gradShine" x1="0%" y1="0%" x2="100%" y2="100%">'
+		+'	<stop offset="0%"   stop-color="white" stop-opacity="0.7"/>'
+		+'	<stop offset="100%"  stop-color="purple" stop-opacity="0"/>'
+		+'</linearGradient>'
 	);
 
 	//effects.push('<linearGradient id="coloredGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#606768" stop-opacity="0.3"/><stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="28%" stop-color="#000000" stop-opacity="0.3"/><stop offset="73%" stop-color="#000000" stop-opacity="0.3"/><stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/><stop offset="97%" stop-color="#000000" stop-opacity="0.3"/><stop offset="100%" stop-color="#000000" stop-opacity="0.3"/></linearGradient>');

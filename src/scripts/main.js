@@ -13,7 +13,7 @@ function graphexMain() {
 		prepareGraph();
 		defineNodes();
 		defineNodeDrawing();
-		if (globals.browser.name == "Chrome"){
+		if (globals.browser.name != "Firefox" && globals.browser.name != "IE"){
       defineLinkObjectsCommonAssets();
 		  defineLinkObjects();
       defineLinkDrawing();
@@ -30,7 +30,7 @@ function graphexMain() {
 
   function runUnitTests(){
     // UNIT TESTS...
-		if (window.location.href.startsWith("http://localhost:9090/")){
+		if(window.location.href.substr(0,17)=="http://localhost:"){
 			var unitTestFramework = new UnitTestFramework();
 			unitTestFramework.runAllUnitTests(globals.allUnitTests);
 		}

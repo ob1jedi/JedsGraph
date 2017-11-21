@@ -113,8 +113,12 @@
     if(isArray(input1)) {
       for(var i=0;i<input1.length;i++)
         for(var x=0;x<input2.length;x++)
-          if(isString(input1[i])&&input1[i]===input2[x]&&input1[i].startsWith(idFieldName+":"))
+          if(   isString(input1[i])
+             && input1[i] === input2[x]
+             && input1[i].substr(0,(idFieldName+":").length) == (idFieldName+":")
+            ){
             return true;
+          }
       return false;
     }
     throw "JSONMERGE ERROR: unable to compare"
