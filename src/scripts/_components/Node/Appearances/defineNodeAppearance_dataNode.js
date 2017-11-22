@@ -186,14 +186,7 @@
 
 function defineNodeAppearance_dataNode(node, ui) {
 	var _cnf = node.data.entityConfig.config;
-	//var cnf = node.data.sourceConfig.displaySettings;
 
-	//var nodeConfig = node.data.config.nodeDisplayBody;
-	//var configHelper = new ConfigHelper();
-	//nodeConfig = configHelper.getNodeConfig();
-
-
-	//if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }
 	ui.attr('class', 'datanode')
 	node.data.UI = {
 		bodyUI: undefined,
@@ -207,18 +200,11 @@ function defineNodeAppearance_dataNode(node, ui) {
 	//Circle elements NODE-CIRCLE
 	var nodeAppearance = new nodeAppearanceHelper(node);
 
-	//node.data.variables["Relations"].forEach(function (functionConfig) {
-	//});
-	//for (var i = 0; i < 50; i++) {
-	//	nodeAppearance.addNodeLine();	
-	//}
-
 	nodeAppearance.addNodeBody();
 	nodeAppearance.addNodeImage();
 	nodeAppearance.addNodeText();
 	nodeAppearance.addNodeCircleTextPath();
 	nodeAppearance.addNodeCircleText();
-
 
 	_cnf["relatedThings"].forEach(function (thingConfig) {
 		if (thingConfig.thingName === "option")

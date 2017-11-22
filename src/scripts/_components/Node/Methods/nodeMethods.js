@@ -124,7 +124,7 @@ function fixTextWidth4Node(node)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function showOnNode(nodeId, text)
 {
-	var node = getDataNode(nodeId);
+	var node = getExistingNode(nodeId);
 	node.data.displayLabel = text;
 	refreshNodeAppearance(nodeId);
 }
@@ -133,7 +133,7 @@ function showOnNode(nodeId, text)
 function increaseNodeSprings(nodeid)
 {
 	if (!nodeid){nodeid=globals.selectedNodeID;}
-	var node = getDataNode(nodeid);
+	var node = getExistingNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
 		var nodespring = globals.layout.getSpring(nodeid, toNode.id);
@@ -169,7 +169,7 @@ function decreaseNodeDepth(node)
 function decreaseNodeSprings(nodeid)
 {
 	if (!nodeid){nodeid=globals.selectedNodeID;}
-	var node = getDataNode(nodeid);
+	var node = getExistingNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
 		var nodespring = globals.layout.getSpring(nodeid, toNode.id);

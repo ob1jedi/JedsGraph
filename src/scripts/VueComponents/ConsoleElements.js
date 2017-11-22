@@ -170,7 +170,6 @@ var consoleApp = new Vue({
       
       this.tabs.styles.selectedNodeColor = nodeConfig.attributes["background-color"];
       this.tabs.styles.selectedNodeBorderColor = nodeConfig.attributes["border-color"];
-      //debugger;
       this.tabs.styles.selectedNodeTextColor = nodeConfig.attributes.labelText["color"];
       this.tabs.styles.selectedNodeCircleTextColor = nodeConfig.attributes.circleText["color"];
       this.tabs.styles.selectedNodeShape = nodeConfig.attributes["shape"];
@@ -365,7 +364,6 @@ var consoleApp = new Vue({
       },
       selectExisting: function(selectedConfig) {
         var jsonHelper=new JsonHelper();
-        //debugger;
         this.styles.selectedNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")||null;
         this.styles.bNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")?true:false;
         

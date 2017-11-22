@@ -59,7 +59,6 @@
       nodeRegister[toNode.id] = 1;// ... Register node for this tree.
       var col = Math.max(gridDict[fromNode.id].col + 1, gridDict[toNode.id].col);
       _totalCols = Math.max(col, _totalCols);
-      //debugger;
       //var row = _totalRows;//gridDict[fN.id].row;
       gridDict[toNode.id].col = col;
       //while (matrix[_totalRows + ',' + col] == 1){
@@ -87,8 +86,7 @@
     var circularDependants = [];
     globals.nodeList.forEach(function(n) {
       if (gridDict[n.id].col == -1 && gridDict[n.id].row == -1){
-        //debugger;
-        circularDependants.push(n);
+          circularDependants.push(n);
       }
     });
     return circularDependants;

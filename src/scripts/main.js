@@ -43,7 +43,6 @@ function graphexMain() {
         // PARAMETERS
     //extract commands from URL:
     var urlHelper  = new UrlHelper();
-    //debugger;
     var params = urlHelper.GetAllParams();
     params.forEach(function(param){
       if (param.key == "graph"){

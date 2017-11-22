@@ -14,7 +14,6 @@
   }
 
   this.AddToEntityTypeDefs = function(node){
-    //debugger;
     var entityType = new EntityTypeDef();
     labelFound = false;
     // Check for existing node type...
@@ -28,7 +27,6 @@
         }
       }
     }
-    //debugger;
     // Update properties...
     for (var key in node.data.propertiesObject){
       if (!entityType.properties.hasOwnProperty(key))

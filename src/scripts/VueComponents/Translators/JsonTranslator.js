@@ -30,9 +30,8 @@ function JsonTranslator() {
     translator.TranslateToGraph_ReturnGraphElements(_baseObjectName||'root',expression);
   }
 
-  this.TranslateToGraph_ReturnGraphElements=function(objectName,jsonString) {
+  this.TranslateToGraph_ReturnGraphElements = function(objectName,jsonString) {
     var jsonObject=JSON.parse(jsonString);
-    //debugger;
     if(isObject(jsonObject) && hasPrimitives(jsonObject))
       createEntity(objectName,jsonObject);
     else if (isObject(jsonObject))

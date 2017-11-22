@@ -106,9 +106,9 @@
         "tooltip": "Create new workflow"
       }
 		],
-		"behaviours": {
-			"loadNodePopouts": false
-		},
+		"behaviours": [
+			"autoImage"
+		],
 
 		"effects": {
 			"haze": false,

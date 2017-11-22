@@ -32,11 +32,15 @@
   this.GetConfigForEntityId=function(entityId) {
     var dataSvc=new DataService();
     var entity=dataSvc.GetEntityById(entityId);
-    return this.GetConfigForEntity(entity);
+    return getConfigForEntity(entity);
   }
 
   //Get config file...
   this.GetConfigForEntity=function(entity) {
+    return getConfigForEntity(entity);
+  }
+
+  function getConfigForEntity(entity){
     var dataSvc=new DataService();
     var theseEntityConfigs=[];
     //entityConfigs.push(globals.masterEntityConfigs[0]);
@@ -49,12 +53,10 @@
     var jsonHelper=new JsonHelper();
     theseEntityConfigs.map(function(cnf) {
       //finalConfig = $.extend(true, {}, finalConfig, cnf);
-      finalConfig=jsonHelper.MergeJson(finalConfig,cnf,"arrayId");
+      finalConfig=jsonHelper.MergeJson(finalConfig, cnf,"arrayId");
     });
     return finalConfig;
   }
-
-
 
   //this.AddToConfigReturnConfig =function(sourceConfig, configValuePath, newValue){
 

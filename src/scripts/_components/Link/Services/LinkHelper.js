@@ -14,7 +14,6 @@
         var boxWidth=link.data.UI.subTextUI.getBBox().width;
 
         while(link.data.UI.subTextUI.childNodes[i]) {
-          //debugger;
           //$(link.data.UI.subTextUI.childNodes[i]).attr('x',-boxWidth/2);
           setUi(link.data.UI.subTextUI.childNodes[i], 'x',-boxWidth/2); 
           i++;
@@ -102,7 +101,7 @@
     descendantNodes.push(nodeId);
     var i=0;
     while(i<(descendantNodes.length)) {
-      var descendantNode=getDataNode(descendantNodes[i]);
+      var descendantNode=getExistingNode(descendantNodes[i]);
       descendantNode.data.toLinks.forEach(function(link) {
         var linkUI=globals.graphics.getLinkUI(link.id);
         if(linkUI) {
@@ -126,7 +125,7 @@
     ancestorNodes.push(nodeId);
     var i=0;
     while(i<(ancestorNodes.length)) {
-      var ancestorNode=getDataNode(ancestorNodes[i]);
+      var ancestorNode=getExistingNode(ancestorNodes[i]);
       ancestorNode.data.fromLinks.forEach(function(link) {
         var linkUI=globals.graphics.getLinkUI(link.id);
         if(linkUI) {

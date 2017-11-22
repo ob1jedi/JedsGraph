@@ -52,7 +52,6 @@ var SimpleTranslator = function () {
   this.TranslateGraphToFormula = function()
   {
     var statements = [];
-    //debugger;
     globals.nodeList.forEach(function(node){
       var props = JSON.stringify(node.data.propertiesObject).gxTrimBrackets();
       var label = node.data.labels[0];

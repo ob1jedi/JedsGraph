@@ -656,8 +656,8 @@ div.tabcontent {
 #vueFormulaBox {
 	top:50px;
 	margin-top: 0px;
-	margin-left: 200px;
-	margin-right: 200px;
+	/*margin-left: 200px;*/
+	/*margin-right: 200px;*/
 	/*height: 34px;*/
 	height: 50px;
 	padding-left: 5px;
@@ -691,6 +691,7 @@ div.tabcontent {
 	}
 
 	#vueFormulaBox table {
+		margin-left: 200px;
 		font-size: small;
 		line-height: normal;
 	}
@@ -717,7 +718,6 @@ div.tabcontent {
 		color: oldlace;
 		height: 20px;
 		border: none;
-		text-align: top;
 		text-decoration: none;
 		display: inline-block;
 		font-size: 10px;
@@ -726,6 +726,7 @@ div.tabcontent {
 		-webkit-transition-duration: 0.4s; /* Safari */
 		transition-duration: 0.4s;
 		cursor: pointer;
+		overflow:auto;
 	}
 
 .over {

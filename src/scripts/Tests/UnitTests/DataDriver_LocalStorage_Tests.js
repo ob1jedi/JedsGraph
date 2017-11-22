@@ -422,7 +422,7 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_Expec
 	var node2 = {};
 	node1.labels = ["HELLO"];
 	node2.labels = ["WORLD"];
-  //debugger;
+
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
@@ -711,7 +711,6 @@ globals.allUnitTests.push(function stringBinarySearch_GivenDataStringAndValueOfD
 	var expected = 49.1;
 
 	// Act
-	//debugger;
 	var result = sut.indexOfElementInDataString(input, searchFor);
 
 	// Assert
@@ -1204,20 +1203,24 @@ globals.allUnitTests.push(function getRelationshipByPropertyName_GivenGiven2Rela
 globals.allUnitTests.push(function CreateGraphElementsFromJson_GivenJson_ExpectGraphElements() {
 	// Arrange
 	var sut = createJsonParser();
+  
 	var inputJSON = {
 		Parent: {
 			Name: "John",
 			Child: [
 				{
 					Name: "Scott",
-					Age: 10
+					Age: 10,
+          Pic: "custom/assets/network.svg"
 				},
 				{
-					Name: "Jane"
+					Name: "Jane",
+          Avatar: "custom/assets/server.svg"
 				}]
 		}
 	};
 
+  
 	// Act
 	var result = sut.TranslateToGraph_ReturnGraphElements('root', JSON.stringify(inputJSON), globals.currentTheme.sourceConfig);
 

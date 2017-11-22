@@ -37,7 +37,6 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 	var baseNodeConfig = globals.masterConfigs.forEach(function (config) { if (config.prefix == "BNC") return config; });
 
 	// Act
-  //debugger;
 	var confId = sut.CreateUpdateConfigReturnId(configName, testConfig);
 	var result = sut.GetConfigByName(configName);
 
