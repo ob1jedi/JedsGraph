@@ -143,8 +143,8 @@
   }
 
   function accentuateLink(link, isOn){
-    setUi(link.data.UI.pathUI, 'stroke',isOn?globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor:link.data.color)
-    //setUi(link.data.UI, 'fill',isOn?globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor:link.data.color)
+    setUi(link.data.UI.pathUI, 'stroke',isOn?globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor:link.data.color);
+    setUi(link.data.UI.toMarkerUI, 'fill',isOn?globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor:link.data.color);
   }
 
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
