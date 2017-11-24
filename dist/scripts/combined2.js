@@ -170,7 +170,6 @@ var consoleApp = new Vue({
       
       this.tabs.styles.selectedNodeColor = nodeConfig.attributes["background-color"];
       this.tabs.styles.selectedNodeBorderColor = nodeConfig.attributes["border-color"];
-      //debugger;
       this.tabs.styles.selectedNodeTextColor = nodeConfig.attributes.labelText["color"];
       this.tabs.styles.selectedNodeCircleTextColor = nodeConfig.attributes.circleText["color"];
       this.tabs.styles.selectedNodeShape = nodeConfig.attributes["shape"];
@@ -280,7 +279,8 @@ var consoleApp = new Vue({
 				new SimpleTranslator(),
 				new JsonTranslator(),
         new UrlParamsTranslator(),
-        new ParseTreeTranslator()
+        new ParseTreeTranslator(),
+        new ApiImportTranslator()
       ],
       selectedTranslatorName: new SimpleTranslator().Name,
       currentTranslator: new SimpleTranslator(),
@@ -298,14 +298,20 @@ var consoleApp = new Vue({
         });
       },
       executeFormula: function() {
+        new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
         var translator=this.currentTranslator;
         translator.Translate(this.formulaValue);
         this.formulaHistory.push({"formula": this.formulaValue, "translator": this.currentTranslator});
         this.formulaValue="";
+        new VueConsoleHelper().CloseGlobalInfoModal();
       },
       executeExampleFormula: function() {
+        new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
         var translator=this.currentTranslator;
         translator.Translate(this.selectedExample);
+        this.selectedExample = null;
+        new VueConsoleHelper().CloseGlobalInfoModal();
+
       },
       importFromUrl: function(url) {
         new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
@@ -320,7 +326,7 @@ var consoleApp = new Vue({
         httpClient.get(finalUrl,function(response) {
           console.log('response',response);
           translator.Translate(response);
-          new VueConsoleHelper().CloseGlobalInfoModal()
+          new VueConsoleHelper().CloseGlobalInfoModal();
         });
       },
       generateLink: function(){
@@ -365,7 +371,6 @@ var consoleApp = new Vue({
       },
       selectExisting: function(selectedConfig) {
         var jsonHelper=new JsonHelper();
-        //debugger;
         this.styles.selectedNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")||null;
         this.styles.bNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")?true:false;
         

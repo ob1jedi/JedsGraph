@@ -584,9 +584,9 @@ configManager.configs.push( {
         "tooltip": "Create new workflow"
       }
 		],
-		"behaviours": {
-			"loadNodePopouts": false
-		},
+		"behaviours": [
+			"AutoImage"
+		],
 
 		"effects": {
 			"haze": false,

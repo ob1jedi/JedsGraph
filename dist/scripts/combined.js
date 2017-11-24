@@ -34,7 +34,15 @@ function StringHelper(){
     return newString;
   }
 
-
+  this.RegexGetCaptured = function( string, regex, index) {
+  index || (index = 0); // default to the first capturing group
+  var matches = [];
+  var match;
+  while (match = regex.exec(string)) {
+    matches.push(match[index]);
+  }
+  return matches;
+}
 
   this.SplitOr = function(inputString, searchStrings)
   {
@@ -194,11 +202,15 @@ function ConfigHelper() {
   this.GetConfigForEntityId=function(entityId) {
     var dataSvc=new DataService();
     var entity=dataSvc.GetEntityById(entityId);
-    return this.GetConfigForEntity(entity);
+    return getConfigForEntity(entity);
   }
 
   //Get config file...
   this.GetConfigForEntity=function(entity) {
+    return getConfigForEntity(entity);
+  }
+
+  function getConfigForEntity(entity){
     var dataSvc=new DataService();
     var theseEntityConfigs=[];
     //entityConfigs.push(globals.masterEntityConfigs[0]);
@@ -211,12 +223,10 @@ function ConfigHelper() {
     var jsonHelper=new JsonHelper();
     theseEntityConfigs.map(function(cnf) {
       //finalConfig = $.extend(true, {}, finalConfig, cnf);
-      finalConfig=jsonHelper.MergeJson(finalConfig,cnf,"arrayId");
+      finalConfig=jsonHelper.MergeJson(finalConfig, cnf,"arrayId");
     });
     return finalConfig;
   }
-
-
 
   //this.AddToConfigReturnConfig =function(sourceConfig, configValuePath, newValue){
 
@@ -447,7 +457,6 @@ function SimpleArranger(){
       nodeRegister[toNode.id] = 1;// ... Register node for this tree.
       var col = Math.max(gridDict[fromNode.id].col + 1, gridDict[toNode.id].col);
       _totalCols = Math.max(col, _totalCols);
-      //debugger;
       //var row = _totalRows;//gridDict[fN.id].row;
       gridDict[toNode.id].col = col;
       //while (matrix[_totalRows + ',' + col] == 1){
@@ -475,8 +484,7 @@ function SimpleArranger(){
     var circularDependants = [];
     globals.nodeList.forEach(function(n) {
       if (gridDict[n.id].col == -1 && gridDict[n.id].row == -1){
-        //debugger;
-        circularDependants.push(n);
+          circularDependants.push(n);
       }
     });
     return circularDependants;
@@ -561,7 +569,6 @@ var SimpleTranslator = function () {
   this.TranslateGraphToFormula = function()
   {
     var statements = [];
-    //debugger;
     globals.nodeList.forEach(function(node){
       var props = JSON.stringify(node.data.propertiesObject).gxTrimBrackets();
       var label = node.data.labels[0];
@@ -1155,6 +1162,42 @@ function UrlParamsTranslator() {
 			})
 			return thisObject;
 		}
+
+function ApiImportTranslator() {
+
+	this.Name = "Api Importer";
+	this.Examples = [
+            "http://en.wikipedia.org/api/rest_v1/feed/featured/{Year (eg. 2001)}/{Month (eg. 03)}/{Day (eg. 06)}",
+            "http://api.tvmaze.com/search/people?q={Actor Name}"
+	];
+	this.ReferenceContent = ''
+            +'Place an API link in the formula box'
+            +'<br/>This tranlator uses the "Json-son" translator to graph out the return data.'
+            +'<br/>Use <code>{...}</code> to create a prompt, to get info from the user.'
+
+	this.Translate = function (expression) {
+
+    //Get all data from user...
+    var inBracketsRegex = new RegExp(/\{(?:\{??[^\{]*?\})/g);
+    var inBrackets = expression.match(inBracketsRegex);
+    while (inBrackets){
+      inBrackets.forEach(function(captured){
+        var newVal = window.prompt(captured.split(':')[0], "");
+        expression = expression.replace(captured, newVal);
+      });
+      inBrackets = expression.match(inBracketsRegex);
+    }
+
+	  var httpClient=new HttpClient();
+    httpClient.get(expression,function(response) {
+        console.log('response',response);
+        new JsonTranslator().Translate(response);
+    });
+
+	}
+
+}
+
 function JsonTranslator() {
   var _graphEntities=[];
   var _graphRelations=[];
@@ -1182,14 +1225,14 @@ function JsonTranslator() {
 						+'Arrays will become nodes by the name of the parent property.';
 
   this.Translate=function(expression, _baseObjectName) {
+    //debugger;
     var translator=new JsonTranslator();
     //console.log('expression', expression);
     translator.TranslateToGraph_ReturnGraphElements(_baseObjectName||'root',expression);
   }
 
-  this.TranslateToGraph_ReturnGraphElements=function(objectName,jsonString) {
+  this.TranslateToGraph_ReturnGraphElements = function(objectName,jsonString) {
     var jsonObject=JSON.parse(jsonString);
-    //debugger;
     if(isObject(jsonObject) && hasPrimitives(jsonObject))
       createEntity(objectName,jsonObject);
     else if (isObject(jsonObject))
@@ -1232,7 +1275,7 @@ function JsonTranslator() {
   function processArray(name, array) {
     for(var i=0;i<array.length;i++) {
       if(isObject(array[i]))
-        createEntity(name,array);
+        createEntity(name,array[i]);
       else if(isPrimitive(array[i])) {
         createEntity(array[i],{});
       }
@@ -1987,664 +2030,664 @@ function getType(p) {
 	else if (p != null && typeof p == 'number') return 'number';
 	else return 'other';
 }
+function EntityEventsHelper(){
+
+  var eventBehaviourMapping = [
+    //{ name: 'AutoImage', event: addEntityToGraph_before, func: new NodeBehavioursApi().AutoImageToConfig }
+    { name: 'AutoImage', event: addEntityToGraph_after, func: new NodeBehavioursApi().AutoImageToNode }
+  ]
+
+  this.AddEntityToGraph_before = function(nodeData){addEntityToGraph_before(nodeData);}
+  this.AddEntityToGraph_after = function(node){addEntityToGraph_after(node)}
+
+  function addEntityToGraph_before(nodeData){
+    var behaviours = getBehavioursForNodeAndEvent(addEntityToGraph_before.name, nodeData.id);
+    behaviours.forEach(function(b){b(nodeData)});
+  }
+
+  function addEntityToGraph_after(node){
+    //debugger;
+    var behaviours = getBehavioursForNodeAndEvent(addEntityToGraph_after.name, node.id);
+    behaviours.forEach(function(b){b(node)});
+  }
+
+  function getBehavioursForNodeAndEvent(eventName, entityId){
+    var behaviourFunctions = [];
+    var configHelper = new ConfigHelper();
+    var config = configHelper.GetConfigForEntityId(entityId);
+    config.config.behaviours.forEach(function(behaviourName){  
+      eventBehaviourMapping.forEach(function(eb){
+        if (eb.name == behaviourName && eb.event.name == eventName)
+          behaviourFunctions.push(eb.func);
+      });
+    });
+    return behaviourFunctions;
+  }
+
+}
+
 //Graph functions
 
 
 
-function unPinAllNodes()
-{
-	globals.nodeList.forEach(function(node){
-		globals.layout.pinNode(node, false);
-		node.data.isPinned = false;
-	});
-}
-				
-function uncheckAll(){
-	//check nodes
-	globals.nodeList.forEach(function(node){
-		uncheckNode(node);
-	});
-	//check links
-	globals.linkList.forEach(function(link){
-		new LinkHelper().UncheckLink(link);
-	});
+function unPinAllNodes() {
+  globals.nodeList.forEach(function(node) {
+    globals.layout.pinNode(node,false);
+    node.data.isPinned=false;
+  });
 }
 
-function checkAll(){
-	//check nodes
-	globals.nodeList.forEach(function(node){
-		checkNode(node);
-	});
-	//check links
-	globals.linkList.forEach(function(link){
-		new LinkHelper().checkLink(link);
-	});
-}
-		
-function setScreenDragType(key)
-{
-	globals.viewOptions.screenDragType = key;
+function uncheckAll() {
+  //check nodes
+  globals.nodeList.forEach(function(node) {
+    uncheckNode(node);
+  });
+  //check links
+  globals.linkList.forEach(function(link) {
+    new LinkHelper().UncheckLink(link);
+  });
 }
 
-function getDataRootNodes()
-{
-	var rootNodes = [];
-	globals.nodeList.forEach(function(node){
-		if (node.data.fromNodes.length == 0)
-		{
-			rootNodes.push(node);
-		}
-	});
-	return rootNodes;
-}
-		
-function arrangeBy(rootNode, processedNodeIds, maxxRight, maxxLeft, level, startY)
-{
-			
-	if (!rootNode){
-		squares = [];
-		var startPos = globals.layout.getNodePosition(globals.nodeList[0].id);
-		var rootNodes = getDataRootNodes();
-		processedNodeIds = [];
-				
-		var startpos = startPos.x;
-		globals.nodeList.forEach(function(node){
-			globals.layout.pinNode(node, true);
-			node.data.isPinned = true;
-			startpos += 100;
-			globals.layout.setNodePosition(node.id, startpos, startPos.y);
-		});
-			
-		maxxRight = startPos.x;
-		maxxLeft = startPos.x;
-		startY = startPos.y;
-		rootNodes.forEach(function(rootNode, index){
-			maxxRight = arrangeBy(rootNode, processedNodeIds, maxxRight, maxxLeft, 0, startY);
-		});
-	}
-	else{
-				
-
-		level++;
-		processedNodeIds.push(rootNode.id);
-		var rootNodePos = globals.layout.getNodePosition(rootNode.id);
-		var cb = rootNodePos.x - ((rootNode.data.toNodes.length*100) /2)
-		rootNode.data.toNodes.forEach(function(childNode, index){
-			var childNodePos = globals.layout.getNodePosition(childNode.id);
-			childNodePos.x = cb + (100 * index);
-			if (childNodePos.x + 100 >= maxxRight) {maxxRight = childNodePos.x + 100;}
-			if (childNodePos.x <= maxxLeft) {maxxLeft = maxxLeft - 100; maxxRight = maxxRight + 100;}
-			var childLevel = startY + (level * 150);
-			if (childLevel > childNodePos.y) {childNodePos.y = childLevel};
-			globals.layout.setNodePosition(childNode.id, childNodePos.x, childNodePos.y);
-					
-			if (processedNodeIds.indexOf(childNode.id) < 0){
-				arrangeBy(childNode, processedNodeIds, maxxRight, maxxLeft, level, startY);
-			}
-			else //cyclic relation
-			{
-				//globals.layout.pinNode(node, false);
-				//node.data.isPinned = false;
-			}
-		});
-	}
-	return maxxRight;
-
-}	
-		
-function arrangeBy2(rootNode, processedNodeIds, posLeft, posTop, level)
-{
-	if (!rootNode){
-		squares = [];
-		var startPos = globals.layout.getNodePosition(globals.nodeList[0].id);
-		var rootNodes = getDataRootNodes();
-		processedNodeIds = [];
-		globals.nodeList.forEach(function(node){
-			globals.layout.pinNode(node, true);
-			node.data.isPinned = true;
-			globals.layout.setNodePosition(node.id, startPos.x, startPos.y);
-		});
-			
-		posLeft = startPos.x;
-		posTop = startPos.y;
-		var rootTop = startPos.y;
-		rootNodes.forEach(function(rootNode, index){
-			posTop += 100;
-			posTop = arrangeBy2(rootNode, processedNodeIds, posLeft, posTop, 0);
-			var parentPos = rootTop + ((posTop - rootTop)/2);
-			globals.layout.setNodePosition(rootNode.id, posLeft, parentPos);
-			rootTop = posTop;
-		});
-	}
-	else{
-		level++;
-		processedNodeIds.push(rootNode.id);
-		var rootNodePos = {x:posLeft, y:posTop};
-		posLeft += 200;
-		var currentChildTop = posTop - 100;
-		rootNode.data.toNodes.forEach(function(childNode, index){
-			if (processedNodeIds.indexOf(childNode.id) < 0){					
-				currentChildTop += 100;
-				globals.layout.setNodePosition(childNode.id, posLeft, currentChildTop);
-				posTop = arrangeBy2(childNode, processedNodeIds, posLeft, currentChildTop, level);
-			}
-		});
-	}
-	return posTop;
-}
-	
-function addNodeToGraph(nodeId, nodeData)
-{
-	var node = globals.GRAPH.getNode(nodeId);
-	node = globals.GRAPH.addNode(nodeId, nodeData);
-	fixTextWidth4Node(node);
-	return node;
-}
-		
-function highlightLabel(labelIndex)
-{
-	var nodeLabel = globals.labelsList[labelIndex];
-	globals.nodeList.forEach(function(node){
-		node.data.UI.fullUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity);
-		node.data.UI.bodyUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity);
-		if (nodeLabel && node.data.labels.indexOf(nodeLabel.name) == -1) {
-			node.data.UI.fullUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity/ 5)
-			node.data.UI.bodyUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity/ 5);
-		}
-	});	
+function checkAll() {
+  //check nodes
+  globals.nodeList.forEach(function(node) {
+    checkNode(node);
+  });
+  //check links
+  globals.linkList.forEach(function(link) {
+    new LinkHelper().checkLink(link);
+  });
 }
 
-function addPlannedLink(fromNodeID, toNodeID, linkName, linkProperties)
-{
-	var plannedLinkData = new linkDataType()
-	plannedLinkData.fromNode = fromNodeID;
-	plannedLinkData.toNode = toNodeID;
-	plannedLinkData.id = fromNodeID + '_' + toNodeID + ' ' + linkName;
-	plannedLinkData.name = linkName;
-	plannedLinkData.displayLabel = linkName;
-	plannedLinkData.linkType = 'planned';
-	plannedLinkData.color = 'red';
-	link = globals.GRAPH.addLink(fromNodeID, toNodeID, plannedLinkData);
-	globals.linkList.push(link);
+function setScreenDragType(key) {
+  globals.viewOptions.screenDragType=key;
 }
-		
-function addDataLink(fromNodeID, toNodeID, linkData, _sourceConfig)
-{
-	linkData.sourceConfig = _sourceConfig? _sourceConfig : globals.currentTheme.sourceConfig;
-	var bIsNew = false;
-	var link;
-	var existingLink = getDataLink(linkData.id);
-	console.log('existingLink', existingLink);
-	if (existingLink){
-		var updatedProperties = getUpdatedProperties(linkData.properties, existingLink.data.properties);
-		if (linkData.name != existingLink.data.name || updatedProperties.length > 0){
-			existingLink.data.name = linkData.name;
-			existingLink.data.displayLabel = linkData.name;
-			existingLink.data.properties = linkData.properties;
-			globals.animUpdateLinks.push(existingLink);
-		}
-		link = existingLink;
-		fromNodeID = existingLink.data.fromNodeID;
-		toNodeID = existingLink.data.toNodeID;
-	}
-	else{
-		bIsNew = true;
-		link = globals.GRAPH.addLink(fromNodeID, toNodeID, linkData);
-		link.data.fromNodeID = fromNodeID;
-		link.data.toNodeID = toNodeID;
-		link.data.displayLabel = linkData.name;
-		globals.linkList.push(link); 
-		new LinkHelper().FixLinkIndexes(fromNodeID, toNodeID);
-	}
 
-	var toNode = globals.GRAPH.getNode(toNodeID);
-	var fromNode = globals.GRAPH.getNode(fromNodeID);
-			
-	globals.config_ext.startupOptions.linkDisplayValues.map(function (lconfig) {
-		var useConfig = true;
-		if (lconfig.labelFrom){useConfig = (lconfig.labelFrom == fromNode.data.labels[0])?useConfig:false}else{useConfig = false;}
-		if (lconfig.labelTo){useConfig = (lconfig.labelTo == toNode.data.labels[0])?useConfig:false}else{useConfig = false;}
-		if (lconfig.type){useConfig = (lconfig.type == link.data.name)?useConfig:false}else{useConfig = false;}
-		if (useConfig){
-			link.data.config = lconfig;
-			link.data.displayLabel = lconfig.displayField;
-			var propertyValue = getNodePropertyValue(link.data.properties, lconfig.displayField);
-			link.data.displayLabel = propertyValue ? propertyValue : ' ';
-		}			
-	});
-	new LinkHelper().RefreshLinkVisual(link);
-
-	if (bIsNew)
-	{
-		toNode.data.fromLinks.push(link);
-		toNode.data.fromNodes.push(fromNode);
-		fromNode.data.toLinks.push(link);
-		fromNode.data.toNodes.push(toNode);
-	}
-			
-	new LinkHelper().FixTextWidth4Link(link);
-
-	return link;
+function getDataRootNodes() {
+  var rootNodes=[];
+  globals.nodeList.forEach(function(node) {
+    if(node.data.fromNodes.length==0) {
+      rootNodes.push(node);
+    }
+  });
+  return rootNodes;
 }
-		
+
+function arrangeBy(rootNode,processedNodeIds,maxxRight,maxxLeft,level,startY) {
+
+  if(!rootNode) {
+    squares=[];
+    var startPos=globals.layout.getNodePosition(globals.nodeList[0].id);
+    var rootNodes=getDataRootNodes();
+    processedNodeIds=[];
+
+    var startpos=startPos.x;
+    globals.nodeList.forEach(function(node) {
+      globals.layout.pinNode(node,true);
+      node.data.isPinned=true;
+      startpos+=100;
+      globals.layout.setNodePosition(node.id,startpos,startPos.y);
+    });
+
+    maxxRight=startPos.x;
+    maxxLeft=startPos.x;
+    startY=startPos.y;
+    rootNodes.forEach(function(rootNode,index) {
+      maxxRight=arrangeBy(rootNode,processedNodeIds,maxxRight,maxxLeft,0,startY);
+    });
+  }
+  else {
 
 
-function addDataNode(nodeId, nodeData, _sourceConfig)
-{
-	if (!_sourceConfig) _sourceConfig = globals.config_ext;
-	var configHelper = new ConfigHelper();
-	nodeData.sourceConfig = configHelper.getConfig(_sourceConfig);
+    level++;
+    processedNodeIds.push(rootNode.id);
+    var rootNodePos=globals.layout.getNodePosition(rootNode.id);
+    var cb=rootNodePos.x-((rootNode.data.toNodes.length*100)/2)
+    rootNode.data.toNodes.forEach(function(childNode,index) {
+      var childNodePos=globals.layout.getNodePosition(childNode.id);
+      childNodePos.x=cb+(100*index);
+      if(childNodePos.x+100>=maxxRight) { maxxRight=childNodePos.x+100; }
+      if(childNodePos.x<=maxxLeft) { maxxLeft=maxxLeft-100; maxxRight=maxxRight+100; }
+      var childLevel=startY+(level*150);
+      if(childLevel>childNodePos.y) { childNodePos.y=childLevel };
+      globals.layout.setNodePosition(childNode.id,childNodePos.x,childNodePos.y);
 
-	var dataNode = getDataNode(nodeId);
-	var nodeUI;
-	var isNewNode = false;
-	if (dataNode){
-		var newLabels = [];
-		nodeUI = globals.graphics.getNodeUI(nodeId);
-		nodeData.labels.forEach(function (newLabel) {
-			var hasLabel = false;
-			for (var i = 0; i < nodeData.labels.length; i++){
-				if (nodeData.labels[i] == newLabel){
-					hasLabel = true;
-					break;
-				}
-			};
-			if (!hasLabel) {newLabels.push(newLabel)}
-		});
-
-		var updatedProperties = getUpdatedProperties(dataNode.data.properties, nodeData.properties);
-		if (newLabels.length > 0 || updatedProperties.length > 0){
-			if (nodeData.UI.displayTextUI) {
-				nodeData.UI.displayTextUI.innerHTML = propertyListToSvgList(nodeData.properties, '<tspan x="50" dy="1.2em">', '</tspan>');
-			}
-			dataNode.data.labels = nodeData.labels;
-			dataNode.data.properties = nodeData.properties;
-			globals.animUpdateNodes.push(dataNode);
-		}
-		else{//no changes have been made to the node...
-			return; //NOTE: DO NOT RETURN THE DATA-NODE
-		}
-	}
-	else 
-	{
-		isNewNode = true;
-		nodeUI = globals.graphics.getNodeUI(nodeId);
-	}
-			
-	//find config for node if any is specified...
-	_sourceConfig.startupOptions.nodeDisplayBody.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeDisplayBody = nconfig; } });
-	_sourceConfig.startupOptions.nodeDisplayValues.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeDisplayValues = nconfig; } });
-	_sourceConfig.startupOptions.nodeStatReachers.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeStatReachers.push(nconfig); } });
-	_sourceConfig.startupOptions.nodeTransformers.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeTransformers.push(nconfig); } });
-	_sourceConfig.startupOptions.nodeFlyout.map(function (nconfig) { if (nconfig.nodeLabel == nodeData.labels[0]) { nodeData.config.nodeFlyout.push(nconfig); } });
-
-	var nodeDisplayBody = evaluateAugmentsAndUpdateNodeDisplay(nodeData.sourceConfig, nodeData);
-	for (var prop in nodeDisplayBody){
-		nodeData.config.nodeDisplayBody[prop] = nodeDisplayBody[prop];
-	}
-				
-	thisNodeData = nodeData;
-	thisIsNewNode = isNewNode;
-	this_sourceConfig = _sourceConfig;
-
-	//set display attributes based on config...
-	if (thisNodeData.config.nodeDisplayBody.size) {thisNodeData.nodeSize = thisNodeData.config.nodeDisplayBody.size};
-			
-	var finalLabel = '';
-	thisNodeData.labels.forEach(function (nodeLabel, index) {
-		if (finalLabel) { finalLabel += ', ' + finalLabel }
-		if (!finalLabel) { finalLabel = ''; }
-		if (finalLabel == "") {
-			finalLabel = nodeLabel;
-		}
-	});
-
-	//set display label...
-	thisNodeData.displayLabel = "";
-	var configDisplayValueOptions = thisNodeData.entityConfig.config.attributes.labelText["displayData"];
-
-	if (!configDisplayValueOptions) {
-		thisNodeData.displayLabel = finalLabel;
-	} else if (configDisplayValueOptions.key === "property") {
-		thisNodeData.displayLabel = getNodePropertyValue(thisNodeData.properties, configDisplayValueOptions.value);
-	} else if (configDisplayValueOptions.key === "static") {
-		thisNodeData.displayLabel = configDisplayValueOptions.value;
-	} else if (configDisplayValueOptions.key === "first") {
-		for (var i = 0; i < configDisplayValueOptions.value.length; i++)
-		{
-			var potentialFieldValue = getNodePropertyValue(thisNodeData.properties, configDisplayValueOptions.value[i]);
-			if (potentialFieldValue) {
-				thisNodeData.displayLabel = potentialFieldValue;
-				break;
-			}
-		}
-	}
-	if (!thisNodeData.displayLabel || thisNodeData.displayLabel == '') {
-		thisNodeData.displayLabel = " ";
-	}
-	//if (thisNodeData.config.nodeDisplayValues.displayField) {
-	//	if (thisNodeData.displayLabel != "") { thisNodeData.displayLabel + '\n'; }
-	//	var propertyValue = getNodePropertyValue(thisNodeData.properties, thisNodeData.config.nodeDisplayValues.displayField);
-	//	thisNodeData.displayLabel += propertyValue ? propertyValue : ' ';
-	//}
-	//else {
-	//	thisNodeData.displayLabel = finalLabel;
-	//}
-
-	//set circle text...
-	//thisNodeData.entityConfig.config.attributes.circleText["show"] == true
-	if (thisNodeData.config.nodeDisplayValues.circleText) {
-		if (thisNodeData.circleText != "") { 
-			thisNodeData.circleText + '\n';
-		}
-		var propertyValue = getNodePropertyValue(thisNodeData.properties, thisNodeData.config.nodeDisplayValues.displayField);
-		thisNodeData.circleText += propertyValue ? propertyValue : ' ';
-	}
-	else {
-		thisNodeData.circleText = finalLabel;
-	}
-
-		    
-
-	//thisNodeData.displayLabel;
-	var aNeoLabel = getNeoLabel(thisNodeData.labels[0], this_sourceConfig.prefix);
-	if (aNeoLabel) {
-
-		if (!thisNodeData.entityConfig.config.attributes["background-color"]) {
-			thisNodeData.entityConfig.config.attributes["background-color"] = aNeoLabel.color;
-		}
-
-		thisNodeData.nodeColorRGB = aNeoLabel.colorRGB;
-    thisNodeData.nodeColor = rgb2hex(thisNodeData.nodeColorRGB.r, thisNodeData.nodeColorRGB.g, thisNodeData.nodeColorRGB.b);
-
-		if (!thisNodeData.entityConfig.config.attributes["border-color"]) {
-			var nodeBorderColorRGB = {
-        r: thisNodeData.nodeColorRGB.r - 50, 
-        g: thisNodeData.nodeColorRGB.g - 50, 
-        b: thisNodeData.nodeColorRGB.b - 50
+      if(processedNodeIds.indexOf(childNode.id)<0) {
+        arrangeBy(childNode,processedNodeIds,maxxRight,maxxLeft,level,startY);
       }
-      var nodeColorHex = rgb2hex(nodeBorderColorRGB.r, nodeBorderColorRGB.g, nodeBorderColorRGB.b);
-      thisNodeData.entityConfig.config.attributes["border-color"] = nodeColorHex;
-      thisNodeData.nodeBorderColor = nodeColorHex;
-		}
-		//thisNodeData.nodeColor = aNeoLabel.color;
-		//thisNodeData.nodeBorderColor = rgb2hex(thisNodeData.nodeColorRGB.r-20, thisNodeData.nodeColorRGB.g-20, thisNodeData.nodeColorRGB.b-20);
-	}
+      else //cyclic relation
+      {
+        //globals.layout.pinNode(node, false);
+        //node.data.isPinned = false;
+      }
+    });
+  }
+  return maxxRight;
 
-	if (thisIsNewNode) {
-		dataNode = addNodeToGraph(thisNodeData.id, thisNodeData);	
-		PerformNodeStatFunctions(dataNode);
-    var graphHelper = new GraphHelper();
-    graphHelper.AddToEntityTypeDefs(dataNode);
-    globals.nodeList.push(dataNode);	
-		return dataNode; //RETURN ONLY IF NODE IS NEW
-	}
+}
+
+function arrangeBy2(rootNode,processedNodeIds,posLeft,posTop,level) {
+  if(!rootNode) {
+    squares=[];
+    var startPos=globals.layout.getNodePosition(globals.nodeList[0].id);
+    var rootNodes=getDataRootNodes();
+    processedNodeIds=[];
+    globals.nodeList.forEach(function(node) {
+      globals.layout.pinNode(node,true);
+      node.data.isPinned=true;
+      globals.layout.setNodePosition(node.id,startPos.x,startPos.y);
+    });
+
+    posLeft=startPos.x;
+    posTop=startPos.y;
+    var rootTop=startPos.y;
+    rootNodes.forEach(function(rootNode,index) {
+      posTop+=100;
+      posTop=arrangeBy2(rootNode,processedNodeIds,posLeft,posTop,0);
+      var parentPos=rootTop+((posTop-rootTop)/2);
+      globals.layout.setNodePosition(rootNode.id,posLeft,parentPos);
+      rootTop=posTop;
+    });
+  }
+  else {
+    level++;
+    processedNodeIds.push(rootNode.id);
+    var rootNodePos={ x: posLeft,y: posTop };
+    posLeft+=200;
+    var currentChildTop=posTop-100;
+    rootNode.data.toNodes.forEach(function(childNode,index) {
+      if(processedNodeIds.indexOf(childNode.id)<0) {
+        currentChildTop+=100;
+        globals.layout.setNodePosition(childNode.id,posLeft,currentChildTop);
+        posTop=arrangeBy2(childNode,processedNodeIds,posLeft,currentChildTop,level);
+      }
+    });
+  }
+  return posTop;
+}
+
+function addNodeToGraph(nodeId,nodeData) {
+  var node=globals.GRAPH.getNode(nodeId);
+  node=globals.GRAPH.addNode(nodeId,nodeData);
+  fixTextWidth4Node(node);
+  return node;
+}
+
+function highlightLabel(labelIndex) {
+  var nodeLabel=globals.labelsList[labelIndex];
+  globals.nodeList.forEach(function(node) {
+    node.data.UI.fullUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity);
+    node.data.UI.bodyUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity);
+    if(nodeLabel&&node.data.labels.indexOf(nodeLabel.name)==-1) {
+      node.data.UI.fullUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity/5)
+      node.data.UI.bodyUI.attr('fill-opacity',node.data.sourceConfig.displaySettings.entityOpacity/5);
+    }
+  });
+}
+
+function addPlannedLink(fromNodeID,toNodeID,linkName,linkProperties) {
+  var plannedLinkData=new linkDataType()
+  plannedLinkData.fromNode=fromNodeID;
+  plannedLinkData.toNode=toNodeID;
+  plannedLinkData.id=fromNodeID+'_'+toNodeID+' '+linkName;
+  plannedLinkData.name=linkName;
+  plannedLinkData.displayLabel=linkName;
+  plannedLinkData.linkType='planned';
+  plannedLinkData.color='red';
+  link=globals.GRAPH.addLink(fromNodeID,toNodeID,plannedLinkData);
+  globals.linkList.push(link);
+}
+
+function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
+  linkData.sourceConfig=_sourceConfig?_sourceConfig:globals.currentTheme.sourceConfig;
+  var bIsNew=false;
+  var link;
+  var existingLink=getDataLink(linkData.id);
+  console.log('existingLink',existingLink);
+  if(existingLink) {
+    var updatedProperties=getUpdatedProperties(linkData.properties,existingLink.data.properties);
+    if(linkData.name!=existingLink.data.name||updatedProperties.length>0) {
+      existingLink.data.name=linkData.name;
+      existingLink.data.displayLabel=linkData.name;
+      existingLink.data.properties=linkData.properties;
+      globals.animUpdateLinks.push(existingLink);
+    }
+    link=existingLink;
+    fromNodeID=existingLink.data.fromNodeID;
+    toNodeID=existingLink.data.toNodeID;
+  }
+  else {
+    bIsNew=true;
+    link=globals.GRAPH.addLink(fromNodeID,toNodeID,linkData);
+    link.data.fromNodeID=fromNodeID;
+    link.data.toNodeID=toNodeID;
+    link.data.displayLabel=linkData.name;
+    globals.linkList.push(link);
+    new LinkHelper().FixLinkIndexes(fromNodeID,toNodeID);
+  }
+
+  var toNode=globals.GRAPH.getNode(toNodeID);
+  var fromNode=globals.GRAPH.getNode(fromNodeID);
+
+  globals.config_ext.startupOptions.linkDisplayValues.map(function(lconfig) {
+    var useConfig=true;
+    if(lconfig.labelFrom) { useConfig=(lconfig.labelFrom==fromNode.data.labels[0])?useConfig:false } else { useConfig=false; }
+    if(lconfig.labelTo) { useConfig=(lconfig.labelTo==toNode.data.labels[0])?useConfig:false } else { useConfig=false; }
+    if(lconfig.type) { useConfig=(lconfig.type==link.data.name)?useConfig:false } else { useConfig=false; }
+    if(useConfig) {
+      link.data.config=lconfig;
+      link.data.displayLabel=lconfig.displayField;
+      var propertyValue=getNodePropertyValue(link.data.properties,lconfig.displayField);
+      link.data.displayLabel=propertyValue?propertyValue:' ';
+    }
+  });
+  new LinkHelper().RefreshLinkVisual(link);
+
+  if(bIsNew) {
+    toNode.data.fromLinks.push(link);
+    toNode.data.fromNodes.push(fromNode);
+    fromNode.data.toLinks.push(link);
+    fromNode.data.toNodes.push(toNode);
+  }
+
+  new LinkHelper().FixTextWidth4Link(link);
+
+  return link;
 }
 
 
-		
-function addEntityLabel(labelName, _addInstanceCount, entityConfig)
-{	
-	var existingDataLabel = getNeoLabel(labelName);
-	if(existingDataLabel) 
-	{
-		if(_addInstanceCount){existingDataLabel.instanceCount += _addInstanceCount};
-		var fetchbutton = document.getElementById('labelSelector.fetcher.' + labelName)
-		if (fetchbutton) {fetchbutton.innerHTML = existingDataLabel.instanceCount;}
-		return existingDataLabel;
-	}
 
-	var rgbRange = entityConfig.config.attributes.rgbRange;
-	var rgb = {
-		r: Math.ceil(getRandomArbitrary(rgbRange.min, rgbRange.max)),
-		g: Math.ceil(getRandomArbitrary(rgbRange.min, rgbRange.max)),
-		b: Math.ceil(getRandomArbitrary(rgbRange.min, rgbRange.max))
-				}
-	var randomColor = rgb2hex(rgb.r, rgb.g, rgb.b);
-	var newDataLabel = new neoLabelType(labelName, randomColor, rgb, entityConfig);
-	if (_addInstanceCount) {newDataLabel.instanceCount += _addInstanceCount;}
-	//Add new data label to labels-list
-	globals.labelsList.push(newDataLabel);
-						
-	return newDataLabel;
+function addDataNode(nodeId, nodeData, _sourceConfig) {
+  var nodeUI;
+  var isNewNode=false;
+  //if(!_sourceConfig) _sourceConfig=globals.config_ext;
+  //var configHelper=new ConfigHelper();
+  //nodeData.sourceConfig=configHelper.getConfig(_sourceConfig);
+
+  var node = getExistingNode(nodeId);
+  if(node) {
+    var newLabels=[];
+    nodeUI = globals.graphics.getNodeUI(nodeId);
+    nodeData.labels.forEach(function(newLabel) {
+      var hasLabel=false;
+      for(var i=0;i<nodeData.labels.length;i++) {
+        if(nodeData.labels[i]==newLabel) {
+          hasLabel=true;
+          break;
+        }
+      };
+      if(!hasLabel) { newLabels.push(newLabel) }
+    });
+
+    var updatedProperties=getUpdatedProperties(node.data.properties,nodeData.properties);
+    if(newLabels.length>0||updatedProperties.length>0) {
+      if(nodeData.UI.displayTextUI) {
+        nodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(nodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
+      }
+      node.data.labels=nodeData.labels;
+      node.data.properties=nodeData.properties;
+      globals.animUpdateNodes.push(node);
+    }
+    else {//no changes have been made to the node...
+      return; //NOTE: DO NOT RETURN THE DATA-NODE
+    }
+  }
+  else {
+    isNewNode=true;
+    nodeUI=globals.graphics.getNodeUI(nodeId);
+  }
+
+  var thisNodeData=nodeData;
+  var thisIsNewNode=isNewNode;
+  //var this_sourceConfig = _sourceConfig;
+
+  //set display attributes based on config...
+  if(thisNodeData.config.nodeDisplayBody.size) { thisNodeData.nodeSize=thisNodeData.config.nodeDisplayBody.size };
+
+  setupDisplayLabels(thisNodeData);
+
+  if(thisIsNewNode) {
+    setNodeColor(thisNodeData);
+    node=addNodeToGraph(thisNodeData.id,thisNodeData);
+    //PerformNodeStatFunctions(node);
+    recordTypeInfo(node);
+    new EntityEventsHelper().AddEntityToGraph_after(node);
+    return node; //RETURN ONLY IF NODE IS NEW
+  }
 }
-		
-function refreshEntitySelectors(){
-	//Order label selectors...
-	globals.labelsList.sort(sort_by('name', false, function(a){ if (a) {return a.toUpperCase()} }));
-	//Add selector to HTML...
-	var qbuilderFromEntitySelector = document.getElementById('qbuilder.from.entity');
-	var color = 'gray';
-	var button_onclick = "globals.dataService.GetEntitiesByType(false, '')";
-	var fetchButton = '<div id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="' + button_onclick + '"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></div>'
-	var labelSelectorHtml = '<table><tr><td><div onclick="highlightLabel()" class="labelSelectorItem" style="background-color:'+ color +';">All</div></td><td>' + fetchButton + '</td></tr>';
-	if (qbuilderFromEntitySelector) {qbuilderFromEntitySelector.innerHTML = '<option value=""></option>';}
-			
-	globals.labelsList.forEach(function (nodeLabel, index) {
-		color = nodeLabel.data.sourceConfig.config.attributes.selector["background-color"];
-		button_onclick = "globals.dataService.GetEntitiesByType('" + nodeLabel.name + "', '')";
-		
-		labelSelectorHtml += ''
+
+function setupDisplayLabels(thisNodeData) {
+  var finalLabel='';
+  thisNodeData.labels.forEach(function(nodeLabel,index) {
+    if(finalLabel) { finalLabel+=', '+finalLabel }
+    if(!finalLabel) { finalLabel=''; }
+    if(finalLabel=="") {
+      finalLabel=nodeLabel;
+    }
+  });
+  //set display label...
+  thisNodeData.displayLabel="";
+  var configDisplayValueOptions=thisNodeData.entityConfig.config.attributes.labelText["displayData"];
+
+  if(!configDisplayValueOptions) {
+    thisNodeData.displayLabel=finalLabel;
+  } else if(configDisplayValueOptions.key==="property") {
+    thisNodeData.displayLabel=getNodePropertyValue(thisNodeData.properties,configDisplayValueOptions.value);
+  } else if(configDisplayValueOptions.key==="static") {
+    thisNodeData.displayLabel=configDisplayValueOptions.value;
+  } else if(configDisplayValueOptions.key==="first") {
+    for(var i=0;i<configDisplayValueOptions.value.length;i++) {
+      var potentialFieldValue=getNodePropertyValue(thisNodeData.properties,configDisplayValueOptions.value[i]);
+      if(potentialFieldValue) {
+        thisNodeData.displayLabel=potentialFieldValue;
+        break;
+      }
+    }
+  }
+  if(!thisNodeData.displayLabel||thisNodeData.displayLabel=='') {
+    thisNodeData.displayLabel=" ";
+  }
+
+  if(thisNodeData.config.nodeDisplayValues.circleText) {
+    if(thisNodeData.circleText!="") {
+      thisNodeData.circleText+'\n';
+    }
+    var propertyValue=getNodePropertyValue(thisNodeData.properties,thisNodeData.config.nodeDisplayValues.displayField);
+    thisNodeData.circleText+=propertyValue?propertyValue:' ';
+  }
+  else {
+    thisNodeData.circleText=finalLabel;
+  }
+
+}
+
+function setNodeColor(entityData) {
+  //entityData.displayLabel;
+  var aNeoLabel=getNeoLabel(entityData.labels[0]);
+  if(aNeoLabel) {
+
+    if(!entityData.entityConfig.config.attributes["background-color"]) {
+      entityData.entityConfig.config.attributes["background-color"]=aNeoLabel.color;
+    }
+
+    entityData.nodeColorRGB=aNeoLabel.colorRGB;
+    entityData.nodeColor=rgb2hex(entityData.nodeColorRGB.r,entityData.nodeColorRGB.g,entityData.nodeColorRGB.b);
+
+    if(!entityData.entityConfig.config.attributes["border-color"]) {
+      var nodeBorderColorRGB={
+        r: entityData.nodeColorRGB.r-50,
+        g: entityData.nodeColorRGB.g-50,
+        b: entityData.nodeColorRGB.b-50
+      }
+      var nodeColorHex=rgb2hex(nodeBorderColorRGB.r,nodeBorderColorRGB.g,nodeBorderColorRGB.b);
+      entityData.entityConfig.config.attributes["border-color"]=nodeColorHex;
+      entityData.nodeBorderColor=nodeColorHex;
+    }
+    //entityData.nodeColor = aNeoLabel.color;
+    //entityData.nodeBorderColor = rgb2hex(entityData.nodeColorRGB.r-20, entityData.nodeColorRGB.g-20, entityData.nodeColorRGB.b-20);
+  }
+}
+
+function recordTypeInfo(node) {
+  var graphHelper=new GraphHelper();
+  graphHelper.AddToEntityTypeDefs(node);
+  globals.nodeList.push(node);
+}
+
+function addEntityLabel(labelName,_addInstanceCount,entityConfig) {
+  var existingDataLabel=getNeoLabel(labelName);
+  if(existingDataLabel) {
+    if(_addInstanceCount) { existingDataLabel.instanceCount+=_addInstanceCount };
+    var fetchbutton=document.getElementById('labelSelector.fetcher.'+labelName)
+    if(fetchbutton) { fetchbutton.innerHTML=existingDataLabel.instanceCount; }
+    return existingDataLabel;
+  }
+
+  var rgbRange=entityConfig.config.attributes.rgbRange;
+  var rgb={
+    r: Math.ceil(getRandomArbitrary(rgbRange.min,rgbRange.max)),
+    g: Math.ceil(getRandomArbitrary(rgbRange.min,rgbRange.max)),
+    b: Math.ceil(getRandomArbitrary(rgbRange.min,rgbRange.max))
+  }
+  var randomColor=rgb2hex(rgb.r,rgb.g,rgb.b);
+  var newDataLabel=new neoLabelType(labelName,randomColor,rgb,entityConfig);
+  if(_addInstanceCount) { newDataLabel.instanceCount+=_addInstanceCount; }
+  //Add new data label to labels-list
+  globals.labelsList.push(newDataLabel);
+
+  return newDataLabel;
+}
+
+function refreshEntitySelectors() {
+  //Order label selectors...
+  globals.labelsList.sort(sort_by('name',false,function(a) { if(a) { return a.toUpperCase() } }));
+  //Add selector to HTML...
+  var qbuilderFromEntitySelector=document.getElementById('qbuilder.from.entity');
+  var color='gray';
+  var button_onclick="globals.dataService.GetEntitiesByType(false, '')";
+  var fetchButton='<div id="labelSelector.fetcher.All" class="forlabelselector mytooltip" onclick="'+button_onclick+'"><div class="mytooltiptext ttleft ttlower">Fetch from database</div></div>'
+  var labelSelectorHtml='<table><tr><td><div onclick="highlightLabel()" class="labelSelectorItem" style="background-color:'+color+';">All</div></td><td>'+fetchButton+'</td></tr>';
+  if(qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML='<option value=""></option>'; }
+
+  globals.labelsList.forEach(function(nodeLabel,index) {
+    color=nodeLabel.data.sourceConfig.config.attributes.selector["background-color"];
+    button_onclick="globals.dataService.GetEntitiesByType('"+nodeLabel.name+"', '')";
+
+    labelSelectorHtml+=''
 			+'<tr>'
 			+'	<td>'
-			+'		<div onclick="highlightLabel(' + index + ')" class="labelSelectorItem" style="background-color:' + color + ';" > '
-			+ 			  nodeLabel.name
+			+'		<div onclick="highlightLabel('+index+')" class="labelSelectorItem" style="background-color:'+color+';" > '
+			+nodeLabel.name
 			+'		</div>'
 			+'	</td>'
 			+'	<td>'
-			+'		<div id="labelSelector.fetcher.' + nodeLabel.name + '" class="forlabelselector mytooltip pull-right" style="background-color:' +nodeLabel.color + '" onclick= "' +button_onclick + '" > '
-			+			    nodeLabel.instanceCount
+			+'		<div id="labelSelector.fetcher.'+nodeLabel.name+'" class="forlabelselector mytooltip pull-right" style="background-color:'+nodeLabel.color+'" onclick= "'+button_onclick+'" > '
+			+nodeLabel.instanceCount
 			+'			<div class="mytooltiptext ttleft ttupper">'
 			+'				Fetch from database'
 			+'			</div>'
 			+'		</div>'
 			+'	</td>'
 			+'</tr>;'
-		if (qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML += '<option value="' + nodeLabel.name + '">' + nodeLabel.name + '</option>'; }
-	});
-	labelSelectorHtml += '</table>';
-	var LabelsDiv = document.getElementById('selectorLabels');
-	if (LabelsDiv) {LabelsDiv.innerHTML = labelSelectorHtml;}
+    if(qbuilderFromEntitySelector) { qbuilderFromEntitySelector.innerHTML+='<option value="'+nodeLabel.name+'">'+nodeLabel.name+'</option>'; }
+  });
+  labelSelectorHtml+='</table>';
+  var LabelsDiv=document.getElementById('selectorLabels');
+  if(LabelsDiv) { LabelsDiv.innerHTML=labelSelectorHtml; }
 }
-		
-function removeNodeFromStage(nodeID)
-{
-	if (!nodeID) {nodeID = globals.selectedNodeID;}
-	var node = globals.GRAPH.getNode(nodeID);
 
-	var relativeLinks = node.data.toLinks.concat(node.data.fromLinks);
-	relativeLinks.forEach(function (link) {
-		removeLinkFromStage(link.id);
-		//globals.GRAPH.removeLink(link.id);
-	});
+function removeNodeFromStage(nodeID) {
+  if(!nodeID) { nodeID=globals.selectedNodeID; }
+  var node=globals.GRAPH.getNode(nodeID);
 
-	//var allNodeLists = globals.nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
-	var i = -1;
-	while (++i < globals.nodeList.length) 
-		if (globals.nodeList[i].id == nodeID) 
-			globals.nodeList.splice(i, 1); 
-	var i = -1;
-	while (++i < globals.monitoredNodes.length) 
-		if (globals.monitoredNodes[i].id == nodeID) 
-			globals.monitoredNodes.splice(i, 1); 
-	var i = -1;
-	while (++i < globals.checkedNodes.length) 
-		if (globals.checkedNodes[i].id == nodeID) 
-			globals.checkedNodes.splice(i, 1); 
-	
-	globals.nodeList.forEach(function(node) {
-		var i = -1;
-		while (++i < node.data.toNodes.length) 
-			if (node.data.toNodes[i].id == nodeID) 
-				node.data.toNodes.splice(i, 1); 
-		var i = -1;
-		while (++i < node.data.fromNodes.length) 
-			if (node.data.fromNodes[i].id == nodeID) 
-				node.data.fromNodes.splice(i, 1); 
-		var i = -1;
-		while (++i < node.data.toLinks.length) 
-			if (node.data.toLinks[i].toNodeID == nodeID) 
-				node.data.toLinks.splice(i, 1); 
-		var i = -1;
-		while (++i < node.data.fromLinks.length) 
-			if (node.data.fromLinks[i].fromNodeID == nodeID) 
-				node.data.fromLinks.splice(i, 1); 
-	});
+  var relativeLinks=node.data.toLinks.concat(node.data.fromLinks);
+  relativeLinks.forEach(function(link) {
+    removeLinkFromStage(link.id);
+    //globals.GRAPH.removeLink(link.id);
+  });
 
-	globals.GRAPH.removeNode(nodeID);
+  //var allNodeLists = globals.nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
+  var i=-1;
+  while(++i<globals.nodeList.length)
+    if(globals.nodeList[i].id==nodeID)
+      globals.nodeList.splice(i,1);
+  var i=-1;
+  while(++i<globals.monitoredNodes.length)
+    if(globals.monitoredNodes[i].id==nodeID)
+      globals.monitoredNodes.splice(i,1);
+  var i=-1;
+  while(++i<globals.checkedNodes.length)
+    if(globals.checkedNodes[i].id==nodeID)
+      globals.checkedNodes.splice(i,1);
 
-	globals.consoleService.hideNodeFlyout();
+  globals.nodeList.forEach(function(node) {
+    var i=-1;
+    while(++i<node.data.toNodes.length)
+      if(node.data.toNodes[i].id==nodeID)
+        node.data.toNodes.splice(i,1);
+    var i=-1;
+    while(++i<node.data.fromNodes.length)
+      if(node.data.fromNodes[i].id==nodeID)
+        node.data.fromNodes.splice(i,1);
+    var i=-1;
+    while(++i<node.data.toLinks.length)
+      if(node.data.toLinks[i].toNodeID==nodeID)
+        node.data.toLinks.splice(i,1);
+    var i=-1;
+    while(++i<node.data.fromLinks.length)
+      if(node.data.fromLinks[i].fromNodeID==nodeID)
+        node.data.fromLinks.splice(i,1);
+  });
+
+  globals.GRAPH.removeNode(nodeID);
+
+  globals.consoleService.hideNodeFlyout();
 }
-		
+
 function removeLinkFromStage(linkID) {
-	if (!linkID) { linkID = globals.selectedLink.data.id; }
+  if(!linkID) { linkID=globals.selectedLink.data.id; }
 
-	var link = new LinkHelper().GetLinkById(linkID);
-	var i = -1;
-	while (++i < globals.linkList.length) 
-		if (globals.linkList[i].id == linkID) 
-			globals.linkList.splice(i, 1);
-	var i = -1;
-	while (++i < globals.monitoredLinks.length) 
-		if (globals.monitoredLinks[i].id == linkID)
-			globals.monitoredLinks.splice(i, 1);
+  var link=new LinkHelper().GetLinkById(linkID);
+  var i=-1;
+  while(++i<globals.linkList.length)
+    if(globals.linkList[i].id==linkID)
+      globals.linkList.splice(i,1);
+  var i=-1;
+  while(++i<globals.monitoredLinks.length)
+    if(globals.monitoredLinks[i].id==linkID)
+      globals.monitoredLinks.splice(i,1);
 
-	var fromNode = globals.GRAPH.getNode(link.data.fromNodeID);
-	var toNode = globals.GRAPH.getNode(link.data.toNodeID);
-	var i = -1;
-	while (++i < fromNode.data.toNodes.length) 
-		if (fromNode.data.toNodes[i].id == link.data.toNodeID) 
-			fromNode.data.toNodes.splice(i, 1);
-	var i = -1;
-	while (++i < toNode.data.fromNodes.length) 
-		if (toNode.data.fromNodes[i].id == link.data.fromNodeID)
-			toNode.data.fromNodes.splice(i, 1);
+  var fromNode=globals.GRAPH.getNode(link.data.fromNodeID);
+  var toNode=globals.GRAPH.getNode(link.data.toNodeID);
+  var i=-1;
+  while(++i<fromNode.data.toNodes.length)
+    if(fromNode.data.toNodes[i].id==link.data.toNodeID)
+      fromNode.data.toNodes.splice(i,1);
+  var i=-1;
+  while(++i<toNode.data.fromNodes.length)
+    if(toNode.data.fromNodes[i].id==link.data.fromNodeID)
+      toNode.data.fromNodes.splice(i,1);
 
-	var i = -1;
-	while (++i < fromNode.links.length)
-		if (fromNode.links[i].id == link.id)
-			fromNode.links.splice(i, 1);
-	var i = -1;
-	while (++i < toNode.links.length)
-		if (toNode.links[i].id == link.id)
-			toNode.links.splice(i, 1);
+  var i=-1;
+  while(++i<fromNode.links.length)
+    if(fromNode.links[i].id==link.id)
+      fromNode.links.splice(i,1);
+  var i=-1;
+  while(++i<toNode.links.length)
+    if(toNode.links[i].id==link.id)
+      toNode.links.splice(i,1);
 
-	var i = -1;
-	while (++i < fromNode.data.toLinks.length)
-		if (fromNode.data.toLinks[i].id == link.id)
-			fromNode.data.toLinks.splice(i, 1);
-	var i = -1;
-	while (++i < toNode.data.fromLinks.length)
-		if (toNode.data.fromLinks[i].id == link.id)
-			toNode.data.fromLinks.splice(i, 1);
+  var i=-1;
+  while(++i<fromNode.data.toLinks.length)
+    if(fromNode.data.toLinks[i].id==link.id)
+      fromNode.data.toLinks.splice(i,1);
+  var i=-1;
+  while(++i<toNode.data.fromLinks.length)
+    if(toNode.data.fromLinks[i].id==link.id)
+      toNode.data.fromLinks.splice(i,1);
 
-	globals.GRAPH.removeLink(link);
+  globals.GRAPH.removeLink(link);
 }
 
-		
-function getDataNode(nodeID)
-{
-	for (var i = 0; i < globals.nodeList.length; i++){
-		if (globals.nodeList[i].id == nodeID){
-			return globals.nodeList[i];
-		}
-	}
+
+function getExistingNode(nodeID) {
+  for(var i=0;i<globals.nodeList.length;i++) {
+    if(globals.nodeList[i].id==nodeID) {
+      return globals.nodeList[i];
+    }
+  }
 }
-		
-		
-function getNodesByMatchingLabels(nodesList, labels){
-	var returnNodeList = [];		
-	//iterate through 
-	nodesList.forEach(function(node){
-		var nodeEligible = true;
-		labels.forEach(function (nodeLabel) {
-			var labelFound = false;
-			node.data.labels.forEach(function(nodelabel){
-				if (nodelabel == nodeLabel)
-					labelFound = true;
-			});
-			if (!labelFound){nodeEligible = false}
-		});
-		if (nodeEligible){returnNodeList.push(node);}
-	});
-	return returnNodeList;
+
+
+function getNodesByMatchingLabels(nodesList,labels) {
+  var returnNodeList=[];
+  //iterate through 
+  nodesList.forEach(function(node) {
+    var nodeEligible=true;
+    labels.forEach(function(nodeLabel) {
+      var labelFound=false;
+      node.data.labels.forEach(function(nodelabel) {
+        if(nodelabel==nodeLabel)
+          labelFound=true;
+      });
+      if(!labelFound) { nodeEligible=false }
+    });
+    if(nodeEligible) { returnNodeList.push(node); }
+  });
+  return returnNodeList;
 }
-		
-function getNodesByMatchingProperties(nodesList, properties){
-	var returnNodeList = [];		
-	//iterate through 
-	nodesList.forEach(function(node){
-		var nodeEligible = true;
-		properties.forEach(function (prop){
-			var propFound = false;
-			node.data.properties.forEach(function(nodeprop){
-				if (prop.key == nodeprop.key && prop.value == nodeprop.value){
-					propFound = true;	
-				}
-			});
-			if (!propFound){nodeEligible = false;}
-		});
-		if(nodeEligible){returnNodeList.push(node);}
-	});
-	return returnNodeList;
+
+function getNodesByMatchingProperties(nodesList,properties) {
+  var returnNodeList=[];
+  //iterate through 
+  nodesList.forEach(function(node) {
+    var nodeEligible=true;
+    properties.forEach(function(prop) {
+      var propFound=false;
+      node.data.properties.forEach(function(nodeprop) {
+        if(prop.key==nodeprop.key&&prop.value==nodeprop.value) {
+          propFound=true;
+        }
+      });
+      if(!propFound) { nodeEligible=false; }
+    });
+    if(nodeEligible) { returnNodeList.push(node); }
+  });
+  return returnNodeList;
 }
-		
-function getNeoLabel(byName)
-{
-	var x;
-		globals.labelsList.forEach(function(labelobj, index){
-		if (labelobj.name == byName){ // &&  labelobj.data.sourceConfig.prefix == sourcePrefix){
-			x = labelobj;
-			return labelobj;
-		}
-	});
-	return x;
+
+function getNeoLabel(byName) {
+  var x;
+  globals.labelsList.forEach(function(labelobj,index) {
+    if(labelobj.name==byName) { // &&  labelobj.data.sourceConfig.prefix == sourcePrefix){
+      x=labelobj;
+      return labelobj;
+    }
+  });
+  return x;
 }
-function getDataLink(id)
-{
-	for (var i = 0; i < globals.linkList.length; i++){
-		if (globals.linkList[i].data.id == id){
-			return globals.linkList[i];
-		}
-	}
+function getDataLink(id) {
+  for(var i=0;i<globals.linkList.length;i++) {
+    if(globals.linkList[i].data.id==id) {
+      return globals.linkList[i];
+    }
+  }
 }
-function getDataLinks(fromNodeID, toNodeID, direction)
-{
-		
-	var x = [];
-	globals.linkList.forEach(function(link, index){
-		switch (direction){
-			case 'same':
-				if (link.fromId == Number(fromNodeID) && link.toId == Number(toNodeID)){
-					x.push(link);
-				}
-				break;
-			case 'opposite':
-				if (link.toId == Number(fromNodeID) && link.fromId == Number(toNodeID)){
-					x.push(link);
-				}
-				break;
-			default:
-				if ((link.fromId == Number(fromNodeID) && link.toId == Number(toNodeID)) ||
-					(link.toId == Number(fromNodeID) && link.fromId == Number(toNodeID))){
-					x.push(link);
-				}
-				break;
-			}
-	});
-	return x;
+function getDataLinks(fromNodeID,toNodeID,direction) {
+
+  var x=[];
+  globals.linkList.forEach(function(link,index) {
+    switch(direction) {
+      case 'same':
+        if(link.fromId==Number(fromNodeID)&&link.toId==Number(toNodeID)) {
+          x.push(link);
+        }
+        break;
+      case 'opposite':
+        if(link.toId==Number(fromNodeID)&&link.fromId==Number(toNodeID)) {
+          x.push(link);
+        }
+        break;
+      default:
+        if((link.fromId==Number(fromNodeID)&&link.toId==Number(toNodeID))||
+					(link.toId==Number(fromNodeID)&&link.fromId==Number(toNodeID))) {
+          x.push(link);
+        }
+        break;
+    }
+  });
+  return x;
 }
-		
-		
-function getConfigByPrefix(configPrefix)
-{
-	for (var i = 0; i < globals.masterConfigs.length; i++){
-		if (globals.masterConfigs[i].prefix == configPrefix){
-			return globals.masterConfigs[i];
-		}
-	}
+
+
+function getConfigByPrefix(configPrefix) {
+  for(var i=0;i<globals.masterConfigs.length;i++) {
+    if(globals.masterConfigs[i].prefix==configPrefix) {
+      return globals.masterConfigs[i];
+    }
+  }
 }
-		
+
 //Node methods
 
 function applyPopoutEffectToNode(newNode, parentNodeId) {
@@ -2771,7 +2814,7 @@ function fixTextWidth4Node(node)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function showOnNode(nodeId, text)
 {
-	var node = getDataNode(nodeId);
+	var node = getExistingNode(nodeId);
 	node.data.displayLabel = text;
 	refreshNodeAppearance(nodeId);
 }
@@ -2780,7 +2823,7 @@ function showOnNode(nodeId, text)
 function increaseNodeSprings(nodeid)
 {
 	if (!nodeid){nodeid=globals.selectedNodeID;}
-	var node = getDataNode(nodeid);
+	var node = getExistingNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
 		var nodespring = globals.layout.getSpring(nodeid, toNode.id);
@@ -2816,7 +2859,7 @@ function decreaseNodeDepth(node)
 function decreaseNodeSprings(nodeid)
 {
 	if (!nodeid){nodeid=globals.selectedNodeID;}
-	var node = getDataNode(nodeid);
+	var node = getExistingNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
 		var nodespring = globals.layout.getSpring(nodeid, toNode.id);
@@ -3716,7 +3759,6 @@ function GraphHelper(){
   }
 
   this.AddToEntityTypeDefs = function(node){
-    //debugger;
     var entityType = new EntityTypeDef();
     labelFound = false;
     // Check for existing node type...
@@ -3730,7 +3772,6 @@ function GraphHelper(){
         }
       }
     }
-    //debugger;
     // Update properties...
     for (var key in node.data.propertiesObject){
       if (!entityType.properties.hasOwnProperty(key))
@@ -4686,7 +4727,7 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		datN.labels = graphElement.fromNode.labels;
 		datN.properties = new neoPropertyList(graphElement.fromNode.properties);
     datN.propertiesObject = graphElement.fromNode.properties;
-		datN.entityConfig = GetConfigForEntityId(datN.id);
+		datN.entityConfig = GetConfigForEntityId(datN);
 		var fromNode = addDataNode(datN.id, datN, _sourceConfig);
 		if (fromNode)
 		    newNodes.push(fromNode);
@@ -4696,7 +4737,7 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
 		datM.labels = graphElement.toNode.labels;
 		datM.properties = new neoPropertyList(graphElement.toNode.properties);
 		datM.propertiesObject = graphElement.toNode.properties;
-		datM.entityConfig = GetConfigForEntityId(datM.id);
+		datM.entityConfig = GetConfigForEntityId(datM);
 		var toNode = addDataNode(datM.id, datM, _sourceConfig);
 		if (toNode) {
 			newNodes.push(toNode);
@@ -4730,7 +4771,7 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 		datM.labels = entity.labels || [];
 		datM.properties = new neoPropertyList(entity.properties);
 		datM.propertiesObject = entity.properties;
-		datM.entityConfig = GetConfigForEntityId(entity.id);
+    datM.entityConfig = GetConfigForEntityId(datM);
 		var addedNode = addDataNode(entity.id, datM, _sourceConfig)
 		newNodes.push(addedNode);
 	});
@@ -4738,10 +4779,11 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 	return newNodes;
 }
 
-function GetConfigForEntityId(entityId)
+function GetConfigForEntityId(nodeData)
 {
+    new EntityEventsHelper().AddEntityToGraph_before(nodeData);
     var configHelper = new ConfigHelper();
-    return configHelper.GetConfigForEntityId(entityId);
+    return configHelper.GetConfigForEntityId(nodeData.id);
 }
 
 function removeNodeFromGraph(nodeId)
@@ -4860,7 +4902,6 @@ var LocalStorageDataDriver = function () {
 	}
 
 	this.GetNextNewConfigId = function () {
-    //debugger;
 		var nextIndex = getNextIndexForCounter('NEXT_CONFIG_ID');
 		return nextIndex;
 	}
@@ -6314,6 +6355,66 @@ NodeFunctionsFactory.remove_entity = function () {
 //globals.nodeFunctions.createToolNode = function () { }
 //globals.nodeFunctions.createCollectorNode = function () { }
 
+function NodeBehavioursApi() {
+  
+  //this.Behaviours = [
+  //  {name: "autoImage", func: autoImage}
+  //];
+
+  this.AutoImageToConfig = function(nodeData) {
+    for(var prop in nodeData.propertiesObject) {
+      var propVal=nodeData.propertiesObject[prop];
+      if(isImage(propVal)) {
+        var config = createEntitySpecificConfig(nodeData.id);
+        config.config = {"attributes":{"img":{"url": propVal}}};
+        new ConfigHelper().AddDynamicEntityConfigReturnId(config.configName, config);
+      }
+    }
+  }
+
+  this.AutoImageToNode = function(node) {
+    
+    for(var prop in node.data.propertiesObject) {
+      var propVal=node.data.propertiesObject[prop];
+      //var propVal=entity.properties[prop];
+      if(isImage(propVal)) {
+        node.data.UI.imageUI.link(propVal);
+        node.data.UI.imageUI.attr("width", node.data.nodeSize * 3);
+        node.data.UI.imageUI.attr("height", node.data.nodeSize * 3);
+        node.data.UI.imageUI.attr("x", -node.data.nodeSize * 3/2);
+        node.data.UI.imageUI.attr("y", -node.data.nodeSize * 3/2);
+        
+        //var config = createEntitySpecificConfig(nodeData.id);
+        //config.config = {"attributes":{"img":{"url": propVal}}};
+        //new ConfigHelper().AddDynamicEntityConfigReturnId(config.configName, config);
+      }
+    }
+  }
+
+  function isImage(value){
+    if (typeof value !== "string") 
+      return;
+    if(value.length>4) {
+        var possibleExtension=value.slice(-4);
+        return possibleExtension.toLowerCase()=='.jpg'
+            ||possibleExtension.toLowerCase()=='.svg'
+            ||possibleExtension.toLowerCase()=='.bmp'
+            ||possibleExtension.toLowerCase()=='.png'
+            ||possibleExtension.toLowerCase()=='.gif'
+            ||possibleExtension.toLowerCase()=='.ico';
+    }
+    return false;
+  }
+
+  function createEntitySpecificConfig(entityId){
+    var newConfig = {};
+    newConfig.configName = 'N' + entityId + '_behaviours';
+    newConfig.configType = "entity";
+    newConfig.matchEntity = {"id":entityId}
+    return newConfig;
+  }
+
+}
 function nodeAppearanceHelper(node) {
 	var _cnf = node.data.entityConfig.config;
 
@@ -6502,14 +6603,7 @@ function nodeAppearanceHelper(node) {
 
 function defineNodeAppearance_dataNode(node, ui) {
 	var _cnf = node.data.entityConfig.config;
-	//var cnf = node.data.sourceConfig.displaySettings;
 
-	//var nodeConfig = node.data.config.nodeDisplayBody;
-	//var configHelper = new ConfigHelper();
-	//nodeConfig = configHelper.getNodeConfig();
-
-
-	//if (nodeConfig.color) { node.data.nodeColor = nodeConfig.color; }
 	ui.attr('class', 'datanode')
 	node.data.UI = {
 		bodyUI: undefined,
@@ -6523,18 +6617,11 @@ function defineNodeAppearance_dataNode(node, ui) {
 	//Circle elements NODE-CIRCLE
 	var nodeAppearance = new nodeAppearanceHelper(node);
 
-	//node.data.variables["Relations"].forEach(function (functionConfig) {
-	//});
-	//for (var i = 0; i < 50; i++) {
-	//	nodeAppearance.addNodeLine();	
-	//}
-
 	nodeAppearance.addNodeBody();
 	nodeAppearance.addNodeImage();
 	nodeAppearance.addNodeText();
 	nodeAppearance.addNodeCircleTextPath();
 	nodeAppearance.addNodeCircleText();
-
 
 	_cnf["relatedThings"].forEach(function (thingConfig) {
 		if (thingConfig.thingName === "option")
@@ -7263,7 +7350,7 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_Expec
 	var node2 = {};
 	node1.labels = ["HELLO"];
 	node2.labels = ["WORLD"];
-  //debugger;
+
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
@@ -7552,7 +7639,6 @@ globals.allUnitTests.push(function stringBinarySearch_GivenDataStringAndValueOfD
 	var expected = 49.1;
 
 	// Act
-	//debugger;
 	var result = sut.indexOfElementInDataString(input, searchFor);
 
 	// Assert
@@ -8045,20 +8131,24 @@ globals.allUnitTests.push(function getRelationshipByPropertyName_GivenGiven2Rela
 globals.allUnitTests.push(function CreateGraphElementsFromJson_GivenJson_ExpectGraphElements() {
 	// Arrange
 	var sut = createJsonParser();
+  
 	var inputJSON = {
 		Parent: {
 			Name: "John",
 			Child: [
 				{
 					Name: "Scott",
-					Age: 10
+					Age: 10,
+          Pic: "custom/assets/Persons/Monroe.png"
 				},
 				{
-					Name: "Jane"
+					Name: "Jane",
+          Avatar: "custom/assets/Persons/elvis.png"
 				}]
 		}
 	};
 
+  
 	// Act
 	var result = sut.TranslateToGraph_ReturnGraphElements('root', JSON.stringify(inputJSON), globals.currentTheme.sourceConfig);
 
@@ -8106,7 +8196,6 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 	var baseNodeConfig = globals.masterConfigs.forEach(function (config) { if (config.prefix == "BNC") return config; });
 
 	// Act
-  //debugger;
 	var confId = sut.CreateUpdateConfigReturnId(configName, testConfig);
 	var result = sut.GetConfigByName(configName);
 
@@ -8731,7 +8820,7 @@ globals.allUnitTests.push(function getJsonValueWithPath_GivenJsonWithArray_Expec
     var entityProperties = {
       Name: "John",
       Age: 30,
-      Source: "../custom/assets/binoculars.svg"
+      Source: "../custom/assets/Persons/Holmes.png"
     };
     var newNode1 = dataSvc.CreateEntity_AddToGraph_ReturnNode(entityLabels, entityProperties);
     entityLabels = ['TypeDefTest'];
@@ -8952,7 +9041,6 @@ function graphexMain() {
         // PARAMETERS
     //extract commands from URL:
     var urlHelper  = new UrlHelper();
-    //debugger;
     var params = urlHelper.GetAllParams();
     params.forEach(function(param){
       if (param.key == "graph"){
@@ -9177,7 +9265,6 @@ function LinkHelper() {
         var boxWidth=link.data.UI.subTextUI.getBBox().width;
 
         while(link.data.UI.subTextUI.childNodes[i]) {
-          //debugger;
           //$(link.data.UI.subTextUI.childNodes[i]).attr('x',-boxWidth/2);
           setUi(link.data.UI.subTextUI.childNodes[i], 'x',-boxWidth/2); 
           i++;
@@ -9265,7 +9352,7 @@ function LinkHelper() {
     descendantNodes.push(nodeId);
     var i=0;
     while(i<(descendantNodes.length)) {
-      var descendantNode=getDataNode(descendantNodes[i]);
+      var descendantNode=getExistingNode(descendantNodes[i]);
       descendantNode.data.toLinks.forEach(function(link) {
         var linkUI=globals.graphics.getLinkUI(link.id);
         if(linkUI) {
@@ -9289,7 +9376,7 @@ function LinkHelper() {
     ancestorNodes.push(nodeId);
     var i=0;
     while(i<(ancestorNodes.length)) {
-      var ancestorNode=getDataNode(ancestorNodes[i]);
+      var ancestorNode=getExistingNode(ancestorNodes[i]);
       ancestorNode.data.fromLinks.forEach(function(link) {
         var linkUI=globals.graphics.getLinkUI(link.id);
         if(linkUI) {
@@ -9306,8 +9393,8 @@ function LinkHelper() {
   }
 
   function accentuateLink(link, isOn){
-    setUi(link.data.UI.pathUI, 'stroke',isOn?globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor:link.data.color)
-    //setUi(link.data.UI, 'fill',isOn?globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor:link.data.color)
+    setUi(link.data.UI.pathUI, 'stroke',isOn?globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor:link.data.color);
+    setUi(link.data.UI.toMarkerUI, 'fill',isOn?globals.currentTheme.sourceConfig.displaySettings.linkHighlightColor:link.data.color);
   }
 
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -9395,7 +9482,7 @@ function LinkHelper() {
     ui.remove();
   }
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  this.GetLinkById = function(linkId) { getLinkById(linkId) }
+  this.GetLinkById = function(linkId) { return getLinkById(linkId) }
   function getLinkById(linkId) {
     for(var i=0;i<globals.linkList.length;i++)
       if(globals.linkList[i].id==linkId)
