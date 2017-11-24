@@ -34,7 +34,15 @@ function StringHelper(){
     return newString;
   }
 
-
+  this.RegexGetCaptured = function( string, regex, index) {
+  index || (index = 0); // default to the first capturing group
+  var matches = [];
+  var match;
+  while (match = regex.exec(string)) {
+    matches.push(match[index]);
+  }
+  return matches;
+}
 
   this.SplitOr = function(inputString, searchStrings)
   {
