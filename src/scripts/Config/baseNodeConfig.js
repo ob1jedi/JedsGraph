@@ -107,7 +107,7 @@
       }
 		],
 		"behaviours": [
-			"autoImage"
+			"AutoImage"
 		],
 
 		"effects": {

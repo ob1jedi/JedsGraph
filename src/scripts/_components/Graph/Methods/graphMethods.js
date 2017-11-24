@@ -283,7 +283,7 @@ function addDataNode(nodeId, nodeData, _sourceConfig) {
     node=addNodeToGraph(thisNodeData.id,thisNodeData);
     //PerformNodeStatFunctions(node);
     recordTypeInfo(node);
-    new EntityEventsHelper().AddEntityToGraph_after(nodeData);
+    new EntityEventsHelper().AddEntityToGraph_after(node);
     return node; //RETURN ONLY IF NODE IS NEW
   }
 }
