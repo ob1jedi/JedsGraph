@@ -279,7 +279,8 @@ var consoleApp = new Vue({
 				new SimpleTranslator(),
 				new JsonTranslator(),
         new UrlParamsTranslator(),
-        new ParseTreeTranslator()
+        new ParseTreeTranslator(),
+        new ApiImportTranslator()
       ],
       selectedTranslatorName: new SimpleTranslator().Name,
       currentTranslator: new SimpleTranslator(),
