@@ -25,6 +25,7 @@ function JsonTranslator() {
 						+'Arrays will become nodes by the name of the parent property.';
 
   this.Translate=function(expression, _baseObjectName) {
+    //debugger;
     var translator=new JsonTranslator();
     //console.log('expression', expression);
     translator.TranslateToGraph_ReturnGraphElements(_baseObjectName||'root',expression);
@@ -74,7 +75,7 @@ function JsonTranslator() {
   function processArray(name, array) {
     for(var i=0;i<array.length;i++) {
       if(isObject(array[i]))
-        createEntity(name,array);
+        createEntity(name,array[i]);
       else if(isPrimitive(array[i])) {
         createEntity(array[i],{});
       }
