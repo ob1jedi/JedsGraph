@@ -231,7 +231,7 @@
     ui.remove();
   }
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  this.GetLinkById = function(linkId) { getLinkById(linkId) }
+  this.GetLinkById = function(linkId) { return getLinkById(linkId) }
   function getLinkById(linkId) {
     for(var i=0;i<globals.linkList.length;i++)
       if(globals.linkList[i].id==linkId)
