@@ -8,7 +8,7 @@
     var entityProperties = {
       Name: "John",
       Age: 30,
-      Source: "../custom/assets/server-3.svg"
+      Source: "../custom/assets/Persons/Holmes.png"
     };
     var newNode1 = dataSvc.CreateEntity_AddToGraph_ReturnNode(entityLabels, entityProperties);
     entityLabels = ['TypeDefTest'];

@@ -1211,11 +1211,11 @@ globals.allUnitTests.push(function CreateGraphElementsFromJson_GivenJson_ExpectG
 				{
 					Name: "Scott",
 					Age: 10,
-          Pic: "custom/assets/network.svg"
+          Pic: "custom/assets/Persons/Monroe.png"
 				},
 				{
 					Name: "Jane",
-          Avatar: "custom/assets/server.svg"
+          Avatar: "custom/assets/Persons/elvis.png"
 				}]
 		}
 	};
