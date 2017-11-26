@@ -42,6 +42,7 @@ function graphexMain() {
   function processParameters(){
         // PARAMETERS
     //extract commands from URL:
+    var stringHelper = new StringHelper();
     var urlHelper  = new UrlHelper();
     var params = urlHelper.GetAllParams();
     params.forEach(function(param){
@@ -51,11 +52,16 @@ function graphexMain() {
       }
 
       if (param.key == "grenc"){
-        var translator = urlHelper.GetParameterByName("trans");
-        var base64Str = new StringHelper().ReplaceEachOfCharSet(param.value, '._-','+/=');
-        var decodedData = atob(base64Str);
-        var translator = new SimpleTranslator();
-        translator.Translate(decodedData);
+        var translator = stringHelper.ParamDecodeString(urlHelper.GetParameterByName("trans"));
+        var decodedData = stringHelper.ParamDecodeString(param.value);
+        //var base64Str = new StringHelper().ReplaceEachOfCharSet(param.value, '._-','+/=');
+        //var decodedData = atob(base64Str);
+        mappings.Translators.forEach(function(transMapping){if (transMapping.name == translator){
+          console.log('translator', transMapping);
+          var trans = transMapping.translator;
+          trans.Translate(decodedData);
+        }});
+
       }
     });
   }

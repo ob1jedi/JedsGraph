@@ -20,7 +20,11 @@ String.prototype.gxTrimBrackets = function(){
 function StringHelper(){
 
   this.ReplaceEachOfCharSet= function(inputString, replaceChars, withChars){
-    if (replaceChars.length !== replaceChars.length)
+    return replaceEachOfCharSet(inputString, replaceChars, withChars);
+  }
+
+  function replaceEachOfCharSet(inputString, replaceChars, withChars){
+      if (replaceChars.length !== replaceChars.length)
       throw 'the replacing character-set must be same length as the replaced character set';
     var newString = '';
     for (var i = 0; i < inputString.length; i++){
@@ -32,6 +36,15 @@ function StringHelper(){
       }
     }
     return newString;
+  }
+
+  this.ParamEncodeString = function(string){
+    return replaceEachOfCharSet(btoa(string), '+/=','._-');
+  }
+
+  this.ParamDecodeString = function(encodedString){
+    encodedString = replaceEachOfCharSet(encodedString, '._-','+/=');
+    return atob(encodedString);
   }
 
   this.RegexGetCaptured = function( string, regex, index) {
