@@ -61,7 +61,7 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 
 function GetConfigForEntityId(nodeData)
 {
-    new EntityEventsHelper().AddEntityToGraph_before(nodeData);
+    new EntityEventsHelper().AddEntityToGraph_beforeConfigLoad(nodeData);
     var configHelper = new ConfigHelper();
     return configHelper.GetConfigForEntityId(nodeData.id);
 }

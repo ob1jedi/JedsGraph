@@ -18,7 +18,7 @@
 			"radius": 25,
 			/* Options: null (auto-color)*/
 			"border-color": null,
-      "border-width": 5,
+      "border-width": 0.5,
 			/* Options: null (auto-color from RGB range)*/
 			"background-color": null,
 			"opacity": 1,

@@ -8,9 +8,10 @@
     for(var prop in nodeData.propertiesObject) {
       var propVal=nodeData.propertiesObject[prop];
       if(isImage(propVal)) {
-        var config = createEntitySpecificConfig(nodeData.id);
-        config.config = {"attributes":{"img":{"url": propVal}}};
-        new ConfigHelper().AddDynamicEntityConfigReturnId(config.configName, config);
+        nodeData.entityConfig.config.attributes.img["url"] = propVal;
+        //var config = createEntitySpecificConfig(nodeData.id);
+        //config.config = {"attributes":{"img":{"url": propVal}}};
+        //new ConfigHelper().AddDynamicEntityConfigReturnId(config.configName, config);
       }
     }
   }

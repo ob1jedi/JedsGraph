@@ -279,11 +279,13 @@ function addDataNode(nodeId, nodeData, _sourceConfig) {
   setupDisplayLabels(thisNodeData);
 
   if(thisIsNewNode) {
+    var eventsHelper = new EntityEventsHelper();
     setNodeColor(thisNodeData);
+    eventsHelper.AddEntityToGraph_beforeNodeAdd(thisNodeData);
     node=addNodeToGraph(thisNodeData.id,thisNodeData);
     //PerformNodeStatFunctions(node);
     recordTypeInfo(node);
-    new EntityEventsHelper().AddEntityToGraph_after(node);
+    eventsHelper.AddEntityToGraph_afterNodeAdd(node);
     return node; //RETURN ONLY IF NODE IS NEW
   }
 }
