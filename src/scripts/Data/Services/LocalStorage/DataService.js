@@ -53,7 +53,11 @@
 		};
 	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
 		var entity = dataDriver.GetEntityById(entityId);
-		updateUiComponents(labels[0], 1, _sourceConfig);
+		
+    var configHelper = new ConfigHelper();
+		var entityConfig = configHelper.GetConfigForEntityId(entityId);
+    
+    updateUiComponents(labels[0], 1, entityConfig);
 		var nodes = addEntitiesToGraphAndReturnNodes([entity])[0];
 		return nodes;
 	}
@@ -144,7 +148,9 @@
 		addEntitiesToGraphAndReturnNodes([node], globals.currentTheme.sourceConfig);
 		//inputCallback(nodeId);
 		//Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);
-		updateUiComponents(entityName, 1, globals.currentTheme.sourceConfig);
+    var configHelper = new ConfigHelper();
+		var entityConfig = configHelper.GetConfigForEntityId(nodeId);
+		updateUiComponents(entityName, 1, entityConfig);
 	}
 
 	this.UpdateEntity = function (nodeID, newProperties, callback) {
