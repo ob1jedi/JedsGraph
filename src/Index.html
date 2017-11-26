@@ -68,13 +68,21 @@
 	<script type="text/javascript" src="scripts/Config/baseGraphConfig.js"></script>
 	<script type="text/javascript" src="scripts/Config/baseLinkConfig.js"></script>
 	<script type="text/javascript" src="scripts/Config/baseNodeConfig.js"></script>
+	<script type="text/javascript" src="scripts/Config/Predefined/UrlNodeConfig.js"></script>
+	<script type="text/javascript" src="scripts/Config/Predefined/RootNodeConfig.js"></script>
 	<!-- endbuild -->
 	<!--------- MINIFIED --------------->
 	<!-- build:js scripts/combined.js -->
+	<script type="text/javascript" src="scripts/Services/JsonHelper.js"></script>
+	<script type="text/javascript" src="scripts/define_mappings.js"></script>
 	<script type="text/javascript" src="scripts/Services/StringHelper.js"></script>
 	<script type="text/javascript" src="scripts/_factoryClasses/NodeFunctions.js"></script>
 	<script type="text/javascript" src="scripts/Config/Services/ConfigHelper.js"></script>
 	<script type="text/javascript" src="scripts/Tests/UnitTestFramework.js"></script>
+	<script type="text/javascript" src="scripts/Data/Services/LocalStorage/DataService.js"></script>
+	<script type="text/javascript" src="scripts/Data/Services/LocalStorage/data2Graph.js"></script>
+	<script type="text/javascript" src="scripts/Data/Services/LocalStorage/DataDriver.js"></script>
+	<script type="text/javascript" src="scripts/Data/Services/LocalStorage/DataStringHelper.js"></script>
 	<script type="text/javascript" src="scripts/VueComponents/Arrangers/SimpleArranger.js"></script>
 	<script type="text/javascript" src="scripts/VueComponents/Translators/SimpleTranslator.js"></script>
 	<script type="text/javascript" src="scripts/VueComponents/Translators/UrlParamsTranslator.js"></script>
@@ -83,6 +91,7 @@
 	<script type="text/javascript" src="scripts/VueComponents/Translators/ApiImportTranslator.js"></script>
 	<script type="text/javascript" src="scripts/VueComponents/Translators/JsonTranslator.js"></script>
 	<script type="text/javascript" src="scripts/VueComponents/Translators/ParseTreeTranslator.js"></script>
+	<script type="text/javascript" src="scripts/VueComponents/Translators/TranslatorHelper.js"></script>
 	<script type="text/javascript" src="scripts/_functions/uiCompliments/panelCalls.js"></script>
 	<script type="text/javascript" src="scripts/_functions/uiCompliments/toolPanelMangement.js"></script>
 	<script type="text/javascript" src="scripts/_functions/uiCompliments/uiUpdates.js"></script>
@@ -93,7 +102,6 @@
 	<script type="text/javascript" src="scripts/_components/Node/Methods/nodeMethods.js"></script>
 	<script type="text/javascript" src="scripts/_components/Console/consoleService.js"></script>
 	<script type="text/javascript" src="scripts/_services/common.js"></script>
-	<script type="text/javascript" src="scripts/Services/JsonHelper.js"></script>
 	<script type="text/javascript" src="scripts/Services/HttpClient.js"></script>
 	<script type="text/javascript" src="scripts/Services/GraphHelper.js"></script>
 	<script type="text/javascript" src="scripts/Services/BrowserHelper.js"></script>
@@ -101,10 +109,6 @@
 	<script type="text/javascript" src="scripts/Data/Services/Neo4j/data2Graph.js"></script>
 	<script type="text/javascript" src="scripts/Data/Services/Neo4j/neo4j.js"></script>
 	<script type="text/javascript" src="scripts/Data/Services/Neo4j/graph2Data.js"></script>
-	<script type="text/javascript" src="scripts/Data/Services/LocalStorage/DataService.js"></script>
-	<script type="text/javascript" src="scripts/Data/Services/LocalStorage/data2Graph.js"></script>
-	<script type="text/javascript" src="scripts/Data/Services/LocalStorage/DataDriver.js"></script>
-	<script type="text/javascript" src="scripts/Data/Services/LocalStorage/DataStringHelper.js"></script>
 	<script type="text/javascript" src="scripts/_cyclicFunctions/animations.js"></script>
 	<script type="text/javascript" src="scripts/_cyclicFunctions/dataMonitoring.js"></script>
 	<script type="text/javascript" src="scripts/Models/BrowserModel.js"></script>
@@ -133,7 +137,7 @@
 	<script type="text/javascript" src="scripts/Models/GraphElement.js"></script>
 	<script type="text/javascript" src="scripts/Models/PropertyTypeDef.js"></script>
 	<script type="text/javascript" src="scripts/Models/EntityTypeDef.js"></script>
-	<script type="text/javascript" src="scripts/020_define_globals.js"></script>
+	<script type="text/javascript" src="scripts/define_globals.js"></script>
 	<script type="text/javascript" src="scripts/Tests/UnitTests/DataDriver_LocalStorage_Tests.js"></script>
 	<script type="text/javascript" src="scripts/Tests/UnitTests/Config_Tests.js"></script>
 	<script type="text/javascript" src="scripts/Tests/UnitTests/Translator_Tests.js"></script>
