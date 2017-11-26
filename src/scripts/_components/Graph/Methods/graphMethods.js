@@ -175,7 +175,7 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
   var bIsNew=false;
   var link;
   var existingLink=getDataLink(linkData.id);
-  console.log('existingLink',existingLink);
+
   if(existingLink) {
     var updatedProperties=getUpdatedProperties(linkData.properties,existingLink.data.properties);
     if(linkData.name!=existingLink.data.name||updatedProperties.length>0) {

@@ -9,9 +9,7 @@ function createDataStringHelper() {
 	return new DataStringHelper();
 }
 
-function createJsonParser() {
-	return new JsonTranslator();
-}
+
 //[Test]
 globals.allUnitTests.push(function getNextNewNodeId_Given_Expect1() {
 	// Arrange
@@ -1195,36 +1193,3 @@ globals.allUnitTests.push(function getRelationshipByPropertyName_GivenGiven2Rela
 
 });
 
-
-
-//=== JSON Parser =============================================================================================================================================================
-
-//[Test]
-globals.allUnitTests.push(function CreateGraphElementsFromJson_GivenJson_ExpectGraphElements() {
-	// Arrange
-	var sut = createJsonParser();
-  
-	var inputJSON = {
-		Parent: {
-			Name: "John",
-			Child: [
-				{
-					Name: "Scott",
-					Age: 10,
-          Pic: "custom/assets/Persons/Monroe.png"
-				},
-				{
-					Name: "Jane",
-          Avatar: "custom/assets/Persons/elvis.png"
-				}]
-		}
-	};
-
-  
-	// Act
-	var result = sut.TranslateToGraph_ReturnGraphElements('root', JSON.stringify(inputJSON), globals.currentTheme.sourceConfig);
-
-	// Assert
-	return (result.length == 2
-		&& result[0].fromNode.data.labels[0] == "Parent") ? true : result;
-});

@@ -76,7 +76,6 @@ function Neo4jFetchEntitiesForNode(nodeId, _sourceConfig)
 			
 	};
 
-	applyWaitingAffectToNode(nodeId);
 	Neo4j_Command([command], whenResultsComeBackFunction, _sourceConfig);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
