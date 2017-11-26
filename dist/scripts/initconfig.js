@@ -489,10 +489,14 @@ configManager.configs.push( {
 		"attributes": {
 			/* Options: |circle|rect| */
 			"shape": "circle",
+      /*only if shape is rect*/
+      "width": 100,
+      "height": 15,
 			/* Options: null (auto-size)*/
 			"radius": 25,
 			/* Options: null (auto-color)*/
 			"border-color": null,
+      "border-width": 5,
 			/* Options: null (auto-color from RGB range)*/
 			"background-color": null,
 			"opacity": 1,
@@ -523,6 +527,7 @@ configManager.configs.push( {
 				"color": "#cccccc",
 				"font-family": "Arial, Helvetica, sans-serif",
 				"font-weight": "normal",
+        "font-size": 20,
 				"x": 0,
 				"y": 0,
 				"effects": {
@@ -585,7 +590,8 @@ configManager.configs.push( {
       }
 		],
 		"behaviours": [
-			"AutoImage"
+			"AutoImage",
+      "SubnodesForLinks",
 		],
 
 		"effects": {
@@ -650,5 +656,77 @@ configManager.configs.push( {
 			"velocity": 1 /* if 1 then size increases by 1 as value increases by 1 */
 		} /*relationCount/outRelationCount/inRelationCount(increase node size based on relationships)*/
 
+	}
+});
+
+configManager.configs.push( {
+	"configName": "BaseNodeconfig", /*mandatory field, must be unique among other configs*/
+	"prefix": "BNC", /*mandatory field, must be unique among other configs*/
+	/*mandatory field, value can be "node"/"graph"/"link" */
+	"configType": "entity",
+	/*will apply to all nodes. Options are: null */
+	"matchEntity": {labels:["link"]},
+	"config": {
+		"attributes": {
+			/* Options: |circle|rect| */
+			"shape": "rect",
+			/* Options: null (auto-size)*/
+			"radius": 1,
+      "width": 80,
+      "height": 20,
+			/* Options: null (auto-color)*/
+			"border-color": "#0e243f",
+			/* Options: null (auto-color from RGB range)*/
+			"background-color": "#4292f4",
+			"opacity": 0.5,
+			"highlightRing": {
+				"border-color": "#0e243f"
+			},
+
+			"focusRing": {
+				"border-color": "blue"
+			},
+
+			"labelText": {
+				"show": true,
+				/* Options: null(show label)|{key:"property", value:"nameOfProperty"}|{key:"static", value:"some text"}|{key:"first", value:["propName1", "propName2"]}*/
+				"displayData": {
+					"key": "static",
+					"value": "http://..."
+				}
+			},
+      "circleText": {
+				"show": false
+			}
+
+		},
+
+		"behaviours": [
+      "FetchLinkOnDblClick"
+		]
+	}
+});
+
+configManager.configs.push( {
+	"configName": "BaseNodeconfig", /*mandatory field, must be unique among other configs*/
+	"prefix": "BNC", /*mandatory field, must be unique among other configs*/
+
+	/*mandatory field, value can be "node"/"graph"/"link" */
+	"configType": "entity",
+
+	/*will apply to all nodes. Options are: null */
+	"matchEntity": {labels:["root"]},
+	"config": {
+		"attributes": {
+      "background-color": "black",
+      "border-color": "black",
+      "radius": 10,
+			"labelText": {
+				"show": false
+			},
+			"circleText": {
+				"show": false
+				},
+		}
 	}
 });

@@ -1,3 +1,152 @@
+function JsonHelper() {
+
+  this.Contains=function(subsetJson,supersetJson, caseSensitive) {
+    if(!ofSameType(subsetJson,supersetJson))
+      return false;
+
+    if (isObject(subsetJson))
+        for(var key in subsetJson)
+          return this.Contains(subsetJson[key],supersetJson[key])
+    else if (isArray(subsetJson))
+        for(var i=0;i<subsetJson.length;i++)
+          return this.Contains(subsetJson[i],supersetJson[i])
+    else if (typeof subsetJson === "string")
+      if (caseSensitive)
+        return subsetJson === supersetJson;
+      else
+        return subsetJson.toLowerCase() === supersetJson.toLowerCase()
+    else
+      return subsetJson === supersetJson;
+  }
+
+  this.GetValueWithPath =function(json, path){
+    var elements = path.split('/');
+    var configElement = json;
+    for (var i=0; i < elements.length; i++){
+      if (configElement === undefined)
+       return undefined;
+
+      var subels = elements[i].split('[');
+      if (subels.length > 1){ 
+        configElement = configElement[subels[0]][Number(subels[1].replace(']',''))];
+      }
+      else
+        configElement = configElement[subels[0]];
+    }
+    return configElement;
+  }
+
+
+  this.MergeJson=function(baseJson,newJson,idFieldName) {
+    if (!newJson || !baseJson) 
+      throw "JSONMERGE ERROR: Invalid Json input";
+    return mergeJson(baseJson,newJson,idFieldName);
+  }
+
+  function mergeJson(baseJson,newJson,idFieldName){
+    if(!ofSameType(baseJson,newJson)){
+      return clone(newJson);
+    }
+    if(isArray(baseJson))
+      baseJson=mergeArrays(baseJson,newJson,idFieldName);
+    else if(isObject(baseJson)){
+      baseJson=mergeObjects(baseJson,newJson,idFieldName);
+      }
+    else{
+      baseJson=newJson;
+    }
+    return baseJson;
+  }
+
+  mergeObjects=function(baseObject,newObject,idFieldName) {
+    var returnObject = {};
+    for(var key in baseObject) {
+      returnObject[key]= clone(baseObject[key]);
+    }
+    for(var key in newObject) {
+      if(baseObject[key] === undefined){
+        returnObject[key]=clone(newObject[key])
+      }
+      else
+        returnObject[key]=mergeJson(baseObject[key],newObject[key],idFieldName)
+    }
+    return returnObject;
+  }
+
+  mergeArrays=function(baseArray,newArray,idFieldName) {
+    if(!idFieldName)
+      throw "JSONMERGE ERROR: No discriminator specified";
+    var returnArray = [];
+    baseArray.map(function(e){returnArray.push(e)});
+    for(var n=0;n<newArray.length;n++) {
+      var matchFound=false;
+      for(var b=0;b<baseArray.length;b++) {
+        if(areEquivalent(baseArray[b],newArray[n],idFieldName)) {
+          matchFound=true;
+          if(isObject(baseArray[b])){
+            returnArray[b] = mergeObjects(baseArray[b],newArray[n],idFieldName);
+          }
+          else if(isArray(baseArray[b])){
+            returnArray[b] = mergeArrays(baseArray[b],newArray[n],idFieldName);
+          }
+          break;
+        }
+      }
+      if(!matchFound)
+        returnArray.push(clone(newArray[n]));
+    }
+    return returnArray;
+  }
+
+  function clone(input){
+    return JSON.parse(JSON.stringify(input));
+  }
+
+
+  function areEquivalent(input1,input2,idFieldName) {
+    if(!ofSameType(input1,input2))
+      return false;
+    if(isObject(input1))
+      return (input1[idFieldName]===input2[idFieldName]&&input1[idFieldName])
+    if(isPrimitive(input1))
+      return input1===input2
+    if(isArray(input1)) {
+      for(var i=0;i<input1.length;i++)
+        for(var x=0;x<input2.length;x++)
+          if(   isString(input1[i])
+             && input1[i] === input2[x]
+             && input1[i].substr(0,(idFieldName+":").length) == (idFieldName+":")
+            ){
+            return true;
+          }
+      return false;
+    }
+    throw "JSONMERGE ERROR: unable to compare"
+  }
+  function isString(input) {
+    return typeof input==="string";
+  }
+  function isArray(input) {
+    return (typeof input==="array" || Array.isArray(input)) && input
+  }
+  function isObject(input) {
+    return typeof input==="object" && !Array.isArray(input) && input;
+  }
+  function isPrimitive(input) {
+    return !isObject(input)&&!isArray(input);
+  }
+  function ofSameType(element1,element2) {
+    return typeof element1===typeof element2 && Array.isArray(element1) === Array.isArray(element2);
+  }
+}
+//==========Globals ==================================================================================================================================================================			
+var mappings = new Mappings();
+
+function Mappings(){
+  
+  this.Translators = [];
+
+}
 String.prototype.gxTrimQuotes = function(){
     var str = this;
     str = str.replace(/^"+|"+$/g, '');
@@ -20,7 +169,11 @@ String.prototype.gxTrimBrackets = function(){
 function StringHelper(){
 
   this.ReplaceEachOfCharSet= function(inputString, replaceChars, withChars){
-    if (replaceChars.length !== replaceChars.length)
+    return replaceEachOfCharSet(inputString, replaceChars, withChars);
+  }
+
+  function replaceEachOfCharSet(inputString, replaceChars, withChars){
+      if (replaceChars.length !== replaceChars.length)
       throw 'the replacing character-set must be same length as the replaced character set';
     var newString = '';
     for (var i = 0; i < inputString.length; i++){
@@ -32,6 +185,15 @@ function StringHelper(){
       }
     }
     return newString;
+  }
+
+  this.ParamEncodeString = function(string){
+    return replaceEachOfCharSet(btoa(string), '+/=','._-');
+  }
+
+  this.ParamDecodeString = function(encodedString){
+    encodedString = replaceEachOfCharSet(encodedString, '._-','+/=');
+    return atob(encodedString);
   }
 
   this.RegexGetCaptured = function( string, regex, index) {
@@ -396,6 +558,977 @@ var UnitTestFramework = function () {
 			console.log('TEST PASSED');
 	}
 }
+var DataService = function () {
+	var dataDriver = new LocalStorageDataDriver();
+
+  this.DropDatabase = function(){
+    dataDriver.ClearStorage();
+    window.location.reload();
+  }
+
+	this.CreateConfigReturnId = function (configName, jsonConfig) {
+		if (dataDriver.ConfigExists(configName))
+	        throw "A config by that name already exists";
+	    return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
+	}
+
+	this.CreateUpdateConfigReturnId = function (configName, jsonConfig) {
+		var existingConfig = this.GetConfigByName(configName);
+		if (!existingConfig)
+			return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
+		var jsonHelper = new JsonHelper();
+    //var finalConf = $.extend(true, {}, existingConfig, jsonConfig);
+    var finalConf = jsonHelper.MergeJson(existingConfig, jsonConfig, "arrayId");
+		console.log('existingConfig',existingConfig );
+    console.log('jsonConfig',jsonConfig );
+    console.log('finalConf',finalConf );
+    return dataDriver.UpdateConfigInDb(configName, finalConf);
+	}
+
+	this.GetAllConfigs = function () {
+		var allConfigNames = dataDriver.GetAllConfigNames();
+		return allConfigNames.map(function (cnfName) { return dataDriver.GetConfigsByName(cnfName)[0]})
+	}
+
+	this.GetConfigByName = function (configName) {
+		if (!configName) throw "Config name not provided";
+	    var configs = dataDriver.GetConfigsByName(configName);
+	    if (configs.length == 0)
+	        return null;
+	    return configs[0];
+	}
+
+	this.FetchEntitiesForNodeId = function (nodeId, _sourceConfig) {
+		var graphElements = dataDriver.GetRelatedEntityGraph(stripDomainFromId(nodeId));
+		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
+	}
+
+	this.CreateEntity_AddToGraph_ReturnNode = function (labels, properties, _sourceConfig) {
+		if (!_sourceConfig) { _sourceConfig = globals.currentTheme.sourceConfig;}
+	    if (!properties)
+	        properties = {};
+	    var newEntity = {
+		    labels: labels,
+		    properties: properties
+		};
+	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
+		var entity = dataDriver.GetEntityById(entityId);
+		
+    var configHelper = new ConfigHelper();
+		var entityConfig = configHelper.GetConfigForEntityId(entityId);
+    
+    updateUiComponents(labels[0], 1, entityConfig);
+		var nodes = addEntitiesToGraphAndReturnNodes([entity])[0];
+		return nodes;
+	}
+
+	this.CreateEntityReturnId = function (labels, properties) {
+	    if (!properties)
+	        properties = {};
+	    var newEntity = {
+	        labels: labels,
+	        properties: properties
+	    };
+	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
+	    return entityId;
+	}
+
+	this.DeleteEntity = function (entityID, _sourceConfig) {
+		dataDriver.DeleteEntity(entityID);
+		//Neo4jDeleteNode(nodeID, _sourceConfig);
+	}
+
+	this.CheckMonitoredNodes = function (_sourceConfig) {
+		//Neo4jCheckMonitoredNodes(_sourceConfig);
+	}
+
+	this.CheckMonitoredLinks = function (_sourceConfig) {
+		//Neo4jCheckMonitoredLinks(_sourceConfig);
+	}
+
+	this.Qbuilder = function (selectType, _sourceConfig) {
+		//Neo4jQbuilder(selectType, _sourceConfig);
+	}
+
+	this.Qbuilder_ClearValue = function (selectType) {
+		//Neo4jQbuilder_ClearValue(selectType);
+	}
+
+	this.QuerySimpleSearch = function (fromEntity, whereProperty, equalsValue, _sourceConfig) {
+		//Neo4jQuerySimpleSearch(fromEntity, whereProperty, equalsValue, _sourceConfig);
+	}
+
+	this.GetRelationCounts = function (nodeId, callback, _sourceConfig) {
+		//Neo4jGetRelationCounts(nodeId, callback, _sourceConfig);
+	}
+
+	this.GetEntitiesByType = function (byLabel, sourceConfigPrefix) {
+		//Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
+		var entities = dataDriver.GetEntitiesByType(byLabel);
+		return addEntitiesToGraphAndReturnNodes(entities, globals.currentTheme.sourceConfig);
+	}
+
+	this.GetEntityById = function(entityId, sourceConfigPrefix) {
+	    return dataDriver.GetEntityFromDatabase(entityId);
+	}
+
+	this.GetEntitiesByDetails = function (nodeLabel, properties, _sourceConfig) {
+		//Neo4jGetEntitiesByDetails(nodeLabel, properties, _sourceConfig);
+	}
+
+	this.GetAllEntities = function (_sourceConfig) {
+		var labelData = dataDriver.GetAllEntityTypes();
+		labelData.forEach(function (labelData) {
+			var entities = dataDriver.GetEntitiesByType(labelData);
+			addEntitiesToGraphAndReturnNodes(entities, globals.currentTheme.sourceConfig);
+		});
+		this.GetAllRelations(_sourceConfig);
+		//Neo4jGetAllEntities(_sourceConfig);
+	}
+
+	this.GetAllRelations = function (_sourceConfig) {
+		var labelDatas = dataDriver.GetAllRelationTypesAndRelationIds();
+
+		var graphElements = labelDatas.map(function (labelData) {
+			labelData.ids.map(function (id) {
+				return dataDriver.GetGraphOfRelation(id)
+			});
+		});
+		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
+		//Neo4jGetAllRelations(_sourceConfig);
+	}
+
+	this.CreateEntityReturnCallbackWithIds = function (entityName, propList, inputCallback) {
+		var newNode = {
+			labels: [entityName],
+			properties: propList
+		};
+		var nodeId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
+		var node = dataDriver.GetEntityFromDatabase(nodeId);
+		addEntitiesToGraphAndReturnNodes([node], globals.currentTheme.sourceConfig);
+		//inputCallback(nodeId);
+		//Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);
+    var configHelper = new ConfigHelper();
+		var entityConfig = configHelper.GetConfigForEntityId(nodeId);
+		updateUiComponents(entityName, 1, entityConfig);
+	}
+
+	this.UpdateEntity = function (nodeID, newProperties, callback) {
+		//Neo4jUpdateEntity(nodeID, newProperties, callback);
+	}
+
+	this.CreateRelation_AddToGraph_ReturnLink = function (fromEntityId, toEntityId, labels, properties, _sourceConfig, planOnly) {
+		//Neo4jCreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly)
+		var relId = dataDriver.CreateRelationPopulateAndReturnId(stripDomainFromId(fromEntityId), stripDomainFromId(toEntityId), labels, properties);
+		var relation = dataDriver.GetLinkFromDatabase(relId);
+		var link = addRelationToGraphReturnLink(relation); 
+    applyPopoutEffectToNodesById(fromEntityId, toEntityId);
+    return link
+	}
+
+	this.DeleteRelationship = function (relationshipID, _sourceConfig) {
+		//Neo4jDeleteRelationship(relationshipID, _sourceConfig);
+	}
+
+	this.DeleteLabel = function (nodeId, labelName, _sourceConfig) {
+		//Neo4jDeleteLabel(nodeId, labelName, _sourceConfig);
+	}
+
+	this.AddProperty = function (nodeId, _sourceConfig) {
+		//Neo4jAddProperty(nodeId, _sourceConfig);
+	}
+
+	this.AddLabel = function (_sourceConfig) {
+		//Neo4jAddLabel(_sourceConfig);
+	}
+
+	this.GetAllEntityTypes = function (_sourceConfig) {
+		//Neo4jGetAllLabels(_sourceConfig);
+		var labels = dataDriver.GetAllEntityTypesAndEntityIds(_sourceConfig);
+		labels.forEach(function (label) {
+			var pseudoEntity = new DataEntity();
+			pseudoEntity.labels = [label];
+
+			var configHelper = new ConfigHelper();
+			var entityConfig = configHelper.GetConfigForEntity(pseudoEntity);
+
+			updateUiComponents(label.label, label.ids.length, entityConfig);
+		});
+	}
+
+	function updateUiComponents(label, entityCount, entityConfig)
+	{
+		var typeSelector = addEntityLabel(label, entityCount, entityConfig);
+		refreshEntitySelectors();
+    consoleApp.refreshTypeSelectors();
+	}
+
+	function stripDomainFromId(nodeId)
+	{
+		if (nodeId.length > 3)
+			if (nodeId.substring(0, 3) == 'LOC')
+				return nodeId.substring(3);
+		return nodeId;
+	}
+
+}
+
+
+
+//===============================================================================================
+
+//===============================================================================================
+
+
+//===============================================================================================
+
+
+function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceConfig) {
+	var newNodes = [];
+	graphElements.forEach(function (graphElement) {
+		var datN = new nodeDataType;
+		datN.id = graphElement.fromNode.id;
+		datN.labels = graphElement.fromNode.labels;
+		datN.properties = new neoPropertyList(graphElement.fromNode.properties);
+    datN.propertiesObject = graphElement.fromNode.properties;
+		datN.entityConfig = GetConfigForEntityId(datN);
+		var fromNode = addDataNode(datN.id, datN, _sourceConfig);
+		if (fromNode)
+		    newNodes.push(fromNode);
+
+		var datM = new nodeDataType;
+		datM.id =graphElement.toNode.id;
+		datM.labels = graphElement.toNode.labels;
+		datM.properties = new neoPropertyList(graphElement.toNode.properties);
+		datM.propertiesObject = graphElement.toNode.properties;
+		datM.entityConfig = GetConfigForEntityId(datM);
+		var toNode = addDataNode(datM.id, datM, _sourceConfig);
+		if (toNode) {
+			newNodes.push(toNode);
+			applyPopoutEffectToNode(toNode, datN.id)
+		}
+		//link R...
+		var linkdata = new linkDataType(datN.id, datM.id, graphElement.link.id, graphElement.link.labels, _sourceConfig);
+		linkdata.properties = new neoPropertyList(graphElement.link.properties);
+		linkdata.propertiesObject = graphElement.link.properties;
+		var link = addDataLink(datN.id, datM.id, linkdata, _sourceConfig);
+	});
+
+	refreshNodesDepths();
+	return newNodes;
+}
+
+function addRelationToGraphReturnLink(relation, _sourceConfig) {
+    var dat = new linkDataType(relation.fromNodeId, relation.toNodeId, relation.id, relation.labels, _sourceConfig);
+    if (relation.properties) { dat.properties = new neoPropertyList(relation.properties); }
+    if (relation.properties) { dat.propertiesObject = relation.properties }
+    var relation = addDataLink(dat.fromNodeID, dat.toNodeID, dat, _sourceConfig);
+    return relation;
+}
+
+function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
+{
+	var newNodes =[];
+	entities.forEach(function (entity) {
+		var datM = new nodeDataType;
+		datM.id = entity.id;
+		datM.labels = entity.labels || [];
+		datM.properties = new neoPropertyList(entity.properties);
+		datM.propertiesObject = entity.properties;
+    datM.entityConfig = GetConfigForEntityId(datM);
+		var addedNode = addDataNode(entity.id, datM, _sourceConfig)
+		newNodes.push(addedNode);
+	});
+	
+	return newNodes;
+}
+
+function GetConfigForEntityId(nodeData)
+{
+    new EntityEventsHelper().AddEntityToGraph_before(nodeData);
+    var configHelper = new ConfigHelper();
+    return configHelper.GetConfigForEntityId(nodeData.id);
+}
+
+function removeNodeFromGraph(nodeId)
+{
+	removeNodeFromStage(nodeId);
+}
+
+var LocalStorageDataDriver = function () {
+
+
+    //----PUBLIC----------------------------------------------------------
+
+  this.ClearStorage = function(){
+    localStorage.clear();
+  }
+
+
+	this.UpdateConfigInDb = function (name, configJson) {
+		writeConfigToStorage(name, configJson);
+		return configJson.id;
+	}
+    this.CreateConfigInDbAndReturnId = function (name, configJson) {
+    	configJson.id = this.GetNextNewConfigId();
+        writeConfigToStorage(name, configJson);
+        return configJson.id;
+    }
+
+	this.CreateEntityInDatabasePopulateAndReturnId = function (node) {
+		node = sanitizeNode(node);
+		node.id = this.GetNextNewEntityId();
+		writeNodeToStorage(node);
+		return node.id;
+	}
+
+	this.GetRelatedNodes = function (nodeId) {
+		var node = this.GetEntityFromDatabase(nodeId);
+		var nodeLinks = node.links;
+		var dataDriver = this;
+		var relatedNodeIds = [];
+		nodeLinks.forEach(function (linkId) {
+			var link = dataDriver.GetLinkFromDatabase(linkId);
+			if (nodeId == link.fromNodeId)
+				relatedNodeIds.push(link.toNodeId);
+			else
+				relatedNodeIds.push(link.fromNodeId);
+		});
+
+		return relatedNodeIds;
+	}
+
+	this.GetEntityById = function (entityId){
+	    return this.GetEntityFromDatabase(entityId);
+	}
+
+	this.GetConfigById = function (configId) {
+	    return this.GetConfigFromDatabase(configId);
+	}
+
+	this.GetRelatedEntityGraph = function (nodeId) {
+		var node = this.GetEntityFromDatabase(nodeId);
+		var dataDriver = this;
+		return node.links.map(function (linkId) { return dataDriver.GetGraphOfRelation(linkId) });
+	}
+
+	this.GetGraphOfRelation = function (linkId) {
+		var link = this.GetLinkFromDatabase(linkId);
+		var graphElement = new GraphElement();
+		graphElement.fromNode = this.GetEntityFromDatabase(link.fromNodeId);
+		graphElement.toNode = this.GetEntityFromDatabase(link.toNodeId);
+		graphElement.link = link;
+		return graphElement;
+	}
+
+	this.CreateRelationPopulateAndReturnId = function (fromEntityId, toEntityId, labels, properties) {
+	    link = {}; //new Relation(); //sanitizeLink(relation);
+		link.id = this.GetNextNewRelationId();
+		link.fromNodeId = fromEntityId;
+		link.toNodeId = toEntityId;
+		link.labels = labels || [];
+		link.properties = properties ? properties : {};
+
+		var fromEntity = this.GetEntityFromDatabase(fromEntityId);
+		fromEntity.links.push(link.id);
+		writeNodeToStorage(fromEntity);
+
+		var toEntity = this.GetEntityFromDatabase(toEntityId);
+		toEntity.links.push(link.id);
+		writeNodeToStorage(toEntity);
+
+		writeLinkToStorage(link);
+		return link.id;
+	}
+
+	this.GetConfigFromDatabase = function (configId) {
+	    return getConfigFromDatabase(configId);
+	}
+
+	this.GetEntityFromDatabase = function (nodeId) {
+		return getEntityFromDatabase(nodeId);
+	}
+
+	this.GetLinkFromDatabase = function (linkId) {
+		return getRelationFromDatabase(linkId);
+	}
+
+	this.DeleteEntity = function(nodeId)
+	{
+		localStorage.removeItem(nodeKeyFromNodeId(nodeId));
+	}
+
+
+	this.EntityExists = function(nodeId)
+	{
+		var node = readNodeFromStorage(nodeId);
+		return node !== null;
+	}
+
+	this.GetNextNewConfigId = function () {
+		var nextIndex = getNextIndexForCounter('NEXT_CONFIG_ID');
+		return nextIndex;
+	}
+
+	this.GetNextNewEntityId = function () {
+		return getNextIndexForCounter('NEXT_NODE_ID');
+	}
+
+	this.GetNextNewRelationId = function () {
+		return getNextIndexForCounter('NEXT_LINK_ID');
+	}
+
+	function getNextIndexForCounter(CounterName) {
+		
+		var nextId = localStorage.getItem(CounterName);
+		if (nextId === null) {
+			localStorage.setItem(CounterName, 1);
+			return 1;
+		}
+		nextId = Number(nextId) + 1;
+		localStorage.setItem(CounterName, nextId);
+		return nextId;
+	}
+
+	this.ConfigExists = function (configName) {
+	    var configs = getItemsInIndex('INDEX_ON_CONFIG_NAMES', configName, 'config');
+	    return (configs.length > 0);
+	}
+
+	this.GetConfigsByName = function (configName) {
+	    return getItemsInIndex('INDEX_ON_CONFIG_NAMES', configName, 'config');
+	}
+
+	this.GetEntitiesByType = function(labelName){		
+		return getItemsInIndex('INDEX_ON_NODE_LABELS', labelName, 'node');
+	}
+
+	this.GetEntitiesByPropertyName = function (propertyName) {
+		return getItemsInIndex('INDEX_ON_NODE_PROPS', propertyName, 'node');
+	}
+
+	this.GetRelationsByLabel = function (labelName) {
+		return getItemsInIndex('INDEX_ON_LINK_LABELS', labelName, 'link');
+	}
+
+	this.GetRelationsByPropertyName = function (propertyName) {
+		return getItemsInIndex('INDEX_ON_LINK_PROPS', propertyName, 'link');
+	}
+
+	this.GetAllEntityTypes = function () {
+		var nodeIndex = localStorage.getItem('INDEX_ON_NODE_LABELS');
+		return getAllLabelsFromIndex(nodeIndex);
+	}
+
+	this.GetAllRelationTypes = function () {
+		var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
+		return getAllLabelsFromIndex(linkIndex);
+	}
+
+	this.GetAllConfigNames = function () {
+		var linkIndex = localStorage.getItem('INDEX_ON_CONFIG_NAMES');
+		return getAllLabelsFromIndex(linkIndex);
+	}
+
+	//this.GetAllRelationTypeInfos = function () {
+	//	var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
+	//	return getAllLabelsFromIndex(linkIndex);
+	//}
+
+	this.GetAllEntityTypesAndEntityIds = function () {
+		return getAllLabelsAndIdsForIndex('INDEX_ON_NODE_LABELS');
+	}
+
+	this.GetAllRelationTypesAndRelationIds = function () {
+		return getAllLabelsAndIdsForIndex('INDEX_ON_LINK_LABELS');
+	}
+	//---- PRIVATE ----------------------------------------------------------
+
+	function getConfigFromDatabase(configId) {
+	    throwIfInvalidConfigId(configId);
+	    var config = readConfigFromStorage(configId);
+	    return config;
+	}
+
+	function getEntityFromDatabase(nodeId) {
+		throwIfInvalidNodeId(nodeId);
+		var node = readNodeFromStorage(nodeId);
+		return node;
+	}
+
+	function getRelationFromDatabase(linkId) {
+		throwIfInvalidLinkId(linkId);
+		var link = readLinkFromStorage(linkId);
+		return link;
+	}
+
+	function getItemsInIndex(indexName, elementName, itemType) {
+		var dataStringHelper = new DataStringHelper();
+		var indexedData = dataStringHelper.getDataString(indexName);
+		if (indexedData == "|")
+		    return [];
+		var itemIdList = dataStringHelper.getDataFromDataString(indexedData, elementName);
+		if (itemIdList.length == 0)
+		    return [];
+		var itemIdArray = itemIdList.split(',');
+		if (itemIdArray.length == 0)
+		    return [];
+		var itemArray = [];
+		var dataDriver = this;
+		for (var i = 0; i < itemIdArray.length; i++) {
+			if (itemType === 'node')
+				itemArray.push(getEntityFromDatabase(itemIdArray[i]));
+			if (itemType === 'link')
+			    itemArray.push(getRelationFromDatabase(itemIdArray[i]));
+			if (itemType === 'config')
+			    itemArray.push(getConfigFromDatabase(itemIdArray[i]));
+		}
+		return itemArray;
+	}
+
+	function getAllLabelsAndIdsForIndex(indexName) {
+		var indexedData = localStorage.getItem(indexName);
+		var dataStringHelper = new DataStringHelper();
+		var elementArray = dataStringHelper.getAllElements(indexedData);
+		var elementInfo = elementArray.map(function (element) {
+			return elementToLabelInfo(element);
+		});
+		return elementInfo;
+	}
+
+	function getAllLabelsFromIndex(indexedData) {
+		var dataStringHelper = new DataStringHelper();
+		var elementArray = dataStringHelper.getAllElements(indexedData);
+		var elemenNames = elementArray.map(function (element) { return element.split(':')[0] });
+		return elemenNames;
+	}
+
+	function elementToLabelInfo(element) {
+		var elementParts = element.split(':');
+		if (elementParts.length > 1)
+			return { label: elementParts[0], ids: elementParts[1].split(',') }
+		return { label: elementParts[0], ids: [] }
+	}
+	
+	function writeConfigToStorage(name, config) {
+		if (!config.id) throw "Missing config-id in config";
+	    localStorage.setItem(configKeyFromConfigId(config.id), serialize(config));
+	    updateIndex("INDEX_ON_CONFIG_NAMES", name, config.id);
+	}
+
+	function writeNodeToStorage(node) {
+		localStorage.setItem(nodeKeyFromNodeId(node.id), serialize(node));
+		updateLabelsIndex("INDEX_ON_NODE_LABELS", node);
+		updatePropertyIndex("INDEX_ON_NODE_PROPS", node);
+	}
+
+	function writeLinkToStorage(link) {
+		localStorage.setItem(linkKeyFromNodeId(link.id), serialize(link));
+		updateLabelsIndex("INDEX_ON_LINK_LABELS", link);
+		updatePropertyIndex("INDEX_ON_LINK_PROPS", link);
+	}
+
+	function updateLabelsIndex(indexName, item) {
+		item.labels.forEach(function (label) {
+			updateIndex(indexName, label, item.id);
+		});
+	}
+
+	function updatePropertyIndex(indexName, item) {
+		for (var propertyKey in item.properties) {
+			updateIndex(indexName, propertyKey, item.id);
+		}
+	}
+
+	function updateIndex(indexName, elementName, data) {
+		var index = localStorage.getItem(indexName);
+		var dataStringHelper = new DataStringHelper();
+		if (index === null)
+			index = dataStringHelper.getNewDataString();
+		index = dataStringHelper.ensureDataIntoElement(index, elementName, data)
+		localStorage.setItem(indexName, index);
+	}
+
+	function sanitizeNode(node) {
+		if (node === undefined)
+			node = {};
+		node.labels = sanitizeLabels(node.labels);
+		node.links = sanitizeNodeLinks(node.links);
+		node.properties = sanitizeProperties(node.properties);
+		return node;
+	}
+
+	function sanitizeLink(link) {
+		if (link === undefined)
+			link = {};
+		link.labels = sanitizeLabels(link.labels);
+		link.properties = sanitizeProperties(link.properties);
+		return link;
+	}
+
+	function sanitizeNodeLinks(links) {
+		if (links === undefined)
+			links = [];
+		return links;
+	}
+
+	function sanitizeLabels(labels) {
+		if (labels === undefined)
+			labels = [];
+		return labels;
+	}
+
+	function sanitizeProperties(properties) {
+		if (properties === undefined)
+			properties = [];
+		return properties;
+	}
+
+	function readConfigFromStorage(configId) {
+	    return deserialize(localStorage.getItem(configKeyFromConfigId(configId)));
+	}
+
+	function readNodeFromStorage(nodeId) {
+		return deserialize(localStorage.getItem(nodeKeyFromNodeId(nodeId)));
+	}
+
+	function readLinkFromStorage(linkId) {
+		return deserialize(localStorage.getItem(linkKeyFromNodeId(linkId)));
+	}
+
+
+	function throwIfInvalidConfigId(configId) {
+	    if (configId === undefined || configId === null || configId === 0)
+	        throw "Invalid config id";
+	}
+
+	function throwIfInvalidNodeId(nodeId) {
+		if (nodeId === undefined || nodeId === null || nodeId === 0)
+			throw "Invalid node id";
+	}
+
+	function throwIfInvalidLinkId(linkId) {
+		if (linkId === undefined || linkId === null || linkId === 0)
+			throw "Invalid link id";
+	}
+
+	function configKeyFromConfigId(configId) {
+	    return 'C_' + configId;
+	}
+
+	function nodeKeyFromNodeId(nodeId) {
+		return 'N_' + nodeId;
+	}
+
+	function linkKeyFromNodeId(linkId) {
+		return 'L_' + linkId;
+	}
+
+	function serialize(object) {
+		return JSON.stringify(object);
+	}
+
+	function deserialize(object) {
+		return JSON.parse(object);
+	}
+
+
+
+}
+
+//================= DATA STRING HELPER =====================================================================================================================
+var DataStringHelper = function () {
+
+	this.getNewDataString = function () {
+		return '|';
+	}
+
+
+	// ===== PUBLIC ===== //
+	this.indexOfElementInDataString = function (string, targetWord) {
+		validateInputString(string);
+		if (string == "|") {
+			// ...There are no more words to the left.
+			// Return 1 to say that the insertion index is the current separator + 1, and 0.1 is a flag to say the the item was not found.
+			return 1.1;
+		}
+		// Get the mid-index of the data string
+		var stringCenterIndex = getCenterIndex(string);
+		// Get elements pre-separator-index...
+		var centerWordStartSeparatorIndex = getFirstLeftSeparatorIndexFromIndex(string, stringCenterIndex, ['|'])
+		// Get elements data-separator-index... (eg the colon that separates the label from the data)
+		var centerWordEndSeparatorIndex = getNextSeparatorIndex(string, centerWordStartSeparatorIndex + 1, [':', '|'])
+		// Get elements post-separator-index...
+		var centerElementEndSeparatorIndex = getNextSeparatorIndex(string, centerWordStartSeparatorIndex + 1, ['|'])
+		// Get the word from the data string...
+		var wordFromArray = string.slice(centerWordStartSeparatorIndex + 1, centerWordEndSeparatorIndex);
+		
+		// Get the elements word-index...
+		var leftWordIndex = centerWordStartSeparatorIndex + 1;
+
+		for (var charIndex = 0; charIndex < Math.min(targetWord.length, wordFromArray.length) ; charIndex++) {
+
+			if (character1IsBeforeCharacter2(targetWord[charIndex], wordFromArray[charIndex]))
+				return searchLeftHalfOfDataBlockReturnIndex(string, centerWordStartSeparatorIndex, targetWord, this);
+
+			if (character1IsAfterCharacter2(targetWord[charIndex], wordFromArray[charIndex]))
+				return searchRightHalfOfDataBlockReturnIndex(string, centerElementEndSeparatorIndex, targetWord, this);
+		}
+		// ...All characters match.
+
+		if (wordsAreIdentical(targetWord, wordFromArray))
+			// ...Found word, return success...
+			return centerWordStartSeparatorIndex + 1;
+
+		if (wordIsLonger(targetWord, wordFromArray))
+			// ...Word is longer, go right...
+			return searchRightHalfOfDataBlockReturnIndex(string, centerElementEndSeparatorIndex, targetWord, this);
+		//return centerElementEndSeparatorIndex + indexInRightHalf;
+
+		if (wordIsShorter(targetWord, wordFromArray))
+			// ...Word is shorter, go left...
+			return searchLeftHalfOfDataBlockReturnIndex(string, centerWordStartSeparatorIndex, targetWord, this);
+
+	}
+
+	this.getWordAtIndex = function (inputString, index) {
+		return inputString.slice(index, getNextSeparatorIndex(inputString, index, ['|']));
+	}
+
+	this.insertElementIntoDataString = function (dataString, newElement) {
+		var dataElementIndex = this.indexOfElementInDataString(dataString, newElement);
+		
+		if (!elementExists(dataElementIndex)) {
+			// Element doesnt exist yet.
+			// Get Data String
+			var insertionIndex = Math.floor(dataElementIndex);
+			var newDataString = dataString.slice(0, insertionIndex) + newElement + '|' + dataString.slice(insertionIndex);
+			
+			return newDataString;
+		}
+
+	}
+
+	this.numberBinarySearch = function (set, criteria) {
+		if (set.length === 0) {
+			return 0;
+		}
+		var checkAtIndex = Math.floor(set.length / 2);
+		if (set[checkAtIndex] === criteria)
+			return checkAtIndex;
+		else if (criteria > set[checkAtIndex]) {
+			return checkAtIndex + 1 + this.numberBinarySearch(set.slice(checkAtIndex + 1), criteria); // back half of the array
+		} else {
+			return this.numberBinarySearch(set.slice(0, checkAtIndex - 1), criteria); // front half of the array
+		}
+	}
+
+	this.deleteElementFromDataString = function (dataString, element) {
+		var dataElementIndex = this.indexOfElementInDataString(dataString, element);
+		
+		if (elementExists(dataElementIndex)) {
+			// Element exists.
+			var startIndex = Math.floor(dataElementIndex);
+			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
+			var dataString = dataString.slice(0, startIndex - 1) + dataString.slice(endIndex);
+		}
+		return dataString;
+	}
+
+	this.getDataString = function(dataStringName) {
+		var dataString = localStorage.getItem(dataStringName);
+		if (!dataString || dataString == null)
+			dataString = '|';
+		return dataString;
+	}
+
+	this.getDataFromDataString = function (dataString, elementName) {
+		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
+		if (elementExists(dataElementIndex)) {
+			var element = getElementFromDataString(dataString, dataElementIndex);
+			var partitions = element.split(':');
+			return (partitions.length > 1) ? partitions[1] : undefined;
+		}
+		return "";
+	}
+
+	this.replaceDataInElement = function (dataString, elementName, newData) {
+		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
+		if (elementExists(dataElementIndex)) {
+			var startIndex = getNextSeparatorIndex(dataString, dataElementIndex, [':', '|']);
+			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
+			var dataString = dataString.slice(0, startIndex) + ":" + newData + dataString.slice(endIndex);
+		}
+		else {
+			dataString = this.insertElementIntoDataString(dataString, elementName + ":" + newData);
+		}
+		return dataString;
+	}
+
+	this.ensureDataIntoElement = function (dataString, elementName, newData) {
+		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
+		if (elementExists(dataElementIndex)) {
+			var startIndex = getNextSeparatorIndex(dataString, dataElementIndex, [':', '|']);
+			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
+			var elementData = dataString.slice(startIndex + 1, endIndex);
+			var newDataString = ensureDataIntoString(elementData, newData);
+			var dataString = dataString.slice(0, startIndex) + ":" + newDataString + dataString.slice(endIndex);
+		}
+		else {
+			var fullElement = elementName;
+			if (newData != undefined)
+				fullElement = fullElement + ":" + newData;
+			dataString = this.insertElementIntoDataString(dataString, fullElement);
+		}
+		return dataString;
+	}
+
+	this.ensureDataNotInElement = function (dataString, elementName, excludeData) {
+		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
+		if (elementExists(dataElementIndex)) {
+			var startIndex = getNextSeparatorIndex(dataString, dataElementIndex, [':', '|']);
+			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
+			var elementData = dataString.slice(startIndex + 1, endIndex);
+			var newDataString = removeDataFromString(elementData, excludeData);
+			var dataString = dataString.slice(0, startIndex) + ":" + newDataString + dataString.slice(endIndex);
+		}
+		return dataString;
+	}
+
+	this.clearElementData = function (dataString, elementName, newData) {
+		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
+		if (elementExists(dataElementIndex)) {
+			var startIndex = getNextSeparatorIndex(dataString, dataElementIndex, [':', '|']);
+			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
+			var dataString = dataString.slice(0, startIndex) + dataString.slice(endIndex);
+		}
+		return dataString;
+	}
+
+	this.getAllElements = function (dataString) {
+		if (!dataString || dataString == null)
+			return [];
+		var elementArray = dataString.split('|');
+		return elementArray.splice(1, elementArray.length - 2);
+	}
+
+	// ===== PRIVATE ===== //
+	function removeDataFromString(dataString, excludeData) {
+		var dataArray = dataString.split(',');
+		var index = dataArray.indexOf(excludeData.toString());
+		if (index == -1)
+			return dataString;
+		dataArray = dataArray.splice(index - 1, 1);
+		return dataArray.join();
+	}
+
+	function ensureDataIntoString(dataString, newData) {
+		var dataArray = dataString.split(',');
+		if (dataExistsInArray(dataArray, newData.toString()))
+			return dataString;
+		// TODO: add sorting to this.
+		dataArray.push(newData);
+		return dataArray.join();
+	}
+	function dataExistsInArray(someArray, someElement) {
+		return someArray.indexOf(someElement) > -1;
+	}
+	function elementExists(flaggedDataElementIndex) {
+		return !hasNewFlag(flaggedDataElementIndex);
+	}
+
+	function getElementFromDataString(dataString, startIndex) {
+		var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
+		return dataString.slice(startIndex, endIndex);
+	}
+	function hasNewFlag(dataElementIndex) {
+		return (dataElementIndex % 1) > 0;
+	}
+
+	function handleEmptyString(string, nameOfDataString) {
+
+	}
+
+	function validateInputString(string) {
+		
+		// Validate input data string...
+		if (!string
+			|| string === null
+			|| string[0] !== '|'
+			|| string[string.length - 1] !== '|'
+			|| string.length === 0
+			|| string == '||'){
+			  throw "Invalid data-string";
+      }
+	}
+	function character1IsBeforeCharacter2(character1, character2) {
+		return character1.charCodeAt(0) < character2.charCodeAt(0);
+	}
+	function character1IsAfterCharacter2(character1, character2) {
+		return character1.charCodeAt(0) > character2.charCodeAt(0);
+	}
+	function wordIsShorter(targetWord, wordFromArray) {
+		return targetWord.length < wordFromArray.length;
+	}
+	function wordIsLonger(targetWord, wordFromArray) {
+		return targetWord.length > wordFromArray.length;
+	}
+	function wordsAreIdentical(word1, word2) {
+		return word1 === word2;
+	}
+	function searchRightHalfOfDataBlockReturnIndex(string, fromIndex, targetWord, dataDriver) {
+		return fromIndex + dataDriver.indexOfElementInDataString(getRightHalfOfString(string, fromIndex), targetWord);
+	}
+	function searchLeftHalfOfDataBlockReturnIndex(string, fromIndex, targetWord, dataDriver) {
+		return dataDriver.indexOfElementInDataString(getLeftHalfOfString(string, fromIndex), targetWord);
+	}
+	function getRightHalfOfString(string, fromIndex) {
+		return string.slice(fromIndex);
+	}
+	function getLeftHalfOfString(string, fromIndex) {
+		return string.slice(0, fromIndex + 1);
+	}
+	function charactersMatch(char1, char2) {
+		return char1 === char2;
+	}
+	function getFirstLeftSeparatorIndexFromIndex(string, startFromIndex, separatorArray) {
+		var checkAtIndex = startFromIndex;
+		var overflow = 0;
+		while (!arrayContains(separatorArray, string[checkAtIndex]) && checkAtIndex >= -1) {
+			if (++overflow > 100000)
+				throw "Overflow";
+			checkAtIndex--;
+		}
+		if (checkAtIndex === -1)
+			throw "Missing separator in index";
+		return checkAtIndex;
+	}
+	function getNextSeparatorIndex(string, startFromIndex, separatorArray) {
+		var checkAtIndex = startFromIndex;
+		var overflow = 0;
+		while (!arrayContains(separatorArray, string[checkAtIndex]) && checkAtIndex < string.length) {
+			if (++overflow > 100000)
+				throw "Overflow";
+			checkAtIndex++;
+		}
+		if (checkAtIndex >= string.length)
+			throw 'Missing separator in index in string: "' + string + '", starting from index: ' + startFromIndex;
+		return checkAtIndex;
+	}
+	function getCenterIndex(string) {
+		return Math.floor(string.length / 2);
+	}
+	function arrayContains(array, element) {
+		for (var i = 0; i < array.length; i++)
+			if (array[i] === element)
+				return true;
+		return false
+	}
+
+	
+}
+//======================================================================================================================================
+
 function SimpleArranger(){
   var _totalRows = -1;
   var _totalCols = -1;
@@ -613,7 +1746,7 @@ var SimpleTranslator = function () {
 			currentNodes = [globals.selectedNode];
 		}
 		else {
-      //...we're creaing a new node.
+      //...we're creating a new node.
       currentNodes = getNodesFromStage(currentEntity.labels, currentEntity.properties);
 			if (currentNodes.length == 0 ){
         currentNodes = currentNodes.concat(createEntityAddToGraphReturnNodes(currentEntity.labels, currentEntity.properties));
@@ -801,6 +1934,8 @@ var SimpleTranslator = function () {
 
 }
 
+mappings.Translators.push({name:"Simply Graphex", translator: new SimpleTranslator()});
+
 
 function UrlParamsTranslator() {
 
@@ -874,6 +2009,7 @@ function UrlParamsTranslator() {
 
 }
 
+mappings.Translators.push({name:"Paramalactic", translator: new UrlParamsTranslator()});
 
 		function jsonStringToObject(jsonString)
 		{
@@ -1163,19 +2299,21 @@ function UrlParamsTranslator() {
 			return thisObject;
 		}
 
+
 function ApiImportTranslator() {
 
 	this.Name = "Api Importer";
 	this.Examples = [
             "http://en.wikipedia.org/api/rest_v1/feed/featured/{Year (eg. 2001)}/{Month (eg. 03)}/{Day (eg. 06)}",
-            "http://api.tvmaze.com/search/people?q={Actor Name}"
+            "http://api.tvmaze.com/search/people?q={Actor Name}",
+            "https://itunes.apple.com/search?term={Genre}"
 	];
 	this.ReferenceContent = ''
             +'Place an API link in the formula box'
             +'<br/>This tranlator uses the "Json-son" translator to graph out the return data.'
             +'<br/>Use <code>{...}</code> to create a prompt, to get info from the user.'
 
-	this.Translate = function (expression) {
+	this.Translate = function (expression, parentNode) {
 
     //Get all data from user...
     var inBracketsRegex = new RegExp(/\{(?:\{??[^\{]*?\})/g);
@@ -1191,13 +2329,17 @@ function ApiImportTranslator() {
 	  var httpClient=new HttpClient();
     httpClient.get(expression,function(response) {
         console.log('response',response);
-        new JsonTranslator().Translate(response);
+        new JsonTranslator().Translate(response, parentNode);
     });
 
 	}
 
 }
 
+
+
+
+mappings.Translators.push({name:"Api Importer", translator: new ApiImportTranslator()})
 function JsonTranslator() {
   var _graphEntities=[];
   var _graphRelations=[];
@@ -1208,13 +2350,13 @@ function JsonTranslator() {
           '{"x":{"y":{}}}',
           '{"Sam":{"Bob":{"John":{}}}}'
   ];
-  this.ImportExamples=[
-    {
-      name: "This day in history", 
-      params: ["$day", "$month", "$year"],
-      value: 'http://en.wikipedia.org/api/rest_v1/feed/featured/$year/$month/$day' 
-    }
-  ];
+  //this.ImportExamples=[
+  //  {
+  //    name: "This day in history",
+  //    params: ["$day","$month","$year"],
+  //    value: 'http://en.wikipedia.org/api/rest_v1/feed/featured/$year/$month/$day'
+  //  }
+  //];
 
   this.ReferenceContent=''
 						+'Objects are nodes, eg. <span class ="inputModal code">{"John":{}}</span>'
@@ -1224,55 +2366,65 @@ function JsonTranslator() {
 						+'<hr>'
 						+'Arrays will become nodes by the name of the parent property.';
 
-  this.Translate=function(expression, _baseObjectName) {
-    //debugger;
+  this.Translate=function(expression,parentNode) {
     var translator=new JsonTranslator();
-    //console.log('expression', expression);
-    translator.TranslateToGraph_ReturnGraphElements(_baseObjectName||'root',expression);
+    translator.TranslateToGraph_ReturnGraphElements(parentNode||null,expression);
   }
 
-  this.TranslateToGraph_ReturnGraphElements = function(objectName,jsonString) {
+  this.TranslateToGraph_ReturnGraphElements=function(parentNode,jsonString) {
+    var dataService=new DataService();
+    var appendingEntity=null;
+
     var jsonObject=JSON.parse(jsonString);
-    if(isObject(jsonObject) && hasPrimitives(jsonObject))
-      createEntity(objectName,jsonObject);
-    else if (isObject(jsonObject))
-      processObject(jsonObject)
-    else if(isArray(jsonObject)) 
-      processArray(objectName, jsonObject);
+    if(isObject(jsonObject)&&parentNode) {
+      appendingEntity=createEntity('root',jsonObject)
+    }
+    else if(isObject(jsonObject)&&hasPrimitives(jsonObject))
+      createEntity('root',jsonObject);
+    else if(isObject(jsonObject)&&!hasPrimitives(jsonObject))
+      processObject(jsonObject);
+    else if(isArray(jsonObject))
+      processArray('root',jsonObject);
     else if(isPrimitive(jsonObject)) {
       createEntity(jsonString,{});
     }
 
-    var dataService=new DataService();
     for(var e=0;e<_graphEntities.length;e++) {
-      var node=dataService.CreateEntity_AddToGraph_ReturnNode(_graphEntities[e].labels,_graphEntities[e].properties);
-      _graphEntities[e].id=node.id;
+      var newNode=dataService.CreateEntity_AddToGraph_ReturnNode(_graphEntities[e].labels,_graphEntities[e].properties);
+      _graphEntities[e].id=newNode.id;
     }
 
     var graphElements=[];
+    if(appendingEntity) {
+      var link=dataService.CreateRelation_AddToGraph_ReturnLink(parentNode.id,appendingEntity.id);
+      graphElements.push(createNewGaphElement(link));
+    }
     for(var e=0;e<_graphRelations.length;e++) {
       var link=dataService.CreateRelation_AddToGraph_ReturnLink(_graphRelations[e].fromEntity.id,_graphRelations[e].toEntity.id,_graphRelations[e].labels,_graphRelations[e].properties);
-      var newGraphElement=new GraphElement();
-      newGraphElement.fromNode=globals.GRAPH.getNode(link.fromId);
-      newGraphElement.toNode=globals.GRAPH.getNode(link.toId);
-      newGraphElement.link=link;
-      graphElements.push(newGraphElement);
+      graphElements.push(createNewGaphElement(link));
     }
-
     return graphElements;
   }
 
-  function processObject(obj){
-    for(var thingKey in obj) {
-        if(isObject(obj[thingKey]))
-          createEntity(thingKey,obj[thingKey]);
-        else if(isArray(obj[thingKey])) {
-          processArray(thingKey, obj[thingKey]);
-        }
-      }
+  function createNewGaphElement(link) {
+    var newGraphElement=new GraphElement();
+    newGraphElement.fromNode=globals.GRAPH.getNode(link.fromId);
+    newGraphElement.toNode=globals.GRAPH.getNode(link.toId);
+    newGraphElement.link=link;
+    return newGraphElement;
   }
 
-  function processArray(name, array) {
+  function processObject(obj) {
+    for(var thingKey in obj) {
+      if(isObject(obj[thingKey]))
+        createEntity(thingKey,obj[thingKey]);
+      else if(isArray(obj[thingKey])) {
+        processArray(thingKey,obj[thingKey]);
+      }
+    }
+  }
+
+  function processArray(name,array) {
     for(var i=0;i<array.length;i++) {
       if(isObject(array[i]))
         createEntity(name,array[i]);
@@ -1302,7 +2454,7 @@ function JsonTranslator() {
             var newChildEntity=createEntity(propertyKey,obj[propertyKey][i]);
             newLinks.push(createRelation('',[],newEntity,newChildEntity));
           }
-          if (isPrimitive(obj[propertyKey][i])){
+          if(isPrimitive(obj[propertyKey][i])) {
             var newChildEntity=createEntity(propertyKey,obj[propertyKey][i]);
             newLinks.push(createRelation('',[],newEntity,newChildEntity));
           }
@@ -1343,6 +2495,9 @@ function JsonTranslator() {
     return false;
   }
 }
+
+mappings.Translators.push({ name: "Json-son",translator: new JsonTranslator() });
+
 
 function ParseTreeTranslator() {
   var _dataSvc = new DataService();
@@ -1471,6 +2626,12 @@ function ParseTreeTranslator() {
 
 }
 
+
+mappings.Translators.push({name:"Logic Parse Tree", translator: new ParseTreeTranslator()});
+function TranslatorHelper(){
+
+
+}
 
 function createNode() {
 	var newNodeValue = document.getElementById('newNodeData').value;
@@ -2033,22 +3194,33 @@ function getType(p) {
 function EntityEventsHelper(){
 
   var eventBehaviourMapping = [
-    //{ name: 'AutoImage', event: addEntityToGraph_before, func: new NodeBehavioursApi().AutoImageToConfig }
-    { name: 'AutoImage', event: addEntityToGraph_after, func: new NodeBehavioursApi().AutoImageToNode }
+    
+    { name: 'AutoImage', event: addEntityToGraph_after, func: new NodeBehavioursApi().AutoImageToNode },
+    { name: 'SubnodesForLinks', event: addEntityToGraph_after, func: new NodeBehavioursApi().CreateSubNodesFromLinks },
+    { name: 'FetchLinkOnDblClick', event: nodeDoubleClick, func: new NodeBehavioursApi().FetchNodeLinks }
   ]
 
   this.AddEntityToGraph_before = function(nodeData){addEntityToGraph_before(nodeData);}
   this.AddEntityToGraph_after = function(node){addEntityToGraph_after(node)}
+  this.NodeDblClick = function(node){nodeDoubleClick(node)}
 
   function addEntityToGraph_before(nodeData){
-    var behaviours = getBehavioursForNodeAndEvent(addEntityToGraph_before.name, nodeData.id);
-    behaviours.forEach(function(b){b(nodeData)});
+    executeConfigBehaviors(nodeData, addEntityToGraph_before.name, nodeData.id);
   }
 
   function addEntityToGraph_after(node){
-    //debugger;
-    var behaviours = getBehavioursForNodeAndEvent(addEntityToGraph_after.name, node.id);
-    behaviours.forEach(function(b){b(node)});
+    executeConfigBehaviors(node, addEntityToGraph_after.name, node.id);
+  }
+
+  function nodeDoubleClick(node){
+    executeConfigBehaviors(node, nodeDoubleClick.name, node.id);
+  }
+
+  function executeConfigBehaviors(eventData, eventName, nodeId){
+    var behaviours = getBehavioursForNodeAndEvent(eventName, nodeId);
+    behaviours.forEach(function(behaviourFunction){
+      behaviourFunction(eventData)
+    });
   }
 
   function getBehavioursForNodeAndEvent(eventName, entityId){
@@ -2243,7 +3415,7 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
   var bIsNew=false;
   var link;
   var existingLink=getDataLink(linkData.id);
-  console.log('existingLink',existingLink);
+
   if(existingLink) {
     var updatedProperties=getUpdatedProperties(linkData.properties,existingLink.data.properties);
     if(linkData.name!=existingLink.data.name||updatedProperties.length>0) {
@@ -2701,11 +3873,16 @@ function applyPopoutEffectToNode(newNode, parentNodeId) {
 	globals.layout.pinNode(newNode, false);
 }
 
-function applyWaitingAffectToNode(nodeId) {
-
-}
-function removeWaitingAffectFromNode(nodeId) {
-
+function applyPopoutEffectToNodesById(parentNodeId, newNodeId) {
+	var newNode = globals.GRAPH.getNode(newNodeId);
+  globals.layout.pinNode(newNode, true);
+	var pos = globals.layout.getNodePosition(parentNodeId);
+	var nodeRadius = Number(newNode.data.entityConfig.config.attributes["radius"]);
+	globals.layout.setNodePosition(newNode.id,
+		getRandomArbitrary(pos.x - nodeRadius / 2, pos.x + nodeRadius / 2),
+		getRandomArbitrary(pos.y - nodeRadius / 2, pos.y + nodeRadius / 2)
+	);
+	globals.layout.pinNode(newNode, false);
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -3590,147 +4767,6 @@ function getNeoId(fromGraphId)
 {
 	return fromGraphId.substring(3); 
 }
-function JsonHelper() {
-
-  this.Contains=function(subsetJson,supersetJson, caseSensitive) {
-    if(!ofSameType(subsetJson,supersetJson))
-      return false;
-
-    if (isObject(subsetJson))
-        for(var key in subsetJson)
-          return this.Contains(subsetJson[key],supersetJson[key])
-    else if (isArray(subsetJson))
-        for(var i=0;i<subsetJson.length;i++)
-          return this.Contains(subsetJson[i],supersetJson[i])
-    else if (typeof subsetJson === "string")
-      if (caseSensitive)
-        return subsetJson === supersetJson;
-      else
-        return subsetJson.toLowerCase() === supersetJson.toLowerCase()
-    else
-      return subsetJson === supersetJson;
-  }
-
-  this.GetValueWithPath =function(json, path){
-    var elements = path.split('/');
-    var configElement = json;
-    for (var i=0; i < elements.length; i++){
-      if (configElement === undefined)
-       return undefined;
-
-      var subels = elements[i].split('[');
-      if (subels.length > 1){ 
-        configElement = configElement[subels[0]][Number(subels[1].replace(']',''))];
-      }
-      else
-        configElement = configElement[subels[0]];
-    }
-    return configElement;
-  }
-
-
-  this.MergeJson=function(baseJson,newJson,idFieldName) {
-    if (!newJson || !baseJson) 
-      throw "JSONMERGE ERROR: Invalid Json input";
-    return mergeJson(baseJson,newJson,idFieldName);
-  }
-
-  function mergeJson(baseJson,newJson,idFieldName){
-    if(!ofSameType(baseJson,newJson)){
-      return clone(newJson);
-    }
-    if(isArray(baseJson))
-      baseJson=mergeArrays(baseJson,newJson,idFieldName);
-    else if(isObject(baseJson)){
-      baseJson=mergeObjects(baseJson,newJson,idFieldName);
-      }
-    else{
-      baseJson=newJson;
-    }
-    return baseJson;
-  }
-
-  mergeObjects=function(baseObject,newObject,idFieldName) {
-    var returnObject = {};
-    for(var key in baseObject) {
-      returnObject[key]= clone(baseObject[key]);
-    }
-    for(var key in newObject) {
-      if(baseObject[key] === undefined){
-        returnObject[key]=clone(newObject[key])
-      }
-      else
-        returnObject[key]=mergeJson(baseObject[key],newObject[key],idFieldName)
-    }
-    return returnObject;
-  }
-
-  mergeArrays=function(baseArray,newArray,idFieldName) {
-    if(!idFieldName)
-      throw "JSONMERGE ERROR: No discriminator specified";
-    var returnArray = [];
-    baseArray.map(function(e){returnArray.push(e)});
-    for(var n=0;n<newArray.length;n++) {
-      var matchFound=false;
-      for(var b=0;b<baseArray.length;b++) {
-        if(areEquivalent(baseArray[b],newArray[n],idFieldName)) {
-          matchFound=true;
-          if(isObject(baseArray[b])){
-            returnArray[b] = mergeObjects(baseArray[b],newArray[n],idFieldName);
-          }
-          else if(isArray(baseArray[b])){
-            returnArray[b] = mergeArrays(baseArray[b],newArray[n],idFieldName);
-          }
-          break;
-        }
-      }
-      if(!matchFound)
-        returnArray.push(clone(newArray[n]));
-    }
-    return returnArray;
-  }
-
-  function clone(input){
-    return JSON.parse(JSON.stringify(input));
-  }
-
-
-  function areEquivalent(input1,input2,idFieldName) {
-    if(!ofSameType(input1,input2))
-      return false;
-    if(isObject(input1))
-      return (input1[idFieldName]===input2[idFieldName]&&input1[idFieldName])
-    if(isPrimitive(input1))
-      return input1===input2
-    if(isArray(input1)) {
-      for(var i=0;i<input1.length;i++)
-        for(var x=0;x<input2.length;x++)
-          if(   isString(input1[i])
-             && input1[i] === input2[x]
-             && input1[i].substr(0,(idFieldName+":").length) == (idFieldName+":")
-            ){
-            return true;
-          }
-      return false;
-    }
-    throw "JSONMERGE ERROR: unable to compare"
-  }
-  function isString(input) {
-    return typeof input==="string";
-  }
-  function isArray(input) {
-    return (typeof input==="array" || Array.isArray(input)) && input
-  }
-  function isObject(input) {
-    return typeof input==="object" && !Array.isArray(input) && input;
-  }
-  function isPrimitive(input) {
-    return !isObject(input)&&!isArray(input);
-  }
-  function ofSameType(element1,element2) {
-    return typeof element1===typeof element2 && Array.isArray(element1) === Array.isArray(element2);
-  }
-}
 var HttpClient = function () {
 	this.get = function (aUrl, aCallback) {
 		var anHttpRequest = new XMLHttpRequest();
@@ -4132,7 +5168,6 @@ function Neo4jFetchEntitiesForNode(nodeId, _sourceConfig)
 			
 	};
 
-	applyWaitingAffectToNode(nodeId);
 	Neo4j_Command([command], whenResultsComeBackFunction, _sourceConfig);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4501,969 +5536,6 @@ function Neo4jQbuilder(selectType, _sourceConfig) {
 		Neo4j_Command([command], callback, getConfigByPrefix(sourcePrefix));
 	}
 }
-
-var DataService = function () {
-	var dataDriver = new LocalStorageDataDriver();
-
-  this.DropDatabase = function(){
-    dataDriver.ClearStorage();
-    window.location.reload();
-  }
-
-	this.CreateConfigReturnId = function (configName, jsonConfig) {
-		if (dataDriver.ConfigExists(configName))
-	        throw "A config by that name already exists";
-	    return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
-	}
-
-	this.CreateUpdateConfigReturnId = function (configName, jsonConfig) {
-		var existingConfig = this.GetConfigByName(configName);
-		if (!existingConfig)
-			return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
-		var jsonHelper = new JsonHelper();
-    //var finalConf = $.extend(true, {}, existingConfig, jsonConfig);
-    var finalConf = jsonHelper.MergeJson(existingConfig, jsonConfig, "arrayId");
-		console.log('existingConfig',existingConfig );
-    console.log('jsonConfig',jsonConfig );
-    console.log('finalConf',finalConf );
-    return dataDriver.UpdateConfigInDb(configName, finalConf);
-	}
-
-	this.GetAllConfigs = function () {
-		var allConfigNames = dataDriver.GetAllConfigNames();
-		return allConfigNames.map(function (cnfName) { return dataDriver.GetConfigsByName(cnfName)[0]})
-	}
-
-	this.GetConfigByName = function (configName) {
-		if (!configName) throw "Config name not provided";
-	    var configs = dataDriver.GetConfigsByName(configName);
-	    if (configs.length == 0)
-	        return null;
-	    return configs[0];
-	}
-
-	this.FetchEntitiesForNodeId = function (nodeId, _sourceConfig) {
-		var graphElements = dataDriver.GetRelatedEntityGraph(stripDomainFromId(nodeId));
-		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
-	}
-
-	this.CreateEntity_AddToGraph_ReturnNode = function (labels, properties, _sourceConfig) {
-		if (!_sourceConfig) { _sourceConfig = globals.currentTheme.sourceConfig;}
-	    if (!properties)
-	        properties = {};
-	    var newEntity = {
-		    labels: labels,
-		    properties: properties
-		};
-	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
-		var entity = dataDriver.GetEntityById(entityId);
-		updateUiComponents(labels[0], 1, _sourceConfig);
-		var nodes = addEntitiesToGraphAndReturnNodes([entity])[0];
-		return nodes;
-	}
-
-	this.CreateEntityReturnId = function (labels, properties) {
-	    if (!properties)
-	        properties = {};
-	    var newEntity = {
-	        labels: labels,
-	        properties: properties
-	    };
-	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
-	    return entityId;
-	}
-
-	this.DeleteEntity = function (entityID, _sourceConfig) {
-		dataDriver.DeleteEntity(entityID);
-		//Neo4jDeleteNode(nodeID, _sourceConfig);
-	}
-
-	this.CheckMonitoredNodes = function (_sourceConfig) {
-		//Neo4jCheckMonitoredNodes(_sourceConfig);
-	}
-
-	this.CheckMonitoredLinks = function (_sourceConfig) {
-		//Neo4jCheckMonitoredLinks(_sourceConfig);
-	}
-
-	this.Qbuilder = function (selectType, _sourceConfig) {
-		//Neo4jQbuilder(selectType, _sourceConfig);
-	}
-
-	this.Qbuilder_ClearValue = function (selectType) {
-		//Neo4jQbuilder_ClearValue(selectType);
-	}
-
-	this.QuerySimpleSearch = function (fromEntity, whereProperty, equalsValue, _sourceConfig) {
-		//Neo4jQuerySimpleSearch(fromEntity, whereProperty, equalsValue, _sourceConfig);
-	}
-
-	this.GetRelationCounts = function (nodeId, callback, _sourceConfig) {
-		//Neo4jGetRelationCounts(nodeId, callback, _sourceConfig);
-	}
-
-	this.GetEntitiesByType = function (byLabel, sourceConfigPrefix) {
-		//Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
-		var entities = dataDriver.GetEntitiesByType(byLabel);
-		return addEntitiesToGraphAndReturnNodes(entities, globals.currentTheme.sourceConfig);
-	}
-
-	this.GetEntityById = function(entityId, sourceConfigPrefix) {
-	    return dataDriver.GetEntityFromDatabase(entityId);
-	}
-
-	this.GetEntitiesByDetails = function (nodeLabel, properties, _sourceConfig) {
-		//Neo4jGetEntitiesByDetails(nodeLabel, properties, _sourceConfig);
-	}
-
-	this.GetAllEntities = function (_sourceConfig) {
-		var labelData = dataDriver.GetAllEntityTypes();
-		labelData.forEach(function (labelData) {
-			var entities = dataDriver.GetEntitiesByType(labelData);
-			addEntitiesToGraphAndReturnNodes(entities, globals.currentTheme.sourceConfig);
-		});
-		this.GetAllRelations(_sourceConfig);
-		//Neo4jGetAllEntities(_sourceConfig);
-	}
-
-	this.GetAllRelations = function (_sourceConfig) {
-		var labelDatas = dataDriver.GetAllRelationTypesAndRelationIds();
-
-		var graphElements = labelDatas.map(function (labelData) {
-			labelData.ids.map(function (id) {
-				return dataDriver.GetGraphOfRelation(id)
-			});
-		});
-		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
-		//Neo4jGetAllRelations(_sourceConfig);
-	}
-
-	this.CreateEntityReturnCallbackWithIds = function (entityName, propList, inputCallback) {
-		var newNode = {
-			labels: [entityName],
-			properties: propList
-		};
-		var nodeId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
-		var node = dataDriver.GetEntityFromDatabase(nodeId);
-		addEntitiesToGraphAndReturnNodes([node], globals.currentTheme.sourceConfig);
-		//inputCallback(nodeId);
-		//Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);
-		updateUiComponents(entityName, 1, globals.currentTheme.sourceConfig);
-	}
-
-	this.UpdateEntity = function (nodeID, newProperties, callback) {
-		//Neo4jUpdateEntity(nodeID, newProperties, callback);
-	}
-
-	this.CreateRelation_AddToGraph_ReturnLink = function (fromEntityId, toEntityId, labels, properties, _sourceConfig, planOnly) {
-		//Neo4jCreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly)
-		var relId = dataDriver.CreateRelationPopulateAndReturnId(stripDomainFromId(fromEntityId), stripDomainFromId(toEntityId), labels, properties);
-		var link = dataDriver.GetLinkFromDatabase(relId);
-		return addRelationToGraphReturnLink(link);
-	}
-
-	this.DeleteRelationship = function (relationshipID, _sourceConfig) {
-		//Neo4jDeleteRelationship(relationshipID, _sourceConfig);
-	}
-
-	this.DeleteLabel = function (nodeId, labelName, _sourceConfig) {
-		//Neo4jDeleteLabel(nodeId, labelName, _sourceConfig);
-	}
-
-	this.AddProperty = function (nodeId, _sourceConfig) {
-		//Neo4jAddProperty(nodeId, _sourceConfig);
-	}
-
-	this.AddLabel = function (_sourceConfig) {
-		//Neo4jAddLabel(_sourceConfig);
-	}
-
-	this.GetAllEntityTypes = function (_sourceConfig) {
-		//Neo4jGetAllLabels(_sourceConfig);
-		var labels = dataDriver.GetAllEntityTypesAndEntityIds(_sourceConfig);
-		labels.forEach(function (label) {
-			var pseudoEntity = new DataEntity();
-			pseudoEntity.labels = [label];
-
-			var configHelper = new ConfigHelper();
-			var entityConfig = configHelper.GetConfigForEntity(pseudoEntity);
-
-			updateUiComponents(label.label, label.ids.length, entityConfig);
-		});
-	}
-
-	function updateUiComponents(label, entityCount, entityConfig)
-	{
-		var typeSelector = addEntityLabel(label, entityCount, entityConfig);
-		refreshEntitySelectors();
-    consoleApp.refreshTypeSelectors();
-	}
-
-	function stripDomainFromId(nodeId)
-	{
-		if (nodeId.length > 3)
-			if (nodeId.substring(0, 3) == 'LOC')
-				return nodeId.substring(3);
-		return nodeId;
-	}
-
-}
-
-
-
-//===============================================================================================
-
-//===============================================================================================
-
-
-//===============================================================================================
-
-
-function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceConfig) {
-	var newNodes = [];
-	graphElements.forEach(function (graphElement) {
-		var datN = new nodeDataType;
-		datN.id = graphElement.fromNode.id;
-		datN.labels = graphElement.fromNode.labels;
-		datN.properties = new neoPropertyList(graphElement.fromNode.properties);
-    datN.propertiesObject = graphElement.fromNode.properties;
-		datN.entityConfig = GetConfigForEntityId(datN);
-		var fromNode = addDataNode(datN.id, datN, _sourceConfig);
-		if (fromNode)
-		    newNodes.push(fromNode);
-
-		var datM = new nodeDataType;
-		datM.id =graphElement.toNode.id;
-		datM.labels = graphElement.toNode.labels;
-		datM.properties = new neoPropertyList(graphElement.toNode.properties);
-		datM.propertiesObject = graphElement.toNode.properties;
-		datM.entityConfig = GetConfigForEntityId(datM);
-		var toNode = addDataNode(datM.id, datM, _sourceConfig);
-		if (toNode) {
-			newNodes.push(toNode);
-			applyPopoutEffectToNode(toNode, datN.id)
-		}
-		//link R...
-		var linkdata = new linkDataType(datN.id, datM.id, graphElement.link.id, graphElement.link.labels, _sourceConfig);
-		linkdata.properties = new neoPropertyList(graphElement.link.properties);
-		linkdata.propertiesObject = graphElement.link.properties;
-		var link = addDataLink(datN.id, datM.id, linkdata, _sourceConfig);
-	});
-
-	refreshNodesDepths();
-	return newNodes;
-}
-
-function addRelationToGraphReturnLink(relation, _sourceConfig) {
-    var dat = new linkDataType(relation.fromNodeId, relation.toNodeId, relation.id, relation.labels, _sourceConfig);
-    if (relation.properties) { dat.properties = new neoPropertyList(relation.properties); }
-    if (relation.properties) { dat.propertiesObject = relation.properties }
-    var relation = addDataLink(dat.fromNodeID, dat.toNodeID, dat, _sourceConfig);
-    return relation;
-}
-
-function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
-{
-	var newNodes =[];
-	entities.forEach(function (entity) {
-		var datM = new nodeDataType;
-		datM.id = entity.id;
-		datM.labels = entity.labels || [];
-		datM.properties = new neoPropertyList(entity.properties);
-		datM.propertiesObject = entity.properties;
-    datM.entityConfig = GetConfigForEntityId(datM);
-		var addedNode = addDataNode(entity.id, datM, _sourceConfig)
-		newNodes.push(addedNode);
-	});
-	
-	return newNodes;
-}
-
-function GetConfigForEntityId(nodeData)
-{
-    new EntityEventsHelper().AddEntityToGraph_before(nodeData);
-    var configHelper = new ConfigHelper();
-    return configHelper.GetConfigForEntityId(nodeData.id);
-}
-
-function removeNodeFromGraph(nodeId)
-{
-	removeNodeFromStage(nodeId);
-}
-
-var LocalStorageDataDriver = function () {
-
-
-    //----PUBLIC----------------------------------------------------------
-
-  this.ClearStorage = function(){
-    localStorage.clear();
-  }
-
-
-	this.UpdateConfigInDb = function (name, configJson) {
-		writeConfigToStorage(name, configJson);
-		return configJson.id;
-	}
-    this.CreateConfigInDbAndReturnId = function (name, configJson) {
-    	configJson.id = this.GetNextNewConfigId();
-        writeConfigToStorage(name, configJson);
-        return configJson.id;
-    }
-
-	this.CreateEntityInDatabasePopulateAndReturnId = function (node) {
-		node = sanitizeNode(node);
-		node.id = this.GetNextNewEntityId();
-		writeNodeToStorage(node);
-		return node.id;
-	}
-
-	this.GetRelatedNodes = function (nodeId) {
-		var node = this.GetEntityFromDatabase(nodeId);
-		var nodeLinks = node.links;
-		var dataDriver = this;
-		var relatedNodeIds = [];
-		nodeLinks.forEach(function (linkId) {
-			var link = dataDriver.GetLinkFromDatabase(linkId);
-			if (nodeId == link.fromNodeId)
-				relatedNodeIds.push(link.toNodeId);
-			else
-				relatedNodeIds.push(link.fromNodeId);
-		});
-
-		return relatedNodeIds;
-	}
-
-	this.GetEntityById = function (entityId){
-	    return this.GetEntityFromDatabase(entityId);
-	}
-
-	this.GetConfigById = function (configId) {
-	    return this.GetConfigFromDatabase(configId);
-	}
-
-	this.GetRelatedEntityGraph = function (nodeId) {
-		var node = this.GetEntityFromDatabase(nodeId);
-		var dataDriver = this;
-		return node.links.map(function (linkId) { return dataDriver.GetGraphOfRelation(linkId) });
-	}
-
-	this.GetGraphOfRelation = function (linkId) {
-		var link = this.GetLinkFromDatabase(linkId);
-		var graphElement = new GraphElement();
-		graphElement.fromNode = this.GetEntityFromDatabase(link.fromNodeId);
-		graphElement.toNode = this.GetEntityFromDatabase(link.toNodeId);
-		graphElement.link = link;
-		return graphElement;
-	}
-
-	this.CreateRelationPopulateAndReturnId = function (fromEntityId, toEntityId, labels, properties) {
-	    link = {}; //new Relation(); //sanitizeLink(relation);
-		link.id = this.GetNextNewRelationId();
-		link.fromNodeId = fromEntityId;
-		link.toNodeId = toEntityId;
-		link.labels = labels || [];
-		link.properties = properties ? properties : {};
-
-		var fromEntity = this.GetEntityFromDatabase(fromEntityId);
-		fromEntity.links.push(link.id);
-		writeNodeToStorage(fromEntity);
-
-		var toEntity = this.GetEntityFromDatabase(toEntityId);
-		toEntity.links.push(link.id);
-		writeNodeToStorage(toEntity);
-
-		writeLinkToStorage(link);
-		return link.id;
-	}
-
-	this.GetConfigFromDatabase = function (configId) {
-	    return getConfigFromDatabase(configId);
-	}
-
-	this.GetEntityFromDatabase = function (nodeId) {
-		return getEntityFromDatabase(nodeId);
-	}
-
-	this.GetLinkFromDatabase = function (linkId) {
-		return getRelationFromDatabase(linkId);
-	}
-
-	this.DeleteEntity = function(nodeId)
-	{
-		localStorage.removeItem(nodeKeyFromNodeId(nodeId));
-	}
-
-
-	this.EntityExists = function(nodeId)
-	{
-		var node = readNodeFromStorage(nodeId);
-		return node !== null;
-	}
-
-	this.GetNextNewConfigId = function () {
-		var nextIndex = getNextIndexForCounter('NEXT_CONFIG_ID');
-		return nextIndex;
-	}
-
-	this.GetNextNewEntityId = function () {
-		return getNextIndexForCounter('NEXT_NODE_ID');
-	}
-
-	this.GetNextNewRelationId = function () {
-		return getNextIndexForCounter('NEXT_LINK_ID');
-	}
-
-	function getNextIndexForCounter(CounterName) {
-		
-		var nextId = localStorage.getItem(CounterName);
-		if (nextId === null) {
-			localStorage.setItem(CounterName, 1);
-			return 1;
-		}
-		nextId = Number(nextId) + 1;
-		localStorage.setItem(CounterName, nextId);
-		return nextId;
-	}
-
-	this.ConfigExists = function (configName) {
-	    var configs = getItemsInIndex('INDEX_ON_CONFIG_NAMES', configName, 'config');
-	    return (configs.length > 0);
-	}
-
-	this.GetConfigsByName = function (configName) {
-	    return getItemsInIndex('INDEX_ON_CONFIG_NAMES', configName, 'config');
-	}
-
-	this.GetEntitiesByType = function(labelName){		
-		return getItemsInIndex('INDEX_ON_NODE_LABELS', labelName, 'node');
-	}
-
-	this.GetEntitiesByPropertyName = function (propertyName) {
-		return getItemsInIndex('INDEX_ON_NODE_PROPS', propertyName, 'node');
-	}
-
-	this.GetRelationsByLabel = function (labelName) {
-		return getItemsInIndex('INDEX_ON_LINK_LABELS', labelName, 'link');
-	}
-
-	this.GetRelationsByPropertyName = function (propertyName) {
-		return getItemsInIndex('INDEX_ON_LINK_PROPS', propertyName, 'link');
-	}
-
-	this.GetAllEntityTypes = function () {
-		var nodeIndex = localStorage.getItem('INDEX_ON_NODE_LABELS');
-		return getAllLabelsFromIndex(nodeIndex);
-	}
-
-	this.GetAllRelationTypes = function () {
-		var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
-		return getAllLabelsFromIndex(linkIndex);
-	}
-
-	this.GetAllConfigNames = function () {
-		var linkIndex = localStorage.getItem('INDEX_ON_CONFIG_NAMES');
-		return getAllLabelsFromIndex(linkIndex);
-	}
-
-	//this.GetAllRelationTypeInfos = function () {
-	//	var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
-	//	return getAllLabelsFromIndex(linkIndex);
-	//}
-
-	this.GetAllEntityTypesAndEntityIds = function () {
-		return getAllLabelsAndIdsForIndex('INDEX_ON_NODE_LABELS');
-	}
-
-	this.GetAllRelationTypesAndRelationIds = function () {
-		return getAllLabelsAndIdsForIndex('INDEX_ON_LINK_LABELS');
-	}
-	//---- PRIVATE ----------------------------------------------------------
-
-	function getConfigFromDatabase(configId) {
-	    throwIfInvalidConfigId(configId);
-	    var config = readConfigFromStorage(configId);
-	    return config;
-	}
-
-	function getEntityFromDatabase(nodeId) {
-		throwIfInvalidNodeId(nodeId);
-		var node = readNodeFromStorage(nodeId);
-		return node;
-	}
-
-	function getRelationFromDatabase(linkId) {
-		throwIfInvalidLinkId(linkId);
-		var link = readLinkFromStorage(linkId);
-		return link;
-	}
-
-	function getItemsInIndex(indexName, elementName, itemType) {
-		var dataStringHelper = new DataStringHelper();
-		var indexedData = dataStringHelper.getDataString(indexName);
-		if (indexedData == "|")
-		    return [];
-		var itemIdList = dataStringHelper.getDataFromDataString(indexedData, elementName);
-		if (itemIdList.length == 0)
-		    return [];
-		var itemIdArray = itemIdList.split(',');
-		if (itemIdArray.length == 0)
-		    return [];
-		var itemArray = [];
-		var dataDriver = this;
-		for (var i = 0; i < itemIdArray.length; i++) {
-			if (itemType === 'node')
-				itemArray.push(getEntityFromDatabase(itemIdArray[i]));
-			if (itemType === 'link')
-			    itemArray.push(getRelationFromDatabase(itemIdArray[i]));
-			if (itemType === 'config')
-			    itemArray.push(getConfigFromDatabase(itemIdArray[i]));
-		}
-		return itemArray;
-	}
-
-	function getAllLabelsAndIdsForIndex(indexName) {
-		var indexedData = localStorage.getItem(indexName);
-		var dataStringHelper = new DataStringHelper();
-		var elementArray = dataStringHelper.getAllElements(indexedData);
-		var elementInfo = elementArray.map(function (element) {
-			return elementToLabelInfo(element);
-		});
-		return elementInfo;
-	}
-
-	function getAllLabelsFromIndex(indexedData) {
-		var dataStringHelper = new DataStringHelper();
-		var elementArray = dataStringHelper.getAllElements(indexedData);
-		var elemenNames = elementArray.map(function (element) { return element.split(':')[0] });
-		return elemenNames;
-	}
-
-	function elementToLabelInfo(element) {
-		var elementParts = element.split(':');
-		if (elementParts.length > 1)
-			return { label: elementParts[0], ids: elementParts[1].split(',') }
-		return { label: elementParts[0], ids: [] }
-	}
-	
-	function writeConfigToStorage(name, config) {
-		if (!config.id) throw "Missing config-id in config";
-	    localStorage.setItem(configKeyFromConfigId(config.id), serialize(config));
-	    updateIndex("INDEX_ON_CONFIG_NAMES", name, config.id);
-	}
-
-	function writeNodeToStorage(node) {
-		localStorage.setItem(nodeKeyFromNodeId(node.id), serialize(node));
-		updateLabelsIndex("INDEX_ON_NODE_LABELS", node);
-		updatePropertyIndex("INDEX_ON_NODE_PROPS", node);
-	}
-
-	function writeLinkToStorage(link) {
-		localStorage.setItem(linkKeyFromNodeId(link.id), serialize(link));
-		updateLabelsIndex("INDEX_ON_LINK_LABELS", link);
-		updatePropertyIndex("INDEX_ON_LINK_PROPS", link);
-	}
-
-	function updateLabelsIndex(indexName, item) {
-		item.labels.forEach(function (label) {
-			updateIndex(indexName, label, item.id);
-		});
-	}
-
-	function updatePropertyIndex(indexName, item) {
-		for (var propertyKey in item.properties) {
-			updateIndex(indexName, propertyKey, item.id);
-		}
-	}
-
-	function updateIndex(indexName, elementName, data) {
-		var index = localStorage.getItem(indexName);
-		var dataStringHelper = new DataStringHelper();
-		if (index === null)
-			index = dataStringHelper.getNewDataString();
-		index = dataStringHelper.ensureDataIntoElement(index, elementName, data)
-		localStorage.setItem(indexName, index);
-	}
-
-	function sanitizeNode(node) {
-		if (node === undefined)
-			node = {};
-		node.labels = sanitizeLabels(node.labels);
-		node.links = sanitizeNodeLinks(node.links);
-		node.properties = sanitizeProperties(node.properties);
-		return node;
-	}
-
-	function sanitizeLink(link) {
-		if (link === undefined)
-			link = {};
-		link.labels = sanitizeLabels(link.labels);
-		link.properties = sanitizeProperties(link.properties);
-		return link;
-	}
-
-	function sanitizeNodeLinks(links) {
-		if (links === undefined)
-			links = [];
-		return links;
-	}
-
-	function sanitizeLabels(labels) {
-		if (labels === undefined)
-			labels = [];
-		return labels;
-	}
-
-	function sanitizeProperties(properties) {
-		if (properties === undefined)
-			properties = [];
-		return properties;
-	}
-
-	function readConfigFromStorage(configId) {
-	    return deserialize(localStorage.getItem(configKeyFromConfigId(configId)));
-	}
-
-	function readNodeFromStorage(nodeId) {
-		return deserialize(localStorage.getItem(nodeKeyFromNodeId(nodeId)));
-	}
-
-	function readLinkFromStorage(linkId) {
-		return deserialize(localStorage.getItem(linkKeyFromNodeId(linkId)));
-	}
-
-
-	function throwIfInvalidConfigId(configId) {
-	    if (configId === undefined || configId === null || configId === 0)
-	        throw "Invalid config id";
-	}
-
-	function throwIfInvalidNodeId(nodeId) {
-		if (nodeId === undefined || nodeId === null || nodeId === 0)
-			throw "Invalid node id";
-	}
-
-	function throwIfInvalidLinkId(linkId) {
-		if (linkId === undefined || linkId === null || linkId === 0)
-			throw "Invalid link id";
-	}
-
-	function configKeyFromConfigId(configId) {
-	    return 'C_' + configId;
-	}
-
-	function nodeKeyFromNodeId(nodeId) {
-		return 'N_' + nodeId;
-	}
-
-	function linkKeyFromNodeId(linkId) {
-		return 'L_' + linkId;
-	}
-
-	function serialize(object) {
-		return JSON.stringify(object);
-	}
-
-	function deserialize(object) {
-		return JSON.parse(object);
-	}
-
-
-
-}
-
-//================= DATA STRING HELPER =====================================================================================================================
-var DataStringHelper = function () {
-
-	this.getNewDataString = function () {
-		return '|';
-	}
-
-
-	// ===== PUBLIC ===== //
-	this.indexOfElementInDataString = function (string, targetWord) {
-		validateInputString(string);
-		if (string == "|") {
-			// ...There are no more words to the left.
-			// Return 1 to say that the insertion index is the current separator + 1, and 0.1 is a flag to say the the item was not found.
-			return 1.1;
-		}
-		// Get the mid-index of the data string
-		var stringCenterIndex = getCenterIndex(string);
-		// Get elements pre-separator-index...
-		var centerWordStartSeparatorIndex = getFirstLeftSeparatorIndexFromIndex(string, stringCenterIndex, ['|'])
-		// Get elements data-separator-index... (eg the colon that separates the label from the data)
-		var centerWordEndSeparatorIndex = getNextSeparatorIndex(string, centerWordStartSeparatorIndex + 1, [':', '|'])
-		// Get elements post-separator-index...
-		var centerElementEndSeparatorIndex = getNextSeparatorIndex(string, centerWordStartSeparatorIndex + 1, ['|'])
-		// Get the word from the data string...
-		var wordFromArray = string.slice(centerWordStartSeparatorIndex + 1, centerWordEndSeparatorIndex);
-		
-		// Get the elements word-index...
-		var leftWordIndex = centerWordStartSeparatorIndex + 1;
-
-		for (var charIndex = 0; charIndex < Math.min(targetWord.length, wordFromArray.length) ; charIndex++) {
-
-			if (character1IsBeforeCharacter2(targetWord[charIndex], wordFromArray[charIndex]))
-				return searchLeftHalfOfDataBlockReturnIndex(string, centerWordStartSeparatorIndex, targetWord, this);
-
-			if (character1IsAfterCharacter2(targetWord[charIndex], wordFromArray[charIndex]))
-				return searchRightHalfOfDataBlockReturnIndex(string, centerElementEndSeparatorIndex, targetWord, this);
-		}
-		// ...All characters match.
-
-		if (wordsAreIdentical(targetWord, wordFromArray))
-			// ...Found word, return success...
-			return centerWordStartSeparatorIndex + 1;
-
-		if (wordIsLonger(targetWord, wordFromArray))
-			// ...Word is longer, go right...
-			return searchRightHalfOfDataBlockReturnIndex(string, centerElementEndSeparatorIndex, targetWord, this);
-		//return centerElementEndSeparatorIndex + indexInRightHalf;
-
-		if (wordIsShorter(targetWord, wordFromArray))
-			// ...Word is shorter, go left...
-			return searchLeftHalfOfDataBlockReturnIndex(string, centerWordStartSeparatorIndex, targetWord, this);
-
-	}
-
-	this.getWordAtIndex = function (inputString, index) {
-		return inputString.slice(index, getNextSeparatorIndex(inputString, index, ['|']));
-	}
-
-	this.insertElementIntoDataString = function (dataString, newElement) {
-		var dataElementIndex = this.indexOfElementInDataString(dataString, newElement);
-		
-		if (!elementExists(dataElementIndex)) {
-			// Element doesnt exist yet.
-			// Get Data String
-			var insertionIndex = Math.floor(dataElementIndex);
-			var newDataString = dataString.slice(0, insertionIndex) + newElement + '|' + dataString.slice(insertionIndex);
-			
-			return newDataString;
-		}
-
-	}
-
-	this.numberBinarySearch = function (set, criteria) {
-		if (set.length === 0) {
-			return 0;
-		}
-		var checkAtIndex = Math.floor(set.length / 2);
-		if (set[checkAtIndex] === criteria)
-			return checkAtIndex;
-		else if (criteria > set[checkAtIndex]) {
-			return checkAtIndex + 1 + this.numberBinarySearch(set.slice(checkAtIndex + 1), criteria); // back half of the array
-		} else {
-			return this.numberBinarySearch(set.slice(0, checkAtIndex - 1), criteria); // front half of the array
-		}
-	}
-
-	this.deleteElementFromDataString = function (dataString, element) {
-		var dataElementIndex = this.indexOfElementInDataString(dataString, element);
-		
-		if (elementExists(dataElementIndex)) {
-			// Element exists.
-			var startIndex = Math.floor(dataElementIndex);
-			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
-			var dataString = dataString.slice(0, startIndex - 1) + dataString.slice(endIndex);
-		}
-		return dataString;
-	}
-
-	this.getDataString = function(dataStringName) {
-		var dataString = localStorage.getItem(dataStringName);
-		if (!dataString || dataString == null)
-			dataString = '|';
-		return dataString;
-	}
-
-	this.getDataFromDataString = function (dataString, elementName) {
-		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
-		if (elementExists(dataElementIndex)) {
-			var element = getElementFromDataString(dataString, dataElementIndex);
-			var partitions = element.split(':');
-			return (partitions.length > 1) ? partitions[1] : undefined;
-		}
-		return "";
-	}
-
-	this.replaceDataInElement = function (dataString, elementName, newData) {
-		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
-		if (elementExists(dataElementIndex)) {
-			var startIndex = getNextSeparatorIndex(dataString, dataElementIndex, [':', '|']);
-			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
-			var dataString = dataString.slice(0, startIndex) + ":" + newData + dataString.slice(endIndex);
-		}
-		else {
-			dataString = this.insertElementIntoDataString(dataString, elementName + ":" + newData);
-		}
-		return dataString;
-	}
-
-	this.ensureDataIntoElement = function (dataString, elementName, newData) {
-		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
-		if (elementExists(dataElementIndex)) {
-			var startIndex = getNextSeparatorIndex(dataString, dataElementIndex, [':', '|']);
-			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
-			var elementData = dataString.slice(startIndex + 1, endIndex);
-			var newDataString = ensureDataIntoString(elementData, newData);
-			var dataString = dataString.slice(0, startIndex) + ":" + newDataString + dataString.slice(endIndex);
-		}
-		else {
-			var fullElement = elementName;
-			if (newData != undefined)
-				fullElement = fullElement + ":" + newData;
-			dataString = this.insertElementIntoDataString(dataString, fullElement);
-		}
-		return dataString;
-	}
-
-	this.ensureDataNotInElement = function (dataString, elementName, excludeData) {
-		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
-		if (elementExists(dataElementIndex)) {
-			var startIndex = getNextSeparatorIndex(dataString, dataElementIndex, [':', '|']);
-			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
-			var elementData = dataString.slice(startIndex + 1, endIndex);
-			var newDataString = removeDataFromString(elementData, excludeData);
-			var dataString = dataString.slice(0, startIndex) + ":" + newDataString + dataString.slice(endIndex);
-		}
-		return dataString;
-	}
-
-	this.clearElementData = function (dataString, elementName, newData) {
-		var dataElementIndex = this.indexOfElementInDataString(dataString, elementName);
-		if (elementExists(dataElementIndex)) {
-			var startIndex = getNextSeparatorIndex(dataString, dataElementIndex, [':', '|']);
-			var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
-			var dataString = dataString.slice(0, startIndex) + dataString.slice(endIndex);
-		}
-		return dataString;
-	}
-
-	this.getAllElements = function (dataString) {
-		if (!dataString || dataString == null)
-			return [];
-		var elementArray = dataString.split('|');
-		return elementArray.splice(1, elementArray.length - 2);
-	}
-
-	// ===== PRIVATE ===== //
-	function removeDataFromString(dataString, excludeData) {
-		var dataArray = dataString.split(',');
-		var index = dataArray.indexOf(excludeData.toString());
-		if (index == -1)
-			return dataString;
-		dataArray = dataArray.splice(index - 1, 1);
-		return dataArray.join();
-	}
-
-	function ensureDataIntoString(dataString, newData) {
-		var dataArray = dataString.split(',');
-		if (dataExistsInArray(dataArray, newData.toString()))
-			return dataString;
-		// TODO: add sorting to this.
-		dataArray.push(newData);
-		return dataArray.join();
-	}
-	function dataExistsInArray(someArray, someElement) {
-		return someArray.indexOf(someElement) > -1;
-	}
-	function elementExists(flaggedDataElementIndex) {
-		return !hasNewFlag(flaggedDataElementIndex);
-	}
-
-	function getElementFromDataString(dataString, startIndex) {
-		var endIndex = getNextSeparatorIndex(dataString, startIndex, ['|']);
-		return dataString.slice(startIndex, endIndex);
-	}
-	function hasNewFlag(dataElementIndex) {
-		return (dataElementIndex % 1) > 0;
-	}
-
-	function handleEmptyString(string, nameOfDataString) {
-
-	}
-
-	function validateInputString(string) {
-		
-		// Validate input data string...
-		if (!string
-			|| string === null
-			|| string[0] !== '|'
-			|| string[string.length - 1] !== '|'
-			|| string.length === 0
-			|| string == '||'){
-			  throw "Invalid data-string";
-      }
-	}
-	function character1IsBeforeCharacter2(character1, character2) {
-		return character1.charCodeAt(0) < character2.charCodeAt(0);
-	}
-	function character1IsAfterCharacter2(character1, character2) {
-		return character1.charCodeAt(0) > character2.charCodeAt(0);
-	}
-	function wordIsShorter(targetWord, wordFromArray) {
-		return targetWord.length < wordFromArray.length;
-	}
-	function wordIsLonger(targetWord, wordFromArray) {
-		return targetWord.length > wordFromArray.length;
-	}
-	function wordsAreIdentical(word1, word2) {
-		return word1 === word2;
-	}
-	function searchRightHalfOfDataBlockReturnIndex(string, fromIndex, targetWord, dataDriver) {
-		return fromIndex + dataDriver.indexOfElementInDataString(getRightHalfOfString(string, fromIndex), targetWord);
-	}
-	function searchLeftHalfOfDataBlockReturnIndex(string, fromIndex, targetWord, dataDriver) {
-		return dataDriver.indexOfElementInDataString(getLeftHalfOfString(string, fromIndex), targetWord);
-	}
-	function getRightHalfOfString(string, fromIndex) {
-		return string.slice(fromIndex);
-	}
-	function getLeftHalfOfString(string, fromIndex) {
-		return string.slice(0, fromIndex + 1);
-	}
-	function charactersMatch(char1, char2) {
-		return char1 === char2;
-	}
-	function getFirstLeftSeparatorIndexFromIndex(string, startFromIndex, separatorArray) {
-		var checkAtIndex = startFromIndex;
-		var overflow = 0;
-		while (!arrayContains(separatorArray, string[checkAtIndex]) && checkAtIndex >= -1) {
-			if (++overflow > 100000)
-				throw "Overflow";
-			checkAtIndex--;
-		}
-		if (checkAtIndex === -1)
-			throw "Missing separator in index";
-		return checkAtIndex;
-	}
-	function getNextSeparatorIndex(string, startFromIndex, separatorArray) {
-		var checkAtIndex = startFromIndex;
-		var overflow = 0;
-		while (!arrayContains(separatorArray, string[checkAtIndex]) && checkAtIndex < string.length) {
-			if (++overflow > 100000)
-				throw "Overflow";
-			checkAtIndex++;
-		}
-		if (checkAtIndex >= string.length)
-			throw 'Missing separator in index in string: "' + string + '", starting from index: ' + startFromIndex;
-		return checkAtIndex;
-	}
-	function getCenterIndex(string) {
-		return Math.floor(string.length / 2);
-	}
-	function arrayContains(array, element) {
-		for (var i = 0; i < array.length; i++)
-			if (array[i] === element)
-				return true;
-		return false
-	}
-
-	
-}
-//======================================================================================================================================
 
 //Cyclic functions
 		
@@ -6142,6 +6214,7 @@ function dataNode_OnMouseUp(node, x, y) {
 
 function dataNode_OnMouseDblClick(node, x, y) {
 	globals.dataService.FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
+  new EntityEventsHelper().NodeDblClick(node);
 }
 
 function dataNode_OnMouseLeave(node, x, y) {
@@ -6372,23 +6445,62 @@ function NodeBehavioursApi() {
     }
   }
 
+  this.CreateSubNodesFromLinks = function(node) {
+    //debugger;
+    for(var prop in node.data.propertiesObject) {
+      var propVal = node.data.propertiesObject[prop];
+      if (isLink(propVal) && !isImage(propVal) && !isHtml(propVal) && node.data.labels[0] != 'link'){
+        var dataSvc= new DataService();
+        var subNode = dataSvc.CreateEntity_AddToGraph_ReturnNode(["link"], {"URL":propVal});
+        var link=new dataSvc.CreateRelation_AddToGraph_ReturnLink(node.id,subNode.id,["links_to"]);
+
+      }
+    }
+  }
+
+  this.FetchNodeLinks = function(node) {
+    for(var prop in node.data.propertiesObject) {
+      var propVal = node.data.propertiesObject[prop];
+      if (isLink(propVal) && !isImage(propVal) && !isHtml(propVal)){
+        var dataSvc= new DataService();
+        try{
+          new ApiImportTranslator().Translate(propVal, node);
+        }catch(exception){}
+      }
+    }
+  }
+
   this.AutoImageToNode = function(node) {
     
     for(var prop in node.data.propertiesObject) {
       var propVal=node.data.propertiesObject[prop];
-      //var propVal=entity.properties[prop];
       if(isImage(propVal)) {
         node.data.UI.imageUI.link(propVal);
         node.data.UI.imageUI.attr("width", node.data.nodeSize * 3);
         node.data.UI.imageUI.attr("height", node.data.nodeSize * 3);
         node.data.UI.imageUI.attr("x", -node.data.nodeSize * 3/2);
         node.data.UI.imageUI.attr("y", -node.data.nodeSize * 3/2);
-        
-        //var config = createEntitySpecificConfig(nodeData.id);
-        //config.config = {"attributes":{"img":{"url": propVal}}};
-        //new ConfigHelper().AddDynamicEntityConfigReturnId(config.configName, config);
       }
     }
+  }
+
+  function isLink(value){
+    if (typeof value !== "string") 
+      return;
+    if(value.length>7) {
+        return value.substr(0,7).toLowerCase()=='http://' || value.substr(0,8).toLowerCase()=='https://'
+    }
+    return false;
+  }
+
+  function isHtml(value){
+    if (typeof value !== "string") 
+      return;
+    if(value.length>5) {
+        var possibleExtension=value.slice(-5);
+        return possibleExtension.toLowerCase()=='.html'
+    }
+    return false;
   }
 
   function isImage(value){
@@ -6427,18 +6539,16 @@ function nodeAppearanceHelper(node) {
 		var nodeBody = Viva.Graph.svg(_cnf.attributes["shape"])
 			.attr('cx', 0)//...for circle
 			.attr('cy', 0)//...for circle
-			.attr('width', nodeRadius)//...for rect
-			.attr('height', nodeRadius)//...for rect
 			.attr('r', nodeRadius) //...for circle
 			.attr('fill', _cnf.attributes["background-color"] == null ? 'grey':_cnf.attributes["background-color"])
-			.attr('stroke-width', 3)
+			.attr('stroke-width', Number(_cnf.attributes["border-width"]))
 			.attr('stroke', _cnf.attributes["border-color"] == null ? 'black': _cnf.attributes["border-color"])
 		if (_cnf.attributes["shape"] == "rect") {
-			nodeBody.attr('width', nodeRadius * 3);
-			nodeBody.attr('height', nodeRadius * 2);
-			nodeBody.attr('rx', nodeRadius / 4);
-			nodeBody.attr('x', -(nodeRadius * 3 / 2));
-			nodeBody.attr('y', -(nodeRadius * 2 / 2));
+			nodeBody.attr('width', Number(_cnf.attributes["width"]));
+			nodeBody.attr('height',  Number(_cnf.attributes["height"]));
+			nodeBody.attr('rx', nodeRadius);
+			nodeBody.attr('x', -((Number(_cnf.attributes["width"])) / 2));
+			nodeBody.attr('y', -((Number(_cnf.attributes["height"])) / 2));
 		}
 		if (_cnf.effects["haze"] == true)
 			nodeBody.attr('filter', 'url(#hazeEffect)'); //haze
@@ -6533,7 +6643,7 @@ function nodeAppearanceHelper(node) {
 			.attr('fill', _cnf.attributes.labelText["color"])
 			.attr('font-family', _cnf.attributes.labelText["font-family"])
 			.attr('font-weight', _cnf.attributes.labelText["font-weight"])
-			.attr('font-size', '20')
+			.attr('font-size', Number(_cnf.attributes.labelText["font-size"]))
 			//.attr('stroke', 'black')
 			//.attr('stroke-width', '0.5')
 			.text(this.node.data.displayLabel);
@@ -6860,6 +6970,8 @@ function EntityTypeDef() {
   this.properties = {};
   this.imageProperties = []; 
 }
+
+
 //==========Globals ==================================================================================================================================================================			
 var globals = new Globals();
 
@@ -6937,9 +7049,7 @@ function createDataStringHelper() {
 	return new DataStringHelper();
 }
 
-function createJsonParser() {
-	return new JsonTranslator();
-}
+
 //[Test]
 globals.allUnitTests.push(function getNextNewNodeId_Given_Expect1() {
 	// Arrange
@@ -8125,39 +8235,6 @@ globals.allUnitTests.push(function getRelationshipByPropertyName_GivenGiven2Rela
 
 
 
-//=== JSON Parser =============================================================================================================================================================
-
-//[Test]
-globals.allUnitTests.push(function CreateGraphElementsFromJson_GivenJson_ExpectGraphElements() {
-	// Arrange
-	var sut = createJsonParser();
-  
-	var inputJSON = {
-		Parent: {
-			Name: "John",
-			Child: [
-				{
-					Name: "Scott",
-					Age: 10,
-          Pic: "custom/assets/Persons/Monroe.png"
-				},
-				{
-					Name: "Jane",
-          Avatar: "custom/assets/Persons/elvis.png"
-				}]
-		}
-	};
-
-  
-	// Act
-	var result = sut.TranslateToGraph_ReturnGraphElements('root', JSON.stringify(inputJSON), globals.currentTheme.sourceConfig);
-
-	// Assert
-	return (result.length == 2
-		&& result[0].fromNode.data.labels[0] == "Parent") ? true : result;
-});
-
-
 // Private...
 function createConfigHelper() {
 	return new ConfigHelper();
@@ -8407,48 +8484,7 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
     return true
 	});
 
-	//[Test]
-	globals.allUnitTests.push(function JsonTranslate_GivenStringOnlyObject_ExpectNode() {
-		// Arrange
-    var sut=new JsonTranslator();
-    var jsonObject1='"TestJsonNode"';
-		
-    // Act
-		var result = sut.Translate(jsonObject1);
-		
-    // Assert
-    console.log('Testing: "TestJsonNode"')
-    var result = getNodesByMatchingLabels(globals.nodeList, ['"TestJsonNode"']);
-    if (result.length == 0) return result;
 
-    return true
-	});
-
-	////[Test]
-	//globals.allUnitTests.push(function JsonTranslate_GivenArrayWithObjects_ExpectRootNodes() {
-	//	// Arrange
-  //  var sut=new JsonTranslator();
-  //  var jsonObject1='["TestRootNode"]';
-		
-    
-  //  // Act
-	//	var result = sut.Translate(jsonObject1, "BaseNode");
-		
-  //  // Assert
-  //  console.log('Testing: BaseNode')
-  //  var result = getNodesByMatchingLabels(globals.nodeList, ['BaseNode']);
-  //  if (result.length == 0) return result;
-
-  //  //console.log('Testing: TestJsonNode')
-  //  //var result = getNodesByMatchingLabels(globals.nodeList, ['stringOnlyNode']);
-  //  //if (!result) return result;
-
-  //  console.log('Testing: TestRootNode')
-  //  var result = getNodesByMatchingLabels(globals.nodeList, ['TestRootNode']);
-  //  if (result.length == 0) return result;
-
-  //  return true
-	//});
 
 
 	//[Test]
@@ -8538,6 +8574,82 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
     // Assert
     return true
 	});
+
+
+	//[Test]
+	globals.allUnitTests.push(function JsonTranslate_GivenStringOnlyObject_ExpectNode() {
+		// Arrange
+    var sut=new JsonTranslator();
+    var jsonObject1='"TestJsonNode"';
+		
+    // Act
+		var result = sut.Translate(jsonObject1);
+		
+    // Assert
+    console.log('Testing: "TestJsonNode"')
+    var result = getNodesByMatchingLabels(globals.nodeList, ['"TestJsonNode"']);
+    if (result.length == 0) return result;
+
+    return true
+	});
+
+	////[Test]
+	//globals.allUnitTests.push(function JsonTranslate_GivenArrayWithObjects_ExpectRootNodes() {
+	//	// Arrange
+  //  var sut=new JsonTranslator();
+  //  var jsonObject1='["TestRootNode"]';
+		
+    
+  //  // Act
+	//	var result = sut.Translate(jsonObject1, "BaseNode");
+		
+  //  // Assert
+  //  console.log('Testing: BaseNode')
+  //  var result = getNodesByMatchingLabels(globals.nodeList, ['BaseNode']);
+  //  if (result.length == 0) return result;
+
+  //  //console.log('Testing: TestJsonNode')
+  //  //var result = getNodesByMatchingLabels(globals.nodeList, ['stringOnlyNode']);
+  //  //if (!result) return result;
+
+  //  console.log('Testing: TestRootNode')
+  //  var result = getNodesByMatchingLabels(globals.nodeList, ['TestRootNode']);
+  //  if (result.length == 0) return result;
+
+  //  return true
+	//});
+
+//[Test]
+globals.allUnitTests.push(function CreateGraphElementsFromJsonOffExistingNode_GivenJson_ExpectGraphElements() {
+	// Arrange
+	var sut = new JsonTranslator(); 
+  var node = new DataService().CreateEntity_AddToGraph_ReturnNode(["ParentRootNode"]);
+
+	var inputJSON = {
+		Parent: {
+			Name: "John",
+			Child: [
+				{
+					Name: "Scott",
+					Age: 10,
+          Pic: "custom/assets/Persons/Monroe.png",
+          link: "http://localhost:9090/scripts/Tests/TestAssets/TestJson.json"
+				},
+				{
+					Name: "Jane",
+          Avatar: "custom/assets/Persons/elvis.png"
+				}]
+		}
+	};
+
+  
+	// Act
+	var result = sut.TranslateToGraph_ReturnGraphElements(node, JSON.stringify(inputJSON), globals.currentTheme.sourceConfig);
+
+	// Assert
+	return (result.length == 4
+		&& result[0].fromNode.data.labels[0] == "ParentRootNode") ? true : result;
+});
 
 
 //[Test]
@@ -9040,6 +9152,7 @@ function graphexMain() {
   function processParameters(){
         // PARAMETERS
     //extract commands from URL:
+    var stringHelper = new StringHelper();
     var urlHelper  = new UrlHelper();
     var params = urlHelper.GetAllParams();
     params.forEach(function(param){
@@ -9049,11 +9162,16 @@ function graphexMain() {
       }
 
       if (param.key == "grenc"){
-        var translator = urlHelper.GetParameterByName("trans");
-        var base64Str = new StringHelper().ReplaceEachOfCharSet(param.value, '._-','+/=');
-        var decodedData = atob(base64Str);
-        var translator = new SimpleTranslator();
-        translator.Translate(decodedData);
+        var translator = stringHelper.ParamDecodeString(urlHelper.GetParameterByName("trans"));
+        var decodedData = stringHelper.ParamDecodeString(param.value);
+        //var base64Str = new StringHelper().ReplaceEachOfCharSet(param.value, '._-','+/=');
+        //var decodedData = atob(base64Str);
+        mappings.Translators.forEach(function(transMapping){if (transMapping.name == translator){
+          console.log('translator', transMapping);
+          var trans = transMapping.translator;
+          trans.Translate(decodedData);
+        }});
+
       }
     });
   }
@@ -9491,7 +9609,6 @@ function LinkHelper() {
   }
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   function showLinkData(link) {
-    console.log('showing link data');
     setUi(link.data.UI.fullUI, 'labelVisible','true');
     if(link.data.displayingData) { return; }
     link.data.displayingData = true;
@@ -9743,15 +9860,25 @@ function defineLinkObjects()
 			link.data.UI.popoutBodyUI = linkRect;
 			link.data.UI.popoutTextUI = linkPoputText;
 			
+      ui.attr('fromNodeRadius',25); //default
+			ui.attr('toNodeRadius',25);//default
+			ui.attr('labelWidth',30);//default
+			ui.attr('labelVisible',false);//default
 			//var linkUI = globals.graphics.getLinkUI(link.id);
 			if (link.data.linkType == 'data'){
 				ui.attr('fromNode',link.data.fromNodeID).attr('toNode',link.data.toNodeID);
 				ui.attr('linkDataIndex',globals.linkList.length);//default
+
+        //fromNode.data.entityConfig.config.attributes["radius"];//nodeSize
+
+        var fromNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
+        var toNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
+        //if (fromNode.data.labels[0] == "root")
+          //debugger;
+        ui.attr('fromNodeRadius',fromNode.data.entityConfig.config.attributes["radius"]); //default
+			  ui.attr('toNodeRadius',toNode.data.entityConfig.config.attributes["radius"]);//default
 			}
-			ui.attr('fromNodeRadius',25); //default
-			ui.attr('toNodeRadius',25);//default
-			ui.attr('labelWidth',30);//default
-			ui.attr('labelVisible',false);//default
+
 			//ui.attr('linkPos', getDataLinks(link.data.fromNodeID, link.data.toNodeID).length);//will be adjusted later				
 		}
 		//====== INDICATOR LINKS ========================================================================================================

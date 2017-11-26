@@ -306,15 +306,14 @@ var consoleApp = new Vue({
         new VueConsoleHelper().CloseGlobalInfoModal();
       },
       executeExampleFormula: function() {
-        new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
-        var translator=this.currentTranslator;
+        //new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
+        var translator = this.currentTranslator;
         translator.Translate(this.selectedExample);
         this.selectedExample = null;
-        new VueConsoleHelper().CloseGlobalInfoModal();
-
+        //new VueConsoleHelper().CloseGlobalInfoModal();
       },
       importFromUrl: function(url) {
-        new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
+        //new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
         console.log('IMPORTING...');
         var translator=this.currentTranslator;
         var httpClient=new HttpClient();
@@ -326,15 +325,15 @@ var consoleApp = new Vue({
         httpClient.get(finalUrl,function(response) {
           console.log('response',response);
           translator.Translate(response);
-          new VueConsoleHelper().CloseGlobalInfoModal();
+          //new VueConsoleHelper().CloseGlobalInfoModal();
         });
       },
       generateLink: function(){
         if ((this.formulaValue||'').trim().length == 0){ alert('Please enter a formula'); return;}
         console.log('this.formulaValue', this.formulaValue);
-        var encodedFormula = new StringHelper().ReplaceEachOfCharSet(btoa(this.formulaValue), '+/=','._-');
-        console.log('encodedFormula', encodedFormula);
-        var blob = "http://www.graphex.io/?trans=Simple&grenc=" + encodedFormula;
+        var encodedFormula = new StringHelper().ParamEncodeString(this.formulaValue);
+        var encodedTranslator = new StringHelper().ParamEncodeString(this.selectedTranslatorName);
+        var blob = "http://www.graphex.io/?trans="+encodedTranslator+"&grenc=" + encodedFormula;
         var content = "<input id='exportGraphTextArea' value='" + blob + "'>";
         new VueConsoleHelper().DisplayConfirmModal('Sharable Link', content, ifConfirmed, 'Copy', 'Exit');
         function ifConfirmed(){
