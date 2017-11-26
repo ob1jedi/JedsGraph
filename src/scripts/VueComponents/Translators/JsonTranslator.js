@@ -8,13 +8,13 @@ function JsonTranslator() {
           '{"x":{"y":{}}}',
           '{"Sam":{"Bob":{"John":{}}}}'
   ];
-  this.ImportExamples=[
-    {
-      name: "This day in history", 
-      params: ["$day", "$month", "$year"],
-      value: 'http://en.wikipedia.org/api/rest_v1/feed/featured/$year/$month/$day' 
-    }
-  ];
+  //this.ImportExamples=[
+  //  {
+  //    name: "This day in history",
+  //    params: ["$day","$month","$year"],
+  //    value: 'http://en.wikipedia.org/api/rest_v1/feed/featured/$year/$month/$day'
+  //  }
+  //];
 
   this.ReferenceContent=''
 						+'Objects are nodes, eg. <span class ="inputModal code">{"John":{}}</span>'
@@ -24,55 +24,65 @@ function JsonTranslator() {
 						+'<hr>'
 						+'Arrays will become nodes by the name of the parent property.';
 
-  this.Translate=function(expression, _baseObjectName) {
-    //debugger;
+  this.Translate=function(expression,parentNode) {
     var translator=new JsonTranslator();
-    //console.log('expression', expression);
-    translator.TranslateToGraph_ReturnGraphElements(_baseObjectName||'root',expression);
+    translator.TranslateToGraph_ReturnGraphElements(parentNode||null,expression);
   }
 
-  this.TranslateToGraph_ReturnGraphElements = function(objectName,jsonString) {
+  this.TranslateToGraph_ReturnGraphElements=function(parentNode,jsonString) {
+    var dataService=new DataService();
+    var appendingEntity=null;
+
     var jsonObject=JSON.parse(jsonString);
-    if(isObject(jsonObject) && hasPrimitives(jsonObject))
-      createEntity(objectName,jsonObject);
-    else if (isObject(jsonObject))
-      processObject(jsonObject)
-    else if(isArray(jsonObject)) 
-      processArray(objectName, jsonObject);
+    if(isObject(jsonObject)&&parentNode) {
+      appendingEntity=createEntity('root',jsonObject)
+    }
+    else if(isObject(jsonObject)&&hasPrimitives(jsonObject))
+      createEntity('root',jsonObject);
+    else if(isObject(jsonObject)&&!hasPrimitives(jsonObject))
+      processObject(jsonObject);
+    else if(isArray(jsonObject))
+      processArray('root',jsonObject);
     else if(isPrimitive(jsonObject)) {
       createEntity(jsonString,{});
     }
 
-    var dataService=new DataService();
     for(var e=0;e<_graphEntities.length;e++) {
-      var node=dataService.CreateEntity_AddToGraph_ReturnNode(_graphEntities[e].labels,_graphEntities[e].properties);
-      _graphEntities[e].id=node.id;
+      var newNode=dataService.CreateEntity_AddToGraph_ReturnNode(_graphEntities[e].labels,_graphEntities[e].properties);
+      _graphEntities[e].id=newNode.id;
     }
 
     var graphElements=[];
+    if(appendingEntity) {
+      var link=dataService.CreateRelation_AddToGraph_ReturnLink(parentNode.id,appendingEntity.id);
+      graphElements.push(createNewGaphElement(link));
+    }
     for(var e=0;e<_graphRelations.length;e++) {
       var link=dataService.CreateRelation_AddToGraph_ReturnLink(_graphRelations[e].fromEntity.id,_graphRelations[e].toEntity.id,_graphRelations[e].labels,_graphRelations[e].properties);
-      var newGraphElement=new GraphElement();
-      newGraphElement.fromNode=globals.GRAPH.getNode(link.fromId);
-      newGraphElement.toNode=globals.GRAPH.getNode(link.toId);
-      newGraphElement.link=link;
-      graphElements.push(newGraphElement);
+      graphElements.push(createNewGaphElement(link));
     }
-
     return graphElements;
   }
 
-  function processObject(obj){
-    for(var thingKey in obj) {
-        if(isObject(obj[thingKey]))
-          createEntity(thingKey,obj[thingKey]);
-        else if(isArray(obj[thingKey])) {
-          processArray(thingKey, obj[thingKey]);
-        }
-      }
+  function createNewGaphElement(link) {
+    var newGraphElement=new GraphElement();
+    newGraphElement.fromNode=globals.GRAPH.getNode(link.fromId);
+    newGraphElement.toNode=globals.GRAPH.getNode(link.toId);
+    newGraphElement.link=link;
+    return newGraphElement;
   }
 
-  function processArray(name, array) {
+  function processObject(obj) {
+    for(var thingKey in obj) {
+      if(isObject(obj[thingKey]))
+        createEntity(thingKey,obj[thingKey]);
+      else if(isArray(obj[thingKey])) {
+        processArray(thingKey,obj[thingKey]);
+      }
+    }
+  }
+
+  function processArray(name,array) {
     for(var i=0;i<array.length;i++) {
       if(isObject(array[i]))
         createEntity(name,array[i]);
@@ -102,7 +112,7 @@ function JsonTranslator() {
             var newChildEntity=createEntity(propertyKey,obj[propertyKey][i]);
             newLinks.push(createRelation('',[],newEntity,newChildEntity));
           }
-          if (isPrimitive(obj[propertyKey][i])){
+          if(isPrimitive(obj[propertyKey][i])) {
             var newChildEntity=createEntity(propertyKey,obj[propertyKey][i]);
             newLinks.push(createRelation('',[],newEntity,newChildEntity));
           }
