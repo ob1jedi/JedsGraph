@@ -160,8 +160,10 @@
 	this.CreateRelation_AddToGraph_ReturnLink = function (fromEntityId, toEntityId, labels, properties, _sourceConfig, planOnly) {
 		//Neo4jCreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly)
 		var relId = dataDriver.CreateRelationPopulateAndReturnId(stripDomainFromId(fromEntityId), stripDomainFromId(toEntityId), labels, properties);
-		var link = dataDriver.GetLinkFromDatabase(relId);
-		return addRelationToGraphReturnLink(link);
+		var relation = dataDriver.GetLinkFromDatabase(relId);
+		var link = addRelationToGraphReturnLink(relation); 
+    applyPopoutEffectToNodesById(fromEntityId, toEntityId);
+    return link
 	}
 
 	this.DeleteRelationship = function (relationshipID, _sourceConfig) {

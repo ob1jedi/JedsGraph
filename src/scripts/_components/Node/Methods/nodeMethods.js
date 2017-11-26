@@ -11,11 +11,16 @@ function applyPopoutEffectToNode(newNode, parentNodeId) {
 	globals.layout.pinNode(newNode, false);
 }
 
-function applyWaitingAffectToNode(nodeId) {
-
-}
-function removeWaitingAffectFromNode(nodeId) {
-
+function applyPopoutEffectToNodesById(parentNodeId, newNodeId) {
+	var newNode = globals.GRAPH.getNode(newNodeId);
+  globals.layout.pinNode(newNode, true);
+	var pos = globals.layout.getNodePosition(parentNodeId);
+	var nodeRadius = Number(newNode.data.entityConfig.config.attributes["radius"]);
+	globals.layout.setNodePosition(newNode.id,
+		getRandomArbitrary(pos.x - nodeRadius / 2, pos.x + nodeRadius / 2),
+		getRandomArbitrary(pos.y - nodeRadius / 2, pos.y + nodeRadius / 2)
+	);
+	globals.layout.pinNode(newNode, false);
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
