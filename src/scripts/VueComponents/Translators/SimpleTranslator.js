@@ -96,7 +96,7 @@ var SimpleTranslator = function () {
 			currentNodes = [globals.selectedNode];
 		}
 		else {
-      //...we're creaing a new node.
+      //...we're creating a new node.
       currentNodes = getNodesFromStage(currentEntity.labels, currentEntity.properties);
 			if (currentNodes.length == 0 ){
         currentNodes = currentNodes.concat(createEntityAddToGraphReturnNodes(currentEntity.labels, currentEntity.properties));
@@ -283,3 +283,5 @@ var SimpleTranslator = function () {
 	}
 
 }
+
+mappings.Translators.push({name:"Simply Graphex", translator: new SimpleTranslator()});

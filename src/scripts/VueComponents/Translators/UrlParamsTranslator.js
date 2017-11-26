@@ -70,3 +70,5 @@ function UrlParamsTranslator() {
 	}
 
 }
+
+mappings.Translators.push({name:"Paramalactic", translator: new UrlParamsTranslator()});

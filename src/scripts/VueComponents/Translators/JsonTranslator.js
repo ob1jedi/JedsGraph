@@ -143,3 +143,5 @@ function JsonTranslator() {
     return false;
   }
 }
+
+mappings.Translators.push({ name: "Json-son",translator: new JsonTranslator() });

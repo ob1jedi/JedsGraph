@@ -33,3 +33,8 @@ function ApiImportTranslator() {
 	}
 
 }
+
+
+
+
+mappings.Translators.push({name:"Api Importer", translator: new ApiImportTranslator()})

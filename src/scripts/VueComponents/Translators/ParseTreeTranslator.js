@@ -125,3 +125,6 @@ function ParseTreeTranslator() {
   }
 
 }
+
+
+mappings.Translators.push({name:"Logic Parse Tree", translator: new ParseTreeTranslator()});
