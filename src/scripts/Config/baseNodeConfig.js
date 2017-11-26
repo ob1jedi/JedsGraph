@@ -11,10 +11,14 @@
 		"attributes": {
 			/* Options: |circle|rect| */
 			"shape": "circle",
+      /*only if shape is rect*/
+      "width": 100,
+      "height": 15,
 			/* Options: null (auto-size)*/
 			"radius": 25,
 			/* Options: null (auto-color)*/
 			"border-color": null,
+      "border-width": 5,
 			/* Options: null (auto-color from RGB range)*/
 			"background-color": null,
 			"opacity": 1,
@@ -45,6 +49,7 @@
 				"color": "#cccccc",
 				"font-family": "Arial, Helvetica, sans-serif",
 				"font-weight": "normal",
+        "font-size": 20,
 				"x": 0,
 				"y": 0,
 				"effects": {
@@ -107,7 +112,8 @@
       }
 		],
 		"behaviours": [
-			"AutoImage"
+			"AutoImage",
+      "SubnodesForLinks",
 		],
 
 		"effects": {

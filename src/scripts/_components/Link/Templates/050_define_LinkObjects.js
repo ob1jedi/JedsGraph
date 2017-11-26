@@ -162,15 +162,25 @@ function defineLinkObjects()
 			link.data.UI.popoutBodyUI = linkRect;
 			link.data.UI.popoutTextUI = linkPoputText;
 			
+      ui.attr('fromNodeRadius',25); //default
+			ui.attr('toNodeRadius',25);//default
+			ui.attr('labelWidth',30);//default
+			ui.attr('labelVisible',false);//default
 			//var linkUI = globals.graphics.getLinkUI(link.id);
 			if (link.data.linkType == 'data'){
 				ui.attr('fromNode',link.data.fromNodeID).attr('toNode',link.data.toNodeID);
 				ui.attr('linkDataIndex',globals.linkList.length);//default
+
+        //fromNode.data.entityConfig.config.attributes["radius"];//nodeSize
+
+        var fromNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
+        var toNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
+        //if (fromNode.data.labels[0] == "root")
+          //debugger;
+        ui.attr('fromNodeRadius',fromNode.data.entityConfig.config.attributes["radius"]); //default
+			  ui.attr('toNodeRadius',toNode.data.entityConfig.config.attributes["radius"]);//default
 			}
-			ui.attr('fromNodeRadius',25); //default
-			ui.attr('toNodeRadius',25);//default
-			ui.attr('labelWidth',30);//default
-			ui.attr('labelVisible',false);//default
+
 			//ui.attr('linkPos', getDataLinks(link.data.fromNodeID, link.data.toNodeID).length);//will be adjusted later				
 		}
 		//====== INDICATOR LINKS ========================================================================================================

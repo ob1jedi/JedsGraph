@@ -10,18 +10,16 @@
 		var nodeBody = Viva.Graph.svg(_cnf.attributes["shape"])
 			.attr('cx', 0)//...for circle
 			.attr('cy', 0)//...for circle
-			.attr('width', nodeRadius)//...for rect
-			.attr('height', nodeRadius)//...for rect
 			.attr('r', nodeRadius) //...for circle
 			.attr('fill', _cnf.attributes["background-color"] == null ? 'grey':_cnf.attributes["background-color"])
-			.attr('stroke-width', 3)
+			.attr('stroke-width', Number(_cnf.attributes["border-width"]))
 			.attr('stroke', _cnf.attributes["border-color"] == null ? 'black': _cnf.attributes["border-color"])
 		if (_cnf.attributes["shape"] == "rect") {
-			nodeBody.attr('width', nodeRadius * 3);
-			nodeBody.attr('height', nodeRadius * 2);
-			nodeBody.attr('rx', nodeRadius / 4);
-			nodeBody.attr('x', -(nodeRadius * 3 / 2));
-			nodeBody.attr('y', -(nodeRadius * 2 / 2));
+			nodeBody.attr('width', Number(_cnf.attributes["width"]));
+			nodeBody.attr('height',  Number(_cnf.attributes["height"]));
+			nodeBody.attr('rx', nodeRadius);
+			nodeBody.attr('x', -((Number(_cnf.attributes["width"])) / 2));
+			nodeBody.attr('y', -((Number(_cnf.attributes["height"])) / 2));
 		}
 		if (_cnf.effects["haze"] == true)
 			nodeBody.attr('filter', 'url(#hazeEffect)'); //haze
@@ -116,7 +114,7 @@
 			.attr('fill', _cnf.attributes.labelText["color"])
 			.attr('font-family', _cnf.attributes.labelText["font-family"])
 			.attr('font-weight', _cnf.attributes.labelText["font-weight"])
-			.attr('font-size', '20')
+			.attr('font-size', Number(_cnf.attributes.labelText["font-size"]))
 			//.attr('stroke', 'black')
 			//.attr('stroke-width', '0.5')
 			.text(this.node.data.displayLabel);
