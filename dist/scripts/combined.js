@@ -845,7 +845,7 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 
 function GetConfigForEntityId(nodeData)
 {
-    new EntityEventsHelper().AddEntityToGraph_before(nodeData);
+    new EntityEventsHelper().AddEntityToGraph_beforeConfigLoad(nodeData);
     var configHelper = new ConfigHelper();
     return configHelper.GetConfigForEntityId(nodeData.id);
 }
@@ -3195,21 +3195,30 @@ function EntityEventsHelper(){
 
   var eventBehaviourMapping = [
     
-    { name: 'AutoImage', event: addEntityToGraph_after, func: new NodeBehavioursApi().AutoImageToNode },
-    { name: 'SubnodesForLinks', event: addEntityToGraph_after, func: new NodeBehavioursApi().CreateSubNodesFromLinks },
-    { name: 'FetchLinkOnDblClick', event: nodeDoubleClick, func: new NodeBehavioursApi().FetchNodeLinks }
+    //{ name: 'AutoImage', event: AddEntityToGraph_afterNodeAdd, func: new NodeBehavioursApi().AutoImageToNode },
+    { name: 'AutoImage',            event: addEntityToGraph_beforeNodeAdd,   func: new NodeBehavioursApi().AutoImageToConfig },
+    { name: 'SubnodesForLinks',     event: AddEntityToGraph_afterNodeAdd,    func: new NodeBehavioursApi().CreateSubNodesFromLinks },
+    { name: 'FetchLinkOnDblClick',  event: nodeDoubleClick,           func: new NodeBehavioursApi().FetchNodeLinks }
   ]
-
-  this.AddEntityToGraph_before = function(nodeData){addEntityToGraph_before(nodeData);}
-  this.AddEntityToGraph_after = function(node){addEntityToGraph_after(node)}
+  
+  this.AddEntityToGraph_beforeConfigLoad = function(nodeData){addEntityToGraph_beforeConfig(nodeData);}
+  
+  this.AddEntityToGraph_beforeNodeAdd = function(nodeData){addEntityToGraph_beforeNodeAdd(nodeData);}
+  
+  this.AddEntityToGraph_afterNodeAdd = function(node){AddEntityToGraph_afterNodeAdd(node)}
+  
   this.NodeDblClick = function(node){nodeDoubleClick(node)}
 
-  function addEntityToGraph_before(nodeData){
-    executeConfigBehaviors(nodeData, addEntityToGraph_before.name, nodeData.id);
+  function addEntityToGraph_beforeConfig(nodeData){
+    executeConfigBehaviors(nodeData, addEntityToGraph_beforeConfig.name, nodeData.id);
   }
 
-  function addEntityToGraph_after(node){
-    executeConfigBehaviors(node, addEntityToGraph_after.name, node.id);
+  function addEntityToGraph_beforeNodeAdd(nodeData){
+    executeConfigBehaviors(nodeData, addEntityToGraph_beforeNodeAdd.name, nodeData.id);
+  }
+  
+  function AddEntityToGraph_afterNodeAdd(node){
+    executeConfigBehaviors(node, AddEntityToGraph_afterNodeAdd.name, node.id);
   }
 
   function nodeDoubleClick(node){
@@ -3519,11 +3528,13 @@ function addDataNode(nodeId, nodeData, _sourceConfig) {
   setupDisplayLabels(thisNodeData);
 
   if(thisIsNewNode) {
+    var eventsHelper = new EntityEventsHelper();
     setNodeColor(thisNodeData);
+    eventsHelper.AddEntityToGraph_beforeNodeAdd(thisNodeData);
     node=addNodeToGraph(thisNodeData.id,thisNodeData);
     //PerformNodeStatFunctions(node);
     recordTypeInfo(node);
-    new EntityEventsHelper().AddEntityToGraph_after(node);
+    eventsHelper.AddEntityToGraph_afterNodeAdd(node);
     return node; //RETURN ONLY IF NODE IS NEW
   }
 }
@@ -6438,9 +6449,10 @@ function NodeBehavioursApi() {
     for(var prop in nodeData.propertiesObject) {
       var propVal=nodeData.propertiesObject[prop];
       if(isImage(propVal)) {
-        var config = createEntitySpecificConfig(nodeData.id);
-        config.config = {"attributes":{"img":{"url": propVal}}};
-        new ConfigHelper().AddDynamicEntityConfigReturnId(config.configName, config);
+        nodeData.entityConfig.config.attributes.img["url"] = propVal;
+        //var config = createEntitySpecificConfig(nodeData.id);
+        //config.config = {"attributes":{"img":{"url": propVal}}};
+        //new ConfigHelper().AddDynamicEntityConfigReturnId(config.configName, config);
       }
     }
   }
