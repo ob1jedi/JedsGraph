@@ -97,9 +97,11 @@ function ParseTreeTranslator() {
 
   function getExpressionFromDictionary(expKey)
   {
-    for (var key in _dictionery)
-      if (key == expKey)
-        return _dictionery[key];
+    if (_dictionery[expKey] != undefined)
+      return _dictionery[expKey];
+    //for (var key in _dictionery)
+    //  if (key == expKey)
+    //    return _dictionery[key];
     return expKey;
   }
 
