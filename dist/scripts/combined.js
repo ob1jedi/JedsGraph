@@ -1651,13 +1651,15 @@ function SimpleArranger(){
 
 var SimpleTranslator = function () {
   var _references = [];
-  
+  var _hiddenNodes = [];
   // Reference character
   var _r = '#'; 
   // Appender character
   var _a = '^';
   // Continuouse character
   var _c = '&';
+  // Hide-node character
+  var _h = '*';
 
 	this.Name = "Simply Graphex";
 	this.Examples = [
@@ -1727,10 +1729,15 @@ var SimpleTranslator = function () {
 
 	this.Translate = function (expression) {
     _references = [];
+    _hiddenNodes = [];
     var subExpressions = expression.split(';');
     for (var i =0; i< subExpressions.length; i++){
       if (subExpressions[i].trim().length > 0)
         processExpression(subExpressions[i].trim());
+    }
+    
+    for (var i =0; i< _hiddenNodes.length; i++){
+      removeNodeFromStage(_hiddenNodes[i]);
     }
 	}
 
@@ -1750,10 +1757,11 @@ var SimpleTranslator = function () {
       currentNodes = getNodesFromStage(currentEntity.labels, currentEntity.properties);
 			if (currentNodes.length == 0 ){
         currentNodes = currentNodes.concat(createEntityAddToGraphReturnNodes(currentEntity.labels, currentEntity.properties));
-        console.log('currentNodes', currentNodes);
       }
 			if (mustSelectNode(currentElement))
 				highlightSelectedNode(currentNode.id);
+      if (mustHideNode(currentElement))
+        hideNode(currentNode.id);
 		}
 
 		for (var i = 1 ; i < elements.length; i++) {
@@ -1775,9 +1783,14 @@ var SimpleTranslator = function () {
           if (nextNodes.length == 0)      
             nextNodes = createEntityAddToGraphReturnNodes(nextEntity.labels, nextEntity.properties);
 					if (mustSelectNode(subElement)){
-						nextNodes.forEach(function(nextNode) {highlightSelectedNode(nextNode.id)});
+						nextNodes.forEach(function(nextNode) {
+              highlightSelectedNode(nextNode.id)});
           }
-					applyPopoutEffectToNode(nextNodes[0], currentNodes[0].id);
+          if (mustHideNode(subElement)){
+						nextNodes.forEach(function(nextNode) {
+              hideNode(nextNode.id)});
+          }
+					//applyPopoutEffectToNode(nextNodes[0], currentNodes[0].id);
 				}
 
         //Create relationship
@@ -1797,6 +1810,13 @@ var SimpleTranslator = function () {
 		}
   }
   
+  function hideNode(nodeId){
+    _hiddenNodes.push(nodeId);
+    //removeNodeFromStage(nodeId);
+  }
+
+  
+
   function createEntityAddToGraphReturnNodes(labels, properties){
     var dataSvc = new DataService();
     var idAndLabelArray = labels[0].split(_r);
@@ -1871,6 +1891,11 @@ var SimpleTranslator = function () {
 	{
 		return (element.indexOf(_a) > -1);
 	}
+  function mustHideNode(element)
+	{
+		return (element.indexOf(_h) > -1);
+	}
+
 	function IsNodeSelected() {
 		if (!globals.selectedNode) {
 			alert("You must select an existing node first.");
@@ -1879,7 +1904,8 @@ var SimpleTranslator = function () {
 		return true;
 	}
 	function getEntityDetails(element) {
-		element = element.replace(_a, '');
+		element = element.replace(_a, '').replace(_h, '');
+
 		var nodePart = getNodePart(element);
 		if (nodePart === '')
 			return null;
@@ -9884,11 +9910,11 @@ function defineLinkObjects()
         //fromNode.data.entityConfig.config.attributes["radius"];//nodeSize
 
         var fromNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
-        var toNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
+        var toNode = node=globals.GRAPH.getNode(link.data.toNodeID);
         //if (fromNode.data.labels[0] == "root")
           //debugger;
-        ui.attr('fromNodeRadius',fromNode.data.entityConfig.config.attributes["radius"]); //default
-			  ui.attr('toNodeRadius',toNode.data.entityConfig.config.attributes["radius"]);//default
+        ui.attr('fromNodeRadius',fromNode.data.entityConfig.config.attributes["radius"]);
+			  ui.attr('toNodeRadius',toNode.data.entityConfig.config.attributes["radius"]);
 			}
 
 			//ui.attr('linkPos', getDataLinks(link.data.fromNodeID, link.data.toNodeID).length);//will be adjusted later				
