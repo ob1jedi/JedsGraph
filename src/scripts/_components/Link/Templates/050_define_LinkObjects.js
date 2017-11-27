@@ -174,11 +174,11 @@ function defineLinkObjects()
         //fromNode.data.entityConfig.config.attributes["radius"];//nodeSize
 
         var fromNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
-        var toNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
+        var toNode = node=globals.GRAPH.getNode(link.data.toNodeID);
         //if (fromNode.data.labels[0] == "root")
           //debugger;
-        ui.attr('fromNodeRadius',fromNode.data.entityConfig.config.attributes["radius"]); //default
-			  ui.attr('toNodeRadius',toNode.data.entityConfig.config.attributes["radius"]);//default
+        ui.attr('fromNodeRadius',fromNode.data.entityConfig.config.attributes["radius"]);
+			  ui.attr('toNodeRadius',toNode.data.entityConfig.config.attributes["radius"]);
 			}
 
 			//ui.attr('linkPos', getDataLinks(link.data.fromNodeID, link.data.toNodeID).length);//will be adjusted later				
