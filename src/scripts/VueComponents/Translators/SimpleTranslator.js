@@ -2,6 +2,9 @@
 var SimpleTranslator = function () {
   var _references = [];
   var _hiddenNodes = [];
+  var _interpolationDictionary = [];
+  var _interpolationCounter = 0;
+
   // Reference character
   var _r = '#'; 
   // Appender character
@@ -10,6 +13,8 @@ var SimpleTranslator = function () {
   var _c = '&';
   // Hide-node character
   var _h = '*';
+  // Interpolation character
+  var _i = '$'; // ... there is a regex with the $ sign in it, be sure to replace that if you change this.
 
 	this.Name = "Simply Graphex";
 	this.Examples = [
@@ -17,17 +22,20 @@ var SimpleTranslator = function () {
 						"Sam->John"+_a+"->Bob",
 						"-->Product->3",
 						"Diana-MotherOf->William&Harry",
-						"Fe(name: Iron)",
+						"Fe(name: Iron)->S(name: Sulpher)",
 						"C(name: Carbon, weight: 12.011)",
 						"Oxygen->Hydrogen(1) & Hydrogen(2)",
+            'Graph1(quoted:"n->n")->Graph2(special_chars:"-=)(*&^%$#@!~>:)")',
             "Mother"+_r+"M->Father"+_r+"F; "+_r+"F->"+_r+"M; "+_r+"M->Son; "+_r+"F->Son; Son->Grandson",
             "Sun"+_r+"S->Earth"+_r+"E; "+_r+"S->Mars"+_r+"M; "+_r+"E->Moon; "+_r+"M->Phobos;"
 	];
 	this.ReferenceContent = ''
+            +'Syntax characters: <span class ="inputModal code">->():#^&*$</span>:'
+            +'<hr>'
 						+'Type any word to create a node, eg. <span class ="inputModal code">John</span>'
 						+'<hr>'
 						+'Create a node with some attributes, eg.'
-						+'	</br><span class ="inputModal code">John(age: 30, sex: male)</span>'
+						+'	</br><span class ="inputModal code">John(age: 30, gender: male)</span>'
 						+'<hr>'
 						+'Create a relationship between two nodes:'
 						+'	</br><span class ="inputModal code">node1->node2</span>'
@@ -50,9 +58,45 @@ var SimpleTranslator = function () {
 						+'<hr>'
             +'Create a temporary node reference using the <span class ="inputModal code">'+ _r+ '</span> character:'
             +'  </br><span class ="inputModal code">star '+_r+'S->planet '+_r+'P; '+_r+'S->sun; '+_r+'P->Earth</span>';
+            +'<hr>'
+            +'Use double quotes for property values that have special characters <span class ="inputModal code">"..."</span>:'
+            +'  </br><span class ="inputModal code">Sentence->Word(chars:"x * y - 34")</span>';
 	
-  this.TranslateGraphToFormula = function()
-  {
+  this.Translate = function (expression) {
+    _references = [];
+    _hiddenNodes = [];
+    expression = normalizeExpression(expression);
+    var subExpressions = expression.split(';');
+    for (var i =0; i< subExpressions.length; i++){
+      if (subExpressions[i].trim().length > 0)
+        processExpression(subExpressions[i].trim());
+    }
+    
+    for (var i =0; i< _hiddenNodes.length; i++){
+      removeNodeFromStage(_hiddenNodes[i]);
+    }
+	}
+
+  function normalizeExpression(expression){
+    return createDictionaryAndNormalizeSubStructures(expression);
+  }
+
+  function createDictionaryAndNormalizeSubStructures(expression){
+    var dictIndex = 0;
+    var encapsulationRegex = new RegExp(/("(?:"??[^"]*?"))/g);
+    var encapsulated = expression.match(encapsulationRegex);
+    while (encapsulated){
+      encapsulated.forEach(function(captured){
+        var dictVal = _i + (++_interpolationCounter);
+        _interpolationDictionary[dictVal] = captured.slice(1,-1);
+        expression = expression.replace(captured, dictVal);
+      });
+      encapsulated = expression.match(encapsulationRegex);
+    }
+    return expression;
+  }
+
+  this.TranslateGraphToFormula = function(){
     var statements = [];
     globals.nodeList.forEach(function(node){
       var props = JSON.stringify(node.data.propertiesObject).gxTrimBrackets();
@@ -77,19 +121,7 @@ var SimpleTranslator = function () {
     return statements.join('');
   }
 
-	this.Translate = function (expression) {
-    _references = [];
-    _hiddenNodes = [];
-    var subExpressions = expression.split(';');
-    for (var i =0; i< subExpressions.length; i++){
-      if (subExpressions[i].trim().length > 0)
-        processExpression(subExpressions[i].trim());
-    }
-    
-    for (var i =0; i< _hiddenNodes.length; i++){
-      removeNodeFromStage(_hiddenNodes[i]);
-    }
-	}
+
 
   function processExpression(expression){
     var dataSvc = new DataService();
@@ -150,7 +182,7 @@ var SimpleTranslator = function () {
 					    currentNode.id,
 					    nextNode.id,
 					    (relation === null) ? [] : relation.labels,
-					    (relation === null) ? {} : relation.properties
+					    (relation === null) ? {} : properties = interpolateProperties(relation.properties)
 				    );
           });
         });
@@ -162,9 +194,30 @@ var SimpleTranslator = function () {
   
   function hideNode(nodeId){
     _hiddenNodes.push(nodeId);
-    //removeNodeFromStage(nodeId);
   }
 
+  function interpolate(string){
+    debugger;
+    if (typeof string === 'string'){
+      //var reg = new RegExp('^\\' + _i + '\d+$', ["g"])
+      var reg = new RegExp(/^\$\d+$/g);
+      if (string.match(reg)){
+        if (_interpolationDictionary[string] != undefined){
+          return _interpolationDictionary[string]
+        }
+      }
+    }
+    return string;
+  }
+  
+  function interpolateProperties(properties){
+    if (properties != undefined){
+      for (var propName in properties){
+        properties[propName] = interpolate(properties[propName]);
+      }
+    }
+    return properties;
+  }
   
 
   function createEntityAddToGraphReturnNodes(labels, properties){
@@ -182,13 +235,14 @@ var SimpleTranslator = function () {
     
     validateLabelName(label);
 
-    var newNode = dataSvc.CreateEntity_AddToGraph_ReturnNode([label], properties)
+    var newNode = dataSvc.CreateEntity_AddToGraph_ReturnNode([label], interpolateProperties(properties))
     
     if (isDeclaringReference(label, id))
       addToReferences(id, newNode);
 
     return [newNode];
   }
+
   function returnReferenceNodes(id){
     for (var i = 0; i < _references.length ; i++)
       if (_references[i].id == id)
