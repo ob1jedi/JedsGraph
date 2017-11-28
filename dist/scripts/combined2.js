@@ -573,7 +573,7 @@ function VueMenuHelper(){
   }
 
   this.ArrangeNodes = function(_orientation){
-    new SimpleArranger().Arrange(_orientation);
+    new SimpleArranger(_orientation).Arrange();
     this.CenterGraph();
   }
   this.UnpinAll = function(){

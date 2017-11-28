@@ -145,7 +145,7 @@ var mappings = new Mappings();
 function Mappings(){
   
   this.Translators = [];
-
+  this.Arrangers = [];
 }
 String.prototype.gxTrimQuotes = function(){
     var str = this;
@@ -1529,12 +1529,13 @@ var DataStringHelper = function () {
 }
 //======================================================================================================================================
 
-function SimpleArranger(){
+function SimpleArranger(orientation){
+  var _orientation = orientation||"top-to-bottom";
   var _totalRows = -1;
   var _totalCols = -1;
   var _matrix = {};
 
-  this.Arrange = function(orientation){
+  this.Arrange = function(){
     var rootNodes = getRootNodes();
     var nodeGrid = {};
     nodeGrid = createAndInitializeNodeGridDictionary(rootNodes);
@@ -1546,7 +1547,7 @@ function SimpleArranger(){
       circularDependants = findAnyLeftOutCircularDependants(nodeGrid);
     }
 
-    drawNodes(nodeGrid, orientation);
+    drawNodes(nodeGrid, _orientation);
   }
 
   function getRootNodes(){
@@ -1632,26 +1633,39 @@ function SimpleArranger(){
       switch (orientation || "top-to-bottom")
       {
         case "left-to-right":
-          globals.layout.setNodePosition(n.id, gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
+          setNodePosition_Animated(n, gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
           break;
         case "right-to-left":
-          globals.layout.setNodePosition(n.id, -gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
+          setNodePosition_Animated(n, -gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
           break;
         case "top-to-bottom":
-          globals.layout.setNodePosition(n.id, gridDict[n.id].row * graphDistanceFactor, gridDict[n.id].col * graphDistanceFactor);
+          setNodePosition_Animated(n, gridDict[n.id].row * graphDistanceFactor, gridDict[n.id].col * graphDistanceFactor);
           break;
         case "bottom-to-top":
-          globals.layout.setNodePosition(n.id, gridDict[n.id].row * graphDistanceFactor, -gridDict[n.id].col * graphDistanceFactor + centerOffset);
+          setNodePosition_Animated(n, gridDict[n.id].row * graphDistanceFactor, -gridDict[n.id].col * graphDistanceFactor + centerOffset);
           break;
       }
     });
   }
 
+  function setNodePosition_Animated(node, xPos, yPos){
+    globals.layout.setNodePosition(node.id, xPos, yPos);
+    //globals.animator.NodePositionAnimation(node, {"x":xPos,"y":yPos});
+  }
+
 }
+
+mappings.Arrangers.push({name:"Tree", arranger: new SimpleArranger("bottom-to-top")});
+mappings.Arrangers.push({name:"Roots", arranger: new SimpleArranger("top-to-bottom")});
+mappings.Arrangers.push({name:"List", arranger: new SimpleArranger("left-to-right")});
+
 
 var SimpleTranslator = function () {
   var _references = [];
   var _hiddenNodes = [];
+  var _interpolationDictionary = [];
+  var _interpolationCounter = 0;
+
   // Reference character
   var _r = '#'; 
   // Appender character
@@ -1660,6 +1674,8 @@ var SimpleTranslator = function () {
   var _c = '&';
   // Hide-node character
   var _h = '*';
+  // Interpolation character
+  var _i = '$'; // ... there is a regex with the $ sign in it, be sure to replace that if you change this.
 
 	this.Name = "Simply Graphex";
 	this.Examples = [
@@ -1667,17 +1683,20 @@ var SimpleTranslator = function () {
 						"Sam->John"+_a+"->Bob",
 						"-->Product->3",
 						"Diana-MotherOf->William&Harry",
-						"Fe(name: Iron)",
+						"Fe(name: Iron)->S(name: Sulpher)",
 						"C(name: Carbon, weight: 12.011)",
 						"Oxygen->Hydrogen(1) & Hydrogen(2)",
+            'Graph1(quoted:"n->n")->Graph2(special_chars:"-=)(*&^%$#@!~>:)")',
             "Mother"+_r+"M->Father"+_r+"F; "+_r+"F->"+_r+"M; "+_r+"M->Son; "+_r+"F->Son; Son->Grandson",
             "Sun"+_r+"S->Earth"+_r+"E; "+_r+"S->Mars"+_r+"M; "+_r+"E->Moon; "+_r+"M->Phobos;"
 	];
 	this.ReferenceContent = ''
+            +'Syntax characters: <span class ="inputModal code">->():#^&*$</span>:'
+            +'<hr>'
 						+'Type any word to create a node, eg. <span class ="inputModal code">John</span>'
 						+'<hr>'
 						+'Create a node with some attributes, eg.'
-						+'	</br><span class ="inputModal code">John(age: 30, sex: male)</span>'
+						+'	</br><span class ="inputModal code">John(age: 30, gender: male)</span>'
 						+'<hr>'
 						+'Create a relationship between two nodes:'
 						+'	</br><span class ="inputModal code">node1->node2</span>'
@@ -1700,9 +1719,45 @@ var SimpleTranslator = function () {
 						+'<hr>'
             +'Create a temporary node reference using the <span class ="inputModal code">'+ _r+ '</span> character:'
             +'  </br><span class ="inputModal code">star '+_r+'S->planet '+_r+'P; '+_r+'S->sun; '+_r+'P->Earth</span>';
+            +'<hr>'
+            +'Use double quotes for property values that have special characters <span class ="inputModal code">"..."</span>:'
+            +'  </br><span class ="inputModal code">Sentence->Word(chars:"x * y - 34")</span>';
 	
-  this.TranslateGraphToFormula = function()
-  {
+  this.Translate = function (expression) {
+    _references = [];
+    _hiddenNodes = [];
+    expression = normalizeExpression(expression);
+    var subExpressions = expression.split(';');
+    for (var i =0; i< subExpressions.length; i++){
+      if (subExpressions[i].trim().length > 0)
+        processExpression(subExpressions[i].trim());
+    }
+    
+    for (var i =0; i< _hiddenNodes.length; i++){
+      removeNodeFromStage(_hiddenNodes[i]);
+    }
+	}
+
+  function normalizeExpression(expression){
+    return createDictionaryAndNormalizeSubStructures(expression);
+  }
+
+  function createDictionaryAndNormalizeSubStructures(expression){
+    var dictIndex = 0;
+    var encapsulationRegex = new RegExp(/("(?:"??[^"]*?"))/g);
+    var encapsulated = expression.match(encapsulationRegex);
+    while (encapsulated){
+      encapsulated.forEach(function(captured){
+        var dictVal = _i + (++_interpolationCounter);
+        _interpolationDictionary[dictVal] = captured.slice(1,-1);
+        expression = expression.replace(captured, dictVal);
+      });
+      encapsulated = expression.match(encapsulationRegex);
+    }
+    return expression;
+  }
+
+  this.TranslateGraphToFormula = function(){
     var statements = [];
     globals.nodeList.forEach(function(node){
       var props = JSON.stringify(node.data.propertiesObject).gxTrimBrackets();
@@ -1727,19 +1782,7 @@ var SimpleTranslator = function () {
     return statements.join('');
   }
 
-	this.Translate = function (expression) {
-    _references = [];
-    _hiddenNodes = [];
-    var subExpressions = expression.split(';');
-    for (var i =0; i< subExpressions.length; i++){
-      if (subExpressions[i].trim().length > 0)
-        processExpression(subExpressions[i].trim());
-    }
-    
-    for (var i =0; i< _hiddenNodes.length; i++){
-      removeNodeFromStage(_hiddenNodes[i]);
-    }
-	}
+
 
   function processExpression(expression){
     var dataSvc = new DataService();
@@ -1800,7 +1843,7 @@ var SimpleTranslator = function () {
 					    currentNode.id,
 					    nextNode.id,
 					    (relation === null) ? [] : relation.labels,
-					    (relation === null) ? {} : relation.properties
+					    (relation === null) ? {} : properties = interpolateProperties(relation.properties)
 				    );
           });
         });
@@ -1812,9 +1855,30 @@ var SimpleTranslator = function () {
   
   function hideNode(nodeId){
     _hiddenNodes.push(nodeId);
-    //removeNodeFromStage(nodeId);
   }
 
+  function interpolate(string){
+
+    if (typeof string === 'string'){
+      //var reg = new RegExp('^\\' + _i + '\d+$', ["g"])
+      var reg = new RegExp(/^\$\d+$/g);
+      if (string.match(reg)){
+        if (_interpolationDictionary[string] != undefined){
+          return _interpolationDictionary[string]
+        }
+      }
+    }
+    return string;
+  }
+  
+  function interpolateProperties(properties){
+    if (properties != undefined){
+      for (var propName in properties){
+        properties[propName] = interpolate(properties[propName]);
+      }
+    }
+    return properties;
+  }
   
 
   function createEntityAddToGraphReturnNodes(labels, properties){
@@ -1832,13 +1896,14 @@ var SimpleTranslator = function () {
     
     validateLabelName(label);
 
-    var newNode = dataSvc.CreateEntity_AddToGraph_ReturnNode([label], properties)
+    var newNode = dataSvc.CreateEntity_AddToGraph_ReturnNode([label], interpolateProperties(properties))
     
     if (isDeclaringReference(label, id))
       addToReferences(id, newNode);
 
     return [newNode];
   }
+
   function returnReferenceNodes(id){
     for (var i = 0; i < _references.length ; i++)
       if (_references[i].id == id)
@@ -2623,9 +2688,8 @@ function ParseTreeTranslator() {
 
   function getExpressionFromDictionary(expKey)
   {
-    for (var key in _dictionery)
-      if (key == expKey)
-        return _dictionery[key];
+    if (_dictionery[expKey] != undefined)
+      return _dictionery[expKey];
     return expKey;
   }
 
@@ -4687,42 +4751,7 @@ function addSubNode(parentNode, id, color, displayLabel)
 
 }
 		
-		
-function addSatelliteToNode(node)
-{
-	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
-	var rippleCircle = Viva.Graph.svg('circle')
-				.attr('cx', 0)
-				.attr('cy', 0)
-				.attr('r', nodeRadius)
-				.attr('fill','transparent')//node.data.nodeColor)//'#4dffc3')
-				.attr('stroke','red')
-				.attr('stroke-width','5')
-				.attr('stroke-opacity','0.7')
-		var circletiny = Viva.Graph.svg('circle')
-				.attr('cx', nodeRadius)
-				.attr('cy', nodeRadius)
-				.attr('r', 5)
-				.attr('fill','red')//node.data.nodeColor)//'#4dffc3')
-				.attr('stroke','red')
-				.attr('opacity',0.5)
-				.attr('stroke-width',0)
-		var endArrow =  Viva.Graph.svg('path')
-					.attr('stroke-width',0)
-					.attr('d', 'M 0 -0.7 L 2 0 L 0 0.7 z')
-					.attr('fill',node.data.nodeColor);
-							
-		var gSattelite = Viva.Graph.svg('g')
-		gSattelite.append(circletiny);
-		gSattelite.attr('dx',100);
-		gSattelite.attr('dy',100);
-		globals.timeoutElements.push(new timeoutElementType(rippleCircle, 5, removeAnimatedElement));
-		globals.timeoutElements.push(new timeoutElementType(gSattelite, 60, removeAnimatedElement));
-		node.data.UI.fullUI.insertBefore(rippleCircle, node.data.UI.bodyUI);
-		node.data.UI.fullUI.insertBefore(gSattelite, node.data.UI.bodyUI);
-		gSattelite.attr('class','rotatee');
-		rippleCircle.attr('class','droplet');
-}
+
 		
 var ConsoleService = function () {
 
@@ -4982,6 +5011,17 @@ function UrlHelper(){
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
+
+  //this.GetParameterByName = function(name, url) {
+      
+  //    if (!url) url = window.location.href;
+  //    name = name.replace(/[\[\]]/g, "\\$&");
+  //    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+  //        results = regex.exec(url);
+  //    if (!results) return null;
+  //    if (!results[2]) return '';
+  //    return results[2];
+  //  }
 
     this.GetAllParams = function(url) {
       var match,
@@ -5707,6 +5747,119 @@ function Neo4jQbuilder(selectType, _sourceConfig) {
 
 		}
 		
+		
+function addSatelliteToNode(node)
+{
+	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
+	var rippleCircle = Viva.Graph.svg('circle')
+				.attr('cx', 0)
+				.attr('cy', 0)
+				.attr('r', nodeRadius)
+				.attr('fill','transparent')//node.data.nodeColor)//'#4dffc3')
+				.attr('stroke','red')
+				.attr('stroke-width','5')
+				.attr('stroke-opacity','0.7')
+		var circletiny = Viva.Graph.svg('circle')
+				.attr('cx', nodeRadius)
+				.attr('cy', nodeRadius)
+				.attr('r', 5)
+				.attr('fill','red')//node.data.nodeColor)//'#4dffc3')
+				.attr('stroke','red')
+				.attr('opacity',0.5)
+				.attr('stroke-width',0)
+		var endArrow =  Viva.Graph.svg('path')
+					.attr('stroke-width',0)
+					.attr('d', 'M 0 -0.7 L 2 0 L 0 0.7 z')
+					.attr('fill',node.data.nodeColor);
+							
+		var gSattelite = Viva.Graph.svg('g')
+		gSattelite.append(circletiny);
+		gSattelite.attr('dx',100);
+		gSattelite.attr('dy',100);
+		globals.timeoutElements.push(new timeoutElementType(rippleCircle, 5, removeAnimatedElement));
+		globals.timeoutElements.push(new timeoutElementType(gSattelite, 60, removeAnimatedElement));
+		node.data.UI.fullUI.insertBefore(rippleCircle, node.data.UI.bodyUI);
+		node.data.UI.fullUI.insertBefore(gSattelite, node.data.UI.bodyUI);
+		gSattelite.attr('class','rotatee');
+		rippleCircle.attr('class','droplet');
+}
+
+
+function AnimationHelper(){
+
+  this.StartAnimationTicker = function(){
+    animationTick();
+  }
+
+  function animationTick(){
+    setTimeout(function(){ 
+          stepAllAnimations()
+				  animationTick(); 
+			  }, 10);
+  }
+
+  function stepAllAnimations(){
+    var i = -1;
+    var overflow = 1000;
+    while (++i < globals.animations.length && i < overflow){
+      var anim = globals.animations[i];
+      if (anim.complete)
+        globals.animations.splice(i,1);
+      else
+        anim.onNextStep(anim);
+    }
+  }
+
+  function AnimatedObject(){
+    this.currentStepIndex = 0;
+    this.complete = false;
+    this.remainingSteps = 70;
+    this.data = {};
+    this.beforeStart = function(){}
+    this.onNextStep = function(){}
+  }
+
+  this.NodePositionAnimation = function(node, requestedPos){
+    var anim = new AnimatedObject();
+    var currentPos = globals.layout.getNodePosition(node.id);
+    anim.data = {"node": node, "currentPos": currentPos, "requestedPos": requestedPos};
+    anim.stepX = Math.abs(requestedPos.x - currentPos.x) / anim.remainingSteps * (currentPos.x<=requestedPos.x?1:-1);
+    anim.stepY = Math.abs(requestedPos.y - currentPos.y) / anim.remainingSteps * (currentPos.y<=requestedPos.y?1:-1);
+    anim.onNextStep = function(){
+      var node = this.data.node;
+      var currentPos = this.data.currentPos;
+      var reqPos = this.data.requestedPos;
+      var remainingSteps = this.remainingSteps--;
+      var nextX = currentPos.x + this.stepX
+      var nextY = currentPos.y + this.stepY
+      this.data.currentPos.x = nextX;
+      this.data.currentPos.y = nextY;
+    
+      if (typeof (nextX) !== 'number' || typeof (nextY) !== 'number') debugger;
+      globals.layout.setNodePosition(node.id, nextX, nextY);
+      if (this.remainingSteps <= 0) this.complete = true;
+    }
+    globals.animations.push(anim);
+  }
+
+
+  this.AddNodeRipple = function(node){
+  	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
+	  var rippleCircle = Viva.Graph.svg('circle')
+				.attr('cx', 0)
+				.attr('cy', 0)
+				.attr('r', nodeRadius)
+				.attr('fill','transparent')//node.data.nodeColor)//'#4dffc3')
+				.attr('stroke','red')
+				.attr('stroke-width','5')
+				.attr('stroke-opacity','0.7')
+		globals.timeoutElements.push(new timeoutElementType(rippleCircle, 5, removeAnimatedElement));		
+		node.data.UI.fullUI.insertBefore(rippleCircle, node.data.UI.bodyUI);
+		rippleCircle.attr('class','droplet');
+}
+
+
+}
 	
 //============ DATA MONITORING ================================================================================================================================================================================================  
 
@@ -6234,6 +6387,7 @@ function dataNode_OnMouseEnter(node, x, y) {
 }
 
 function dataNode_OnMouseDown(node,x, y) {
+  
 	var graphHelper = new GraphHelper();
   graphHelper.SelectNode(node);
 
@@ -6250,8 +6404,10 @@ function dataNode_OnMouseUp(node, x, y) {
 }
 
 function dataNode_OnMouseDblClick(node, x, y) {
+  //nodePositionAnimation(node, {x:0,y:0});
 	globals.dataService.FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
   new EntityEventsHelper().NodeDblClick(node);
+  //globals.animator.AddNodeRipple(node);
 }
 
 function dataNode_OnMouseLeave(node, x, y) {
@@ -7022,8 +7178,8 @@ function Globals(){
 		this.nodeList = []; //list of "node" objects
     
     this.entityTypeDefs = []; 
+    this.animations = [];
     
-
 		this.monitoredNodes = [];//list of "node" objects
 		this.toolPanels = [];
 		this.monitoredLinks = []; //list of "link" objects
@@ -7046,6 +7202,7 @@ function Globals(){
 		this.processUniqueId = 0; //... must be incremented every time its used
 		this.nodeFunctions = {}; //... This object instance will become an instance of the factory class "NodeFunctions", and get developer custom functions added to it.
 
+    this.animator = new AnimationHelper();
 		this.consoleService = new ConsoleService();
 
 		//......Filter settings.............
@@ -9171,8 +9328,11 @@ function graphexMain() {
 
 		// Start monitoring timeout elements
 		checkTimeoutElements() 
-
+    // Start animation cycle...
+    globals.animator.StartAnimationTicker();
+    // Run unit tests...
     runUnitTests();
+    // Check params for Graphs
     processParameters();
 	}
 
@@ -9201,15 +9361,30 @@ function graphexMain() {
 
       if (param.key == "grenc"){
         var translator = stringHelper.ParamDecodeString(urlHelper.GetParameterByName("trans"));
+        var arranger = urlHelper.GetParameterByName("arrange");
         var decodedData = stringHelper.ParamDecodeString(param.value);
-        //var base64Str = new StringHelper().ReplaceEachOfCharSet(param.value, '._-','+/=');
-        //var decodedData = atob(base64Str);
-        mappings.Translators.forEach(function(transMapping){if (transMapping.name == translator){
-          console.log('translator', transMapping);
-          var trans = transMapping.translator;
-          trans.Translate(decodedData);
-        }});
+        executeTranslator(translator, decodedData);
+        //executeArranger(arranger);
+      }
+    });
+  }
 
+  function executeTranslator(translator, data){
+    if (!translator || !data) return;
+    mappings.Translators.forEach(function(transMapping){if (transMapping.name == translator){
+      var trans = transMapping.translator;
+      trans.Translate(data);
+    }});
+  }
+
+  function executeArranger(arranger){
+    if (!arranger) return;
+    //debugger;
+    mappings.Arrangers.forEach(function(arrangerMapping){
+      //debugger;
+      if (arrangerMapping.name == arranger){
+        var arranger = transMapping.arranger;
+        arranger.Arrange(arranger);
       }
     });
   }
