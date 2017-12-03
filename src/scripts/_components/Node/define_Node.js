@@ -7,9 +7,6 @@ function define_Node() {
 		nodeOuterLayer = Viva.Graph.svg('g');
 		nodeLayer = Viva.Graph.svg('g');
 
-		if (isShadowEffectTurnedOnInConfig(node.data.sourceConfig)) {
-			addShadowTo(nodeLayer);
-		}
 		if (node.data.nodeType == 'data') {
 			defineNodeAppearance_dataNode(node, nodeLayer);
 		}
@@ -28,15 +25,6 @@ function define_Node() {
 		return nodeOuterLayer;
 	});
 
-	function isShadowEffectTurnedOnInConfig(config) {
-		//console.log('Shadow:', config.displaySettings.shadow);
-		return config.displaySettings.shadow;
-	}
-
-	function addShadowTo(nodeLayer) {
-		nodeLayer.attr('filter', 'url(#shadowEffect)');
-	}
-
 	function attachMetaData(node, ui) {
 		ui.attr('depth', 5);
 		ui.attr('class', 'node');
@@ -49,14 +37,6 @@ function define_Node() {
 	function attachMouseEventsToNode(node, ui) {
 		//NODE EVENTS
 		// events (http://www.w3.org/TR/SVG/interact.html#SVGEvents ),
-		// including mouse events:
-
-		//$(ui).tap(function (event) { // MOUSE CLICK
-		//	node_Event("tap", node, event.pageX, event.pageY);
-		//}),
-		//$(ui).taphold(function (event) { // MOUSE CLICK
-		//	node_Event("taphold", node, event.pageX, event.pageY);
-		//}),
 
 		$(ui).touchstart(function (event) { // MOUSE CLICK
 			node_Event("touchstart", node, event.originalEvent.touches[0].pageX, event.originalEvent.touches[0].pageY);
