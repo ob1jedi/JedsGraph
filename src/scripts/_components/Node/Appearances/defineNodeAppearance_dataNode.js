@@ -21,6 +21,8 @@
       nodeBody.attr('x',-((Number(_cnf.attributes["width"]))/2));
       nodeBody.attr('y',-((Number(_cnf.attributes["height"]))/2));
     }
+    if(_cnf.effects["shadow"]==true)
+      nodeBody.attr('filter','url(#shadowEffect)'); //haze
     if(_cnf.effects["haze"]==true)
       nodeBody.attr('filter','url(#hazeEffect)'); //haze
     if(_cnf.effects["glass"]==true)
@@ -184,9 +186,9 @@
     effectsUi+='</defs>';
     ui.innerHTML=effectsUi;
 
-    for(var i=0;i<nodeEffects.length;i++) {
-      ui.attr('filter','url(#'+nodeEffects[i].name+')');
-    }
+    //for(var i=0;i<nodeEffects.length;i++) {
+    //  ui.attr('filter','url(#'+nodeEffects[i].name+')');
+    //}
   }
 }
 
