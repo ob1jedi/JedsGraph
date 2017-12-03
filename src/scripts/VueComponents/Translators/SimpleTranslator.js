@@ -197,9 +197,7 @@ var SimpleTranslator = function () {
   }
 
   function interpolate(string){
-    debugger;
     if (typeof string === 'string'){
-      //var reg = new RegExp('^\\' + _i + '\d+$', ["g"])
       var reg = new RegExp(/^\$\d+$/g);
       if (string.match(reg)){
         if (_interpolationDictionary[string] != undefined){

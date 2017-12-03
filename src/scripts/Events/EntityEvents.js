@@ -1,10 +1,8 @@
 ﻿function EntityEventsHelper(){
 
   var eventBehaviourMapping = [
-    
-    //{ name: 'AutoImage', event: AddEntityToGraph_afterNodeAdd, func: new NodeBehavioursApi().AutoImageToNode },
     { name: 'AutoImage',            event: addEntityToGraph_beforeNodeAdd,   func: new NodeBehavioursApi().AutoImageToConfig },
-    { name: 'SubnodesForLinks',     event: AddEntityToGraph_afterNodeAdd,    func: new NodeBehavioursApi().CreateSubNodesFromLinks },
+    { name: 'SubnodesForLinks',     event: addEntityToGraph_afterNodeAdd,    func: new NodeBehavioursApi().CreateSubNodesFromLinks },
     { name: 'FetchLinkOnDblClick',  event: nodeDoubleClick,           func: new NodeBehavioursApi().FetchNodeLinks }
   ]
   
@@ -12,7 +10,7 @@
   
   this.AddEntityToGraph_beforeNodeAdd = function(nodeData){addEntityToGraph_beforeNodeAdd(nodeData);}
   
-  this.AddEntityToGraph_afterNodeAdd = function(node){AddEntityToGraph_afterNodeAdd(node)}
+  this.AddEntityToGraph_afterNodeAdd = function(node){addEntityToGraph_afterNodeAdd(node)}
   
   this.NodeDblClick = function(node){nodeDoubleClick(node)}
 
@@ -24,8 +22,8 @@
     executeConfigBehaviors(nodeData, addEntityToGraph_beforeNodeAdd.name, nodeData.id);
   }
   
-  function AddEntityToGraph_afterNodeAdd(node){
-    executeConfigBehaviors(node, AddEntityToGraph_afterNodeAdd.name, node.id);
+  function addEntityToGraph_afterNodeAdd(node){
+    executeConfigBehaviors(node, addEntityToGraph_afterNodeAdd.name, node.id);
   }
 
   function nodeDoubleClick(node){

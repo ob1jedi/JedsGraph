@@ -23,23 +23,19 @@
 	else if (eventType == "SubNodePulledOut")
 		node_Event_subNodePulledOut(node, x, y);
 
-	else if (eventType == "touchstart")
-		node_OnTouchStart(node, x, y);
+	else if (eventType == "touchstart"){
+		node_OnMouseDown(node, x, y)
+  }
 
-	else if (eventType == "tap")
-		node_OnTap(node, x, y);
-
-	else if (eventType == "touchend")
-		node_OnTouchEnd(node, x, y);
-	//else if (eventType == "taphold")
-	//	node_OnTapHold(node, x, y);
-
-	//else if (eventType == "touchmove")
-	//	node_OnTouchMove(node, x, y);
-
-	//else if (eventType == "touchend")
-	//	node_OnTouchEnd(node, x, y);
-
+	else if (eventType == "touchend"){
+    globals.states.hammeringNode = true;
+    globals.states.lastHammeredNodeAt = new Date().getTime();
+    setTimeout(function(){ 
+      if (new Date().getTime() - globals.states.lastHammeredNodeAt > 500) 
+        globals.states.hammeringNode = false; 
+    }, 500);
+		node_OnMouseUp(node, x, y)
+  }
 }
 
 //-----------------------------------------------------------------
@@ -61,6 +57,7 @@ function nodeFlyout_Event_PinClick(nodeId) {
 
 
 function node_OnMouseEnter(node, x, y) {
+  globals.states.overNode = node;
 	if (node.data.nodeType == "data")
 		dataNode_OnMouseEnter(node, x, y);
 	else if (node.data.nodeType == "subnode")
@@ -69,21 +66,9 @@ function node_OnMouseEnter(node, x, y) {
 		plannedNode_OnMouseEnter(node, x, y);
 }
 
-function node_OnTap(node, x, y) {
-	node_OnMouseDown(node, x, y)
-}
-
-function node_OnTouchStart(node, x, y) {
-	node_OnMouseDown(node, x, y)
-}
-
-function node_OnTouchEnd(node, x, y) {
-	node_OnMouseUp(node, x, y)
-}
-
-
 function node_OnMouseDown(node, x, y) {
-	node.data.dragging = 'true';
+	globals.states.holdingNode = node;
+  node.data.dragging = 'true';
 
 	if (node.data.nodeType == "data")
 		dataNode_OnMouseDown(node, x, y);
@@ -103,6 +88,7 @@ function node_OnMouseDblClick(node, x, y) {
 }
 
 function node_OnMouseLeave(node, x, y) {
+  globals.states.overNode = null;
 	if (node.data.nodeType == "data")
 		dataNode_OnMouseLeave(node, x, y);
 	else if (node.data.nodeType == "subnode")
@@ -113,7 +99,8 @@ function node_OnMouseLeave(node, x, y) {
 
 function node_OnMouseUp(node, x, y) {
 	//$node.data.UI.fullUI.attr('dragging', 'false');
-	node.data.dragging = 'false';
+	globals.states.holdingNode = null;
+  node.data.dragging = 'false';
 	//console.log('node state', node);
 
 	if (node.data.nodeType == "data")
@@ -149,8 +136,9 @@ function dataNode_OnMouseEnter(node, x, y) {
 }
 
 function dataNode_OnMouseDown(node,x, y) {
+  
 	var graphHelper = new GraphHelper();
-  graphHelper.SelectNode(node);
+  graphHelper.ConsoleShowNode(node);
 
   highlightSelectedNode(node.id);
 	globals.nodeFunctions = NodeFunctionsFactory.createNew(node);
@@ -165,8 +153,10 @@ function dataNode_OnMouseUp(node, x, y) {
 }
 
 function dataNode_OnMouseDblClick(node, x, y) {
+  //nodePositionAnimation(node, {x:0,y:0});
 	globals.dataService.FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
   new EntityEventsHelper().NodeDblClick(node);
+  //globals.animator.AddNodeRipple(node);
 }
 
 function dataNode_OnMouseLeave(node, x, y) {

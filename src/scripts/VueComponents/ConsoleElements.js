@@ -8,7 +8,6 @@ Vue.component('vw-panel-nodeEditor',{
   template: '#vueTemplate-panel-nodeEditor'
 })
 
-
 Vue.component('vw-panel-nodeEditor-matching',{
   props: ['tabs'],
   template: '#vueTemplate-panel-nodeEditor-matching'
@@ -32,6 +31,10 @@ Vue.component('vw-panel-nodeEditor-behaviours',{
   template: '#vueTemplate-panel-nodeEditor-behaviours'
 })
 
+Vue.component('vw-panel-nodeStamp',{
+  props: ['nodestamp'],
+  template: '#vueTemplate-panel-nodeStamp'
+})
 // ================= TOPBAR ================= 
 
 Vue.component('vw-topbar',{
@@ -68,11 +71,14 @@ Vue.component('vw-left-sidebar',{
 })
 
 Vue.component('vw-right-sidebar',{
-  props: ['tabs', 'panels'],
+  props: ['tabs', 'nodestamp', 'panels'],
   template: '#vueTemplate-right-sidebar'
 })
 
-
+Vue.component('vw-left-toolbar',{
+  props: ['lefttoolbar', 'panels'],
+  template: '#vueTemplate-left-toolbar'
+})
 
 // ================= MODALS ================= 
 
@@ -111,8 +117,6 @@ Vue.component('vw-mode-indicator',{
   template: '#vueTemplate-mode-indicator'
 })
 
-
-
 // ================= FORMULA BOX ================= 
 Vue.component('vw-formula-box',{
   props: ['formulaprop', 'panels'],
@@ -126,10 +130,31 @@ var consoleApp = new Vue({
     new VueConsoleHelper().RegisterWindowsEvents();
   },
   data: {
+    nodeStamp:{
+      activeStamp: -1,
+      stamps:[
+        {labels:'n', properties:{Title:'nx'}, config:{"attributes":{"background-color":"gray", "border-color":"black"}}},
+        {labels:'n', properties:{Title:'nx'}, config:{"attributes":{"background-color":"gray", "border-color":"black"}}}
+      ]
+    },
+    leftToolbar:{
+      toolbar:
+          {
+            checkedItems:[],
+            left:-150,
+            toolbar:
+              {
+                checkedItems:['new-nodes'],
+                left:-150,
+              }
+          }
+    },
     panels:{
       nodeTypeEditor: {show:false},
+      nodeStamp: {show:true},
       nodeTypeSelector: {show:false},
-      formulaBar:{show:true}
+      formulaBar:{show:true},
+      leftToolbar:{show:true}
     },
     modals: {
       commonModal:{
@@ -161,7 +186,7 @@ var consoleApp = new Vue({
       //this.systemData.totalEntityCount++;
       this.systemData.typeSelectors = globals.labelsList;
     },
-    selectNode: function(node){
+    consoleShowNode: function(node){
       this.selectedNode = node;
       var nodeConfig = node.data.entityConfig.config;
       
@@ -218,6 +243,10 @@ var consoleApp = new Vue({
               {
                 caption: "Formula bar", 
                 func: function(){consoleApp.panels.formulaBar.show = !consoleApp.panels.formulaBar.show}
+              },
+              {
+                caption: "Toolbar", 
+                func: function(){consoleApp.panels.leftToolbar.show = !consoleApp.panels.leftToolbar.show}
               },
             ],
           },
@@ -573,7 +602,7 @@ function VueMenuHelper(){
   }
 
   this.ArrangeNodes = function(_orientation){
-    new SimpleArranger().Arrange(_orientation);
+    new SimpleArranger(_orientation).Arrange();
     this.CenterGraph();
   }
   this.UnpinAll = function(){
@@ -650,6 +679,32 @@ function VueMenuHelper(){
 
 }
 
+function VueToolbarHelper(){
+
+  this.executeToolbarAction = function(name, args){
+    switch (name){
+      case 'SelectNavigation':
+        globals.modes.createNodeOnGraphDblClick = false;
+        break
+      case 'SelectCreateNodes':
+        globals.modes.createNodeOnGraphDblClick = true;
+        break;
+      case 'SelectCreateFreeNodes':
+        globals.modes.selectNodeAfterCreate = false;
+        globals.modes.createLinkFromSelectedNodeOnCreateNode = false;
+        break;
+      case 'SelectCreateChainedNodes':
+        globals.modes.selectNodeAfterCreate = true;
+        globals.modes.createLinkFromSelectedNodeOnCreateNode = true;
+        break;
+      case 'SelectCreateChildNodes':
+        globals.modes.selectNodeAfterCreate = false;
+        globals.modes.createLinkFromSelectedNodeOnCreateNode = true;
+        break;
+        
+    }
+  }
+}
 
 function VueConsoleHelper(){
 

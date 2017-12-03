@@ -131,3 +131,116 @@
 
 		}
 		
+		
+function addSatelliteToNode(node)
+{
+	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
+	var rippleCircle = Viva.Graph.svg('circle')
+				.attr('cx', 0)
+				.attr('cy', 0)
+				.attr('r', nodeRadius)
+				.attr('fill','transparent')//node.data.nodeColor)//'#4dffc3')
+				.attr('stroke','red')
+				.attr('stroke-width','5')
+				.attr('stroke-opacity','0.7')
+		var circletiny = Viva.Graph.svg('circle')
+				.attr('cx', nodeRadius)
+				.attr('cy', nodeRadius)
+				.attr('r', 5)
+				.attr('fill','red')//node.data.nodeColor)//'#4dffc3')
+				.attr('stroke','red')
+				.attr('opacity',0.5)
+				.attr('stroke-width',0)
+		var endArrow =  Viva.Graph.svg('path')
+					.attr('stroke-width',0)
+					.attr('d', 'M 0 -0.7 L 2 0 L 0 0.7 z')
+					.attr('fill',node.data.nodeColor);
+							
+		var gSattelite = Viva.Graph.svg('g')
+		gSattelite.append(circletiny);
+		gSattelite.attr('dx',100);
+		gSattelite.attr('dy',100);
+		globals.timeoutElements.push(new timeoutElementType(rippleCircle, 5, removeAnimatedElement));
+		globals.timeoutElements.push(new timeoutElementType(gSattelite, 60, removeAnimatedElement));
+		node.data.UI.fullUI.insertBefore(rippleCircle, node.data.UI.bodyUI);
+		node.data.UI.fullUI.insertBefore(gSattelite, node.data.UI.bodyUI);
+		gSattelite.attr('class','rotatee');
+		rippleCircle.attr('class','droplet');
+}
+
+
+function AnimationHelper(){
+
+  this.StartAnimationTicker = function(){
+    animationTick();
+  }
+
+  function animationTick(){
+    setTimeout(function(){ 
+          stepAllAnimations()
+				  animationTick(); 
+			  }, 10);
+  }
+
+  function stepAllAnimations(){
+    var i = -1;
+    var overflow = 1000;
+    while (++i < globals.animations.length && i < overflow){
+      var anim = globals.animations[i];
+      if (anim.complete)
+        globals.animations.splice(i,1);
+      else
+        anim.onNextStep(anim);
+    }
+  }
+
+  function AnimatedObject(){
+    this.currentStepIndex = 0;
+    this.complete = false;
+    this.remainingSteps = 70;
+    this.data = {};
+    this.beforeStart = function(){}
+    this.onNextStep = function(){}
+  }
+
+  this.NodePositionAnimation = function(node, requestedPos){
+    var anim = new AnimatedObject();
+    var currentPos = globals.layout.getNodePosition(node.id);
+    anim.data = {"node": node, "currentPos": currentPos, "requestedPos": requestedPos};
+    anim.stepX = Math.abs(requestedPos.x - currentPos.x) / anim.remainingSteps * (currentPos.x<=requestedPos.x?1:-1);
+    anim.stepY = Math.abs(requestedPos.y - currentPos.y) / anim.remainingSteps * (currentPos.y<=requestedPos.y?1:-1);
+    anim.onNextStep = function(){
+      var node = this.data.node;
+      var currentPos = this.data.currentPos;
+      var reqPos = this.data.requestedPos;
+      var remainingSteps = this.remainingSteps--;
+      var nextX = currentPos.x + this.stepX
+      var nextY = currentPos.y + this.stepY
+      this.data.currentPos.x = nextX;
+      this.data.currentPos.y = nextY;
+    
+      if (typeof (nextX) !== 'number' || typeof (nextY) !== 'number') debugger;
+      globals.layout.setNodePosition(node.id, nextX, nextY);
+      if (this.remainingSteps <= 0) this.complete = true;
+    }
+    globals.animations.push(anim);
+  }
+
+
+  this.AddNodeRipple = function(node){
+  	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
+	  var rippleCircle = Viva.Graph.svg('circle')
+				.attr('cx', 0)
+				.attr('cy', 0)
+				.attr('r', nodeRadius)
+				.attr('fill','transparent')//node.data.nodeColor)//'#4dffc3')
+				.attr('stroke','red')
+				.attr('stroke-width','5')
+				.attr('stroke-opacity','0.7')
+		globals.timeoutElements.push(new timeoutElementType(rippleCircle, 5, removeAnimatedElement));		
+		node.data.UI.fullUI.insertBefore(rippleCircle, node.data.UI.bodyUI);
+		rippleCircle.attr('class','droplet');
+}
+
+
+}

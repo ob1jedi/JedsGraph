@@ -12,8 +12,8 @@ function Globals(){
 		this.nodeList = []; //list of "node" objects
     
     this.entityTypeDefs = []; 
+    this.animations = [];
     
-
 		this.monitoredNodes = [];//list of "node" objects
 		this.toolPanels = [];
 		this.monitoredLinks = []; //list of "link" objects
@@ -36,12 +36,24 @@ function Globals(){
 		this.processUniqueId = 0; //... must be incremented every time its used
 		this.nodeFunctions = {}; //... This object instance will become an instance of the factory class "NodeFunctions", and get developer custom functions added to it.
 
+    this.animator = new AnimationHelper();
 		this.consoleService = new ConsoleService();
+
+    // States ...
+    this.states = {};
+    this.states.overNode = null; // ...nodeType; (mouse is over a node);
+    this.states.holdingNode = null; // ...nodeType; (user is dragging or holding a node)
+    this.states.hammeringNode = false; // ...Bool; (last tap/click within 1 second, was on a node)
+    this.states.lastHammeredNodeAt = null; // ...Number; (the last Time that the node was clicked)
+    // Modes ...
+    this.modes = {};
+    this.modes.createNodeOnGraphDblClick = false;
+    this.modes.selectNodeAfterCreate = false;
+    this.modes.createLinkFromSelectedNodeOnCreateNode = false;
 
 		//......Filter settings.............
 		this.viewOptions = new viewOptionsType();
 		this.interactionOptions = new interactionOptionsType();
-
 
 		//......Display settings............
 		this.currentTheme = new themeType();

@@ -11,7 +11,8 @@ function graphexMain() {
 		configHelper.runStartupProcedures();
 		setupCommonUI();
 		prepareGraph();
-		defineNodes();
+		define_Graph();
+    define_Node();
 		defineNodeDrawing();
 		if (globals.browser.name != "Firefox" && globals.browser.name != "IE"){
       defineLinkObjectsCommonAssets();
@@ -23,8 +24,11 @@ function graphexMain() {
 
 		// Start monitoring timeout elements
 		checkTimeoutElements() 
-
+    // Start animation cycle...
+    globals.animator.StartAnimationTicker();
+    // Run unit tests...
     runUnitTests();
+    // Check params for Graphs
     processParameters();
 	}
 
@@ -53,15 +57,30 @@ function graphexMain() {
 
       if (param.key == "grenc"){
         var translator = stringHelper.ParamDecodeString(urlHelper.GetParameterByName("trans"));
+        var arranger = urlHelper.GetParameterByName("arrange");
         var decodedData = stringHelper.ParamDecodeString(param.value);
-        //var base64Str = new StringHelper().ReplaceEachOfCharSet(param.value, '._-','+/=');
-        //var decodedData = atob(base64Str);
-        mappings.Translators.forEach(function(transMapping){if (transMapping.name == translator){
-          console.log('translator', transMapping);
-          var trans = transMapping.translator;
-          trans.Translate(decodedData);
-        }});
+        executeTranslator(translator, decodedData);
+        //executeArranger(arranger);
+      }
+    });
+  }
 
+  function executeTranslator(translator, data){
+    if (!translator || !data) return;
+    mappings.Translators.forEach(function(transMapping){if (transMapping.name == translator){
+      var trans = transMapping.translator;
+      trans.Translate(data);
+    }});
+  }
+
+  function executeArranger(arranger){
+    if (!arranger) return;
+    //debugger;
+    mappings.Arrangers.forEach(function(arrangerMapping){
+      //debugger;
+      if (arrangerMapping.name == arranger){
+        var arranger = transMapping.arranger;
+        arranger.Arrange(arranger);
       }
     });
   }

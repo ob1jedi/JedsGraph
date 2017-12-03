@@ -1,9 +1,10 @@
-﻿function SimpleArranger(){
+﻿function SimpleArranger(orientation){
+  var _orientation = orientation||"top-to-bottom";
   var _totalRows = -1;
   var _totalCols = -1;
   var _matrix = {};
 
-  this.Arrange = function(orientation){
+  this.Arrange = function(){
     var rootNodes = getRootNodes();
     var nodeGrid = {};
     nodeGrid = createAndInitializeNodeGridDictionary(rootNodes);
@@ -15,7 +16,7 @@
       circularDependants = findAnyLeftOutCircularDependants(nodeGrid);
     }
 
-    drawNodes(nodeGrid, orientation);
+    drawNodes(nodeGrid, _orientation);
   }
 
   function getRootNodes(){
@@ -101,19 +102,28 @@
       switch (orientation || "top-to-bottom")
       {
         case "left-to-right":
-          globals.layout.setNodePosition(n.id, gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
+          setNodePosition_Animated(n, gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
           break;
         case "right-to-left":
-          globals.layout.setNodePosition(n.id, -gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
+          setNodePosition_Animated(n, -gridDict[n.id].col * graphDistanceFactor, gridDict[n.id].row * graphDistanceFactor);
           break;
         case "top-to-bottom":
-          globals.layout.setNodePosition(n.id, gridDict[n.id].row * graphDistanceFactor, gridDict[n.id].col * graphDistanceFactor);
+          setNodePosition_Animated(n, gridDict[n.id].row * graphDistanceFactor, gridDict[n.id].col * graphDistanceFactor);
           break;
         case "bottom-to-top":
-          globals.layout.setNodePosition(n.id, gridDict[n.id].row * graphDistanceFactor, -gridDict[n.id].col * graphDistanceFactor + centerOffset);
+          setNodePosition_Animated(n, gridDict[n.id].row * graphDistanceFactor, -gridDict[n.id].col * graphDistanceFactor + centerOffset);
           break;
       }
     });
   }
 
+  function setNodePosition_Animated(node, xPos, yPos){
+    globals.layout.setNodePosition(node.id, xPos, yPos);
+    //globals.animator.NodePositionAnimation(node, {"x":xPos,"y":yPos});
+  }
+
 }
+
+mappings.Arrangers.push({name:"Tree", arranger: new SimpleArranger("bottom-to-top")});
+mappings.Arrangers.push({name:"Roots", arranger: new SimpleArranger("top-to-bottom")});
+mappings.Arrangers.push({name:"List", arranger: new SimpleArranger("left-to-right")});

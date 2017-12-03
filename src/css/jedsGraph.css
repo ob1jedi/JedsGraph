@@ -540,17 +540,16 @@ div.tabcontent {
 #rightSidebar {
 	background-color: #1a1a1a;
 	top: 50px;
+	float:right;
 	width: 200px;
-	margin: 0px;
 	padding: 0px;
 	border-width: 0px;
 	overflow: auto;
 	max-height: 92%;
-	position: fixed;
+	position: relative;
     border: solid;
     border-color: #0d0d0d;
     border-width: 2px;
-	right: 0px;
 }
 
 #modeIndicator {
@@ -577,6 +576,7 @@ div.tabcontent {
 	margin: 0px,0px,0px,0px;
 	padding: 0px,0px,0px,0px;
 }
+
 
 .modeIndicatorLabel {
 	font-size: 10px;
@@ -1072,6 +1072,30 @@ hr {
 	animation: slide-out 0.5s forwards;
 	-webkit-animation: slide-out 0.5s forwards;
 }
+
+.nodeStamp{
+	margin: 10px;
+	height: 80px;
+	background-color:transparent;	
+	border-width:0px;
+	border-color:salmon;
+	border-radius:2px;
+	transition: background-color 0.3s;
+}
+.nodeStamp.active {
+	border-width:2px;
+}
+.nodeStamp:hover{
+	background-color:#252525;	
+	transition: background-color 0.3s;
+}
+
+
+.nodeStamp svg{
+	height: 60px;
+	width: 140px;
+}
+
 
 @keyframes slide-in {
 	0% {

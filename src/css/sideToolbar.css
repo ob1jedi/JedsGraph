@@ -1,0 +1,99 @@
+﻿
+.sidebar {
+    color: #FFF;
+    background: #1a1a1a;
+    margin-top:49px;
+	width: 210px;
+	/*opacity: 0.5;*/
+    /*max-width: 200px;*/
+    height: 100%;
+    float: left;
+    position: fixed;
+    z-index: 1000;
+    display: block;
+    -webkit-transition: margin 0.5s;
+    transition: margin 0.5s;
+	flex:1;
+}
+
+
+
+.ico {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.ico.new-node {
+  background: url(../custom/assets/GraphexIcons/NewNode2.svg);
+  background-size:32px;
+}
+
+.ico.new-nodes-and-links {
+  background: url(../custom/assets/GraphexIcons/NewGraphNodes.svg);
+  background-size:32px;
+}
+.ico.new-nodes {
+  background: url(../custom/assets/GraphexIcons/NewNodes.svg);
+  background-size:32px;
+}
+.ico.new-parent-and-children {
+  background: url(../custom/assets/GraphexIcons/NewParentAndChildren.svg);
+  background-size:32px;
+}
+.sidebar.level2{
+	background-color:#1f1f1f;
+}
+
+.sidebar.closed {
+  /*margin-left: -140px;*/
+  transition: margin 0.5s;
+}
+
+#navbar-toggle {
+    cursor: pointer;
+}
+#toggleView {
+    margin-left: 44px;
+}
+.menu-icon {
+    float: right;
+}
+.sidebar-nav {
+    display: block;
+    float: left;
+    width: 100%;
+    list-style: none;
+    /*margin: 0;*/
+    padding: 0;
+}
+.sidebar-nav li a {
+    padding-left: 20px;
+    font-size: 13px;
+    text-decoration: none;
+    color: #FFF;
+    float: left;
+    text-decoration: none;
+    width: 100%;
+    height: 70px;
+    line-height: 25px;
+    padding: 20px;
+    vertical-align: center;
+}
+.sidebar-nav li a.checked {
+    background: salmon;
+	-webkit-transition: background 0.5s;
+    transition: background 0.5s;
+}
+
+.sidebar-nav li a:hover {
+    background:#121213;
+    -webkit-transition: background 0.5s;
+    transition: background 0.5s;
+}
+
+.sidebar-nav li a.checked:hover {
+    background: salmon;
+	-webkit-transition: background 0.5s;
+    transition: background 0.5s;
+}

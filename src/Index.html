@@ -37,10 +37,12 @@
 	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
 	<!--------- MINIFIED --------------->
 	<!-- build:css scripts/styles.css -->
+	<link href="css/sideToolbar.css" rel="stylesheet">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/jedsGraph.css" rel="stylesheet">
 	<link href="css/dropdownMenu.css" rel="stylesheet">
 	<link href="css/modal.css" rel="stylesheet">
+	<script src="https://use.fontawesome.com/39fce12af8.js"></script>
 	<!-- endbuild -->
 	<!-- build:js scripts/libs.js -->
 	<!--------- JQuery --------->
@@ -54,6 +56,9 @@
 	<!------- Vivagraph -------->
 	<!--<script type="text/javascript" src="deps/vivagraph.js"></script>-->
 	<script src="deps/vivagraph.min.js"></script>
+	<script src="deps/hammer.min.js"></script>
+	<script src="deps/hammer-time.min.js"></script>
+
 	<!-- endbuild -->
 	<!--<link href="html/help/formulas.html" rel="subresource">-->
 	<link href="html/help/formulas.html" rel="subresource">
@@ -147,7 +152,10 @@
 	<script type="text/javascript" src="scripts/030_initSequence/012.setup_UI.js"></script>
 	<script type="text/javascript" src="scripts/main.js"></script>
 	<script type="text/javascript" src="scripts/031_mainSequence/010_prepare_GraphObject.js"></script>
-	<script type="text/javascript" src="scripts/_components/Node/Templates/020_define_NodeObjects.js"></script>
+	<script type="text/javascript" src="scripts/_components/Graph/Behaviours/GraphBehavioursHelper.js"></script>
+	<script type="text/javascript" src="scripts/_components/Graph/Events/GraphEvents.js"></script>
+	<script type="text/javascript" src="scripts/_components/Graph/define_Graph.js"></script>
+	<script type="text/javascript" src="scripts/_components/Node/define_Node.js"></script>
 	<script type="text/javascript" src="scripts/_components/Node/Methods/drawNode.js"></script>
 	<script type="text/javascript" src="scripts/_components/Link/Services/LinkHelper.js"></script>
 	<script type="text/javascript" src="scripts/_components/Link/Templates/040_define_LinkObjectsCommonAssets.js"></script>
@@ -160,6 +168,7 @@
 </head>
 
 <body onload='graphexInitialize()'>
+	<div id="indicator" style="z-index:1; position:fixed; margin-left:90%; color:white; font-size:xx-small"></div>
 
 	<div id="vue-app">
 		<!--Graph-->
@@ -167,11 +176,13 @@
 		<!--Console-->
 		<vw-formula-box v-bind:formulaprop="formulaToolbar" v-bind:panels="panels"></vw-formula-box>
 		<vw-left-sidebar v-bind:sysdata="systemData" v-bind:panels="panels"></vw-left-sidebar>
-		<vw-right-sidebar v-bind:tabs="tabs" v-bind:panels="panels"></vw-right-sidebar>
+		<vw-right-sidebar v-bind:tabs="tabs" v-bind:nodestamp="nodeStamp" v-bind:panels="panels"></vw-right-sidebar>
+		<vw-left-toolbar v-bind:lefttoolbar="leftToolbar.toolbar" toolbarwidth="200" v-bind:panels="panels"></vw-left-toolbar>
 		<!--<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>-->
 		<vw-topbar v-bind:topbar="topbar"></vw-topbar>
 		<!--Modals-->
 		<vw-modal v-bind:modal="modals.commonModal"></vw-modal>
+
 	</div>
 
 	<div class="nodeFlyout" id='panel.node'>
@@ -452,6 +463,29 @@
 		</div>
 	</script>
 
+	<script type="text/x-template" id="vueTemplate-panel-nodeStamp">
+		<div class='modPanel' id='nodeStamp'>
+			<div class="panelHead">Node Stamp<i class="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
+
+			<div class="nodeStamp"
+				 v-for="(stamp, index) in nodestamp.stamps"
+				 v-on:click="nodestamp.activeStamp == index"
+				v-bind:class="{ active: nodestamp.activeStamp == index}">
+				<svg width="100" height="100">
+					<circle cx="30" cy="30" r="25" stroke="green" stroke-width="1" v-bind:stroke="stamp.config.attributes['border-color']" v-bind:fill="stamp.config.attributes['background-color']" />
+				</svg>
+				<span><label>NodeType</label></span>
+			</div>
+			<!--<ul>
+				<li class="nodeStamp" v-for="(stamp, index) in nodestamp.stamps">
+					<svg width="100" height="100">
+						<circle cx="30" cy="25" r="25" stroke="green" stroke-width="1" v-bind:fill="stamp.config.attributes['background-color']" />
+					</svg>
+				</li>
+			</ul>-->
+		</div>
+	</script>
+
 	<script type="text/x-template" id="vueTemplate-topbar">
 		<div id='graphexTopBar'>
 			<table>
@@ -551,8 +585,11 @@
 	</script>
 
 	<script type="text/x-template" id="vueTemplate-right-sidebar">
-		<div v-if="panels.nodeTypeEditor.show" id='rightSidebar' class="flexcroll">
+		<div id='rightSidebar'
+			 class="flexcroll"
+			 v-if="panels.nodeTypeEditor.show || panels.nodeStamp.show">
 			<vw-panel-nodeEditor v-if="panels.nodeTypeEditor.show" v-bind:tabsprop="tabs"></vw-panel-nodeEditor>
+			<vw-panel-nodeStamp v-if="panels.nodeStamp.show" v-bind:nodestamp="nodestamp"></vw-panel-nodeStamp>
 		</div>
 	</script>
 
@@ -581,6 +618,73 @@
 		<div id='modeIndicator'>
 			<img src="indicatorprop.image" class="modeIndicatorImage" />
 			<span class="modeIndicatorLabel">{{indicatorprop.title}}</span>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-left-toolbar">
+		<div>
+
+			<div v-if="panels.leftToolbar.show" class="sidebar level2" v-bind:style="{ 'margin-left': lefttoolbar.toolbar.left + 'px'}">
+				<ul class="sidebar-nav">
+					<li><a id="navbar-toggle" v-on:click="lefttoolbar.toolbar.left=-150">Close <i class="fa fa-bars menu-icon fa-2x" aria-hidden="true"></i></a></li>
+					<li>
+						<!--FREE NODES-->
+						<a v-bind:class="{checked: lefttoolbar.toolbar.checkedItems.indexOf('new-nodes')> -1}"
+						   v-on:click="lefttoolbar.toolbar.checkedItems = ['new-nodes'];"
+						   onclick="new VueToolbarHelper().executeToolbarAction('SelectCreateFreeNodes');"
+						   href="#">New free nodes<i class="ico new-nodes menu-icon" aria-hidden="true"></i></a>
+					</li>
+
+					<li>
+						<!--CHAINED NODES-->
+						<a v-bind:class="{checked: lefttoolbar.toolbar.checkedItems.indexOf('new-nodes-and-links')> -1}"
+						   v-on:click="lefttoolbar.toolbar.checkedItems = ['new-nodes-and-links'];"
+						   onclick="new VueToolbarHelper().executeToolbarAction('SelectCreateChainedNodes');"
+						   href="#">New chained nodes<i class="ico new-nodes-and-links menu-icon" aria-hidden="true"></i></a>
+					</li>
+					<li>
+						<!--CHILD NODES-->
+						<a v-bind:class="{checked: lefttoolbar.toolbar.checkedItems.indexOf('new-parent-and-children')> -1}"
+						   v-on:click="lefttoolbar.toolbar.checkedItems = ['new-parent-and-children'];"
+						   onclick="new VueToolbarHelper().executeToolbarAction('SelectCreateChildNodes');"
+						   href="#">New node & children<i class="ico new-parent-and-children menu-icon" aria-hidden="true"></i></a>
+					</li>
+				</ul>
+			</div>
+
+			<div v-if="panels.leftToolbar.show" class="sidebar" v-bind:class="" v-bind:style="{ 'margin-left': lefttoolbar.left + 'px'}">
+				<ul class="sidebar-nav">
+					<li><a id="navbar-toggle" v-on:click="lefttoolbar.left=(lefttoolbar.left==-150)?0:-150">Close <i class="fa fa-bars menu-icon fa-2x" aria-hidden="true"></i></a></li>
+
+					<li>
+						<!--NAVIGATION-->
+						<a v-bind:class="{checked: lefttoolbar.checkedItems.indexOf('navigate')> -1}"
+						   onclick="new VueToolbarHelper().executeToolbarAction('SelectNavigation');"
+						   v-on:click="lefttoolbar.checkedItems = ['navigate'];
+									   lefttoolbar.toolbar.left = ((lefttoolbar.toolbar.left==-85||lefttoolbar.left==0) ?60:-85);"
+						   href="#">
+							Navigate<i class="fa fa-hand-pointer-o menu-icon fa-2x" aria-hidden="true"></i>
+						</a>
+					</li>
+
+					<li>
+						<!--NEW NODES-->
+						<a v-bind:class="{checked: lefttoolbar.checkedItems.indexOf('new-node')> -1}"
+						   v-on:click="lefttoolbar.checkedItems = ['new-node'];
+									   lefttoolbar.toolbar.left = ((lefttoolbar.toolbar.left==-85||lefttoolbar.left==0) ?60:-85);"
+						   onclick="new VueToolbarHelper().executeToolbarAction('SelectCreateNodes');"
+						   href="#">
+							Create nodes<i class="ico new-node menu-icon" aria-hidden="true"></i>
+						</a>
+					</li>
+
+
+
+				</ul>
+			</div>
+
+
+			<!--<vw-left-toolbar v-if="lefttoolbar.toolbar" v-bind:lefttoolbar="lefttoolbar.toolbar" toolbarwidth="toolbarwidth + 200" v-bind:panels="panels"></vw-left-toolbar>-->
 		</div>
 	</script>
 

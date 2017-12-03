@@ -4,5 +4,5 @@ var mappings = new Mappings();
 function Mappings(){
   
   this.Translators = [];
-
+  this.Arrangers = [];
 }

@@ -1,5 +1,10 @@
 ﻿function GraphHelper(){
   
+  this.SelectNode = function(node){
+    globals.selectedNode = node;
+    highlightSelectedNode(node.id);
+    consoleApp.consoleShowNode(node);
+  }
   this.getNodesByName = function(name){
     var nodes = [];
     for (var i = 0; i < globals.nodeList.length; i++){
@@ -9,8 +14,8 @@
     return nodes;
   }
 
-  this.SelectNode = function(node){
-    consoleApp.selectNode(node);
+  this.ConsoleShowNode = function(node){
+    consoleApp.consoleShowNode(node);
   }
 
   this.AddToEntityTypeDefs = function(node){

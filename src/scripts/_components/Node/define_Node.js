@@ -1,6 +1,6 @@
 //====== NODE VISUAL DEFINITIONS ========================================================================================================
 
-function defineNodes() {
+function define_Node() {
 	//Node elements...
 	globals.graphics.node(function (node) {
 
@@ -51,12 +51,12 @@ function defineNodes() {
 		// events (http://www.w3.org/TR/SVG/interact.html#SVGEvents ),
 		// including mouse events:
 
-		$(ui).tap(function (event) { // MOUSE CLICK
-			node_Event("tap", node, event.pageX, event.pageY);
-		}),
-		$(ui).taphold(function (event) { // MOUSE CLICK
-			node_Event("taphold", node, event.pageX, event.pageY);
-		}),
+		//$(ui).tap(function (event) { // MOUSE CLICK
+		//	node_Event("tap", node, event.pageX, event.pageY);
+		//}),
+		//$(ui).taphold(function (event) { // MOUSE CLICK
+		//	node_Event("taphold", node, event.pageX, event.pageY);
+		//}),
 
 		$(ui).touchstart(function (event) { // MOUSE CLICK
 			node_Event("touchstart", node, event.originalEvent.touches[0].pageX, event.originalEvent.touches[0].pageY);
