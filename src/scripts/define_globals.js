@@ -50,6 +50,8 @@ function Globals(){
     this.modes.createNodeOnGraphDblClick = false;
     this.modes.selectNodeAfterCreate = false;
     this.modes.createLinkFromSelectedNodeOnCreateNode = false;
+    // Nodestamp
+    this.nodeStamp = new NodeStampType();
 
 		//......Filter settings.............
 		this.viewOptions = new viewOptionsType();

@@ -39,11 +39,11 @@ Vue.component('vw-panel-nodeStamp',{
 
 Vue.component('vw-topbar',{
   props: ['topbar'],
-  template:'#vueTemplate-topbar'
+  template: '#vueTemplate-topbar'
 })
 
 Vue.component('vw-dropdown-menu',{
-  props: ['name', 'menuitems'],
+  props: ['name','menuitems'],
   template: '#vueTemplate-dropdown-menu'
 })
 
@@ -56,28 +56,33 @@ Vue.component('vw-panel-nodeSelector',{
 // ================= BOTTOMBAR/FOOTER ================= 
 
 Vue.component('vw-footer',{
-  template:'#vueTemplate-footer'
+  template: '#vueTemplate-footer'
 })
 
 // ================= SIDEBARS & GRAPH ================= 
 
 Vue.component('vw-graph',{
-  template:'#vueTemplate-graph'
+  template: '#vueTemplate-graph'
 })
 
 Vue.component('vw-left-sidebar',{
-  props: ['sysdata', 'panels'],
+  props: ['sysdata','panels'],
   template: '#vueTemplate-left-sidebar'
 })
 
 Vue.component('vw-right-sidebar',{
-  props: ['tabs', 'nodestamp', 'panels'],
+  props: ['tabs','nodestamp','panels'],
   template: '#vueTemplate-right-sidebar'
 })
 
 Vue.component('vw-left-toolbar',{
-  props: ['lefttoolbar', 'panels'],
-  template: '#vueTemplate-left-toolbar'
+  props: ['lefttoolbar','panels'],
+  template: '#vueTemplate-toolbar'
+})
+
+Vue.component('vw-subtoolbar',{
+  props: ['toolbar','expander_function','parent','level'],
+  template: '#vueTemplate-subtoolbar'
 })
 
 // ================= MODALS ================= 
@@ -119,177 +124,282 @@ Vue.component('vw-mode-indicator',{
 
 // ================= FORMULA BOX ================= 
 Vue.component('vw-formula-box',{
-  props: ['formulaprop', 'panels'],
+  props: ['formulaprop','panels'],
   template: '#vueTemplate-formula-box'
 })
 
-var consoleApp = new Vue({
+var consoleApp=new Vue({
   components: ['vw-panel-nodeEditor'],
   el: '#vue-app',
-  created: function () {
+  created: function() {
     new VueConsoleHelper().RegisterWindowsEvents();
   },
   data: {
-    nodeStamp:{
-      activeStamp: -1,
-      stamps:[
-        {labels:'n', properties:{Title:'nx'}, config:{"attributes":{"background-color":"gray", "border-color":"black"}}},
-        {labels:'n', properties:{Title:'nx'}, config:{"attributes":{"background-color":"gray", "border-color":"black"}}}
-      ]
+    /*NodeStamp right toolbar*/
+    nodeStamp: {
+      activeStampIndex: -1,
+      stamps: [
+        { labels: ['Node'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "red","border-color": "green","border-width": 1 } } } },
+        { labels: ['Person'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "green","border-color": "blue","border-width": 2 } } } },
+        { labels: ['Sign'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "blue","border-color": "red","border-width": 3 },"effects": { "shadow": true } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+      ],
+      popoulateNodeStamps: function(){
+        //getStampsFromDatabase();
+        //getPopularStamps();
+        //getRandomStamps();
+      },
+      selectStamp: function() {
+        globals.nodeStamp=this.stamps[this.activeStampIndex];
+      }
     },
-    leftToolbar:{
-      toolbar:
+    /*Left toolbar*/
+    leftToolbar: {
+      expander_function: function(toolbar,_parent,_justClose) {
+        if(!toolbar) return;
+
+        if(_justClose&&toolbar.stateIndex!=0)
+          toolbar.stateIndex=0;
+        else
+          toolbar.stateIndex=(toolbar.stateIndex>=toolbar.states.length-1)?0:toolbar.stateIndex+1;
+
+        // adjust toolbar according to potential states...
+        if(!_parent) {
+          console.log('toolbar',toolbar);
+          toolbar.stateLeft=toolbar.states[toolbar.stateIndex];
+        }
+        // adjust toolbars according to parents state...
+        if(_parent) {
+          console.log('sub-toolbar',toolbar);
+          toolbar.stateLeft=_parent.stateLeft+toolbar.states[toolbar.stateIndex];
+        }
+        // adjust child toolbars...
+        for(var t in toolbar.toolbars) {
+          toolbar.toolbars[t].stateLeft=toolbar.stateLeft+toolbar.toolbars[t].states[toolbar.toolbars[t].stateIndex];
+        }
+      },
+
+      toolbar: {
+        stateLeft: -150,
+        stateIndex: 0,
+        states: [-150,0],
+        checkedItems: [],
+        left: -150,
+        items: [
           {
-            checkedItems:[],
-            left:-150,
-            toolbar:
-              {
-                checkedItems:['new-nodes'],
-                left:-150,
-              }
+            desc: 'Navigation',
+            ico: 'fa-hand-pointer-o',
+            buttonType: 'radio', // ...options: {check / radio/ button}
+            func: function() { new VueToolbarHelper().executeToolbarAction('SelectNavigation'); },
+            subToolbarKey: 'navigation'
+          },
+          {
+            desc: 'Create nodes',
+            img: 'custom/assets/GraphexIcons/NewNode2.svg',
+            buttonType: 'radio', // ...options: {check / radio/ button}
+            func: function() { new VueToolbarHelper().executeToolbarAction('SelectCreateNodes'); },
+            subToolbarKey: 'newNodes'
           }
+        ],
+        toolbars: {
+          "navigation": {
+            stateLeft: -150,
+            stateIndex: 0,
+            states: [0,60,200],
+            checkedItems: [],
+            items: [
+              {
+                desc: 'Span view',
+                img: 'custom/assets/GraphexIcons/NewNodes.svg',
+                buttonType: 'radio', // ...options: {check / radio/ button}
+                func: function() { new VueToolbarHelper().executeToolbarAction('SelectViewSpan'); }
+              },
+              {
+                desc: 'Parralax view',
+                img: 'custom/assets/GraphexIcons/NewNodes.svg',
+                buttonType: 'radio', // ...options: {check / radio/ button}
+                func: function() { new VueToolbarHelper().executeToolbarAction('SelectViewParralax'); }
+              }
+
+            ]
+          },
+
+          "newNodes": {
+            stateLeft: -150,
+            stateIndex: 0,
+            states: [0,60,200],
+            checkedItems: [],
+            items: [
+              {
+                desc: 'Add free nodes',
+                img: 'custom/assets/GraphexIcons/NewNodes.svg',
+                buttonType: 'radio', // ...options: {check / radio/ button}
+                func: function() { new VueToolbarHelper().executeToolbarAction('SelectCreateFreeNodes'); }
+              },
+              {
+                desc: 'Add chained nodes',
+                img: 'custom/assets/GraphexIcons/NewGraphNodes.svg',
+                buttonType: 'radio', // ...options: {check / radio/ button}
+                func: function() { new VueToolbarHelper().executeToolbarAction('SelectCreateChainedNodes'); }
+              },
+              {
+                desc: 'Add child nodes',
+                img: 'custom/assets/GraphexIcons/NewParentAndChildren.svg',
+                buttonType: 'radio', // ...options: {check / radio/ button}
+                func: function() { new VueToolbarHelper().executeToolbarAction('SelectCreateChildNodes'); }
+              }
+
+            ],
+            left: -150,
+            toolbars: {}
+          }
+        }
+      }
     },
-    panels:{
-      nodeTypeEditor: {show:false},
-      nodeStamp: {show:true},
-      nodeTypeSelector: {show:false},
-      formulaBar:{show:true},
-      leftToolbar:{show:true}
+
+    panels: {
+      nodeTypeEditor: { show: false },
+      nodeStamp: { show: true },
+      nodeTypeSelector: { show: false },
+      formulaBar: { show: true },
+      leftToolbar: { show: true }
     },
+
     modals: {
-      commonModal:{
-        header:"",
-        htmlContent:"",
-        buttons:[
-          {caption:"ok", onclick: new VueConsoleHelper().CloseGlobalInfoModal}
+      commonModal: {
+        header: "",
+        htmlContent: "",
+        buttons: [
+          { caption: "ok",onclick: new VueConsoleHelper().CloseGlobalInfoModal }
         ]
       }
     },
-    systemData:{
+
+    systemData: {
       //totalEntityCount: 0,
       typeSelectors: [],
-      getAllEntities: function(){
+      getAllEntities: function() {
         new DataService().GetAllEntities();
       },
-      getEntitiesByType:function(entityTypeName, index){
+      getEntitiesByType: function(entityTypeName,index) {
         new DataService().GetEntitiesByType(entityTypeName);
       },
-      highlightAllNodes: function(){
+      highlightAllNodes: function() {
         highlightLabel()
       },
-      highlightNodesByType:function(index){
-          highlightLabel(index);
+      highlightNodesByType: function(index) {
+        highlightLabel(index);
       }
     },
     // PUBLIC
-    refreshTypeSelectors: function(){
+    refreshTypeSelectors: function() {
       //this.systemData.totalEntityCount++;
-      this.systemData.typeSelectors = globals.labelsList;
+      this.systemData.typeSelectors=globals.labelsList;
     },
-    consoleShowNode: function(node){
-      this.selectedNode = node;
-      var nodeConfig = node.data.entityConfig.config;
-      
-      this.tabs.newMatching.selectedNodeType = node.data.labels[0];
-      this.tabs.newMatching.properties = node.data.properties || [];
-      
-      this.tabs.styles.selectedNodeColor = nodeConfig.attributes["background-color"];
-      this.tabs.styles.selectedNodeBorderColor = nodeConfig.attributes["border-color"];
-      this.tabs.styles.selectedNodeTextColor = nodeConfig.attributes.labelText["color"];
-      this.tabs.styles.selectedNodeCircleTextColor = nodeConfig.attributes.circleText["color"];
-      this.tabs.styles.selectedNodeShape = nodeConfig.attributes["shape"];
-      this.tabs.styles.selectedNodeSize = nodeConfig.attributes["radius"];
-      this.tabs.styles.selectedNodeImageUrl = nodeConfig.attributes.img["url"];
+    consoleShowNode: function(node) {
+      this.selectedNode=node;
+      var nodeConfig=node.data.entityConfig.config;
 
-      this.tabs.effects.hasEffectHaze = nodeConfig.effects["haze"];
-      this.tabs.effects.hasEffectShadow = nodeConfig.effects["shadow"];
-      this.tabs.effects.hasEffectGlass = nodeConfig.effects["glass"];
-      this.tabs.effects.hasEffectRounded = nodeConfig.effects["rounded"];
+      this.tabs.newMatching.selectedNodeType=node.data.labels[0];
+      this.tabs.newMatching.properties=node.data.properties||[];
 
-      this.tabs.behaviours.selectedDisplayTextType = nodeConfig.attributes.labelText.displayData["key"];
-      this.tabs.behaviours.selectedDisplayField = nodeConfig.attributes.labelText.displayData["value"];;
-      this.tabs.behaviours.selectedNodeImageType = nodeConfig.attributes.img.displayData["key"];
-      this.tabs.behaviours.selectedNodeImageValue = nodeConfig.attributes.img.displayData["value"];;;
+      this.tabs.styles.selectedNodeColor=nodeConfig.attributes["background-color"];
+      this.tabs.styles.selectedNodeBorderColor=nodeConfig.attributes["border-color"];
+      this.tabs.styles.selectedNodeTextColor=nodeConfig.attributes.labelText["color"];
+      this.tabs.styles.selectedNodeCircleTextColor=nodeConfig.attributes.circleText["color"];
+      this.tabs.styles.selectedNodeShape=nodeConfig.attributes["shape"];
+      this.tabs.styles.selectedNodeSize=nodeConfig.attributes["radius"];
+      this.tabs.styles.selectedNodeImageUrl=nodeConfig.attributes.img["url"];
+
+      this.tabs.effects.hasEffectHaze=nodeConfig.effects["haze"];
+      this.tabs.effects.hasEffectShadow=nodeConfig.effects["shadow"];
+      this.tabs.effects.hasEffectGlass=nodeConfig.effects["glass"];
+      this.tabs.effects.hasEffectRounded=nodeConfig.effects["rounded"];
+
+      this.tabs.behaviours.selectedDisplayTextType=nodeConfig.attributes.labelText.displayData["key"];
+      this.tabs.behaviours.selectedDisplayField=nodeConfig.attributes.labelText.displayData["value"];;
+      this.tabs.behaviours.selectedNodeImageType=nodeConfig.attributes.img.displayData["key"];
+      this.tabs.behaviours.selectedNodeImageValue=nodeConfig.attributes.img.displayData["value"];;;
 
     },
     // PRIVATE
     selectedNode: null,
-    topbar:{
+    topbar: {
       items: [
          {
-           caption: "File", 
-           items:[
+           caption: "File",
+           items: [
             {
-              caption: "Reset storage", 
-              func: function(){new VueMenuHelper().ResetDatabase()}
+              caption: "Reset storage",
+              func: function() { new VueMenuHelper().ResetDatabase() }
             },
             {
-              caption: "Export graph", 
-              func: function(){new VueMenuHelper().ExportGraph()}
+              caption: "Export graph",
+              func: function() { new VueMenuHelper().ExportGraph() }
             }
-          ] 
+           ]
          },
          {
-           caption: "View", 
-           items:[
+           caption: "View",
+           items: [
               {
-                caption: "Node Type Editor", 
-                func: function(){consoleApp.panels.nodeTypeEditor.show = !consoleApp.panels.nodeTypeEditor.show}
+                caption: "Node Type Editor",
+                func: function() { consoleApp.panels.nodeTypeEditor.show=!consoleApp.panels.nodeTypeEditor.show }
               },
               {
-                caption: "Node Type Selector", 
-                func: function(){consoleApp.panels.nodeTypeSelector.show = !consoleApp.panels.nodeTypeSelector.show}
+                caption: "Node Type Selector",
+                func: function() { consoleApp.panels.nodeTypeSelector.show=!consoleApp.panels.nodeTypeSelector.show }
               },
               {
-                caption: "Formula bar", 
-                func: function(){consoleApp.panels.formulaBar.show = !consoleApp.panels.formulaBar.show}
+                caption: "Formula bar",
+                func: function() { consoleApp.panels.formulaBar.show=!consoleApp.panels.formulaBar.show }
               },
               {
-                caption: "Toolbar", 
-                func: function(){consoleApp.panels.leftToolbar.show = !consoleApp.panels.leftToolbar.show}
+                caption: "Toolbar",
+                func: function() { consoleApp.panels.leftToolbar.show=!consoleApp.panels.leftToolbar.show }
               },
+           ],
+         },
+          {
+            caption: "Tools",
+            items: [
+               {
+                 caption: "Unpin all",
+                 func: function() { new VueMenuHelper().UnpinAll() }
+               },
+               {
+                 caption: "Arrange as tree",
+                 func: function() { new VueMenuHelper().ArrangeNodes("bottom-to-top") }
+               },
+               {
+                 caption: "Arrange as list",
+                 func: function() { new VueMenuHelper().ArrangeNodes("left-to-right") }
+               },
+               {
+                 caption: "Arrange as roots",
+                 func: function() { new VueMenuHelper().ArrangeNodes("top-to-bottom") }
+               },
+               {
+                 caption: "Center graph",
+                 func: function() { new VueMenuHelper().CenterGraph() }
+               },
+               {
+                 caption: "Clear stage",
+                 func: function() { new VueMenuHelper().ClearStage() }
+               }
             ],
           },
           {
-           caption: "Tools", 
-           items:[
-              {
-                caption: "Unpin all", 
-                func: function(){new VueMenuHelper().UnpinAll()}
-              },
-              {
-                caption: "Arrange as tree", 
-                func: function(){new VueMenuHelper().ArrangeNodes("bottom-to-top")}
-              },
-              {
-                caption: "Arrange as list", 
-                func: function(){new VueMenuHelper().ArrangeNodes("left-to-right")}
-              },
-              {
-                caption: "Arrange as roots", 
-                func: function(){new VueMenuHelper().ArrangeNodes("top-to-bottom")}
-              },
-              {
-                caption: "Center graph", 
-                func: function(){new VueMenuHelper().CenterGraph()}
-              },
-              {
-                caption: "Clear stage", 
-                func: function(){new VueMenuHelper().ClearStage()}
-              }
-            ],
-          },
-          {
-           caption: "Help", 
-           items:[
-              {
-                caption: "About", 
-                func: function(){new VueMenuHelper().ShowAboutModal()}
-              }
+            caption: "Help",
+            items: [
+               {
+                 caption: "About",
+                 func: function() { new VueMenuHelper().ShowAboutModal() }
+               }
             ]
           }
 
-        ],
+      ],
       indicator: {
         title: "",
         image: "../custom/assets/binoculars.svg"
@@ -305,15 +415,15 @@ var consoleApp = new Vue({
       formulaValue: "",
       formulaHistory: [],
       translators: [
-				new SimpleTranslator(),
-				new JsonTranslator(),
+        new SimpleTranslator(),
+        new JsonTranslator(),
         new UrlParamsTranslator(),
         new ParseTreeTranslator(),
         new ApiImportTranslator()
       ],
       selectedTranslatorName: new SimpleTranslator().Name,
       currentTranslator: new SimpleTranslator(),
-      selectedExample: (new SimpleTranslator().Examples && new SimpleTranslator().Examples.length > 0) ? ('example: ' + new SimpleTranslator().Examples[0]) : "",
+      selectedExample: (new SimpleTranslator().Examples&&new SimpleTranslator().Examples.length>0)?('example: '+new SimpleTranslator().Examples[0]):"",
       selectedImport: null,
       selectTranslator: function(value) {
         var currentScope=this;
@@ -321,24 +431,24 @@ var consoleApp = new Vue({
           if(trans.Name===value) {
             currentScope.currentTranslator=trans;
             currentScope.selectedTranslatorName=trans.Name;
-            console.log('translator', currentScope.currentTranslator);
+            console.log('translator',currentScope.currentTranslator);
             return;
           }
         });
       },
       executeFormula: function() {
-        new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
+        new VueConsoleHelper().DisplayInfoModal('Loading','please wlait...');
         var translator=this.currentTranslator;
         translator.Translate(this.formulaValue);
-        this.formulaHistory.push({"formula": this.formulaValue, "translator": this.currentTranslator});
+        this.formulaHistory.push({ "formula": this.formulaValue,"translator": this.currentTranslator });
         this.formulaValue="";
         new VueConsoleHelper().CloseGlobalInfoModal();
       },
       executeExampleFormula: function() {
         //new VueConsoleHelper().DisplayInfoModal('Loading', 'please wlait...');
-        var translator = this.currentTranslator;
+        var translator=this.currentTranslator;
         translator.Translate(this.selectedExample);
-        this.selectedExample = null;
+        this.selectedExample=null;
         //new VueConsoleHelper().CloseGlobalInfoModal();
       },
       importFromUrl: function(url) {
@@ -346,10 +456,10 @@ var consoleApp = new Vue({
         console.log('IMPORTING...');
         var translator=this.currentTranslator;
         var httpClient=new HttpClient();
-        var finalUrl = url;
-        finalUrl = finalUrl.replace('$day', ("0" + (new Date().getDate())).slice(-2));
-        finalUrl = finalUrl.replace('$month', ("0" + (new Date().getMonth() + 1)).slice(-2));
-        finalUrl = finalUrl.replace('$year', 2000);
+        var finalUrl=url;
+        finalUrl=finalUrl.replace('$day',("0"+(new Date().getDate())).slice(-2));
+        finalUrl=finalUrl.replace('$month',("0"+(new Date().getMonth()+1)).slice(-2));
+        finalUrl=finalUrl.replace('$year',2000);
         console.log('URL',finalUrl);
         httpClient.get(finalUrl,function(response) {
           console.log('response',response);
@@ -357,24 +467,24 @@ var consoleApp = new Vue({
           //new VueConsoleHelper().CloseGlobalInfoModal();
         });
       },
-      generateLink: function(){
-        if ((this.formulaValue||'').trim().length == 0){ alert('Please enter a formula'); return;}
-        console.log('this.formulaValue', this.formulaValue);
-        var encodedFormula = new StringHelper().ParamEncodeString(this.formulaValue);
-        var encodedTranslator = new StringHelper().ParamEncodeString(this.selectedTranslatorName);
-        var blob = "http://www.graphex.io/?trans="+encodedTranslator+"&grenc=" + encodedFormula;
-        var content = "<input id='exportGraphTextArea' value='" + blob + "'>";
-        new VueConsoleHelper().DisplayConfirmModal('Sharable Link', content, ifConfirmed, 'Copy', 'Exit');
-        function ifConfirmed(){
-          var text = document.getElementById('exportGraphTextArea');
+      generateLink: function() {
+        if((this.formulaValue||'').trim().length==0) { alert('Please enter a formula'); return; }
+        console.log('this.formulaValue',this.formulaValue);
+        var encodedFormula=new StringHelper().ParamEncodeString(this.formulaValue);
+        var encodedTranslator=new StringHelper().ParamEncodeString(this.selectedTranslatorName);
+        var blob="http://www.graphex.io/?trans="+encodedTranslator+"&grenc="+encodedFormula;
+        var content="<input id='exportGraphTextArea' value='"+blob+"'>";
+        new VueConsoleHelper().DisplayConfirmModal('Sharable Link',content,ifConfirmed,'Copy','Exit');
+        function ifConfirmed() {
+          var text=document.getElementById('exportGraphTextArea');
           text.select();
           document.execCommand("Copy");
           alert('Copied to clipboard');
         };
 
       },
-      displayInfoModal: function(){
-        new VueConsoleHelper().DisplayInfoModal(this.currentTranslator.Name, this.currentTranslator.ReferenceContent);
+      displayInfoModal: function() {
+        new VueConsoleHelper().DisplayInfoModal(this.currentTranslator.Name,this.currentTranslator.ReferenceContent);
       }
 
     },
@@ -401,22 +511,22 @@ var consoleApp = new Vue({
         var jsonHelper=new JsonHelper();
         this.styles.selectedNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")||null;
         this.styles.bNodeColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/background-color")?true:false;
-        
+
         this.styles.selectedNodeBorderColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/border-color")||null;
         this.styles.bNodeBorderColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/border-color")?true:false;
-        
+
         this.styles.selectedNodeTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/labelText/color")||null;
         this.styles.bNodeTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/labelText/color")?true:false;
-        
+
         this.styles.selectedNodeCircleTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/circleText/color")||null;
         this.styles.bNodeCircleTextColor=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/circleText/color")?true:false;
-        
+
         this.styles.selectedNodeSize=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/radius")||null;
         this.styles.bNodeSize=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/radius")?true:false;
-        
+
         this.styles.selectedNodeShape=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/shape")||null;
         this.styles.bNodeShape=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/shape")?true:false;
-        
+
         this.styles.selectedNodeImageUrl=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/img/url")||null;
         this.styles.bNodeImageUrl=jsonHelper.GetValueWithPath(selectedConfig,"config/attributes/img/url")?true:false;
 
@@ -557,7 +667,7 @@ var consoleApp = new Vue({
           });
         // Save config...
         configHelper.AddOrUpdateDynamicEntityConfigReturnId(tempConfig.configName,tempConfig);
-        alert('Config Saved "' + tempConfig.configName + '"')
+        alert('Config Saved "'+tempConfig.configName+'"')
       },
 
       reset: function() {
@@ -577,201 +687,201 @@ function addToConfig(isActive,config,newConfig) {
   return jsonHelper.MergeJson(config,newConfig,"arrayId");
 }
 
-function VueMenuHelper(){
-  this.ResetDatabase = function(){
-    var header = 'Are you sure?';
-    var content = "This will remove all the data and settings that you've accumulated so far";
-    var ifConfirmed = function(){
+function VueMenuHelper() {
+  this.ResetDatabase=function() {
+    var header='Are you sure?';
+    var content="This will remove all the data and settings that you've accumulated so far";
+    var ifConfirmed=function() {
       resetDatabase();
       alert('Storage cleared');
     };
-    new VueConsoleHelper().DisplayConfirmModal(header, content, ifConfirmed, 'Yes', 'Cancel');
+    new VueConsoleHelper().DisplayConfirmModal(header,content,ifConfirmed,'Yes','Cancel');
   }
 
-  this.ExportGraph = function(){
-    var blob = new SimpleTranslator().TranslateGraphToFormula();
+  this.ExportGraph=function() {
+    var blob=new SimpleTranslator().TranslateGraphToFormula();
     //blob = new StringHelper().ReplaceAll(blob, '"', '');
-    var content = "<input id='exportGraphTextArea' value='" + blob + "'>";
-    new VueConsoleHelper().DisplayConfirmModal('Export Data', content, ifConfirmed, 'Copy', 'Exit');
-    function ifConfirmed(){
-      var text = document.getElementById('exportGraphTextArea');
+    var content="<input id='exportGraphTextArea' value='"+blob+"'>";
+    new VueConsoleHelper().DisplayConfirmModal('Export Data',content,ifConfirmed,'Copy','Exit');
+    function ifConfirmed() {
+      var text=document.getElementById('exportGraphTextArea');
       text.select();
       document.execCommand("Copy");
       alert('Copied to clipboard');
     };
   }
 
-  this.ArrangeNodes = function(_orientation){
+  this.ArrangeNodes=function(_orientation) {
     new SimpleArranger(_orientation).Arrange();
     this.CenterGraph();
   }
-  this.UnpinAll = function(){
+  this.UnpinAll=function() {
     unPinAllNodes();
   }
-  this.CenterGraph = function(){
+  this.CenterGraph=function() {
     globals.layout.step();
-    var browserHelper = new BrowserHelper();
-    var windowSize = browserHelper.GetWindowSize();
-    var graphBounds = globals.layout.getGraphRect();
-    var graphSize = ({
+    var browserHelper=new BrowserHelper();
+    var windowSize=browserHelper.GetWindowSize();
+    var graphBounds=globals.layout.getGraphRect();
+    var graphSize=({
       width: Math.abs(graphBounds.x2-graphBounds.x1),
       height: Math.abs(graphBounds.y2-graphBounds.y1),
     })
-    var zoom = globals.graphics.scale(1,{x:0,y:0});
-    var moveX = (windowSize.width/2) - (graphSize.width/2 * zoom);
-    var moveY = (windowSize.height/2) - (graphSize.height/2 * zoom);
+    var zoom=globals.graphics.scale(1,{ x: 0,y: 0 });
+    var moveX=(windowSize.width/2)-(graphSize.width/2*zoom);
+    var moveY=(windowSize.height/2)-(graphSize.height/2*zoom);
 
-    globals.graphics.graphCenterChanged(moveX, moveY);
+    globals.graphics.graphCenterChanged(moveX,moveY);
   },
 
-  this.OtherFunctions = function(){
-  //TODO:
+  this.OtherFunctions=function() {
+    //TODO:
     // Double the size of the graph..
     //globals.graphics.scale(2,{x:1,y:1})
     // Half the size of the graph
     //globals.graphics.scale(0.5,{x:1,y:1})
   }
-  this.ShowAboutModal = function(){
-    var header = "About";
-    var content = ''
+  this.ShowAboutModal=function() {
+    var header="About";
+    var content=''
         +'Hi there, we hope you are enjoying the use of this tool.'
         +'It is still under development, but we welcome any suggestions that you may have.'
         +'<br>If you would like to contact us for any reason, you can get hold of us at:'
         +'<br><a href="mailto:suggest@graphex.io?Subject=I have a suggestion" target="_top">suggest@graphex.io</a>';
-    new VueConsoleHelper().ShowInfoModal(header, content);
+    new VueConsoleHelper().ShowInfoModal(header,content);
   }
 
-  this.ClearStage = function(){
-    var overflow = globals.nodeList.length + 1;;
-    var counter = 0;
-    while (globals.nodeList.length > 0 && ++counter < overflow){
-			removeNodeFromGraph(globals.nodeList[0].id);
+  this.ClearStage=function() {
+    var overflow=globals.nodeList.length+1;;
+    var counter=0;
+    while(globals.nodeList.length>0&&++counter<overflow) {
+      removeNodeFromGraph(globals.nodeList[0].id);
     }
-    globals.labelsList = [];
-    globals.nodeList = [];
-    globals.checkedLinks = [];
-    globals.checkedNodes = [];
-    globals.monitoredLinks = [];
-    globals.monitoredNodes = [];
-    globals.animUpdateNodes = [];
-    globals.animUpdateLinks = [];
-    globals.bPlanRelate = false;
-    globals.bRelate = false;
-    globals.selectedLink = '';
-    globals.selectedNode = '';
-    globals.selectedNodeData = '';
-    globals.selectedNodeID = '';
-    globals.selectedNodeUI = '';
-    globals.timeoutElements = [];
+    globals.labelsList=[];
+    globals.nodeList=[];
+    globals.checkedLinks=[];
+    globals.checkedNodes=[];
+    globals.monitoredLinks=[];
+    globals.monitoredNodes=[];
+    globals.animUpdateNodes=[];
+    globals.animUpdateLinks=[];
+    globals.bPlanRelate=false;
+    globals.bRelate=false;
+    globals.selectedLink='';
+    globals.selectedNode='';
+    globals.selectedNodeData='';
+    globals.selectedNodeID='';
+    globals.selectedNodeUI='';
+    globals.timeoutElements=[];
   }
 
-  this.createFormulaFromGraph = function(){
+  this.createFormulaFromGraph=function() {
 
   }
 
-  function resetDatabase(){
-      new DataService().DropDatabase();
-      refreshEntitySelectors();
-      consoleApp.refreshTypeSelectors();
+  function resetDatabase() {
+    new DataService().DropDatabase();
+    refreshEntitySelectors();
+    consoleApp.refreshTypeSelectors();
   }
 
 
 
 }
 
-function VueToolbarHelper(){
+function VueToolbarHelper() {
 
-  this.executeToolbarAction = function(name, args){
-    switch (name){
+  this.executeToolbarAction=function(name,args) {
+    switch(name) {
       case 'SelectNavigation':
-        globals.modes.createNodeOnGraphDblClick = false;
+        globals.modes.createNodeOnGraphDblClick=false;
         break
       case 'SelectCreateNodes':
-        globals.modes.createNodeOnGraphDblClick = true;
+        globals.modes.createNodeOnGraphDblClick=true;
         break;
       case 'SelectCreateFreeNodes':
-        globals.modes.selectNodeAfterCreate = false;
-        globals.modes.createLinkFromSelectedNodeOnCreateNode = false;
+        globals.modes.selectNodeAfterCreate=false;
+        globals.modes.createLinkFromSelectedNodeOnCreateNode=false;
         break;
       case 'SelectCreateChainedNodes':
-        globals.modes.selectNodeAfterCreate = true;
-        globals.modes.createLinkFromSelectedNodeOnCreateNode = true;
+        globals.modes.selectNodeAfterCreate=true;
+        globals.modes.createLinkFromSelectedNodeOnCreateNode=true;
         break;
       case 'SelectCreateChildNodes':
-        globals.modes.selectNodeAfterCreate = false;
-        globals.modes.createLinkFromSelectedNodeOnCreateNode = true;
+        globals.modes.selectNodeAfterCreate=false;
+        globals.modes.createLinkFromSelectedNodeOnCreateNode=true;
         break;
-        
+
     }
   }
 }
 
-function VueConsoleHelper(){
+function VueConsoleHelper() {
 
-  this.DisplayConfirmModal = function (header, content, confirmFunction, _confirmCaption, _cancelCaption){
-    consoleApp.modals.commonModal.buttons = [];
-    consoleApp.modals.commonModal.header = header;
-    consoleApp.modals.commonModal.htmlContent = content;
-    consoleApp.modals.commonModal.buttons.push({caption:_confirmCaption||"yes", onclick:confirmFunction});
-    consoleApp.modals.commonModal.buttons.push({caption:_cancelCaption||"cancel", onclick:new VueConsoleHelper().CloseGlobalInfoModal})
+  this.DisplayConfirmModal=function(header,content,confirmFunction,_confirmCaption,_cancelCaption) {
+    consoleApp.modals.commonModal.buttons=[];
+    consoleApp.modals.commonModal.header=header;
+    consoleApp.modals.commonModal.htmlContent=content;
+    consoleApp.modals.commonModal.buttons.push({ caption: _confirmCaption||"yes",onclick: confirmFunction });
+    consoleApp.modals.commonModal.buttons.push({ caption: _cancelCaption||"cancel",onclick: new VueConsoleHelper().CloseGlobalInfoModal })
     showGlobalInfoModal();
   }
 
-  this.DisplayInfoModal = function (header, content){
-    consoleApp.modals.commonModal.buttons = [];
-    consoleApp.modals.commonModal.header = header;
-    consoleApp.modals.commonModal.htmlContent = content;
+  this.DisplayInfoModal=function(header,content) {
+    consoleApp.modals.commonModal.buttons=[];
+    consoleApp.modals.commonModal.header=header;
+    consoleApp.modals.commonModal.htmlContent=content;
     showGlobalInfoModal();
   }
 
-  this.ShowInfoModal = function(header, content){
-      consoleApp.modals.commonModal.buttons = [];
-      consoleApp.modals.commonModal.header = header;
-      consoleApp.modals.commonModal.htmlContent = content;
-      showGlobalInfoModal();
-  }
-
-  this.ShowCopyModal = function(header, content){
-      consoleApp.modals.commonModal.buttons = [];
-      consoleApp.modals.commonModal.header = header;
-      consoleApp.modals.commonModal.htmlContent = content;
-      showGlobalInfoModal();
-  }
-
-  this.ShowGlobalInfoModal = function() {
+  this.ShowInfoModal=function(header,content) {
+    consoleApp.modals.commonModal.buttons=[];
+    consoleApp.modals.commonModal.header=header;
+    consoleApp.modals.commonModal.htmlContent=content;
     showGlobalInfoModal();
   }
 
-  this.CloseGlobalInfoModal = function() {
+  this.ShowCopyModal=function(header,content) {
+    consoleApp.modals.commonModal.buttons=[];
+    consoleApp.modals.commonModal.header=header;
+    consoleApp.modals.commonModal.htmlContent=content;
+    showGlobalInfoModal();
+  }
+
+  this.ShowGlobalInfoModal=function() {
+    showGlobalInfoModal();
+  }
+
+  this.CloseGlobalInfoModal=function() {
     closeGlobalInfoModal();
   }
 
-  this.RegisterWindowsEvents = function(){
+  this.RegisterWindowsEvents=function() {
     console.log('Registering window events');
     // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
+    window.onclick=function(event) {
       // Get the modal
-      var modal = document.getElementById('myModal');
-      if (event.target == modal) {
-          modal.style.display = "none";
+      var modal=document.getElementById('myModal');
+      if(event.target==modal) {
+        modal.style.display="none";
       }
     }
   }
 
   function showGlobalInfoModal() {
-    var dialogElement = document.getElementById('myModal');
-    dialogElement.style.display = "block";
+    var dialogElement=document.getElementById('myModal');
+    dialogElement.style.display="block";
     //var dialogElement=document.getElementById(modalId);
     //dialogElement.showModal();
   }
   function closeGlobalInfoModal() {
-    var dialogElement = document.getElementById('myModal');
+    var dialogElement=document.getElementById('myModal');
     console.log('closing dialog');
-    dialogElement.style.display = "none";
+    dialogElement.style.display="none";
     //var dialogElement=document.getElementById(modalId);
     //dialogElement.close();
   }
 
-  
+
 }
 

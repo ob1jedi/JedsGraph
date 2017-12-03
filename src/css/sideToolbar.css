@@ -24,6 +24,11 @@
   height: 32px;
 }
 
+.icoImg {
+  width: 32px;
+  height: 32px;
+}
+
 .ico.new-node {
   background: url(../custom/assets/GraphexIcons/NewNode2.svg);
   background-size:32px;

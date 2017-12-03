@@ -22,9 +22,9 @@
       nodeBody.attr('y',-((Number(_cnf.attributes["height"]))/2));
     }
     if(_cnf.effects["shadow"]==true)
-      nodeBody.attr('filter','url(#shadowEffect)'); //haze
+      nodeBody.attr('filter','url(#shadowEffect)');
     if(_cnf.effects["haze"]==true)
-      nodeBody.attr('filter','url(#hazeEffect)'); //haze
+      nodeBody.attr('filter','url(#hazeEffect)');
     if(_cnf.effects["glass"]==true)
       nodeBody.attr('fill','url(#gradGlass)');
     if(_cnf.effects["rounded"]==true)

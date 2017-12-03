@@ -8,7 +8,14 @@
     var graphScale = Number(graphMatrix[3]);
 
     // Create node...
-    var labels=['n'];
+    var labels = globals.nodeStamp.labels;
+    //var properties = globals.nodeStamp.properties;
+    var config = globals.nodeStamp.config;
+    config.matchEntity = {"labels":labels};
+    config.configName = "stmpCnf_" + labels[0];
+    config.configType = "entity";
+
+    var configId = new ConfigHelper().AddOrUpdateDynamicEntityConfigReturnId(config.configName,config);
     var newNode = new DataService().CreateEntity_AddToGraph_ReturnNode(labels);
 
     // Calculate node position...

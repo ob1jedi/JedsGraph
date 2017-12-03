@@ -41,7 +41,6 @@
   }
 
   function getConfigForEntity(entity){
-    var dataSvc=new DataService();
     var theseEntityConfigs=[];
     //entityConfigs.push(globals.masterEntityConfigs[0]);
     globals.masterEntityConfigs.forEach(function(thisConfig) {
@@ -52,6 +51,7 @@
     var finalConfig={};
     var jsonHelper=new JsonHelper();
     theseEntityConfigs.map(function(cnf) {
+      
       //finalConfig = $.extend(true, {}, finalConfig, cnf);
       finalConfig=jsonHelper.MergeJson(finalConfig, cnf,"arrayId");
     });
