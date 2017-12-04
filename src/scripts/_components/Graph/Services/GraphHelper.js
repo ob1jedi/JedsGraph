@@ -1,5 +1,6 @@
 ﻿function GraphHelper(){
-  
+
+
   this.SelectNode = function(node){
     globals.selectedNode = node;
     highlightSelectedNode(node.id);
@@ -51,7 +52,16 @@
     if (!labelFound){
       entityType.labels = node.data.labels;
       globals.entityTypeDefs.push(entityType);
+      addNodeStamp(node);
     }
+    
+    function addNodeStamp(node)
+    {
+      consoleApp.nodeStamp.stamps.push(
+        { 'labels': node.data.labels ,'properties': { Title: 'string' },config: node.data.entityConfig }
+      );
+    }
+
   }
 
 }

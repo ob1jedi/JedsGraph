@@ -1,6 +1,7 @@
 ﻿#nodeStampPanel{
 	background-color: #1a1a1a;
 	top: 99px;
+	bottom:0px;
 	/*float:right;*/
 	/*margin-right:-200px;*/
 	right:-130px;
@@ -8,7 +9,6 @@
 	padding: 0px;
 	border-width: 0px;
 	overflow: auto;
-	height:100%;
 	/*max-height: 500px;*/
 	position: fixed;
 	transition: right 0.5s;
