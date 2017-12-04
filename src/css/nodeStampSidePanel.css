@@ -1,0 +1,78 @@
+﻿#nodeStampPanel{
+	background-color: #1a1a1a;
+	top: 99px;
+	/*float:right;*/
+	/*margin-right:-200px;*/
+	right:-130px;
+	width: 130px;
+	padding: 0px;
+	border-width: 0px;
+	overflow: auto;
+	height:100%;
+	/*max-height: 500px;*/
+	position: fixed;
+	transition: right 0.5s;
+	padding-bottom:100px;
+}
+#nodeStampPanel.active{
+	right:0px;
+	transition: right 0.5s;
+}
+
+#nodeStampPanel label
+{
+	cursor: pointer;
+	margin: 1px;
+	padding: 1px;
+	color: #8c8c8c;
+	vertical-align: top;
+	font-size: 10px;
+}
+#nodeStampPanel label.canCheck
+{
+	/*color: slategrey;*/
+	text-decoration: underline;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+}
+#nodeStampPanel label.canCheck:hover
+{
+	color: deepskyblue;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+}
+#nodeStampPanel label.active
+{
+	color: #b3ffff;
+}
+
+.nodeStamp{
+	margin: 0px;
+	padding: 5px;
+    width: 118px;
+	background-color:transparent;	
+	border-style:solid;
+	border-color:#424242;
+	border-width:0px;
+	border-bottom-width:1px;
+}
+.nodeStamp div.node {
+    height: 60px;
+    /*background-color:red;*/
+    margin-left:21%;
+}
+.nodeStamp div.lbl {
+    text-align:center;
+}
+
+.nodeStamp.active {
+	background-color:#252525;
+}
+.nodeStamp:hover{
+	background-color:#252525;	
+	transition: background-color 0.3s;
+}
+.nodeStamp svg{
+	height: 60px;
+	width: 60px;
+}

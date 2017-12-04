@@ -1,0 +1,73 @@
+﻿
+#vueFormulaBox {
+	top:50px;
+	margin-top: 0px;
+	width:100%;
+	height: 50px;
+	padding-left: 5px;
+	padding-top: 4px;
+	border-style: solid;
+	border-width: 0px;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	background-color: #0d0d0d;
+	opacity: 0.9;
+	position:relative;
+}
+
+	#vueFormulaBox input {
+		/*width: 80px;*/
+		height: 20px;
+		margin: 2px;
+		border-radius: 3px;
+		border-color: transparent;
+		font-size: 12px;
+	}
+
+	#vueFormulaBox select {
+		height: 20px;
+		margin: 2px;
+		border-radius: 3px;
+		border-color: transparent;
+		font-size: 12px;
+		max-width: 200px;
+	}
+
+	#vueFormulaBox table {
+		margin-left: 200px;
+		font-size: small;
+		line-height: normal;
+	}
+
+		#vueFormulaBox table tr td {
+			padding-left: 5px;
+			height: 5px;
+		}
+
+	#vueFormulaBox label {
+		margin: 1px;
+		padding: 1px;
+		color: slategrey;
+		vertical-align: top;
+		font-size: 10px;
+	}
+
+	#vueFormulaBox table span {
+		font-size: 0px;
+	}
+
+	#vueFormulaBox button {
+		background-color: #4d4d4d;
+		color: oldlace;
+		height: 20px;
+		border: none;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 10px;
+		margin: 3px 1px;
+		letter-spacing: 1px;
+		-webkit-transition-duration: 0.4s; /* Safari */
+		transition-duration: 0.4s;
+		cursor: pointer;
+		overflow:auto;
+	}

@@ -353,7 +353,6 @@ div.modPanel label
 	vertical-align: top;
 	font-size: 10px;
 }
-
 div.modPanel label.canCheck
 {
 	/*color: slategrey;*/
@@ -367,11 +366,9 @@ div.modPanel label.canCheck:hover
 	-webkit-transition-duration: 0.4s;
 	transition-duration: 0.4s;
 }
-
 div.modPanel label.active
 {
 	color: #b3ffff;
-
 }
 
 div.modPanel input
@@ -552,6 +549,8 @@ div.tabcontent {
     border-width: 2px;
 }
 
+
+
 #modeIndicator {
 	text-align: center;
 	align-content: center;
@@ -591,6 +590,7 @@ div.tabcontent {
 #graphexTopBar {
 	top:0px;
 	position:fixed;
+	display:block;
 	width:100%;
 	margin-top: 0px;
 	height: 50px;
@@ -653,81 +653,6 @@ div.tabcontent {
 }
 
 
-#vueFormulaBox {
-	top:50px;
-	margin-top: 0px;
-	/*margin-left: 200px;*/
-	/*margin-right: 200px;*/
-	/*height: 34px;*/
-	height: 50px;
-	padding-left: 5px;
-	padding-top: 4px;
-	border-style: solid;
-	border-width: 0px;
-	border-bottom-left-radius: 3px;
-	border-bottom-right-radius: 3px;
-	/*border-color: #8c8c8c;*/
-	background-color: #0d0d0d;
-	opacity: 0.9;
-	position:relative;
-}
-
-	#vueFormulaBox input {
-		/*width: 80px;*/
-		height: 20px;
-		margin: 2px;
-		border-radius: 3px;
-		border-color: transparent;
-		font-size: 12px;
-	}
-
-	#vueFormulaBox select {
-		height: 20px;
-		margin: 2px;
-		border-radius: 3px;
-		border-color: transparent;
-		font-size: 12px;
-		max-width: 200px;
-	}
-
-	#vueFormulaBox table {
-		margin-left: 200px;
-		font-size: small;
-		line-height: normal;
-	}
-
-		#vueFormulaBox table tr td {
-			padding-left: 5px;
-			height: 5px;
-		}
-
-	#vueFormulaBox label {
-		margin: 1px;
-		padding: 1px;
-		color: slategrey;
-		vertical-align: top;
-		font-size: 10px;
-	}
-
-	#vueFormulaBox table span {
-		font-size: 0px;
-	}
-
-	#vueFormulaBox button {
-		background-color: #4d4d4d;
-		color: oldlace;
-		height: 20px;
-		border: none;
-		text-decoration: none;
-		display: inline-block;
-		font-size: 10px;
-		margin: 3px 1px;
-		letter-spacing: 1px;
-		-webkit-transition-duration: 0.4s; /* Safari */
-		transition-duration: 0.4s;
-		cursor: pointer;
-		overflow:auto;
-	}
 
 .over {
 	background-color: red;
@@ -1073,38 +998,7 @@ hr {
 	-webkit-animation: slide-out 0.5s forwards;
 }
 
-.nodeStamp{
-	margin: 10px;
-    width: 150px;
-	background-color:transparent;	
-	border-width:0px;
-	border-style:solid;
-    border-color:salmon;
-	border-radius:2px;
-	transition: background-color 0.3s;
-}
-.nodeStamp div.node {
-    height: 60px;
-    /*background-color:red;*/
-    margin-left:30%;
-}
-.nodeStamp div.lbl {
-    text-align:center;
-}
 
-.nodeStamp.active {
-	border-width:2px;
-}
-.nodeStamp:hover{
-	background-color:#252525;	
-	transition: background-color 0.3s;
-}
-
-
-.nodeStamp svg{
-	height: 60px;
-	width: 60px;
-}
 
 
 @keyframes slide-in {

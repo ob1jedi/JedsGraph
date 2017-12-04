@@ -31,8 +31,8 @@ Vue.component('vw-panel-nodeEditor-behaviours',{
   template: '#vueTemplate-panel-nodeEditor-behaviours'
 })
 
-Vue.component('vw-panel-nodeStamp',{
-  props: ['nodestamp'],
+Vue.component('vw-panel-nodestamp',{
+  props: ['nodestamp', 'show'],
   template: '#vueTemplate-panel-nodeStamp'
 })
 // ================= TOPBAR ================= 
@@ -81,7 +81,7 @@ Vue.component('vw-left-toolbar',{
 })
 
 Vue.component('vw-subtoolbar',{
-  props: ['toolbar','expander_function','parent','level'],
+  props: ['toolbar','expander_function','collapse_function','parent','level'],
   template: '#vueTemplate-subtoolbar'
 })
 
@@ -137,40 +137,64 @@ var consoleApp=new Vue({
   data: {
     /*NodeStamp right toolbar*/
     nodeStamp: {
+      getWindowHeight: function(){
+        console.log('window.innerHeight', window.innerHeight);
+        return window.innerHeight;
+      },
       activeStampIndex: -1,
       stamps: [
         { labels: ['Node'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "red","border-color": "green","border-width": 1 } } } },
         { labels: ['Person'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "green","border-color": "blue","border-width": 2 } } } },
         { labels: ['Sign'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "blue","border-color": "red","border-width": 3 },"effects": { "shadow": true } } } },
         { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } },
+        { labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "red","border-color": "black" } } } },
       ],
-      popoulateNodeStamps: function(){
-        //getStampsFromDatabase();
-        //getPopularStamps();
-        //getRandomStamps();
-      },
       selectStamp: function() {
         globals.nodeStamp=this.stamps[this.activeStampIndex];
       }
     },
     /*Left toolbar*/
     leftToolbar: {
-      expander_function: function(toolbar,_parent,_justClose) {
+      expander_function: function(toolbar,_parent,_justClose, collapse_function) {
         if(!toolbar) return;
-
-        if(_justClose&&toolbar.stateIndex!=0)
+        // close all siblings...
+        if(_parent) { // ...sub-toolbar
+          for(var t in _parent.toolbars) {
+            if(_parent.toolbars[t].name!=toolbar.name)
+              collapse_function(_parent.toolbars[t]);
+          }
+        }
+        if(_justClose&&toolbar.stateIndex!=0) {
           toolbar.stateIndex=0;
-        else
+        } else {
           toolbar.stateIndex=(toolbar.stateIndex>=toolbar.states.length-1)?0:toolbar.stateIndex+1;
-
+        }
         // adjust toolbar according to potential states...
-        if(!_parent) {
-          console.log('toolbar',toolbar);
+        if(!_parent) { //...root-toolbar
           toolbar.stateLeft=toolbar.states[toolbar.stateIndex];
         }
         // adjust toolbars according to parents state...
-        if(_parent) {
-          console.log('sub-toolbar',toolbar);
+        if(_parent) { // ...sub-toolbar
           toolbar.stateLeft=_parent.stateLeft+toolbar.states[toolbar.stateIndex];
         }
         // adjust child toolbars...
@@ -178,8 +202,16 @@ var consoleApp=new Vue({
           toolbar.toolbars[t].stateLeft=toolbar.stateLeft+toolbar.toolbars[t].states[toolbar.toolbars[t].stateIndex];
         }
       },
+      collapse_function: function(toolbar) {
+        for(var tb in toolbar.toolbars) {
+          this.collapse_function(toolbar.toolbars[tb]);
+        }
+        toolbar.stateIndex=0;
+        toolbar.stateLeft=-150;
+      },
 
       toolbar: {
+        name: 'root',
         stateLeft: -150,
         stateIndex: 0,
         states: [-150,0],
@@ -191,7 +223,7 @@ var consoleApp=new Vue({
             ico: 'fa-hand-pointer-o',
             buttonType: 'radio', // ...options: {check / radio/ button}
             func: function() { new VueToolbarHelper().executeToolbarAction('SelectNavigation'); },
-            subToolbarKey: 'navigation'
+            subToolbarKey: 'viewType'
           },
           {
             desc: 'Create nodes',
@@ -202,33 +234,13 @@ var consoleApp=new Vue({
           }
         ],
         toolbars: {
-          "navigation": {
+          'newNodes': {
+            name: 'newNodes',
             stateLeft: -150,
             stateIndex: 0,
             states: [0,60,200],
             checkedItems: [],
-            items: [
-              {
-                desc: 'Span view',
-                img: 'custom/assets/GraphexIcons/NewNodes.svg',
-                buttonType: 'radio', // ...options: {check / radio/ button}
-                func: function() { new VueToolbarHelper().executeToolbarAction('SelectViewSpan'); }
-              },
-              {
-                desc: 'Parralax view',
-                img: 'custom/assets/GraphexIcons/NewNodes.svg',
-                buttonType: 'radio', // ...options: {check / radio/ button}
-                func: function() { new VueToolbarHelper().executeToolbarAction('SelectViewParralax'); }
-              }
-
-            ]
-          },
-
-          "newNodes": {
-            stateLeft: -150,
-            stateIndex: 0,
-            states: [0,60,200],
-            checkedItems: [],
+            toolbars: {},
             items: [
               {
                 desc: 'Add free nodes',
@@ -248,18 +260,40 @@ var consoleApp=new Vue({
                 buttonType: 'radio', // ...options: {check / radio/ button}
                 func: function() { new VueToolbarHelper().executeToolbarAction('SelectCreateChildNodes'); }
               }
+            ]
 
-            ],
-            left: -150,
-            toolbars: {}
+          },
+          'viewType': {
+            name: 'viewType',
+            stateLeft: -150,
+            stateIndex: 0,
+            states: [0,60,200],
+            checkedItems: [],
+            toolbars: {},
+            items: [
+              {
+                desc: 'Flat view',
+                ico: 'fa-arrows',
+                buttonType: 'radio', // ...options: {check / radio/ button}
+                func: function() { new VueToolbarHelper().executeToolbarAction('SelectViewSpan'); }
+              },
+              {
+                desc: 'Parralax view',
+                img: 'custom/assets/GraphexIcons/NewNodes.svg',
+                buttonType: 'radio', // ...options: {check / radio/ button}
+                func: function() { new VueToolbarHelper().executeToolbarAction('SelectViewParralax'); }
+              }
+
+            ]
           }
+
         }
       }
     },
 
     panels: {
       nodeTypeEditor: { show: false },
-      nodeStamp: { show: true },
+      nodeStamp: { show: false },
       nodeTypeSelector: { show: false },
       formulaBar: { show: true },
       leftToolbar: { show: true }
@@ -792,13 +826,17 @@ function VueMenuHelper() {
 function VueToolbarHelper() {
 
   this.executeToolbarAction=function(name,args) {
+    console.log('executingaction');
     switch(name) {
       case 'SelectNavigation':
         globals.modes.createNodeOnGraphDblClick=false;
+        consoleApp.panels.nodeStamp.show = false;
         break
       case 'SelectCreateNodes':
         globals.modes.createNodeOnGraphDblClick=true;
+        consoleApp.panels.nodeStamp.show = true;
         break;
+
       case 'SelectCreateFreeNodes':
         globals.modes.selectNodeAfterCreate=false;
         globals.modes.createLinkFromSelectedNodeOnCreateNode=false;
