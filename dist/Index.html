@@ -37,6 +37,7 @@
 	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
 	<!--------- MINIFIED --------------->
 	<link rel="stylesheet" href="scripts/styles.css">
+	<link href="fonts/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
 	<script src="scripts/libs.js"></script>
 	<!--<link href="html/help/formulas.html" rel="subresource">-->
 	<link href="html/help/formulas.html" rel="subresource">
@@ -51,9 +52,11 @@
 </head>
 
 <body onload="graphexInitialize()">
-	<div id="indicator" style="z-index:1; position:fixed; margin-left:90%; color:white; font-size:xx-small"></div>
+	
 
 	<div id="vue-app">
+		<vw-hud v-bind:show="panels.hud.show"></vw-hud>
+
 		<!--Graph-->
 		<vw-graph></vw-graph>
 		<!--Console-->
@@ -111,6 +114,10 @@
 		</div>
 	</script>
 
+	<script type="text/x-template" id="vueTemplate-hud">
+		<div v-if="show" id="indicator" style="z-index:1; position:fixed; margin-left:90%; color:white; font-size:xx-small"></div>
+	</script>
+	
 	<script type="text/x-template" id="vueTemplate-panel-nodeEditor-matching">
 		<div class="tabcontent">
 
@@ -520,9 +527,9 @@
 				 v-bind:style="{ 'margin-left': toolbar.stateLeft + 'px', 'z-index': 1000-level}">
 				<ul class="sidebar-nav">
 					<li>
-						<a id="navbar-toggle"
-						   v-on:click="expander_function(toolbar, parent, true, collapse_function)">
-							Close <i class="fa fa-bars menu-icon fa-2x" aria-hidden="true"></i>
+						<a style="color:gray;" id="navbar-toggle"
+						   v-on:click="expander_function(toolbar, parent, false, collapse_function)">
+							Close <i style="color:gray;" class="fa fa-bars menu-icon fa-2x" aria-hidden="true"></i>
 						</a>
 					</li>
 					<li v-for="item in toolbar.items">
@@ -533,7 +540,7 @@
 						   href="#">
 							{{ item.desc }}
 							<img v-if="item.img" class="icoImg pull-right" v-bind:src="item.img" />
-							<i v-if="item.ico" v-bind:class="'fa ' + item.ico + ' menu-icon fa-2x'" aria-hidden="true"></i>
+							<i v-if="item.ico" v-bind:class="item.ico + ' menu-icon'" aria-hidden="true"></i>
 						</a>
 					</li>
 				</ul>

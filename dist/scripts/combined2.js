@@ -122,6 +122,11 @@ Vue.component('vw-mode-indicator',{
   template: '#vueTemplate-mode-indicator'
 })
 
+Vue.component('vw-hud',{
+  props: ['show'],
+  template: '#vueTemplate-hud'
+})
+
 // ================= FORMULA BOX ================= 
 Vue.component('vw-formula-box',{
   props: ['formulaprop','panels'],
@@ -132,6 +137,9 @@ var consoleApp=new Vue({
   components: ['vw-panel-nodeEditor'],
   el: '#vue-app',
   created: function() {
+    if(window.location.href.substr(0,17)=="http://localhost:"){
+      this.panels.hud.show = true;
+    }
     new VueConsoleHelper().RegisterWindowsEvents();
   },
   data: {
@@ -199,7 +207,7 @@ var consoleApp=new Vue({
         items: [
           {
             desc: 'Navigation',
-            ico: 'fa-hand-pointer-o',
+            ico: 'fa fa-hand-pointer-o fa-2x',
             buttonType: 'radio', // ...options: {check / radio/ button}
             func: function() { new VueToolbarHelper().executeToolbarAction('SelectNavigation'); },
             subToolbarKey: 'viewType'
@@ -222,20 +230,20 @@ var consoleApp=new Vue({
             toolbars: {},
             items: [
               {
-                desc: 'Add free nodes',
+                desc: 'Create free nodes',
                 img: 'custom/assets/GraphexIcons/NewNodes.svg',
                 buttonType: 'radio', // ...options: {check / radio/ button}
                 func: function() { new VueToolbarHelper().executeToolbarAction('SelectCreateFreeNodes'); }
               },
               {
-                desc: 'Add chained nodes',
-                img: 'custom/assets/GraphexIcons/NewGraphNodes.svg',
+                desc: 'Append node chain',
+                img: 'custom/assets/GraphexIcons/NewChainedNodes.svg',
                 buttonType: 'radio', // ...options: {check / radio/ button}
                 func: function() { new VueToolbarHelper().executeToolbarAction('SelectCreateChainedNodes'); }
               },
               {
-                desc: 'Add child nodes',
-                img: 'custom/assets/GraphexIcons/NewParentAndChildren.svg',
+                desc: 'Append child nodes',
+                img: 'custom/assets/GraphexIcons/NewChildNodes.svg',
                 buttonType: 'radio', // ...options: {check / radio/ button}
                 func: function() { new VueToolbarHelper().executeToolbarAction('SelectCreateChildNodes'); }
               }
@@ -252,17 +260,10 @@ var consoleApp=new Vue({
             items: [
               {
                 desc: 'Flat view',
-                ico: 'fa-arrows',
+                ico: 'fa fa-arrows fa-2x',
                 buttonType: 'radio', // ...options: {check / radio/ button}
                 func: function() { new VueToolbarHelper().executeToolbarAction('SelectViewSpan'); }
-              },
-              {
-                desc: 'Parralax view',
-                img: 'custom/assets/GraphexIcons/NewNodes.svg',
-                buttonType: 'radio', // ...options: {check / radio/ button}
-                func: function() { new VueToolbarHelper().executeToolbarAction('SelectViewParralax'); }
               }
-
             ]
           }
 
@@ -271,6 +272,7 @@ var consoleApp=new Vue({
     },
 
     panels: {
+      hud: { show:false },
       nodeTypeEditor: { show: false },
       nodeStamp: { show: false },
       nodeTypeSelector: { show: false },
@@ -421,10 +423,6 @@ var consoleApp=new Vue({
 
     // Formula toolbar
     formulaToolbar: {
-      //modalHeader: "",
-      //modalContent: "",
-      //modalButtonCaption: "Close",
-
       formulaValue: "",
       formulaHistory: [],
       translators: [

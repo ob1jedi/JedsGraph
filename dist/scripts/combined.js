@@ -4895,6 +4895,7 @@ function GraphHelper(){
     if (!labelFound){
       entityType.labels = node.data.labels;
       globals.entityTypeDefs.push(entityType);
+
       addNodeStamp(node);
     }
     
@@ -8811,32 +8812,6 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 
     return true
 	});
-
-	////[Test]
-	//globals.allUnitTests.push(function JsonTranslate_GivenArrayWithObjects_ExpectRootNodes() {
-	//	// Arrange
-  //  var sut=new JsonTranslator();
-  //  var jsonObject1='["TestRootNode"]';
-		
-    
-  //  // Act
-	//	var result = sut.Translate(jsonObject1, "BaseNode");
-		
-  //  // Assert
-  //  console.log('Testing: BaseNode')
-  //  var result = getNodesByMatchingLabels(globals.nodeList, ['BaseNode']);
-  //  if (result.length == 0) return result;
-
-  //  //console.log('Testing: TestJsonNode')
-  //  //var result = getNodesByMatchingLabels(globals.nodeList, ['stringOnlyNode']);
-  //  //if (!result) return result;
-
-  //  console.log('Testing: TestRootNode')
-  //  var result = getNodesByMatchingLabels(globals.nodeList, ['TestRootNode']);
-  //  if (result.length == 0) return result;
-
-  //  return true
-	//});
 
 //[Test]
 globals.allUnitTests.push(function CreateGraphElementsFromJsonOffExistingNode_GivenJson_ExpectGraphElements() {
