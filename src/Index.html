@@ -37,7 +37,7 @@
 	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
 	<!--------- MINIFIED --------------->
 	<!-- build:css scripts/styles.css -->
-	
+
 	<link href="css/sideToolbar.css" rel="stylesheet">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/jedsGraph.css" rel="stylesheet">
@@ -45,8 +45,6 @@
 	<link href="css/modal.css" rel="stylesheet">
 	<link href="css/nodeStampSidePanel.css" rel="stylesheet">
 	<link href="css/formulaBar.css" rel="stylesheet">
-
-	<script src="https://use.fontawesome.com/39fce12af8.js"></script>
 	<!-- endbuild -->
 	<!-- build:js scripts/libs.js -->
 	<!--------- JQuery --------->
@@ -62,7 +60,7 @@
 	<script src="deps/vivagraph.min.js"></script>
 	<script src="deps/hammer.min.js"></script>
 	<script src="deps/hammer-time.min.js"></script>
-
+	<script src="https://use.fontawesome.com/39fce12af8.js"></script>
 	<!-- endbuild -->
 	<!--<link href="html/help/formulas.html" rel="subresource">-->
 	<link href="html/help/formulas.html" rel="subresource">
@@ -71,6 +69,7 @@
 
 	<!--------- MINIFIED --------------->
 	<!-- build:js scripts/initconfig.js -->
+
 	<script type="text/javascript" src="custom/config/configloader.js"></script>
 	<script type="text/javascript" src="custom/config/defaultConfig.js"></script>
 	<script type="text/javascript" src="custom/config/Data1.js"></script>
@@ -182,7 +181,7 @@
 		<vw-formula-box v-bind:formulaprop="formulaToolbar" v-bind:panels="panels"></vw-formula-box>
 		<vw-left-sidebar v-bind:sysdata="systemData" v-bind:panels="panels"></vw-left-sidebar>
 		<vw-right-sidebar v-bind:tabs="tabs" v-bind:nodestamp="nodeStamp" v-bind:panels="panels"></vw-right-sidebar>
-		<vw-panel-nodestamp  v-bind:nodestamp="nodeStamp" v-bind:show="panels.nodeStamp.show"></vw-panel-nodestamp>
+		<vw-panel-nodestamp v-bind:nodestamp="nodeStamp" v-bind:show="panels.nodeStamp.show"></vw-panel-nodestamp>
 		<vw-subtoolbar v-bind:toolbar="leftToolbar.toolbar" v-bind:expander_function="leftToolbar.expander_function" v-bind:collapse_function="leftToolbar.collapse_function" v-bind:level="0"></vw-subtoolbar>
 		<!--<vw-left-toolbar v-bind:lefttoolbar="leftToolbar.toolbar" toolbarwidth="200" v-bind:panels="panels"></vw-left-toolbar>-->
 		<!--<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>-->
@@ -473,7 +472,6 @@
 	<script type="text/x-template" id="vueTemplate-panel-nodeStamp">
 		<div id='nodeStampPanel'
 			 v-bind:class="{active:show}"
-			 
 			 class="flexcroll">
 			<!--<div class="panelHead">Node Stamp<i class="glyphicon glyphicon-menu-hamburger pull-right"></i></div>-->
 

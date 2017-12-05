@@ -373,7 +373,6 @@ function ConfigHelper() {
   }
 
   function getConfigForEntity(entity){
-    var dataSvc=new DataService();
     var theseEntityConfigs=[];
     //entityConfigs.push(globals.masterEntityConfigs[0]);
     globals.masterEntityConfigs.forEach(function(thisConfig) {
@@ -384,6 +383,7 @@ function ConfigHelper() {
     var finalConfig={};
     var jsonHelper=new JsonHelper();
     theseEntityConfigs.map(function(cnf) {
+      
       //finalConfig = $.extend(true, {}, finalConfig, cnf);
       finalConfig=jsonHelper.MergeJson(finalConfig, cnf,"arrayId");
     });
@@ -1858,9 +1858,7 @@ var SimpleTranslator = function () {
   }
 
   function interpolate(string){
-
     if (typeof string === 'string'){
-      //var reg = new RegExp('^\\' + _i + '\d+$', ["g"])
       var reg = new RegExp(/^\$\d+$/g);
       if (string.match(reg)){
         if (_interpolationDictionary[string] != undefined){
@@ -3284,10 +3282,8 @@ function getType(p) {
 function EntityEventsHelper(){
 
   var eventBehaviourMapping = [
-    
-    //{ name: 'AutoImage', event: AddEntityToGraph_afterNodeAdd, func: new NodeBehavioursApi().AutoImageToNode },
     { name: 'AutoImage',            event: addEntityToGraph_beforeNodeAdd,   func: new NodeBehavioursApi().AutoImageToConfig },
-    { name: 'SubnodesForLinks',     event: AddEntityToGraph_afterNodeAdd,    func: new NodeBehavioursApi().CreateSubNodesFromLinks },
+    { name: 'SubnodesForLinks',     event: addEntityToGraph_afterNodeAdd,    func: new NodeBehavioursApi().CreateSubNodesFromLinks },
     { name: 'FetchLinkOnDblClick',  event: nodeDoubleClick,           func: new NodeBehavioursApi().FetchNodeLinks }
   ]
   
@@ -3295,7 +3291,7 @@ function EntityEventsHelper(){
   
   this.AddEntityToGraph_beforeNodeAdd = function(nodeData){addEntityToGraph_beforeNodeAdd(nodeData);}
   
-  this.AddEntityToGraph_afterNodeAdd = function(node){AddEntityToGraph_afterNodeAdd(node)}
+  this.AddEntityToGraph_afterNodeAdd = function(node){addEntityToGraph_afterNodeAdd(node)}
   
   this.NodeDblClick = function(node){nodeDoubleClick(node)}
 
@@ -3307,8 +3303,8 @@ function EntityEventsHelper(){
     executeConfigBehaviors(nodeData, addEntityToGraph_beforeNodeAdd.name, nodeData.id);
   }
   
-  function AddEntityToGraph_afterNodeAdd(node){
-    executeConfigBehaviors(node, AddEntityToGraph_afterNodeAdd.name, node.id);
+  function addEntityToGraph_afterNodeAdd(node){
+    executeConfigBehaviors(node, addEntityToGraph_afterNodeAdd.name, node.id);
   }
 
   function nodeDoubleClick(node){
@@ -4846,7 +4842,13 @@ var HttpClient = function () {
 	}
 }
 function GraphHelper(){
-  
+
+
+  this.SelectNode = function(node){
+    globals.selectedNode = node;
+    highlightSelectedNode(node.id);
+    consoleApp.consoleShowNode(node);
+  }
   this.getNodesByName = function(name){
     var nodes = [];
     for (var i = 0; i < globals.nodeList.length; i++){
@@ -4856,8 +4858,8 @@ function GraphHelper(){
     return nodes;
   }
 
-  this.SelectNode = function(node){
-    consoleApp.selectNode(node);
+  this.ConsoleShowNode = function(node){
+    consoleApp.consoleShowNode(node);
   }
 
   this.AddToEntityTypeDefs = function(node){
@@ -4893,7 +4895,16 @@ function GraphHelper(){
     if (!labelFound){
       entityType.labels = node.data.labels;
       globals.entityTypeDefs.push(entityType);
+      addNodeStamp(node);
     }
+    
+    function addNodeStamp(node)
+    {
+      consoleApp.nodeStamp.stamps.push(
+        { 'labels': node.data.labels ,'properties': { Title: 'string' },config: node.data.entityConfig }
+      );
+    }
+
   }
 
 }
@@ -5011,17 +5022,6 @@ function UrlHelper(){
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
-
-  //this.GetParameterByName = function(name, url) {
-      
-  //    if (!url) url = window.location.href;
-  //    name = name.replace(/[\[\]]/g, "\\$&");
-  //    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-  //        results = regex.exec(url);
-  //    if (!results) return null;
-  //    if (!results[2]) return '';
-  //    return results[2];
-  //  }
 
     this.GetAllParams = function(url) {
       var match,
@@ -6220,6 +6220,11 @@ function neo_Statement(statement) {
 }
 
 
+function NodeStampType() {
+	this.labels = [];
+  this.properties = {};
+  this.config = {};
+}
 
 function nodeUiElementsType() {
     this.outerUI;
@@ -6261,23 +6266,19 @@ function node_Event(eventType, node, x, y) {
 	else if (eventType == "SubNodePulledOut")
 		node_Event_subNodePulledOut(node, x, y);
 
-	else if (eventType == "touchstart")
-		node_OnTouchStart(node, x, y);
+	else if (eventType == "touchstart"){
+		node_OnMouseDown(node, x, y)
+  }
 
-	else if (eventType == "tap")
-		node_OnTap(node, x, y);
-
-	else if (eventType == "touchend")
-		node_OnTouchEnd(node, x, y);
-	//else if (eventType == "taphold")
-	//	node_OnTapHold(node, x, y);
-
-	//else if (eventType == "touchmove")
-	//	node_OnTouchMove(node, x, y);
-
-	//else if (eventType == "touchend")
-	//	node_OnTouchEnd(node, x, y);
-
+	else if (eventType == "touchend"){
+    globals.states.hammeringNode = true;
+    globals.states.lastHammeredNodeAt = new Date().getTime();
+    setTimeout(function(){ 
+      if (new Date().getTime() - globals.states.lastHammeredNodeAt > 500) 
+        globals.states.hammeringNode = false; 
+    }, 500);
+		node_OnMouseUp(node, x, y)
+  }
 }
 
 //-----------------------------------------------------------------
@@ -6299,6 +6300,7 @@ function nodeFlyout_Event_PinClick(nodeId) {
 
 
 function node_OnMouseEnter(node, x, y) {
+  globals.states.overNode = node;
 	if (node.data.nodeType == "data")
 		dataNode_OnMouseEnter(node, x, y);
 	else if (node.data.nodeType == "subnode")
@@ -6307,21 +6309,9 @@ function node_OnMouseEnter(node, x, y) {
 		plannedNode_OnMouseEnter(node, x, y);
 }
 
-function node_OnTap(node, x, y) {
-	node_OnMouseDown(node, x, y)
-}
-
-function node_OnTouchStart(node, x, y) {
-	node_OnMouseDown(node, x, y)
-}
-
-function node_OnTouchEnd(node, x, y) {
-	node_OnMouseUp(node, x, y)
-}
-
-
 function node_OnMouseDown(node, x, y) {
-	node.data.dragging = 'true';
+	globals.states.holdingNode = node;
+  node.data.dragging = 'true';
 
 	if (node.data.nodeType == "data")
 		dataNode_OnMouseDown(node, x, y);
@@ -6341,6 +6331,7 @@ function node_OnMouseDblClick(node, x, y) {
 }
 
 function node_OnMouseLeave(node, x, y) {
+  globals.states.overNode = null;
 	if (node.data.nodeType == "data")
 		dataNode_OnMouseLeave(node, x, y);
 	else if (node.data.nodeType == "subnode")
@@ -6351,7 +6342,8 @@ function node_OnMouseLeave(node, x, y) {
 
 function node_OnMouseUp(node, x, y) {
 	//$node.data.UI.fullUI.attr('dragging', 'false');
-	node.data.dragging = 'false';
+	globals.states.holdingNode = null;
+  node.data.dragging = 'false';
 	//console.log('node state', node);
 
 	if (node.data.nodeType == "data")
@@ -6389,7 +6381,7 @@ function dataNode_OnMouseEnter(node, x, y) {
 function dataNode_OnMouseDown(node,x, y) {
   
 	var graphHelper = new GraphHelper();
-  graphHelper.SelectNode(node);
+  graphHelper.ConsoleShowNode(node);
 
   highlightSelectedNode(node.id);
 	globals.nodeFunctions = NodeFunctionsFactory.createNew(node);
@@ -6721,252 +6713,271 @@ function NodeBehavioursApi() {
   }
 
 }
-function nodeAppearanceHelper(node) {
-	var _cnf = node.data.entityConfig.config;
+function nodeAppearanceModel(node) {
+  var _cnf=node.data.entityConfig.config;
 
-    this.node = node;
-	this.nodeGraphics = [];
-	this.nodeEffects = [];
+  this.node=node;
+  this.nodeGraphics=[];
+  this.nodeEffects=[];
 
-	this.addNodeBody = function () {
-		var nodeRadius = Number(_cnf.attributes["radius"]);
-		var nodeBody = Viva.Graph.svg(_cnf.attributes["shape"])
-			.attr('cx', 0)//...for circle
-			.attr('cy', 0)//...for circle
-			.attr('r', nodeRadius) //...for circle
-			.attr('fill', _cnf.attributes["background-color"] == null ? 'grey':_cnf.attributes["background-color"])
-			.attr('stroke-width', Number(_cnf.attributes["border-width"]))
-			.attr('stroke', _cnf.attributes["border-color"] == null ? 'black': _cnf.attributes["border-color"])
-		if (_cnf.attributes["shape"] == "rect") {
-			nodeBody.attr('width', Number(_cnf.attributes["width"]));
-			nodeBody.attr('height',  Number(_cnf.attributes["height"]));
-			nodeBody.attr('rx', nodeRadius);
-			nodeBody.attr('x', -((Number(_cnf.attributes["width"])) / 2));
-			nodeBody.attr('y', -((Number(_cnf.attributes["height"])) / 2));
-		}
-		if (_cnf.effects["haze"] == true)
-			nodeBody.attr('filter', 'url(#hazeEffect)'); //haze
-		if (_cnf.effects["glass"] == true)
-			nodeBody.attr('fill', 'url(#gradGlass)');
-		if (_cnf.effects["rounded"] == true)
-			nodeBody.attr('fill', 'url(#gradRound)');
-		if (!_cnf.effects["opaque"] == true)
-			nodeBody.attr('fill-opacity', _cnf.attributes["opacity"]);
-		node.data.UI.bodyUI = nodeBody;
-		this.nodeGraphics.push(nodeBody);
-		return nodeBody
-	}
+  this.addNodeBody=function() {
+    var nodeRadius=Number(_cnf.attributes["radius"]);
+    var nodeBody=Viva.Graph.svg(_cnf.attributes["shape"])
+			.attr('cx',0)//...for circle
+			.attr('cy',0)//...for circle
+			.attr('r',nodeRadius) //...for circle
+			.attr('fill',_cnf.attributes["background-color"]==null?'grey':_cnf.attributes["background-color"])
+			.attr('stroke-width',Number(_cnf.attributes["border-width"]))
+			.attr('stroke',_cnf.attributes["border-color"]==null?'black':_cnf.attributes["border-color"])
+    if(_cnf.attributes["shape"]=="rect") {
+      nodeBody.attr('width',Number(_cnf.attributes["width"]));
+      nodeBody.attr('height',Number(_cnf.attributes["height"]));
+      nodeBody.attr('rx',nodeRadius);
+      nodeBody.attr('x',-((Number(_cnf.attributes["width"]))/2));
+      nodeBody.attr('y',-((Number(_cnf.attributes["height"]))/2));
+    }
+    if(_cnf.effects["shadow"]==true)
+      nodeBody.attr('filter','url(#shadowEffect)');
+    if(_cnf.effects["haze"]==true)
+      nodeBody.attr('filter','url(#hazeEffect)');
+    if(_cnf.effects["glass"]==true)
+      nodeBody.attr('fill','url(#gradGlass)');
+    if(_cnf.effects["rounded"]==true)
+      nodeBody.attr('fill','url(#gradRound)');
+    if(!_cnf.effects["opaque"]==true)
+      nodeBody.attr('fill-opacity',_cnf.attributes["opacity"]);
+    node.data.UI.bodyUI=nodeBody;
+    this.nodeGraphics.push(nodeBody);
+    return nodeBody
+  }
 
-	this.addNodeImage = function () {
+  this.addNodeImage=function() {
 
-		//if (!_cnf.attributes.img["url"] == null)
-		//	return;
+    //if (!_cnf.attributes.img["url"] == null)
+    //	return;
     // Evaluate image url:
-    var imageUrl = "";
-    if (_cnf.attributes.img.displayData["key"] === "property")
-      imageUrl = this.node.data.propertiesObject[_cnf.attributes.img.displayData["value"]];
-    else if (_cnf.attributes.img.displayData["key"] === "static")
-      imageUrl = _cnf.attributes.img.displayData["value"];
+    var imageUrl="";
+    if(_cnf.attributes.img.displayData["key"]==="property")
+      imageUrl=this.node.data.propertiesObject[_cnf.attributes.img.displayData["value"]];
+    else if(_cnf.attributes.img.displayData["key"]==="static")
+      imageUrl=_cnf.attributes.img.displayData["value"];
     else
-      imageUrl = _cnf.attributes.img["url"];
-		
-    var imgWidth = Number(_cnf.attributes.img["width"]);
-		var imgHeight = Number(_cnf.attributes.img["height"]);
-		
-    if (imageUrl &&imgWidth === 0)
-      imgWidth = 100;
-    if (imageUrl && imgHeight === 0)
-      imgHeight = 100;
+      imageUrl=_cnf.attributes.img["url"];
 
-    var nodeBodyImage = Viva.Graph.svg('image')
+    var imgWidth=Number(_cnf.attributes.img["width"]);
+    var imgHeight=Number(_cnf.attributes.img["height"]);
+
+    if(imageUrl&&imgWidth===0)
+      imgWidth=100;
+    if(imageUrl&&imgHeight===0)
+      imgHeight=100;
+
+    var nodeBodyImage=Viva.Graph.svg('image')
 		//var nodeRadius = Number(nodeRadius);
 		//.attr('rx', nodeRadius)
-		.attr('width', imgWidth)
-		.attr('height', imgHeight)
-		.attr('x', -imgWidth/2)
-		.attr('y', -imgHeight / 2)
-		.attr('opacity', Number(_cnf.attributes.img["opacity"]))
+		.attr('width',imgWidth)
+		.attr('height',imgHeight)
+		.attr('x',-imgWidth/2)
+		.attr('y',-imgHeight/2)
+		.attr('opacity',Number(_cnf.attributes.img["opacity"]))
     .link(imageUrl);
-		if (_cnf.effects["rounded"] == true) nodeBodyImage.attr('fill', 'url(#gradRound)');
-		//if (!_cnf.effects["opaque"] == true) nodeBodyImage.attr('opacity', Number(_cnf.attributes.img["opacity"]));
-		this.node.data.UI.imageUI = nodeBodyImage;
-		this.nodeGraphics.push(nodeBodyImage);
-		return nodeBodyImage;
-	}
+    if(_cnf.effects["rounded"]==true) nodeBodyImage.attr('fill','url(#gradRound)');
+    //if (!_cnf.effects["opaque"] == true) nodeBodyImage.attr('opacity', Number(_cnf.attributes.img["opacity"]));
+    this.node.data.UI.imageUI=nodeBodyImage;
+    this.nodeGraphics.push(nodeBodyImage);
+    return nodeBodyImage;
+  }
 
-	this.addNodeOption = function (thingConfig) {
-		nodeOption = Viva.Graph.svg('image')
-			.attr('x', thingConfig["x"])
-			.attr('y', thingConfig["y"])
-			.attr('width', thingConfig["size"])
-			.attr('height', thingConfig["size"])
-			.attr('fill', thingConfig["color"])
+  this.addNodeOption=function(thingConfig) {
+    nodeOption=Viva.Graph.svg('image')
+			.attr('x',thingConfig["x"])
+			.attr('y',thingConfig["y"])
+			.attr('width',thingConfig["size"])
+			.attr('height',thingConfig["size"])
+			.attr('fill',thingConfig["color"])
 			.link(thingConfig["url"])
-		this.node.data.UI.options.push(nodeOption);
-		this.nodeGraphics.push(nodeOption);
-		return nodeOption;
-	}
+    this.node.data.UI.options.push(nodeOption);
+    this.nodeGraphics.push(nodeOption);
+    return nodeOption;
+  }
 
-	this.addNodeLine = function () {
-		var x = Math.ceil(getRandomArbitrary(40, 90));
-		var y = Math.ceil(getRandomArbitrary(40, 90));
-		var r = Math.ceil(getRandomArbitrary(0, 360));
-		var sx = Math.ceil(getRandomArbitrary(-1, 1));
-		var sy = Math.ceil(getRandomArbitrary(-1, 1));
+  this.addNodeLine=function() {
+    var x=Math.ceil(getRandomArbitrary(40,90));
+    var y=Math.ceil(getRandomArbitrary(40,90));
+    var r=Math.ceil(getRandomArbitrary(0,360));
+    var sx=Math.ceil(getRandomArbitrary(-1,1));
+    var sy=Math.ceil(getRandomArbitrary(-1,1));
 
-		nodeLine = Viva.Graph.svg('line')
-			.attr('x1', 0)
-			.attr('y1', 0)
-			.attr('x2', x)
-			.attr('y2', y)
-			.attr('style', "stroke:url(#gradShine);transform:rotate("+ r +"deg);")
-			.attr('stroke-width', '2')
-		;
-		this.node.data.UI.options.push(nodeLine);
-		this.nodeGraphics.push(nodeLine);
-		return nodeLine;
-	}
+    nodeLine=Viva.Graph.svg('line')
+			.attr('x1',0)
+			.attr('y1',0)
+			.attr('x2',x)
+			.attr('y2',y)
+			.attr('style',"stroke:url(#gradShine);transform:rotate("+r+"deg);")
+			.attr('stroke-width','2')
+    ;
+    this.node.data.UI.options.push(nodeLine);
+    this.nodeGraphics.push(nodeLine);
+    return nodeLine;
+  }
 
-	this.addNodeText = function () {
-		if (!_cnf.attributes.labelText["show"])
-			return;
-		//Text elements...
-		var displayText = Viva.Graph.svg('text')
-			.attr('y', Number(_cnf.attributes.labelText["x"]))
-			.attr('x', Number(_cnf.attributes.labelText["y"]))
-			.attr('fill', _cnf.attributes.labelText["color"])
-			.attr('font-family', _cnf.attributes.labelText["font-family"])
-			.attr('font-weight', _cnf.attributes.labelText["font-weight"])
-			.attr('font-size', Number(_cnf.attributes.labelText["font-size"]))
+  this.addNodeText=function() {
+    if(!_cnf.attributes.labelText["show"])
+      return;
+    //Text elements...
+    var displayText=Viva.Graph.svg('text')
+			.attr('y',Number(_cnf.attributes.labelText["x"]))
+			.attr('x',Number(_cnf.attributes.labelText["y"]))
+			.attr('fill',_cnf.attributes.labelText["color"])
+			.attr('font-family',_cnf.attributes.labelText["font-family"])
+			.attr('font-weight',_cnf.attributes.labelText["font-weight"])
+			.attr('font-size',Number(_cnf.attributes.labelText["font-size"]))
 			//.attr('stroke', 'black')
 			//.attr('stroke-width', '0.5')
 			.text(this.node.data.displayLabel);
-		//if (_cnf.attributes.labelText.effects["haze"] == true)
-		//	displayText.attr('filter', 'url(#darkHazeEffect)'); //haze
-		this.node.data.UI.displayTextUI = displayText;
-		this.nodeGraphics.push(displayText);
-		return displayText;
-	}
+    //if (_cnf.attributes.labelText.effects["haze"] == true)
+    //	displayText.attr('filter', 'url(#darkHazeEffect)'); //haze
+    this.node.data.UI.displayTextUI=displayText;
+    this.nodeGraphics.push(displayText);
+    return displayText;
+  }
 
-	this.addNodeCircleTextPath = function () {
-		if (!_cnf.attributes.circleText["show"])
-			return;
-		var r = Number(_cnf.attributes["radius"]) + 5;
-		var circleTextPath = Viva.Graph.svg('path')
-			.attr('id', 'npath_' + this.node.data.id)
-			.attr('d', ''
+  this.addNodeCircleTextPath=function() {
+    if(!_cnf.attributes.circleText["show"])
+      return;
+    var r=Number(_cnf.attributes["radius"])+5;
+    var circleTextPath=Viva.Graph.svg('path')
+			.attr('id','npath_'+this.node.data.id)
+			.attr('d',''
 				+'M 0, 0'
 				+'m -'+r+', 0'
 				+'a '+r+', '+r+' 0 1, 0 '+r*2+', 0'
 				+'a '+r+', '+r+' 0 1, 0 -'+r*2+', 0')
-			.attr('fill', 'transparent')
-			.attr('style', "transform:rotate(" + 90 + "deg);")
-		this.node.data.UI.circleTextPath = circleTextPath;
-		this.nodeGraphics.push(circleTextPath);
-		return circleTextPath;
-	}
+			.attr('fill','transparent')
+			.attr('style',"transform:rotate("+90+"deg);")
+    this.node.data.UI.circleTextPath=circleTextPath;
+    this.nodeGraphics.push(circleTextPath);
+    return circleTextPath;
+  }
 
-	this.addNodeCircleText = function () {
-		if (!_cnf.attributes.circleText["show"])
-			return;
-		var circleText = Viva.Graph.svg('text')
-			.attr('y', 0)
-			.attr('x', 0)
-			.attr('fill', _cnf.attributes.circleText["color"])
-			.attr('opacity', _cnf.attributes.circleText["opacity"])
-			.attr('font-size', '10')
-		circleText.innerHTML += '<textPath alignment-baseline="hanging" text-anchor="middle" xlink:href="#npath_' + this.node.data.id + '" startOffset="50%">' + this.node.data.circleText + '</textPath>';
-		//circleText.innerHTML += '<textPath alignment-baseline="baseline" text-anchor="start" xlink:href="#npath_' + this.node.data.id + '" startOffset="0%">' + this.node.data.circleText + '</textPath>';
-		this.node.data.UI.circleText = circleText;
-		this.nodeGraphics.push(circleText);
-		return circleText;
-	}
-	
-	this.addEffect = function (name, definition) {
-		this.nodeEffects.push({ name: name, definition:definition });
-	}
+  this.addNodeCircleText=function() {
+    if(!_cnf.attributes.circleText["show"])
+      return;
+    var circleText=Viva.Graph.svg('text')
+			.attr('y',0)
+			.attr('x',0)
+			.attr('fill',_cnf.attributes.circleText["color"])
+			.attr('opacity',_cnf.attributes.circleText["opacity"])
+			.attr('font-size','10')
+    circleText.innerHTML+='<textPath alignment-baseline="hanging" text-anchor="middle" xlink:href="#npath_'+this.node.data.id+'" startOffset="50%">'+this.node.data.circleText+'</textPath>';
+    //circleText.innerHTML += '<textPath alignment-baseline="baseline" text-anchor="start" xlink:href="#npath_' + this.node.data.id + '" startOffset="0%">' + this.node.data.circleText + '</textPath>';
+    this.node.data.UI.circleText=circleText;
+    this.nodeGraphics.push(circleText);
+    return circleText;
+  }
+
+  this.addEffect=function(name,definition) {
+    this.nodeEffects.push({ name: name,definition: definition });
+  }
 
 
 
-	this.compileNode = function(ui)
-	{
-		node.data.UI.fullUI = ui;
+  this.compileNode=function(ui) {
+    node.data.UI.fullUI=ui;
 
-		var effectsUi = '<defs>';
-		for (var i = 0; i < this.nodeEffects.length; i++)
-			effectsUi += this.nodeEffects[i].definition;
-		effectsUi += '</defs>';
+    addEffectsToNode(ui,this.nodeEffects);
 
-		ui.innerHTML = effectsUi;
-		this.nodeGraphics.forEach(function (nodeGraphic) {
-			ui.append(nodeGraphic);
-		});
-	}
+    this.nodeGraphics.forEach(function(nodeGraphic) {
+      ui.append(nodeGraphic);
+    });
+
+  }
+
+  function addEffectsToNode(ui,nodeEffects) {
+    var effectsUi='<defs>';
+    for(var i=0;i<nodeEffects.length;i++) {
+      effectsUi+=nodeEffects[i].definition;
+    }
+    effectsUi+='</defs>';
+    ui.innerHTML=effectsUi;
+
+    //for(var i=0;i<nodeEffects.length;i++) {
+    //  ui.attr('filter','url(#'+nodeEffects[i].name+')');
+    //}
+  }
 }
 
 
-function defineNodeAppearance_dataNode(node, ui) {
-	var _cnf = node.data.entityConfig.config;
+function defineNodeAppearance_dataNode(node,ui) {
+  var _cnf=node.data.entityConfig.config;
 
-	ui.attr('class', 'datanode')
-	node.data.UI = {
-		bodyUI: undefined,
-		imageUI: undefined,
-		displayTextUI: undefined,
-		options: [],
-		circleTextPath: undefined,
-		circleText: undefined
-	}
+  ui.attr('class','datanode')
+  node.data.UI={
+    bodyUI: undefined,
+    imageUI: undefined,
+    displayTextUI: undefined,
+    options: [],
+    circleTextPath: undefined,
+    circleText: undefined
+  }
 
-	//Circle elements NODE-CIRCLE
-	var nodeAppearance = new nodeAppearanceHelper(node);
+  //Circle elements NODE-CIRCLE
+  var nodeAppearance=new nodeAppearanceModel(node);
 
-	nodeAppearance.addNodeBody();
-	nodeAppearance.addNodeImage();
-	nodeAppearance.addNodeText();
-	nodeAppearance.addNodeCircleTextPath();
-	nodeAppearance.addNodeCircleText();
+  nodeAppearance.addNodeBody();
+  nodeAppearance.addNodeImage();
+  nodeAppearance.addNodeText();
+  nodeAppearance.addNodeCircleTextPath();
+  nodeAppearance.addNodeCircleText();
 
-	_cnf["relatedThings"].forEach(function (thingConfig) {
-		if (thingConfig.thingName === "option")
-			nodeAppearance.addNodeOption(thingConfig);
-	});
+  _cnf["relatedThings"].forEach(function(thingConfig) {
+    if(thingConfig.thingName==="option")
+      nodeAppearance.addNodeOption(thingConfig);
+  });
 
-	nodeAppearance.addEffect("hazeEffect",
-		'<filter id="hazeEffect" x="-1" y="-1" width="300%" height="300%"><feOffset result="offOut" in="FillPaint" dx="0" dy="0" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>'
-	);
-	nodeAppearance.addEffect("shadowEffect",
-		'<filter id="shadowEffect" x="-1" y="-1" width="300%" height="300%"><feOffset result="offOut" in="SourceAlpha" dx="20" dy="20" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>'
-	);
-	nodeAppearance.addEffect("gradGlass", ''
-		+'<linearGradient id="gradGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%">'
-		+'	<stop offset="0%" stop-color="#606768" stop-opacity="0.3"/>'
-		+'	<stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/>'
-		+'	<stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/>'
-		+'	<stop offset="28%" stop-color="#000000" stop-opacity="0.3"/>'
-		+'	<stop offset="73%" stop-color="#000000" stop-opacity="0.3"/>'
-		+'	<stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/>'
-		+'	<stop offset="97%" stop-color="#000000" stop-opacity="0.3"/>'
-		+'	<stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>'
-		+'</linearGradient>'
-	);
-	nodeAppearance.addEffect("gradShine", ''
-		+'<linearGradient id="gradShine" x1="0%" y1="0%" x2="100%" y2="100%">'
-		+'	<stop offset="0%"   stop-color="white" stop-opacity="0.7"/>'
-		+'	<stop offset="100%"  stop-color="purple" stop-opacity="0"/>'
-		+'</linearGradient>'
-	);
+  if(_cnf.effects["haze"]) {
+    nodeAppearance.addEffect("hazeEffect",
+		  '<filter id="hazeEffect" x="-1" y="-1" width="300%" height="300%"><feOffset result="offOut" in="FillPaint" dx="0" dy="0" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>'
+	  );
+  }
+  if(_cnf.effects["shadow"]) {
+    nodeAppearance.addEffect("shadowEffect",
+      '<filter id="shadowEffect" x="-1" y="-1" width="300%" height="300%"><feOffset result="offOut" in="SourceAlpha" dx="20" dy="20" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>'
+    );
+  }
+  if(_cnf.effects["glass"]) {
+    nodeAppearance.addEffect("gradGlass",''
+      +'<linearGradient id="gradGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%">'
+      +'	<stop offset="0%" stop-color="#606768" stop-opacity="0.3"/>'
+      +'	<stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/>'
+      +'	<stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/>'
+      +'	<stop offset="28%" stop-color="#000000" stop-opacity="0.3"/>'
+      +'	<stop offset="73%" stop-color="#000000" stop-opacity="0.3"/>'
+      +'	<stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/>'
+      +'	<stop offset="97%" stop-color="#000000" stop-opacity="0.3"/>'
+      +'	<stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>'
+      +'</linearGradient>'
+    );
+  }
+  if(_cnf.effects["highlightHaze"]) {
+    nodeAppearance.addEffect("gradShine",''
+      +'<linearGradient id="gradShine" x1="0%" y1="0%" x2="100%" y2="100%">'
+      +'	<stop offset="0%"   stop-color="white" stop-opacity="0.7"/>'
+      +'	<stop offset="100%"  stop-color="purple" stop-opacity="0"/>'
+      +'</linearGradient>'
+    );
+  }
+  if(_cnf.effects["rounded"]) {
+    //effects.push('<linearGradient id="coloredGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#606768" stop-opacity="0.3"/><stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="28%" stop-color="#000000" stop-opacity="0.3"/><stop offset="73%" stop-color="#000000" stop-opacity="0.3"/><stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/><stop offset="97%" stop-color="#000000" stop-opacity="0.3"/><stop offset="100%" stop-color="#000000" stop-opacity="0.3"/></linearGradient>');
+    nodeAppearance.addEffect("gradRound",
+      '<radialGradient id="gradRound" cx="50%" cy="50%" r="50%" fx="50%" fy="50%"><stop offset="80%" style="stop-color:rgb('+node.data.nodeColorRGB.r+','+node.data.nodeColorRGB.g+','+node.data.nodeColorRGB.b+'); stop-opacity:1" /><stop offset="100%" style="stop-color:rgb('+(node.data.nodeColorRGB.r-100)+','+(node.data.nodeColorRGB.g-100)+','+(node.data.nodeColorRGB.b-100)+');stop-opacity:1" /></radialGradient>'
+    );
+  }
+  //var effectsUi = nodeAppearance.addEffects(effects);
+  //console.log(effectsUi);
 
-	//effects.push('<linearGradient id="coloredGlass" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#606768" stop-opacity="0.3"/><stop offset="3%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="27%" stop-color="#bbbbbb" stop-opacity="0.3"/><stop offset="28%" stop-color="#000000" stop-opacity="0.3"/><stop offset="73%" stop-color="#000000" stop-opacity="0.3"/><stop offset="88%" stop-color="#4b5051" stop-opacity="0.3"/><stop offset="97%" stop-color="#000000" stop-opacity="0.3"/><stop offset="100%" stop-color="#000000" stop-opacity="0.3"/></linearGradient>');
-	nodeAppearance.addEffect("gradRound",
-		'<radialGradient id="gradRound" cx="50%" cy="50%" r="50%" fx="50%" fy="50%"><stop offset="80%" style="stop-color:rgb(' + node.data.nodeColorRGB.r + ',' + node.data.nodeColorRGB.g + ',' + node.data.nodeColorRGB.b + '); stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(' + (node.data.nodeColorRGB.r - 100) + ',' + (node.data.nodeColorRGB.g - 100) + ',' + (node.data.nodeColorRGB.b - 100) + ');stop-opacity:1" /></radialGradient>'
-	);
 
-	//var effectsUi = nodeAppearance.addEffects(effects);
-	//console.log(effectsUi);
-	
-	
-	nodeAppearance.compileNode(ui);
+  nodeAppearance.compileNode(ui);
 
 
 
@@ -7205,10 +7216,23 @@ function Globals(){
     this.animator = new AnimationHelper();
 		this.consoleService = new ConsoleService();
 
+    // States ...
+    this.states = {};
+    this.states.overNode = null; // ...nodeType; (mouse is over a node);
+    this.states.holdingNode = null; // ...nodeType; (user is dragging or holding a node)
+    this.states.hammeringNode = false; // ...Bool; (last tap/click within 1 second, was on a node)
+    this.states.lastHammeredNodeAt = null; // ...Number; (the last Time that the node was clicked)
+    // Modes ...
+    this.modes = {};
+    this.modes.createNodeOnGraphDblClick = false;
+    this.modes.selectNodeAfterCreate = false;
+    this.modes.createLinkFromSelectedNodeOnCreateNode = false;
+    // Nodestamp
+    this.nodeStamp = new NodeStampType();
+
 		//......Filter settings.............
 		this.viewOptions = new viewOptionsType();
 		this.interactionOptions = new interactionOptionsType();
-
 
 		//......Display settings............
 		this.currentTheme = new themeType();
@@ -9316,7 +9340,8 @@ function graphexMain() {
 		configHelper.runStartupProcedures();
 		setupCommonUI();
 		prepareGraph();
-		defineNodes();
+		define_Graph();
+    define_Node();
 		defineNodeDrawing();
 		if (globals.browser.name != "Firefox" && globals.browser.name != "IE"){
       defineLinkObjectsCommonAssets();
@@ -9420,18 +9445,107 @@ function prepareGraph()
 
 
 
+function GraphBehavioursHelper(){
+
+  this.CreateNodeAtClickPoint = function(x, y){
+    // Get graph matrix...
+    var graphMatrix = globals.graphics.getSvgRoot().childNodes[0].attr('transform').substr(7).replace(')','').replace(/\s/g,'').split(',');
+    var graphX = Number(graphMatrix[4]);
+    var graphY = Number(graphMatrix[5]);
+    var graphScale = Number(graphMatrix[3]);
+
+    // Create node...
+    var labels = globals.nodeStamp.labels;
+    //var properties = globals.nodeStamp.properties;
+    var config = globals.nodeStamp.config;
+    config.matchEntity = {"labels":labels};
+    config.configName = "stmpCnf_" + labels[0];
+    config.configType = "entity";
+
+    var configId = new ConfigHelper().AddOrUpdateDynamicEntityConfigReturnId(config.configName,config);
+    var newNode = new DataService().CreateEntity_AddToGraph_ReturnNode(labels);
+
+    // Calculate node position...
+    var posx= ((x) * (1/graphScale)) - graphX * (1/graphScale);// * (1/graphScale);
+    var posy= ((y-50) * (1/graphScale)) - graphY * (1/graphScale);// * (1/graphScale); //e.clientY + window.document.body.scrollTop + window.document.documentElement.scrollTop
+
+    // Create relation...
+    if (globals.modes.createLinkFromSelectedNodeOnCreateNode){
+      var fromNode = globals.selectedNode;
+      if(fromNode){
+        new DataService().CreateRelation_AddToGraph_ReturnLink(fromNode.id, newNode.id);
+      }
+    }
+
+    // Select Node
+    if (globals.modes.selectNodeAfterCreate){
+      //debugger;
+      new GraphHelper().SelectNode(newNode);
+    }
+
+    // Position node...
+    globals.layout.setNodePosition(newNode.id,posx,posy);
+  }
+
+
+  //function translatorCreateRelation(fromNode, toNode){
+  //  _dataSvc.CreateRelation_AddToGraph_ReturnLink(fromNode.id, toNode.id);
+  //}
+
+  //function translatorCreateNode(label, type){
+  //  return _dataSvc.CreateEntity_AddToGraph_ReturnNode([type], {"Name":label});
+  //}
+
+}
+
+function graph_Event(eventType, x, y) {
+  if (eventType == "dblclick"){
+		graph_DoubleClick(x, y);
+  }
+}
+
+function graph_DoubleClick(x, y){
+  if (globals.modes.createNodeOnGraphDblClick == true){
+    new GraphBehavioursHelper().CreateNodeAtClickPoint(x,y);
+  }
+}
+
+
+function define_Graph(){
+  
+  
+  var graph=document.getElementById('graphContainer')
+  graph.onmove=function(e) {
+    updateIndicator(e);
+  }
+
+  // Define Graph Events...
+  Hammer(graph).on("tap", function(e) {
+    //singletap stuff, (theres a problem here, we can't distinguish between a node tap and graph tap)
+  });
+  Hammer(graph).on("doubletap", function(e) {
+    if (globals.states.overNode){
+      new node_Event('dblclick',globals.states.overNode, e.center.x, e.center.y);
+      return;
+    }
+    if (globals.states.hammeringNode){
+      return;
+    }
+    graph_Event('dblclick', e.center.x, e.center.y);
+  });
+
+}
+
+
 //====== NODE VISUAL DEFINITIONS ========================================================================================================
 
-function defineNodes() {
+function define_Node() {
 	//Node elements...
 	globals.graphics.node(function (node) {
 
 		nodeOuterLayer = Viva.Graph.svg('g');
 		nodeLayer = Viva.Graph.svg('g');
 
-		if (isShadowEffectTurnedOnInConfig(node.data.sourceConfig)) {
-			addShadowTo(nodeLayer);
-		}
 		if (node.data.nodeType == 'data') {
 			defineNodeAppearance_dataNode(node, nodeLayer);
 		}
@@ -9450,15 +9564,6 @@ function defineNodes() {
 		return nodeOuterLayer;
 	});
 
-	function isShadowEffectTurnedOnInConfig(config) {
-		//console.log('Shadow:', config.displaySettings.shadow);
-		return config.displaySettings.shadow;
-	}
-
-	function addShadowTo(nodeLayer) {
-		nodeLayer.attr('filter', 'url(#shadowEffect)');
-	}
-
 	function attachMetaData(node, ui) {
 		ui.attr('depth', 5);
 		ui.attr('class', 'node');
@@ -9471,14 +9576,6 @@ function defineNodes() {
 	function attachMouseEventsToNode(node, ui) {
 		//NODE EVENTS
 		// events (http://www.w3.org/TR/SVG/interact.html#SVGEvents ),
-		// including mouse events:
-
-		$(ui).tap(function (event) { // MOUSE CLICK
-			node_Event("tap", node, event.pageX, event.pageY);
-		}),
-		$(ui).taphold(function (event) { // MOUSE CLICK
-			node_Event("taphold", node, event.pageX, event.pageY);
-		}),
 
 		$(ui).touchstart(function (event) { // MOUSE CLICK
 			node_Event("touchstart", node, event.originalEvent.touches[0].pageX, event.originalEvent.touches[0].pageY);
@@ -10234,21 +10331,39 @@ function defineLinkDrawing(){
 	});
 }
 
-function renderGraph()
-{
-	// Finally render the graph with our customized globals.graphics object:
-	renderer = Viva.Graph.View.renderer(globals.GRAPH, {
-	  layout   : globals.layout, //Exclude custom physics
-	  graphics   : globals.graphics,
-	  renderLinks : true,
-	  prerender  : true,
-	  container : document.getElementById('graphContainer')
-	});
-	//var renderer2 = Viva.Graph.View.globals.renderer(graph, {
-	//  container : document.getElementById('schemaContainer')
-	//});
-	globals.renderer = renderer;
-	renderer.run();
+function renderGraph() {
+  // Finally render the graph with our customized globals.graphics object:
+  renderer=Viva.Graph.View.renderer(globals.GRAPH,{
+    layout: globals.layout, //Exclude custom physics
+    graphics: globals.graphics,
+    renderLinks: true,
+    prerender: true,
+    container: document.getElementById('graphContainer')
+  });
+
+  function updateIndicator(e) {
+    setTimeout(function() {
+      var indicator=document.getElementById('indicator');
+      var gx=globals.layout.getGraphRect();
+      var graphMatrix = globals.graphics.getSvgRoot().childNodes[0].attr('transform').substr(7).replace(')','').replace(/\s/g,'').split(',');
+      indicator.innerHTML=''
+      +'x1:'+gx.x1
+      +'<br/>x2:'+gx.x2
+      +'<br/>y1:'+gx.y1
+      +'<br/>y2:'+gx.y2
+      +'<br/>scale:'+graphMatrix[3]
+      +'<br/>GX:'+graphMatrix[4]
+      +'<br/>GY:'+graphMatrix[5]
+      //+ ((e)?('<br/>clientX:' + e.x + '<br/>clientY:' + e.y):'')
+      ;
+      updateIndicator();
+    },10);
+  }
+  updateIndicator();
+  
+
+  globals.renderer=renderer;
+  renderer.run();
 }
 function initUi() {
   //========== STARTUP UI SETTINGS ===========================================================================================================================================================================

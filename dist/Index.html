@@ -51,6 +51,7 @@
 </head>
 
 <body onload="graphexInitialize()">
+	<div id="indicator" style="z-index:1; position:fixed; margin-left:90%; color:white; font-size:xx-small"></div>
 
 	<div id="vue-app">
 		<!--Graph-->
@@ -58,11 +59,15 @@
 		<!--Console-->
 		<vw-formula-box v-bind:formulaprop="formulaToolbar" v-bind:panels="panels"></vw-formula-box>
 		<vw-left-sidebar v-bind:sysdata="systemData" v-bind:panels="panels"></vw-left-sidebar>
-		<vw-right-sidebar v-bind:tabs="tabs" v-bind:panels="panels"></vw-right-sidebar>
+		<vw-right-sidebar v-bind:tabs="tabs" v-bind:nodestamp="nodeStamp" v-bind:panels="panels"></vw-right-sidebar>
+		<vw-panel-nodestamp v-bind:nodestamp="nodeStamp" v-bind:show="panels.nodeStamp.show"></vw-panel-nodestamp>
+		<vw-subtoolbar v-bind:toolbar="leftToolbar.toolbar" v-bind:expander_function="leftToolbar.expander_function" v-bind:collapse_function="leftToolbar.collapse_function" v-bind:level="0"></vw-subtoolbar>
+		<!--<vw-left-toolbar v-bind:lefttoolbar="leftToolbar.toolbar" toolbarwidth="200" v-bind:panels="panels"></vw-left-toolbar>-->
 		<!--<vw-mode-indicator v-bind:indicatorprop="indicator"></vw-mode-indicator>-->
 		<vw-topbar v-bind:topbar="topbar"></vw-topbar>
 		<!--Modals-->
 		<vw-modal v-bind:modal="modals.commonModal"></vw-modal>
+
 	</div>
 
 	<div class="nodeFlyout" id="panel.node">
@@ -343,6 +348,35 @@
 		</div>
 	</script>
 
+	<script type="text/x-template" id="vueTemplate-panel-nodeStamp">
+		<div id='nodeStampPanel'
+			 v-bind:class="{active:show}"
+			 class="flexcroll">
+			<!--<div class="panelHead">Node Stamp<i class="glyphicon glyphicon-menu-hamburger pull-right"></i></div>-->
+
+			<div class="nodeStamp"
+				 v-for="(stamp, index) in nodestamp.stamps"
+				 v-on:click="nodestamp.activeStampIndex = index;
+                            nodestamp.selectStamp();"
+				 v-bind:class="{ active: (nodestamp.activeStampIndex == index)}">
+				<div class="nodestamp node">
+					<svg>
+						<circle cx="30"
+								cy="30"
+								r="25"
+								v-bind:stroke-width="stamp.config.config.attributes['border-width']"
+								v-bind:stroke="stamp.config.config.attributes['border-color']"
+								v-bind:fill="stamp.config.config.attributes['background-color']" />
+					</svg>
+				</div>
+				<div class="nodestamp lbl">
+					<label>{{stamp.labels[0]}}</label>
+				</div>
+			</div>
+
+		</div>
+	</script>
+
 	<script type="text/x-template" id="vueTemplate-topbar">
 		<div id='graphexTopBar'>
 			<table>
@@ -442,7 +476,9 @@
 	</script>
 
 	<script type="text/x-template" id="vueTemplate-right-sidebar">
-		<div v-if="panels.nodeTypeEditor.show" id='rightSidebar' class="flexcroll">
+		<div id='rightSidebar'
+			 class="flexcroll"
+			 v-if="panels.nodeTypeEditor.show">
 			<vw-panel-nodeEditor v-if="panels.nodeTypeEditor.show" v-bind:tabsprop="tabs"></vw-panel-nodeEditor>
 		</div>
 	</script>
@@ -472,6 +508,44 @@
 		<div id='modeIndicator'>
 			<img src="indicatorprop.image" class="modeIndicatorImage" />
 			<span class="modeIndicatorLabel">{{indicatorprop.title}}</span>
+		</div>
+	</script>
+
+
+	<script type="text/x-template" id="vueTemplate-subtoolbar">
+		<!--props: toolbar, expander_function, collapse_function, parent, level-->
+		<div>
+			<div class="sidebar"
+				 v-bind:class="{level2: level>0}"
+				 v-bind:style="{ 'margin-left': toolbar.stateLeft + 'px', 'z-index': 1000-level}">
+				<ul class="sidebar-nav">
+					<li>
+						<a id="navbar-toggle"
+						   v-on:click="expander_function(toolbar, parent, true, collapse_function)">
+							Close <i class="fa fa-bars menu-icon fa-2x" aria-hidden="true"></i>
+						</a>
+					</li>
+					<li v-for="item in toolbar.items">
+						<a v-on:click="expander_function(toolbar.toolbars[item.subToolbarKey], toolbar, false, collapse_function);
+									   toolbar.checkedItems = [item.desc];
+                                       item.func();"
+						   v-bind:class="{checked: toolbar.checkedItems.indexOf(item.desc)> -1}"
+						   href="#">
+							{{ item.desc }}
+							<img v-if="item.img" class="icoImg pull-right" v-bind:src="item.img" />
+							<i v-if="item.ico" v-bind:class="'fa ' + item.ico + ' menu-icon fa-2x'" aria-hidden="true"></i>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div v-for="childToolbarKey in toolbar.toolbars">
+				<vw-subtoolbar v-bind:parent="toolbar"
+							   v-bind:toolbar="childToolbarKey"
+							   v-bind:expander_function="expander_function"
+							   v-bind:collapse_function="collapse_function"
+							   v-bind:level="level + 1">
+				</vw-subtoolbar>
+			</div>
 		</div>
 	</script>
 

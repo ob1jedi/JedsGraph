@@ -93,7 +93,7 @@ function copySupportContent() {
 };
 
 function copyAssets() {
-  return gulp.src('./src/custom/assets/*')
+  return gulp.src('./src/custom/assets/**/*')
       .pipe(gulp.dest('dist/custom/assets'))
 
 };
