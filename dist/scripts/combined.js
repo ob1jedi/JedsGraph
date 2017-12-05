@@ -8482,7 +8482,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 					"color": "#00FF00"
 				},
 				"img": {
-					"url": "custom/assets/Space/Earth-PNG-Clipart.png",
+					"url": "bin/assets/Space/Earth-PNG-Clipart.png",
 					"width": 70,
 					"height": 70
 				}
@@ -8536,7 +8536,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndN
 			"relatedThings": [
 				{
 					"thingName": "option",
-					"url": "custom/assets/64.png",
+					"url": "bin/assets/64.png",
 					"x": 10,
 					"y": -50,
 					"size": 50
@@ -8628,7 +8628,7 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 //					"color": "yellow"
 //				},
 //				"img": {
-//					"url": "custom/assets/Space/Earth-PNG-Clipart.png",
+//					"url": "bin/assets/Space/Earth-PNG-Clipart.png",
 //					"width": 70,
 //					"height": 70
 //				}
@@ -8851,12 +8851,12 @@ globals.allUnitTests.push(function CreateGraphElementsFromJsonOffExistingNode_Gi
 				{
 					Name: "Scott",
 					Age: 10,
-          Pic: "custom/assets/Persons/Monroe.png",
+          Pic: "bin/assets/Persons/Monroe.png",
           link: "http://localhost:9090/scripts/Tests/TestAssets/TestJson.json"
 				},
 				{
 					Name: "Jane",
-          Avatar: "custom/assets/Persons/elvis.png"
+          Avatar: "bin/assets/Persons/elvis.png"
 				}]
 		}
 	};
@@ -9151,14 +9151,14 @@ globals.allUnitTests.push(function getJsonValueWithPath_GivenJsonWithArray_Expec
     var entityProperties = {
       Name: "John",
       Age: 30,
-      Source: "../custom/assets/Persons/Holmes.png"
+      Source: "../bin/assets/Persons/Holmes.png"
     };
     var newNode1 = dataSvc.CreateEntity_AddToGraph_ReturnNode(entityLabels, entityProperties);
     entityLabels = ['TypeDefTest'];
     entityProperties = {
       FirstName: "John",
       Age: "32",
-      Img: "../custom/assets/binoculars.svg"
+      Img: "../bin/assets/binoculars.svg"
     };
     var newNode2 = dataSvc.CreateEntity_AddToGraph_ReturnNode(entityLabels, entityProperties);
 

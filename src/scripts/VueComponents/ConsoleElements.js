@@ -415,7 +415,7 @@ var consoleApp=new Vue({
       ],
       indicator: {
         title: "",
-        image: "../custom/assets/binoculars.svg"
+        image: "../custom/assets/GraphexIcons/NewNodes.svg"
       }
     },
 

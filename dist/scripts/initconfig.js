@@ -568,7 +568,7 @@ configManager.configs.push( {
 		},
 
 		"relatedThings": [
-			/* example of "option" thing: {"thingName": "option","url": "custom/assets/64.png","x": 10,"y": 0,"size": 50}, */
+			/* example of "option" thing: {"thingName": "option","url": "custom/assets/GraphexIcons/NewNodes2.svg","x": 10,"y": 0,"size": 50}, */
       {
         "arrayId":  1,
         "thingName": "popoutBox",

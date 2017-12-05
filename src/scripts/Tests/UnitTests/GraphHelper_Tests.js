@@ -8,14 +8,14 @@
     var entityProperties = {
       Name: "John",
       Age: 30,
-      Source: "../custom/assets/Persons/Holmes.png"
+      Source: "../bin/assets/Persons/Holmes.png"
     };
     var newNode1 = dataSvc.CreateEntity_AddToGraph_ReturnNode(entityLabels, entityProperties);
     entityLabels = ['TypeDefTest'];
     entityProperties = {
       FirstName: "John",
       Age: "32",
-      Img: "../custom/assets/binoculars.svg"
+      Img: "../bin/assets/binoculars.svg"
     };
     var newNode2 = dataSvc.CreateEntity_AddToGraph_ReturnNode(entityLabels, entityProperties);
 

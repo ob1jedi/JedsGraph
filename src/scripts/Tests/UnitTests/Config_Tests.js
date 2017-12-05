@@ -27,7 +27,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfig() {
 					"color": "#00FF00"
 				},
 				"img": {
-					"url": "custom/assets/Space/Earth-PNG-Clipart.png",
+					"url": "bin/assets/Space/Earth-PNG-Clipart.png",
 					"width": 70,
 					"height": 70
 				}
@@ -81,7 +81,7 @@ globals.allUnitTests.push(function addDynamicConfig_GivenConfig_ExpectConfigAndN
 			"relatedThings": [
 				{
 					"thingName": "option",
-					"url": "custom/assets/64.png",
+					"url": "bin/assets/64.png",
 					"x": 10,
 					"y": -50,
 					"size": 50
@@ -173,7 +173,7 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 //					"color": "yellow"
 //				},
 //				"img": {
-//					"url": "custom/assets/Space/Earth-PNG-Clipart.png",
+//					"url": "bin/assets/Space/Earth-PNG-Clipart.png",
 //					"width": 70,
 //					"height": 70
 //				}

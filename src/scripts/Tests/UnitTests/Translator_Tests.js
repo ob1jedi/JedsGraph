@@ -165,32 +165,6 @@
     return true
 	});
 
-	////[Test]
-	//globals.allUnitTests.push(function JsonTranslate_GivenArrayWithObjects_ExpectRootNodes() {
-	//	// Arrange
-  //  var sut=new JsonTranslator();
-  //  var jsonObject1='["TestRootNode"]';
-		
-    
-  //  // Act
-	//	var result = sut.Translate(jsonObject1, "BaseNode");
-		
-  //  // Assert
-  //  console.log('Testing: BaseNode')
-  //  var result = getNodesByMatchingLabels(globals.nodeList, ['BaseNode']);
-  //  if (result.length == 0) return result;
-
-  //  //console.log('Testing: TestJsonNode')
-  //  //var result = getNodesByMatchingLabels(globals.nodeList, ['stringOnlyNode']);
-  //  //if (!result) return result;
-
-  //  console.log('Testing: TestRootNode')
-  //  var result = getNodesByMatchingLabels(globals.nodeList, ['TestRootNode']);
-  //  if (result.length == 0) return result;
-
-  //  return true
-	//});
-
 //[Test]
 globals.allUnitTests.push(function CreateGraphElementsFromJsonOffExistingNode_GivenJson_ExpectGraphElements() {
 	// Arrange
@@ -204,12 +178,12 @@ globals.allUnitTests.push(function CreateGraphElementsFromJsonOffExistingNode_Gi
 				{
 					Name: "Scott",
 					Age: 10,
-          Pic: "custom/assets/Persons/Monroe.png",
+          Pic: "bin/assets/Persons/Monroe.png",
           link: "http://localhost:9090/scripts/Tests/TestAssets/TestJson.json"
 				},
 				{
 					Name: "Jane",
-          Avatar: "custom/assets/Persons/elvis.png"
+          Avatar: "bin/assets/Persons/elvis.png"
 				}]
 		}
 	};
