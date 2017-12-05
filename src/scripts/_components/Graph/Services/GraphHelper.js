@@ -52,6 +52,7 @@
     if (!labelFound){
       entityType.labels = node.data.labels;
       globals.entityTypeDefs.push(entityType);
+
       addNodeStamp(node);
     }
     
