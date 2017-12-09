@@ -185,18 +185,12 @@
     }
     effectsUi+='</defs>';
     ui.innerHTML=effectsUi;
-
-    //for(var i=0;i<nodeEffects.length;i++) {
-    //  ui.attr('filter','url(#'+nodeEffects[i].name+')');
-    //}
   }
 }
 
 
 function defineNodeAppearance_dataNode(node,ui) {
-  //if (node.data.labels[0] == 'WORKFLOW') debugger;
   var _cnf=node.data.entityConfig.config;
-
   ui.attr('class','datanode')
   node.data.UI={
     bodyUI: undefined,
