@@ -194,6 +194,7 @@
 
 
 function defineNodeAppearance_dataNode(node,ui) {
+  //if (node.data.labels[0] == 'WORKFLOW') debugger;
   var _cnf=node.data.entityConfig.config;
 
   ui.attr('class','datanode')

@@ -196,9 +196,8 @@ var consoleApp=new Vue({
           console.log('props object:', propsObject);
           new DataService().UpdateEntity(node.id, node.data.labels, propsObject);
           node.data.propertiesObject = propsObject;
-          node.data.displayLabel = "HELLO";
           new GraphHelper().RefreshNode(node.id);
-          //defineNodeAppearance_dataNode(node, node.data.UI.outerUI.childNodes[0]);
+          
           new VueConsoleHelper().CloseNodeEditModal();
         }
         new VueConsoleHelper().DisplayNodeEditModal(node, confirmFunction);

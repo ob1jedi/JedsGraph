@@ -221,57 +221,31 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
     fromNode.data.toLinks.push(link);
     fromNode.data.toNodes.push(toNode);
   }
-
   new LinkHelper().FixTextWidth4Link(link);
-
   return link;
 }
 
-  var nodeUI;
-function addDataNode(nodeId, nodeData) {
+function addDataNode(nodeId, newNodeData) {
   var arraySvc = new ArrayHelper();
   var isNewNode=false;
   var node=getExistingNode(nodeId);
   if(node) {
-    setupDisplayLabels(node.data);
-    var labelsHaveChanged = !arraySvc.ArraysAreEquivalent(nodeData.labels, node.data.labels);
-    var propertiesHaveChanged = (getUpdatedProperties(node.data.properties,nodeData.properties).length > 0);
-    if(labelsHaveChanged || propertiesHaveChanged) {
-      if(nodeData.UI.displayTextUI) {
-        nodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(nodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
-      }
-      node.data.labels=nodeData.labels;
-      node.data.properties=nodeData.properties;
-      globals.animUpdateNodes.push(node);
+    if(newNodeData.UI.displayTextUI) {
+      newNodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(newNodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
     }
-    else {//no changes have been made to the node...
-      return; //NOTE: DO NOT RETURN THE DATA-NODE
-    }
+    node.data.labels=newNodeData.labels;
+    node.data.properties=newNodeData.properties;
+    globals.animUpdateNodes.push(node);
   }
-  else {
-    isNewNode=true;
-    nodeUI=globals.graphics.getNodeUI(nodeId);
-  }
-
-  var thisNodeData=nodeData;
-  var thisIsNewNode=isNewNode;
-  //var this_sourceConfig = _sourceConfig;
-
-  //set display attributes based on config...
-  if(thisNodeData.config.nodeDisplayBody.size) { thisNodeData.nodeSize=thisNodeData.config.nodeDisplayBody.size };
-
-  setupDisplayLabels(thisNodeData);
-
-  if(thisIsNewNode) {
-    var eventsHelper = new EntityEventsHelper();
-    setNodeColor(thisNodeData);
-    eventsHelper.AddEntityToGraph_beforeNodeAdd(thisNodeData);
-    node=addNodeToGraph(thisNodeData.id,thisNodeData);
-    //PerformNodeStatFunctions(node);
-    recordTypeInfo(node);
-    eventsHelper.AddEntityToGraph_afterNodeAdd(node);
-    return node; //RETURN ONLY IF NODE IS NEW
-  }
+  newNodeData = setupDisplayLabels(newNodeData);
+  var eventsHelper = new EntityEventsHelper();
+  setNodeColor(newNodeData);
+  eventsHelper.AddEntityToGraph_beforeNodeAdd(newNodeData);
+  node=addNodeToGraph(newNodeData.id,newNodeData);
+  //PerformNodeStatFunctions(node);
+  recordTypeInfo(node);
+  eventsHelper.AddEntityToGraph_afterNodeAdd(node);
+  return node;
 }
 
 function setupDisplayLabels(thisNodeData) {
@@ -316,7 +290,7 @@ function setupDisplayLabels(thisNodeData) {
   else {
     thisNodeData.circleText=finalLabel;
   }
-
+  return thisNodeData;
 }
 
 function setNodeColor(entityData) {

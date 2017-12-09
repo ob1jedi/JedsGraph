@@ -14,6 +14,10 @@
     }
     return nodes;
   }
+   this.RefreshNode = function(nodeId){
+    //defineNodeAppearance_subNode();
+     refreshNodeAppearance(nodeId);
+   }
 
   this.ConsoleShowNode = function(node){
     consoleApp.consoleShowNode(node);

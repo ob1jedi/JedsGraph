@@ -438,10 +438,16 @@ function loadNodePopout(node, config)
 //}
 
 function refreshNodeAppearance(nodeId){
-	var node = globals.GRAPH.getNode(nodeId?nodeId:globals.selectedNodeID);
-	addNodeToGraph(node.id, node.data);
-	node.data.UI.fullUI.attr('transform', 'scale(' + node.data.depth + ')');
+	var node = globals.GRAPH.getNode(nodeId?nodeId:globals.selectedNode.id);
+  addDataNode(node.id, node.data);
+  //addNodeToGraph(node.id, node.data);
+  //defineNodeAppearance_dataNode(node, node.data.UI.outerUI.childNodes[0]);
+  applyDepth(node);
+  return node;
+}
 
+function applyDepth(node){
+    node.data.UI.fullUI.attr('transform', 'scale(' + node.data.depth + ')');
 	if (node.data.depth > 1) {
 		node.data.UI.fullUI.attr('opacity', 1 / node.data.depth);
 	}
