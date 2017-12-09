@@ -30,6 +30,10 @@ function graphexMain() {
     runUnitTests();
     // Check params for Graphs
     processParameters();
+
+    //Set defaults
+    globals.nodeStamp = consoleApp.nodeStamp.stamps[0];
+
 	}
 
   function runUnitTests(){
