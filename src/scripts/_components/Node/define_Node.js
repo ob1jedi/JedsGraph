@@ -7,22 +7,25 @@ function define_Node() {
 		nodeOuterLayer = Viva.Graph.svg('g');
 		nodeLayer = Viva.Graph.svg('g');
 
-		if (node.data.nodeType == 'data') {
-			defineNodeAppearance_dataNode(node, nodeLayer);
-		}
-		else if (node.data.nodeType == 'subnode') {
-			defineNodeAppearance_subNode(node, nodeLayer);
-			if (node.data.superNodes[0])
-				nodeLayer.attr('parentnodeid', node.data.superNodes[0].id);
-		}
-		else if (node.data.nodeType == 'planned')
-			defineNodeAppearance_plannedNode(node, nodeLayer);
-
+    switch (node.data.nodeType){
+      case 'data':
+        defineNodeAppearance_dataNode(node, nodeLayer);
+        break;
+      case 'subnode':
+			  defineNodeAppearance_subNode(node, nodeLayer);
+			  if (node.data.superNodes[0]) 
+          nodeLayer.attr('parentnodeid', node.data.superNodes[0].id);
+        break;
+      case 'planned':
+        defineNodeAppearance_plannedNode(node, nodeLayer);
+        break;
+    }
+    
 		attachMouseEventsToNode(node, nodeLayer);
 		attachMetaData(node, nodeLayer);
 		nodeOuterLayer.append(nodeLayer);
 		node.data.UI.outerUI = nodeOuterLayer;
-		return nodeOuterLayer;
+    return nodeOuterLayer;
 	});
 
 	function attachMetaData(node, ui) {
