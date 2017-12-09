@@ -38,71 +38,30 @@ globals.allUnitTests.push(function getNextNewLinkId_Given_Expect1() {
 });
 
 //[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNoNode_ExpectNode() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNoNode_ExpectError() {
 	// Arrange
 	var sut = createDataDriver();
 
 	// Act
-	var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId();
-
+  try{
+	  var result = sut.CreateEntityInDatabasePopulateAndReturnId();
+    return result;
+  }catch(e){
+    return true;
+  }
 	// Assert
-	return (nodeId !== undefined) ? true : result;
-});
-
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeId() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-
-	// Act
-	var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
-	// Assert
-	return (nodeId !== undefined) ? true : result;
-});
-
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeWithId() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-
-	// Act
-	var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
-	// Assert
-	var result = sut.GetEntityFromDatabase(nodeId);
-	return (result.id === nodeId) ? true : result;
-});
-
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given2NodesWithIdsGetFirstNode_ExpectFirstInputNodeId() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
-
-	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	sut.CreateEntityInDatabasePopulateAndReturnId(node2);
-
-	// Assert
-	var result = sut.GetEntityFromDatabase(node1.id);
-	return (result.id === node1.id) ? true : result;
+	
 });
 
 //[Test]
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithIdAndLabel_ExpectInputNodeLabels() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		labels: ["label1"]
-	};
+  var labels = ["label1"]
 
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
+  var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId(labels);
+  var node1 = sut.GetEntityById(nodeId);
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
 	for (var i = 0 ; i < node1.labels.length; i++) {
@@ -116,12 +75,10 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithMultipleLabels_ExpectInputNodeLabels() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		labels: ["label1", "label2"]
-	};
+  var labels = ["label1", "label2"]
 
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -132,50 +89,19 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 	return true;
 });
 
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNoLabels_ExpectInputNodeNoLabels() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-
-	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
-	// Assert
-	var result = sut.GetEntityFromDatabase(node1.id);
-	if (result.labels.length > 0)
-		return result;
-	return true;
-});
-
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith0Properties_ExpectInputNodeNoProperties() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-
-	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
-	// Assert
-	var result = sut.GetEntityFromDatabase(node1.id);
-	if (result.properties.length > 0)
-		return result;
-	return true;
-});
 
 //[Test]
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith1Property_ExpectInputNodeWith1Property() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		properties: {
+	var labels = ["label3"];
+  var properties = {
 			property1: 'MyPropertyValue'
-		}
 	};
 
+
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels, properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -188,15 +114,15 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNumberProperty_ExpectInputNodeWithNumberProperty() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		properties: {
+  var labels = ["label4"];
+	var properties = {
 			property1: 23
-		}
+  }
 
-	};
+
 
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels, properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -209,15 +135,13 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithBooleanProperty_ExpectInputNodeWithBooleanProperty() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		properties: {
+  var labels = ["label4"];
+	var properties = {
 			property1: true
 		}
 
-	};
-
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels, properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -230,15 +154,13 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithArrayOfStringProperty_ExpectInputNodeWithArrayOfStringProperty() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		properties: {
+  var labels = ["label4"];
+	var properties = {
 			property1: ['test1', 'test2']
 		}
-
-	};
-
-	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	
+  // Act
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels, properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -269,7 +191,7 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 	};
 
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -305,8 +227,8 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given2NodeIds_ExpectLinkId0() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 
@@ -325,9 +247,9 @@ globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given2N
 globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given3NodeIds_ExpectLinkIdGreaterThan0() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
-	var node3 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
+	var node3 = ["node3"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	var node3Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
@@ -347,8 +269,8 @@ globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given3N
 globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNode() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
@@ -366,8 +288,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNode()
 globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNodeAndLink() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
@@ -390,8 +312,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNodeAn
 globals.allUnitTests.push(function GetRelatedNodes_Given2RelatedNodes_ExpectRelatedNodeAndLink() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
@@ -416,10 +338,8 @@ globals.allUnitTests.push(function GetRelatedNodes_Given2RelatedNodes_ExpectRela
 globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
-	node1.labels = ["HELLO"];
-	node2.labels = ["WORLD"];
+	var node1 = ["HELLO"];
+	var node2 = ["WORLD"];
 
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
@@ -449,8 +369,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_Expec
 		labels: ["TOOL"],
 		properties: { toolName: "WORD" }
 	};
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 	// Act
@@ -477,8 +397,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_Expec
 		property3: true,
 		Activities: ['Dancing', 'Hockey']
 	}
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, linkLabels, linkProperties);
 
 	// Act
@@ -498,8 +418,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_Expec
 	var node2 = {};
 	node1.labels = ["CASE1"];
 	node2.labels = ["CASE2"];
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 	// Act
@@ -516,7 +436,8 @@ globals.allUnitTests.push(function deleteNode_Given1DeletedNode_ExpectNodeNotFou
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+  node1.labels = ["TESTCASE1"];
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels);
 	sut.DeleteEntity(node1Id);
 
 	// Act
@@ -1083,8 +1004,8 @@ globals.allUnitTests.push(function getAllElements_GivenDataString_ExpectCorrectA
 globals.allUnitTests.push(function getNodeInDatabaseByLabel_Given1NodesWithLabelAndLabel_ExpectNode() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = { labels: ['FindMe'] };
-	var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var labels = ['FindMe'] ;
+	var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(labels);
 	// Act
 	var result = sut.GetEntitiesByType('FindMe');
 	// Assert
@@ -1104,9 +1025,9 @@ globals.allUnitTests.push(function getLinkInDatabaseByLabel_Given2NodesAndRelati
 	var link2Properties = { strength: "strong" };
 
 
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
-	var node3Id = sut.CreateEntityInDatabasePopulateAndReturnId(node3);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
+	var node3Id = sut.CreateEntityInDatabasePopulateAndReturnId(node3.labels, node3.properties);
 	var expectedLinkId1 = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, link1Labels, link1Properties);
 	var expectedLinkId2 = sut.CreateRelationPopulateAndReturnId(node2Id, node3Id, link2Labels, link2Properties);
 
@@ -1123,9 +1044,9 @@ globals.allUnitTests.push(function getAllNodeLabels_GivenNodesWithLabels_ExpectL
 	var node1 = { labels: ['ThisTestLabel0'] };
 	var node2 = { labels: ['ThisTestLabel2', 'ThisTestLabel1'] };
 	var node3 = { labels: ['ThisTestLabel3'] };
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	sut.CreateEntityInDatabasePopulateAndReturnId(node2);
-	sut.CreateEntityInDatabasePopulateAndReturnId(node3);
+	sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
+	sut.CreateEntityInDatabasePopulateAndReturnId(node3.labels, node3.properties);
 	// Act
 	var result = sut.GetAllEntityTypes();
 	// Assert
@@ -1144,7 +1065,7 @@ globals.allUnitTests.push(function getNodesByPropertyName_GivenNodesWithProperti
 			prop2: "value2"
 		}
 	};
-	var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
 
 	// Act
 	var result = sut.GetEntitiesByPropertyName(propertyName);
@@ -1178,8 +1099,8 @@ globals.allUnitTests.push(function getRelationshipByPropertyName_GivenGiven2Rela
 		OnLayby: true,
 		AttendedBy: ['Joan Luna', 'Derick Stapler']
 	}
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
 	var expectedLinkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, linkLabels, linkProperties);
 
 	// Act
