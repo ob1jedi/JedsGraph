@@ -46,16 +46,6 @@ function node_Event_subNodePulledOut(node, x, y)
 	// create new node
 }
 
-function nodeFlyout_Event_HideClick(nodeId) {
-	removeNodeFromGraph(nodeId);
-}
-
-function nodeFlyout_Event_PinClick(nodeId) {
-	var node = globals.GRAPH.getNode(nodeId);
-	unPinNode(node);
-}
-
-
 function node_OnMouseEnter(node, x, y) {
   globals.states.overNode = node;
 	if (node.data.nodeType == "data")

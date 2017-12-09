@@ -475,7 +475,7 @@ function removeNodeFromStage(nodeID) {
 
   globals.GRAPH.removeNode(nodeID);
 
-  globals.consoleService.hideNodeFlyout();
+  globals.consoleService.HideNodeFlyout();
 }
 
 function removeLinkFromStage(linkID) {

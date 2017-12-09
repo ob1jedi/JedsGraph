@@ -36,7 +36,7 @@ function defineNodeDrawing(){
         if (globals.viewOptions.screenDragType == 'depth')
             applyDepthOffset({ x: dx, y: dy })
 
-        globals.consoleService.hideNodeFlyout();
+        globals.consoleService.HideNodeFlyout();
 
     }
 	

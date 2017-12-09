@@ -127,6 +127,17 @@ Vue.component('vw-hud',{
   template: '#vueTemplate-hud'
 })
 
+// ================= NODE FLYOUT ================= 
+Vue.component('vw-node-flyout',{
+  props: ['show', 'nodeflyout'],
+  template: '#vueTemplate-node-flyout'
+})
+
+Vue.component('vw-node-edit-content',{
+  props: ['modal'],
+  template: '#vueTemplate-node-edit-content'
+})
+
 // ================= FORMULA BOX ================= 
 Vue.component('vw-formula-box',{
   props: ['formulaprop','panels'],
@@ -143,6 +154,62 @@ var consoleApp=new Vue({
     new VueConsoleHelper().RegisterWindowsEvents();
   },
   data: {
+    /*Flyout*/
+    nodeFlyout:{
+      
+      showOptions:false,
+      //nodes: [],
+      nodeId: null,
+      position: {left:0, top:0},
+      labels: [],
+      properties: [],
+      hideFlyout: function(){
+        this.nodeId = null;
+      },
+      showFlyout: function(inputNode, x, y){
+        this.showOptions = false;
+        this.position.left = Number(x) + 50;
+        this.position.top = Number(y) + 50;
+        this.labels = inputNode.data.labels;
+        this.properties = inputNode.data.properties;
+        this.nodeId = inputNode.id
+        //this.nodes = this.nodes.push(inputNode);
+      },
+      pinClick: function(){
+        var node = globals.GRAPH.getNode(this.nodeId);
+	      unPinNode(node);
+      },
+      hideClick: function(){
+        removeNodeFromGraph(this.nodeId);
+      },
+      refreshClick: function(){
+        node = refreshNodeAppearance(this.nodeId);
+      },
+      editEntity: function(){
+        var node = globals.selectedNode;
+        function confirmFunction(node){
+          console.log('new node:', node);
+          var propsObject = new JsonHelper().KeyValueCollectionToDictionary(node.data.properties);
+          
+          console.log('node.id:', node.id);
+          console.log('node.data.labels:', node.data.labels);
+          console.log('props object:', propsObject);
+          new DataService().UpdateEntity(node.id, node.data.labels, propsObject);
+          node.data.propertiesObject = propsObject;
+          node.data.displayLabel = "HELLO";
+          new GraphHelper().RefreshNode(node.id);
+          //defineNodeAppearance_dataNode(node, node.data.UI.outerUI.childNodes[0]);
+          new VueConsoleHelper().CloseNodeEditModal();
+        }
+        new VueConsoleHelper().DisplayNodeEditModal(node, confirmFunction);
+        //TODO
+
+      },
+      deleteEntity: function(){
+        //TODO
+      }
+
+    },
     /*NodeStamp right toolbar*/
     nodeStamp: {
       getWindowHeight: function(){
@@ -151,7 +218,7 @@ var consoleApp=new Vue({
       },
       activeStampIndex: -1,
       stamps: [
-        //{ labels: ['Node'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "red","border-color": "green","border-width": 1 } } } },
+        { labels: ['Node'],config: { "config": { "attributes": { "background-color": "gray","border-color": "black","border-width": 1 } } } },
         //{ labels: ['Person'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "green","border-color": "blue","border-width": 2 } } } },
         //{ labels: ['Sign'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "blue","border-color": "red","border-width": 3 },"effects": { "shadow": true } } } },
         //{ labels: ['Server'],properties: { Title: 'string' },config: { "config": { "attributes": { "background-color": "gray","border-color": "black" } } } }
@@ -205,13 +272,13 @@ var consoleApp=new Vue({
         checkedItems: [],
         left: -150,
         items: [
-          {
-            desc: 'Navigation',
-            ico: 'fa fa-hand-pointer-o fa-2x',
-            buttonType: 'radio', // ...options: {check / radio/ button}
-            func: function() { new VueToolbarHelper().executeToolbarAction('SelectNavigation'); },
-            subToolbarKey: 'viewType'
-          },
+          //{
+          //  desc: 'Navigation',
+          //  ico: 'fa fa-hand-pointer-o fa-2x',
+          //  buttonType: 'radio', // ...options: {check / radio/ button}
+          //  func: function() { new VueToolbarHelper().executeToolbarAction('SelectNavigation'); },
+          //  subToolbarKey: 'viewType'
+          //},
           {
             desc: 'Create nodes',
             img: 'custom/assets/GraphexIcons/NewNode2.svg',
@@ -272,6 +339,7 @@ var consoleApp=new Vue({
     },
 
     panels: {
+      flyout: { show:true },
       hud: { show:false },
       nodeTypeEditor: { show: false },
       nodeStamp: { show: false },
@@ -286,6 +354,12 @@ var consoleApp=new Vue({
         htmlContent: "",
         buttons: [
           { caption: "ok",onclick: new VueConsoleHelper().CloseGlobalInfoModal }
+        ]
+      },
+      nodeEditModal: {
+        editingNode: null,
+        buttons: [
+          { caption: "cancel",onclick: new VueConsoleHelper().CloseGlobalInfoModal }
         ]
       }
     },
@@ -833,6 +907,21 @@ function VueToolbarHelper() {
 
 function VueConsoleHelper() {
 
+  this.DisplayNodeEditModal=function(editingNode, confirmFunction) {
+    console.log('editingNode', editingNode);
+    console.log('confirmFunction', confirmFunction);
+    consoleApp.modals.nodeEditModal.editingNode = editingNode;
+    consoleApp.modals.nodeEditModal.buttons=[];
+    consoleApp.modals.nodeEditModal.buttons.push({ caption: "Cancel",onclick: new VueConsoleHelper().CloseNodeEditModal })
+    consoleApp.modals.nodeEditModal.buttons.push({ caption: "Save",onclick: confirmFunction });
+    
+    showNodeEditModal();
+  }
+  
+  this.CloseNodeEditModal=function() {
+    closeNodeEditModal();
+  }
+
   this.DisplayConfirmModal=function(header,content,confirmFunction,_confirmCaption,_cancelCaption) {
     consoleApp.modals.commonModal.buttons=[];
     consoleApp.modals.commonModal.header=header;
@@ -863,13 +952,11 @@ function VueConsoleHelper() {
     showGlobalInfoModal();
   }
 
-  this.ShowGlobalInfoModal=function() {
-    showGlobalInfoModal();
-  }
-
   this.CloseGlobalInfoModal=function() {
     closeGlobalInfoModal();
   }
+
+
 
   this.RegisterWindowsEvents=function() {
     console.log('Registering window events');
@@ -883,18 +970,21 @@ function VueConsoleHelper() {
     }
   }
 
+  function showNodeEditModal() {
+    var dialogElement=document.getElementById('nodeEditModal');
+    dialogElement.style.display="block";
+  }
+  function closeNodeEditModal() {
+    var dialogElement=document.getElementById('nodeEditModal');
+    dialogElement.style.display="none";
+  }
   function showGlobalInfoModal() {
     var dialogElement=document.getElementById('myModal');
     dialogElement.style.display="block";
-    //var dialogElement=document.getElementById(modalId);
-    //dialogElement.showModal();
   }
   function closeGlobalInfoModal() {
     var dialogElement=document.getElementById('myModal');
-    console.log('closing dialog');
     dialogElement.style.display="none";
-    //var dialogElement=document.getElementById(modalId);
-    //dialogElement.close();
   }
 
 

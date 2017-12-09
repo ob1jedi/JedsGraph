@@ -1,5 +1,11 @@
 ﻿function JsonHelper() {
 
+  this.KeyValueCollectionToDictionary = function(keyValueCollection){
+    var obj = {};
+    keyValueCollection.forEach(function(el){obj[el.key] = el.value})
+    return obj;
+  }
+
   this.Contains=function(subsetJson,supersetJson, caseSensitive) {
     if(!ofSameType(subsetJson,supersetJson))
       return false;

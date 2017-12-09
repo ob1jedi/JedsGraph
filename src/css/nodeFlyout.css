@@ -1,0 +1,123 @@
+﻿
+.nodeFlyout {
+	position: absolute;
+	left: 100px;
+	top: 150px;
+	/*padding:10px;*/
+	border-style: solid;
+	border-width: 0px;
+	border-color: #0d0d0d;
+	color: grey;
+	background-color: white;
+	opacity: 0;
+	min-width:120px;
+	border-radius: 0px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	/*font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;*/
+	font-size: 12px;
+	letter-spacing: 0px;
+	transition: opacity 0.2s linear;
+}
+
+	.nodeFlyout button {
+		/*background-color: #b3b3b3;*/
+		color: black;
+		height: 20px;
+		border: none;
+		text-align: top;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 10px;
+		margin: 3px 1px;
+		-webkit-transition-duration: 0.4s; /* Safari */
+		transition-duration: 0.4s;
+		cursor: pointer;
+		resize: none;
+		border-radius: 0px;
+		background-color: #4d4d4d;
+		color: white;
+	}
+
+	.nodeFlyout [class=mainContent] {
+		display: block;
+		background-color: white;
+		position:relative;
+		z-index:100;
+	}
+	.nodeFlyout [class=winbtn] {
+		margin-left: 5px;
+		margin-right: 3px;
+		font-size: small;
+		cursor: pointer;
+	}
+	.nodeFlyout [class=header] {
+		margin-left: 7px;
+		margin-right: 5px;
+		font-size: x-large;
+	}
+	.nodeFlyout [class=properties] {
+		margin:5px;	
+	}
+
+	.nodeFlyout [class=optionExpander] {		
+		display:block;
+		border-top:1px dotted #b5afaf;
+		font-size:15px;
+		text-align:center;
+		transition:0.2s;
+		cursor: pointer;
+		position:relative;
+		z-index:100;
+	}
+	.nodeFlyout [class=optionExpander]:hover {
+		background-color:#808080;
+		color:white;
+		transition: 0.2s;
+	}
+
+	.nodeFlyout [class=extras] {
+		position:relative;
+		z-index:0;
+		background-color:#e4e4e4;
+		transition: margin 0.2s;
+	}
+	.nodeFlyoutHide {
+		margin-top:-50px;
+		transition: margin 0.2s;
+	}
+	.nodeFlyout [class=buttonType2] {
+		display:inline-block;
+		padding:10px;
+		color:#484848;
+		font-size: 20px;
+		margin-right:0px;
+		/*color: red;*/
+		cursor: pointer;
+		/*background-color: blue;*/
+	}
+	.nodeFlyout [class=buttonType2]:hover {
+		background-color:#808080;
+		color:white;
+	}
+
+
+
+	.nodeFlyout textarea {
+		resize: none;
+		border-radius: 5px;
+		background-color: #4d4d4d;
+		color: white;
+		width: 98%;
+		height: 85%;
+	}
+
+.fadein {
+	opacity: 0.8;
+	transition: opacity 0.2s linear;
+}
+
+.fadeout {
+	opacity: 0;
+	transition: opacity 0.2s linear;
+}
+

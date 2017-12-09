@@ -7,6 +7,6 @@ function initUi() {
       globals.graphContainer.style['background-image']='url('+globals.currentTheme.sourceConfig.displaySettings.backgroundImage+')'
     };
   }
-  globals.consoleService.hideNodeFlyout();
+  globals.consoleService.HideNodeFlyout();
 
 }
