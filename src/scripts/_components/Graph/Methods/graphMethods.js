@@ -227,32 +227,16 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
   return link;
 }
 
-
-
-function addDataNode(nodeId, nodeData, _sourceConfig) {
   var nodeUI;
+function addDataNode(nodeId, nodeData) {
+  var arraySvc = new ArrayHelper();
   var isNewNode=false;
-  //if(!_sourceConfig) _sourceConfig=globals.config_ext;
-  //var configHelper=new ConfigHelper();
-  //nodeData.sourceConfig=configHelper.getConfig(_sourceConfig);
-
-  var node = getExistingNode(nodeId);
+  var node=getExistingNode(nodeId);
   if(node) {
-    var newLabels=[];
-    nodeUI = globals.graphics.getNodeUI(nodeId);
-    nodeData.labels.forEach(function(newLabel) {
-      var hasLabel=false;
-      for(var i=0;i<nodeData.labels.length;i++) {
-        if(nodeData.labels[i]==newLabel) {
-          hasLabel=true;
-          break;
-        }
-      };
-      if(!hasLabel) { newLabels.push(newLabel) }
-    });
-
-    var updatedProperties=getUpdatedProperties(node.data.properties,nodeData.properties);
-    if(newLabels.length>0||updatedProperties.length>0) {
+    setupDisplayLabels(node.data);
+    var labelsHaveChanged = !arraySvc.ArraysAreEquivalent(nodeData.labels, node.data.labels);
+    var propertiesHaveChanged = (getUpdatedProperties(node.data.properties,nodeData.properties).length > 0);
+    if(labelsHaveChanged || propertiesHaveChanged) {
       if(nodeData.UI.displayTextUI) {
         nodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(nodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
       }
