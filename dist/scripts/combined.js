@@ -815,58 +815,81 @@ var DataService=function() {
 
 function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceConfig) {
 	var newNodes = [];
-	graphElements.forEach(function (graphElement) {
-		var datN = new nodeDataType;
-		datN.id = graphElement.fromNode.id;
-		datN.labels = graphElement.fromNode.labels;
-		datN.properties = new neoPropertyList(graphElement.fromNode.properties);
-    datN.propertiesObject = graphElement.fromNode.properties;
-		datN.entityConfig = GetConfigForEntityId(datN);
-		var fromNode = addDataNode(datN.id, datN, _sourceConfig);
-		if (fromNode)
-		    newNodes.push(fromNode);
 
-		var datM = new nodeDataType;
-		datM.id =graphElement.toNode.id;
-		datM.labels = graphElement.toNode.labels;
-		datM.properties = new neoPropertyList(graphElement.toNode.properties);
-		datM.propertiesObject = graphElement.toNode.properties;
-		datM.entityConfig = GetConfigForEntityId(datM);
-		var toNode = addDataNode(datM.id, datM, _sourceConfig);
-		if (toNode) {
-			newNodes.push(toNode);
-			applyPopoutEffectToNode(toNode, datN.id)
-		}
-		//link R...
-		var linkdata = new linkDataType(datN.id, datM.id, graphElement.link.id, graphElement.link.labels, _sourceConfig);
-		linkdata.properties = new neoPropertyList(graphElement.link.properties);
-		linkdata.propertiesObject = graphElement.link.properties;
-		var link = addDataLink(datN.id, datM.id, linkdata, _sourceConfig);
+	graphElements.forEach(function (graphElement) {
+    var bFromNodeExists = true;
+    var bToNodeExists = true;
+
+    var fromNode=getExistingNode(graphElement.fromNode.id);
+    if (!fromNode){
+      bFromNodeExists = false;
+		  var datN = new nodeDataType;
+		  datN.id = graphElement.fromNode.id;
+      datN.labels = graphElement.fromNode.labels;
+      datN.properties = new neoPropertyList(graphElement.fromNode.properties);
+      datN.propertiesObject = graphElement.fromNode.properties;
+      datN.entityConfig = GetConfigForEntityId(datN);
+      fromNode = addDataNode(datN.id, datN, _sourceConfig);
+    }
+    newNodes.push(fromNode);
+    var toNode=getExistingNode(graphElement.toNode.id);
+    if (!toNode){
+      bToNodeExists = false;
+		  var datM = new nodeDataType;
+      datM.id =graphElement.toNode.id;
+      datM.labels = graphElement.toNode.labels;
+      datM.properties = new neoPropertyList(graphElement.toNode.properties);
+      datM.propertiesObject = graphElement.toNode.properties;
+      datM.entityConfig = GetConfigForEntityId(datM);
+      toNode = addDataNode(datM.id, datM, _sourceConfig);
+    }
+    newNodes.push(toNode);
+		// Link...
+    var link = getExistingLink(graphElement.link.id);
+    if (!link){
+		  var linkdata = new linkDataType(fromNode.id, toNode.id, graphElement.link.id, graphElement.link.labels, _sourceConfig);
+		  linkdata.properties = new neoPropertyList(graphElement.link.properties);
+		  linkdata.propertiesObject = graphElement.link.properties;
+		  link = addDataLink(fromNode.id, toNode.id, linkdata, _sourceConfig);
+    }
+
+    if (bFromNodeExists && !bToNodeExists)
+      applyPopoutEffectToNode(toNode, fromNode.id)
+    if (bToNodeExists && !bFromNodeExists)
+      applyPopoutEffectToNode(fromNode, toNode.id)
+
 	});
 
 	refreshNodesDepths();
-	return newNodes;
+  
+  return newNodes;
 }
 
 function addRelationToGraphReturnLink(relation, _sourceConfig) {
-    var dat = new linkDataType(relation.fromNodeId, relation.toNodeId, relation.id, relation.labels, _sourceConfig);
-    if (relation.properties) { dat.properties = new neoPropertyList(relation.properties); }
-    if (relation.properties) { dat.propertiesObject = relation.properties }
-    var relation = addDataLink(dat.fromNodeID, dat.toNodeID, dat, _sourceConfig);
-    return relation;
+    var link = getExistingLink(relation.id);
+    if (!link){
+      var dat = new linkDataType(relation.fromNodeId, relation.toNodeId, relation.id, relation.labels, _sourceConfig);
+      if (relation.properties) { dat.properties = new neoPropertyList(relation.properties); }
+      if (relation.properties) { dat.propertiesObject = relation.properties }
+      link = addDataLink(dat.fromNodeID, dat.toNodeID, dat, _sourceConfig);
+    }
+    return link;
 }
 
 function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 {
 	var newNodes =[];
 	entities.forEach(function (entity) {
-		var datM = new nodeDataType;
-		datM.id = entity.id;
-		datM.labels = entity.labels || [];
-		datM.properties = new neoPropertyList(entity.properties);
-		datM.propertiesObject = entity.properties;
-    datM.entityConfig = GetConfigForEntityId(datM);
-		var addedNode = addDataNode(entity.id, datM, _sourceConfig)
+    var addedNode=getExistingNode(entity.id);
+    if (!addedNode){
+		  var datM = new nodeDataType;
+		  datM.id = entity.id;
+		  datM.labels = entity.labels || [];
+		  datM.properties = new neoPropertyList(entity.properties);
+		  datM.propertiesObject = entity.properties;
+      datM.entityConfig = GetConfigForEntityId(datM);
+		  addedNode = addDataNode(entity.id, datM, _sourceConfig)
+    }
 		newNodes.push(addedNode);
 	});
 	
@@ -3620,28 +3643,30 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
 
 function addDataNode(nodeId, newNodeData) {
   var arraySvc = new ArrayHelper();
-  var isNewNode=false;
+  var isNewNode=true;
   var node=getExistingNode(nodeId);
   if(node) {
-    if(newNodeData.UI.displayTextUI) {
-      newNodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(newNodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
-    }
+    //if(newNodeData.UI.displayTextUI) {
+    //  newNodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(newNodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
+    //}
     node.data.labels=newNodeData.labels;
     node.data.properties=newNodeData.properties;
-    globals.animUpdateNodes.push(node);
+    //globals.animUpdateNodes.push(node);
+    //isNewNode = false;
   }
-  newNodeData = setupDisplayLabels(newNodeData);
+  setupDisplayLabelsIn(newNodeData);
   var eventsHelper = new EntityEventsHelper();
-  setNodeColor(newNodeData);
+  setNodeColorIn(newNodeData);
   eventsHelper.AddEntityToGraph_beforeNodeAdd(newNodeData);
   node=addNodeToGraph(newNodeData.id,newNodeData);
   //PerformNodeStatFunctions(node);
   recordTypeInfo(node);
   eventsHelper.AddEntityToGraph_afterNodeAdd(node);
+
   return node;
 }
 
-function setupDisplayLabels(thisNodeData) {
+function setupDisplayLabelsIn(thisNodeData) {
   var finalLabel='';
   thisNodeData.labels.forEach(function(nodeLabel,index) {
     if(finalLabel) { finalLabel+=', '+finalLabel }
@@ -3683,10 +3708,9 @@ function setupDisplayLabels(thisNodeData) {
   else {
     thisNodeData.circleText=finalLabel;
   }
-  return thisNodeData;
 }
 
-function setNodeColor(entityData) {
+function setNodeColorIn(entityData) {
   //entityData.displayLabel;
   var aNeoLabel=getNeoLabel(entityData.labels[0]);
   if(aNeoLabel) {
@@ -3883,6 +3907,13 @@ function getExistingNode(nodeID) {
   }
 }
 
+function getExistingLink(linkID) {
+  for(var i=0;i<globals.linkList.length;i++) {
+    if(globals.linkList[i].id==linkID) {
+      return globals.linkList[i];
+    }
+  }
+}
 
 function getNodesByMatchingLabels(nodesList,labels) {
   var returnNodeList=[];
@@ -5693,7 +5724,6 @@ function AnimationHelper(){
       this.data.currentPos.x = nextX;
       this.data.currentPos.y = nextY;
     
-      if (typeof (nextX) !== 'number' || typeof (nextY) !== 'number') debugger;
       globals.layout.setNodePosition(node.id, nextX, nextY);
       if (this.remainingSteps <= 0) this.complete = true;
     }
@@ -6479,7 +6509,6 @@ function NodeBehavioursApi() {
   }
 
   this.CreateSubNodesFromLinks = function(node) {
-    //debugger;
     for(var prop in node.data.propertiesObject) {
       var propVal = node.data.propertiesObject[prop];
       if (isLink(propVal) && !isImage(propVal) && !isHtml(propVal) && node.data.labels[0] != 'link'){
@@ -9150,9 +9179,7 @@ function graphexMain() {
 
   function executeArranger(arranger){
     if (!arranger) return;
-    //debugger;
     mappings.Arrangers.forEach(function(arrangerMapping){
-      //debugger;
       if (arrangerMapping.name == arranger){
         var arranger = transMapping.arranger;
         arranger.Arrange(arranger);
@@ -9225,7 +9252,6 @@ function GraphBehavioursHelper(){
 
     // Select Node
     if (globals.modes.selectNodeAfterCreate){
-      //debugger;
       new GraphHelper().SelectNode(newNode);
     }
 
@@ -9932,8 +9958,6 @@ function defineLinkObjects()
 
         var fromNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
         var toNode = node=globals.GRAPH.getNode(link.data.toNodeID);
-        //if (fromNode.data.labels[0] == "root")
-          //debugger;
         ui.attr('fromNodeRadius',fromNode.data.entityConfig.config.attributes["radius"]);
 			  ui.attr('toNodeRadius',toNode.data.entityConfig.config.attributes["radius"]);
 			}
