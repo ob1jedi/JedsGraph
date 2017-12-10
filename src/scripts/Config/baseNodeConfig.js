@@ -114,6 +114,7 @@
 		"behaviours": [
 			"AutoImage",
       "SubnodesForLinks",
+      "GetRelatedNodes"
 		],
 
 		"effects": {

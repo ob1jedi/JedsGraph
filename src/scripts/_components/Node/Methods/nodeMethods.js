@@ -125,15 +125,6 @@ function fixTextWidth4Node(node)
 			
 }
 		
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function showOnNode(nodeId, text)
-{
-	var node = getExistingNode(nodeId);
-	node.data.displayLabel = text;
-	refreshNodeAppearance(nodeId);
-}
-		
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function increaseNodeSprings(nodeid)
 {
@@ -347,12 +338,7 @@ function loadNodePopout(node, config)
 	node.data.UI.popoutTextUI.attr('class', 'slidetext');
 }
 
-function refreshNodeAppearance(nodeId){
-	var node = globals.GRAPH.getNode(nodeId?nodeId:globals.selectedNode.id);
-  addDataNode(node.id, node.data);
-  applyDepth(node);
-  return node;
-}
+
 
 function applyDepth(node){
     node.data.UI.fullUI.attr('transform', 'scale(' + node.data.depth + ')');
@@ -377,7 +363,10 @@ function refreshNodesDepths() {
 		}
 		if (!inserted) { nodeZOrder.push(globals.nodeList[n]); }
 	}
-	nodeZOrder.forEach(function (znode) { refreshNodeAppearance(znode.id) });
+  var nodeSvc = new NodeHelper();
+	nodeZOrder.forEach(function (znode) { 
+    nodeSvc.RefreshNode(znode.id) 
+  });
 }
 			
 function increaseNodeSize(nodeId)

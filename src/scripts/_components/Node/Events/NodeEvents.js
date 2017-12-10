@@ -144,7 +144,6 @@ function dataNode_OnMouseUp(node, x, y) {
 
 function dataNode_OnMouseDblClick(node, x, y) {
   //nodePositionAnimation(node, {x:0,y:0});
-	globals.dataService.FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
   new EntityEventsHelper().NodeDblClick(node);
   //globals.animator.AddNodeRipple(node);
 }

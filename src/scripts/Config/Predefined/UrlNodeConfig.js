@@ -41,7 +41,7 @@
 		},
 
 		"behaviours": [
-      "FetchLinkOnDblClick"
+      "FetchHttpDataAsChildNodes"
 		]
 	}
 });

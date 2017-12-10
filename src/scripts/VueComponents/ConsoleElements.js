@@ -182,9 +182,6 @@ var consoleApp=new Vue({
       hideClick: function(){
         removeNodeFromGraph(this.nodeId);
       },
-      refreshClick: function(){
-        node = refreshNodeAppearance(this.nodeId);
-      },
       editEntity: function(){
         var node = globals.selectedNode;
         function confirmFunction(node){
@@ -196,7 +193,7 @@ var consoleApp=new Vue({
           console.log('props object:', propsObject);
           new DataService().UpdateEntity(node.id, node.data.labels, propsObject);
           node.data.propertiesObject = propsObject;
-          new GraphHelper().RefreshNode(node.id);
+          new NodeHelper().ReloadNode(node.id);
           
           new VueConsoleHelper().CloseNodeEditModal();
         }

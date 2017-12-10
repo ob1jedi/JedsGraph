@@ -1,9 +1,10 @@
 ﻿function EntityEventsHelper(){
 
   var eventBehaviourMapping = [
-    { name: 'AutoImage',            event: addEntityToGraph_beforeNodeAdd,   func: new NodeBehavioursApi().AutoImageToConfig },
-    { name: 'SubnodesForLinks',     event: addEntityToGraph_afterNodeAdd,    func: new NodeBehavioursApi().CreateSubNodesFromLinks },
-    { name: 'FetchLinkOnDblClick',  event: nodeDoubleClick,           func: new NodeBehavioursApi().FetchNodeLinks }
+    { name: 'AutoImage',                  event: addEntityToGraph_beforeNodeAdd,   func: new NodeBehavioursApi().AutoImageToConfig },
+    { name: 'SubnodesForLinks',           event: addEntityToGraph_afterNodeAdd,    func: new NodeBehavioursApi().CreateSubNodesFromLinks },
+    { name: 'FetchHttpDataAsChildNodes',  event: nodeDoubleClick,                  func: new NodeBehavioursApi().FetchHttpDataAsChildNodes },
+    { name: 'GetRelatedNodes',            event: nodeDoubleClick,                  func: new NodeBehavioursApi().GetRelatedNodes }
   ]
   
   this.AddEntityToGraph_beforeConfigLoad = function(nodeData){addEntityToGraph_beforeConfig(nodeData);}

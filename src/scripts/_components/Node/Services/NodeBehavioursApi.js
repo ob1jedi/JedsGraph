@@ -29,7 +29,12 @@
     }
   }
 
-  this.FetchNodeLinks = function(node) {
+  this.GetRelatedNodes = function(node){
+    console.log('fetching child entities');
+    new DataService().FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
+  }
+
+  this.FetchHttpDataAsChildNodes = function(node) {
     for(var prop in node.data.propertiesObject) {
       var propVal = node.data.propertiesObject[prop];
       if (isLink(propVal) && !isImage(propVal) && !isHtml(propVal)){

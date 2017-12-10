@@ -149,7 +149,7 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 	return (result.config.attributes.circleText.color === "#FF0000" && result.config.attributes.radius === 15) ? true : result;
 	
 	var nodes = getNodesByMatchingLabels(globals.nodeList, [testEntityName]);
-	refreshNodeAppearance(nodes[0].id);
+	//new NodeHelper().RefreshNode(nodes[0].id);
 
 });
 
