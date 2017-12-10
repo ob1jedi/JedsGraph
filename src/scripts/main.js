@@ -79,9 +79,7 @@ function graphexMain() {
 
   function executeArranger(arranger){
     if (!arranger) return;
-    //debugger;
     mappings.Arrangers.forEach(function(arrangerMapping){
-      //debugger;
       if (arrangerMapping.name == arranger){
         var arranger = transMapping.arranger;
         arranger.Arrange(arranger);

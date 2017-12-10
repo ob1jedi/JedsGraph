@@ -219,7 +219,6 @@ function AnimationHelper(){
       this.data.currentPos.x = nextX;
       this.data.currentPos.y = nextY;
     
-      if (typeof (nextX) !== 'number' || typeof (nextY) !== 'number') debugger;
       globals.layout.setNodePosition(node.id, nextX, nextY);
       if (this.remainingSteps <= 0) this.complete = true;
     }

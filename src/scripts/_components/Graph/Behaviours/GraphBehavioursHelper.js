@@ -32,7 +32,6 @@
 
     // Select Node
     if (globals.modes.selectNodeAfterCreate){
-      //debugger;
       new GraphHelper().SelectNode(newNode);
     }
 

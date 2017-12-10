@@ -227,28 +227,30 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
 
 function addDataNode(nodeId, newNodeData) {
   var arraySvc = new ArrayHelper();
-  var isNewNode=false;
+  var isNewNode=true;
   var node=getExistingNode(nodeId);
   if(node) {
-    if(newNodeData.UI.displayTextUI) {
-      newNodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(newNodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
-    }
+    //if(newNodeData.UI.displayTextUI) {
+    //  newNodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(newNodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
+    //}
     node.data.labels=newNodeData.labels;
     node.data.properties=newNodeData.properties;
-    globals.animUpdateNodes.push(node);
+    //globals.animUpdateNodes.push(node);
+    //isNewNode = false;
   }
-  newNodeData = setupDisplayLabels(newNodeData);
+  setupDisplayLabelsIn(newNodeData);
   var eventsHelper = new EntityEventsHelper();
-  setNodeColor(newNodeData);
+  setNodeColorIn(newNodeData);
   eventsHelper.AddEntityToGraph_beforeNodeAdd(newNodeData);
   node=addNodeToGraph(newNodeData.id,newNodeData);
   //PerformNodeStatFunctions(node);
   recordTypeInfo(node);
   eventsHelper.AddEntityToGraph_afterNodeAdd(node);
+
   return node;
 }
 
-function setupDisplayLabels(thisNodeData) {
+function setupDisplayLabelsIn(thisNodeData) {
   var finalLabel='';
   thisNodeData.labels.forEach(function(nodeLabel,index) {
     if(finalLabel) { finalLabel+=', '+finalLabel }
@@ -290,10 +292,9 @@ function setupDisplayLabels(thisNodeData) {
   else {
     thisNodeData.circleText=finalLabel;
   }
-  return thisNodeData;
 }
 
-function setNodeColor(entityData) {
+function setNodeColorIn(entityData) {
   //entityData.displayLabel;
   var aNeoLabel=getNeoLabel(entityData.labels[0]);
   if(aNeoLabel) {
@@ -490,6 +491,13 @@ function getExistingNode(nodeID) {
   }
 }
 
+function getExistingLink(linkID) {
+  for(var i=0;i<globals.linkList.length;i++) {
+    if(globals.linkList[i].id==linkID) {
+      return globals.linkList[i];
+    }
+  }
+}
 
 function getNodesByMatchingLabels(nodesList,labels) {
   var returnNodeList=[];

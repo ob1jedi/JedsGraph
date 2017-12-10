@@ -17,7 +17,6 @@
   }
 
   this.CreateSubNodesFromLinks = function(node) {
-    //debugger;
     for(var prop in node.data.propertiesObject) {
       var propVal = node.data.propertiesObject[prop];
       if (isLink(propVal) && !isImage(propVal) && !isHtml(propVal) && node.data.labels[0] != 'link'){

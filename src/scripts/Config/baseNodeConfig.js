@@ -130,7 +130,7 @@
 
 		"functions": [
 			/*available event: onDisplay, onClick, onDrag, onHide */
-			/*available functionName: getRelationCount, getOutboundRelationCount, getInboundRelationCount, getTallestTree, getDeepestRoot, getAncestorCount, getDescendantCount */
+			/*available functionName: getRelationCount, getOuthttp://localhost:54839/../ModelsboundRelationCount, getInboundRelationCount, getTallestTree, getDeepestRoot, getAncestorCount, getDescendantCount */
       {
         "arrayId":  1,
         "onEvent": "onDisplay",
