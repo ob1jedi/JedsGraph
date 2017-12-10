@@ -592,6 +592,7 @@ configManager.configs.push( {
 		"behaviours": [
 			"AutoImage",
       "SubnodesForLinks",
+      "GetRelatedNodes"
 		],
 
 		"effects": {
@@ -702,7 +703,7 @@ configManager.configs.push( {
 		},
 
 		"behaviours": [
-      "FetchLinkOnDblClick"
+      "FetchHttpDataAsChildNodes"
 		]
 	}
 });

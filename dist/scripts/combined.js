@@ -1,4 +1,43 @@
+function ArrayHelper(){
+  this.ArraysAreEqual = function(array1, array2){
+    if (array1.length != array2.length)
+      return false;
+    for (var i = 0; i < array1.length; i++)
+      if (array1[i] !== array2[i])
+        return false;
+    return true;
+  }
+
+  this.ArraysAreEquivalent = function (arrayX, arrayY){
+    var array1 = arrayX.slice(0);
+    var array2 = arrayY.slice(0);
+    if (array1.length != array2.length) return false;
+    if (array1.length == 0) return true;
+    var a1 = -1;
+    while (++a1 < array1.length){
+      var a2 = -1;
+      while (++a2 < array2.length && a1 < array1.length){
+        if (array1[array1.length-1] === array2[a2]){
+          array1.splice(a1,1);
+          array2.splice(a2,1);
+        }
+      }
+    }
+    if (array1.length > 0 || array2.length > 0)
+      return false
+    return true;
+  }
+}
+
+
+
 function JsonHelper() {
+
+  this.KeyValueCollectionToDictionary = function(keyValueCollection){
+    var obj = {};
+    keyValueCollection.forEach(function(el){obj[el.key] = el.value})
+    return obj;
+  }
 
   this.Contains=function(subsetJson,supersetJson, caseSensitive) {
     if(!ofSameType(subsetJson,supersetJson))
@@ -558,218 +597,209 @@ var UnitTestFramework = function () {
 			console.log('TEST PASSED');
 	}
 }
-var DataService = function () {
-	var dataDriver = new LocalStorageDataDriver();
+var DataService=function() {
+  var dataDriver=new LocalStorageDataDriver();
 
-  this.DropDatabase = function(){
+  this.DropDatabase=function() {
     dataDriver.ClearStorage();
     window.location.reload();
   }
 
-	this.CreateConfigReturnId = function (configName, jsonConfig) {
-		if (dataDriver.ConfigExists(configName))
-	        throw "A config by that name already exists";
-	    return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
-	}
+  this.CreateConfigReturnId=function(configName,jsonConfig) {
+    if(dataDriver.ConfigExists(configName))
+      throw "A config by that name already exists";
+    return dataDriver.CreateConfigInDbAndReturnId(configName,jsonConfig);
+  }
 
-	this.CreateUpdateConfigReturnId = function (configName, jsonConfig) {
-		var existingConfig = this.GetConfigByName(configName);
-		if (!existingConfig)
-			return dataDriver.CreateConfigInDbAndReturnId(configName, jsonConfig);
-		var jsonHelper = new JsonHelper();
+  this.CreateUpdateConfigReturnId=function(configName,jsonConfig) {
+    var existingConfig=this.GetConfigByName(configName);
+    if(!existingConfig)
+      return dataDriver.CreateConfigInDbAndReturnId(configName,jsonConfig);
+    var jsonHelper=new JsonHelper();
     //var finalConf = $.extend(true, {}, existingConfig, jsonConfig);
-    var finalConf = jsonHelper.MergeJson(existingConfig, jsonConfig, "arrayId");
-		console.log('existingConfig',existingConfig );
-    console.log('jsonConfig',jsonConfig );
-    console.log('finalConf',finalConf );
-    return dataDriver.UpdateConfigInDb(configName, finalConf);
-	}
+    var finalConf=jsonHelper.MergeJson(existingConfig,jsonConfig,"arrayId");
+    console.log('existingConfig',existingConfig);
+    console.log('jsonConfig',jsonConfig);
+    console.log('finalConf',finalConf);
+    return dataDriver.UpdateConfigInDb(configName,finalConf);
+  }
 
-	this.GetAllConfigs = function () {
-		var allConfigNames = dataDriver.GetAllConfigNames();
-		return allConfigNames.map(function (cnfName) { return dataDriver.GetConfigsByName(cnfName)[0]})
-	}
+  this.GetAllConfigs=function() {
+    var allConfigNames=dataDriver.GetAllConfigNames();
+    return allConfigNames.map(function(cnfName) { return dataDriver.GetConfigsByName(cnfName)[0] })
+  }
 
-	this.GetConfigByName = function (configName) {
-		if (!configName) throw "Config name not provided";
-	    var configs = dataDriver.GetConfigsByName(configName);
-	    if (configs.length == 0)
-	        return null;
-	    return configs[0];
-	}
+  this.GetConfigByName=function(configName) {
+    if(!configName) throw "Config name not provided";
+    var configs=dataDriver.GetConfigsByName(configName);
+    if(configs.length==0)
+      return null;
+    return configs[0];
+  }
 
-	this.FetchEntitiesForNodeId = function (nodeId, _sourceConfig) {
-		var graphElements = dataDriver.GetRelatedEntityGraph(stripDomainFromId(nodeId));
-		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
-	}
+  this.FetchEntitiesForNodeId=function(nodeId,_sourceConfig) {
+    var graphElements=dataDriver.GetRelatedEntityGraph(stripDomainFromId(nodeId));
+    addNodesToGraphFromGraphElementsAndReturnNodes(graphElements,globals.currentTheme.sourceConfig);
+  }
 
-	this.CreateEntity_AddToGraph_ReturnNode = function (labels, properties, _sourceConfig) {
-		if (!_sourceConfig) { _sourceConfig = globals.currentTheme.sourceConfig;}
-	    if (!properties)
-	        properties = {};
-	    var newEntity = {
-		    labels: labels,
-		    properties: properties
-		};
-	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
-		var entity = dataDriver.GetEntityById(entityId);
-		
-    var configHelper = new ConfigHelper();
-		var entityConfig = configHelper.GetConfigForEntityId(entityId);
-    
-    updateUiComponents(labels[0], 1, entityConfig);
-		var nodes = addEntitiesToGraphAndReturnNodes([entity])[0];
-		return nodes;
-	}
+  this.CreateEntity_AddToGraph_ReturnNode=function(labels,properties,_sourceConfig) {
+    if(!_sourceConfig) { _sourceConfig=globals.currentTheme.sourceConfig; }
+    if(!properties){
+      properties={};
+    }
+    var entityId=dataDriver.CreateEntityInDatabasePopulateAndReturnId(labels, properties);
+    var entity=dataDriver.GetEntityById(entityId);
 
-	this.CreateEntityReturnId = function (labels, properties) {
-	    if (!properties)
-	        properties = {};
-	    var newEntity = {
-	        labels: labels,
-	        properties: properties
-	    };
-	    var entityId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newEntity);
-	    return entityId;
-	}
+    var configHelper=new ConfigHelper();
+    var entityConfig=configHelper.GetConfigForEntityId(entityId);
 
-	this.DeleteEntity = function (entityID, _sourceConfig) {
-		dataDriver.DeleteEntity(entityID);
-		//Neo4jDeleteNode(nodeID, _sourceConfig);
-	}
+    updateUiComponents(labels[0],1,entityConfig);
+    var nodes=addEntitiesToGraphAndReturnNodes([entity])[0];
+    return nodes;
+  }
 
-	this.CheckMonitoredNodes = function (_sourceConfig) {
-		//Neo4jCheckMonitoredNodes(_sourceConfig);
-	}
+  this.CreateEntityReturnId=function(labels,properties) {
+    if(!properties)
+      properties={};
 
-	this.CheckMonitoredLinks = function (_sourceConfig) {
-		//Neo4jCheckMonitoredLinks(_sourceConfig);
-	}
+    var entityId=dataDriver.CreateEntityInDatabasePopulateAndReturnId(labels, properties);
+    return entityId;
+  }
 
-	this.Qbuilder = function (selectType, _sourceConfig) {
-		//Neo4jQbuilder(selectType, _sourceConfig);
-	}
+  this.DeleteEntity=function(entityID,_sourceConfig) {
+    dataDriver.DeleteEntity(entityID);
+    //Neo4jDeleteNode(nodeID, _sourceConfig);
+  }
 
-	this.Qbuilder_ClearValue = function (selectType) {
-		//Neo4jQbuilder_ClearValue(selectType);
-	}
+  this.CheckMonitoredNodes=function(_sourceConfig) {
+    //Neo4jCheckMonitoredNodes(_sourceConfig);
+  }
 
-	this.QuerySimpleSearch = function (fromEntity, whereProperty, equalsValue, _sourceConfig) {
-		//Neo4jQuerySimpleSearch(fromEntity, whereProperty, equalsValue, _sourceConfig);
-	}
+  this.CheckMonitoredLinks=function(_sourceConfig) {
+    //Neo4jCheckMonitoredLinks(_sourceConfig);
+  }
 
-	this.GetRelationCounts = function (nodeId, callback, _sourceConfig) {
-		//Neo4jGetRelationCounts(nodeId, callback, _sourceConfig);
-	}
+  this.Qbuilder=function(selectType,_sourceConfig) {
+    //Neo4jQbuilder(selectType, _sourceConfig);
+  }
 
-	this.GetEntitiesByType = function (byLabel, sourceConfigPrefix) {
-		//Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
-		var entities = dataDriver.GetEntitiesByType(byLabel);
-		return addEntitiesToGraphAndReturnNodes(entities, globals.currentTheme.sourceConfig);
-	}
+  this.Qbuilder_ClearValue=function(selectType) {
+    //Neo4jQbuilder_ClearValue(selectType);
+  }
 
-	this.GetEntityById = function(entityId, sourceConfigPrefix) {
-	    return dataDriver.GetEntityFromDatabase(entityId);
-	}
+  this.QuerySimpleSearch=function(fromEntity,whereProperty,equalsValue,_sourceConfig) {
+    //Neo4jQuerySimpleSearch(fromEntity, whereProperty, equalsValue, _sourceConfig);
+  }
 
-	this.GetEntitiesByDetails = function (nodeLabel, properties, _sourceConfig) {
-		//Neo4jGetEntitiesByDetails(nodeLabel, properties, _sourceConfig);
-	}
+  this.GetRelationCounts=function(nodeId,callback,_sourceConfig) {
+    //Neo4jGetRelationCounts(nodeId, callback, _sourceConfig);
+  }
 
-	this.GetAllEntities = function (_sourceConfig) {
-		var labelData = dataDriver.GetAllEntityTypes();
-		labelData.forEach(function (labelData) {
-			var entities = dataDriver.GetEntitiesByType(labelData);
-			addEntitiesToGraphAndReturnNodes(entities, globals.currentTheme.sourceConfig);
-		});
-		this.GetAllRelations(_sourceConfig);
-		//Neo4jGetAllEntities(_sourceConfig);
-	}
+  this.GetEntitiesByType=function(byLabel,sourceConfigPrefix) {
+    //Neo4jGetNodesByLabel(byLabel, sourceConfigPrefix);
+    var entities=dataDriver.GetEntitiesByType(byLabel);
+    return addEntitiesToGraphAndReturnNodes(entities,globals.currentTheme.sourceConfig);
+  }
 
-	this.GetAllRelations = function (_sourceConfig) {
-		var labelDatas = dataDriver.GetAllRelationTypesAndRelationIds();
+  this.GetEntityById=function(entityId,sourceConfigPrefix) {
+    return dataDriver.GetEntityFromDatabase(entityId);
+  }
 
-		var graphElements = labelDatas.map(function (labelData) {
-			labelData.ids.map(function (id) {
-				return dataDriver.GetGraphOfRelation(id)
-			});
-		});
-		addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, globals.currentTheme.sourceConfig);
-		//Neo4jGetAllRelations(_sourceConfig);
-	}
+  this.GetEntitiesByDetails=function(nodeLabel,properties,_sourceConfig) {
+    //Neo4jGetEntitiesByDetails(nodeLabel, properties, _sourceConfig);
+  }
 
-	this.CreateEntityReturnCallbackWithIds = function (entityName, propList, inputCallback) {
-		var newNode = {
-			labels: [entityName],
-			properties: propList
-		};
-		var nodeId = dataDriver.CreateEntityInDatabasePopulateAndReturnId(newNode);
-		var node = dataDriver.GetEntityFromDatabase(nodeId);
-		addEntitiesToGraphAndReturnNodes([node], globals.currentTheme.sourceConfig);
-		//inputCallback(nodeId);
-		//Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);
-    var configHelper = new ConfigHelper();
-		var entityConfig = configHelper.GetConfigForEntityId(nodeId);
-		updateUiComponents(entityName, 1, entityConfig);
-	}
+  this.GetAllEntities=function(_sourceConfig) {
+    var labelData=dataDriver.GetAllEntityTypes();
+    labelData.forEach(function(labelData) {
+      var entities=dataDriver.GetEntitiesByType(labelData);
+      addEntitiesToGraphAndReturnNodes(entities,globals.currentTheme.sourceConfig);
+    });
+    this.GetAllRelations(_sourceConfig);
+    //Neo4jGetAllEntities(_sourceConfig);
+  }
 
-	this.UpdateEntity = function (nodeID, newProperties, callback) {
-		//Neo4jUpdateEntity(nodeID, newProperties, callback);
-	}
+  this.GetAllRelations=function(_sourceConfig) {
+    var labelDatas=dataDriver.GetAllRelationTypesAndRelationIds();
 
-	this.CreateRelation_AddToGraph_ReturnLink = function (fromEntityId, toEntityId, labels, properties, _sourceConfig, planOnly) {
-		//Neo4jCreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly)
-		var relId = dataDriver.CreateRelationPopulateAndReturnId(stripDomainFromId(fromEntityId), stripDomainFromId(toEntityId), labels, properties);
-		var relation = dataDriver.GetLinkFromDatabase(relId);
-		var link = addRelationToGraphReturnLink(relation); 
-    applyPopoutEffectToNodesById(fromEntityId, toEntityId);
+    var graphElements=labelDatas.map(function(labelData) {
+      labelData.ids.map(function(id) {
+        return dataDriver.GetGraphOfRelation(id)
+      });
+    });
+    addNodesToGraphFromGraphElementsAndReturnNodes(graphElements,globals.currentTheme.sourceConfig);
+    //Neo4jGetAllRelations(_sourceConfig);
+  }
+
+  this.CreateEntityReturnCallbackWithIds=function(entityName,propList,inputCallback) {
+    var nodeId=dataDriver.CreateEntityInDatabasePopulateAndReturnId([entityName], propList);
+    var node=dataDriver.GetEntityFromDatabase(nodeId);
+    addEntitiesToGraphAndReturnNodes([node],globals.currentTheme.sourceConfig);
+    //inputCallback(nodeId);
+    //Neo4jCreateEntityReturnCallbackWithIds(entityName, propList, inputCallback);
+    var configHelper=new ConfigHelper();
+    var entityConfig=configHelper.GetConfigForEntityId(nodeId);
+    updateUiComponents(entityName,1,entityConfig);
+  }
+
+  this.UpdateEntity=function(entityId, newLabels, newProperties, callback) {
+    dataDriver.UpdateEntityInDatabase(entityId, newLabels, newProperties);
+    if (callback)
+      callback(entityId);
+    //Neo4jUpdateEntity(nodeID, newProperties, callback);
+  }
+
+  this.CreateRelation_AddToGraph_ReturnLink=function(fromEntityId,toEntityId,labels,properties,_sourceConfig,planOnly) {
+    //Neo4jCreateRelation(nodeID1, nodeID2, relationName, propList, _sourceConfig, planOnly)
+    var relId=dataDriver.CreateRelationPopulateAndReturnId(stripDomainFromId(fromEntityId),stripDomainFromId(toEntityId),labels,properties);
+    var relation=dataDriver.GetLinkFromDatabase(relId);
+    var link=addRelationToGraphReturnLink(relation);
+    applyPopoutEffectToNodesById(fromEntityId,toEntityId);
     return link
-	}
+  }
 
-	this.DeleteRelationship = function (relationshipID, _sourceConfig) {
-		//Neo4jDeleteRelationship(relationshipID, _sourceConfig);
-	}
+  this.DeleteRelationship=function(relationshipID,_sourceConfig) {
+    //Neo4jDeleteRelationship(relationshipID, _sourceConfig);
+  }
 
-	this.DeleteLabel = function (nodeId, labelName, _sourceConfig) {
-		//Neo4jDeleteLabel(nodeId, labelName, _sourceConfig);
-	}
+  this.DeleteLabel=function(nodeId,labelName,_sourceConfig) {
+    //Neo4jDeleteLabel(nodeId, labelName, _sourceConfig);
+  }
 
-	this.AddProperty = function (nodeId, _sourceConfig) {
-		//Neo4jAddProperty(nodeId, _sourceConfig);
-	}
+  this.AddProperty=function(nodeId,_sourceConfig) {
+    //Neo4jAddProperty(nodeId, _sourceConfig);
+  }
 
-	this.AddLabel = function (_sourceConfig) {
-		//Neo4jAddLabel(_sourceConfig);
-	}
+  this.AddLabel=function(_sourceConfig) {
+    //Neo4jAddLabel(_sourceConfig);
+  }
 
-	this.GetAllEntityTypes = function (_sourceConfig) {
-		//Neo4jGetAllLabels(_sourceConfig);
-		var labels = dataDriver.GetAllEntityTypesAndEntityIds(_sourceConfig);
-		labels.forEach(function (label) {
-			var pseudoEntity = new DataEntity();
-			pseudoEntity.labels = [label];
+  this.GetAllEntityTypes=function(_sourceConfig) {
+    //Neo4jGetAllLabels(_sourceConfig);
+    var labels=dataDriver.GetAllEntityTypesAndEntityIds(_sourceConfig);
+    labels.forEach(function(label) {
+      var pseudoEntity=new DataEntity();
+      pseudoEntity.labels=[label];
 
-			var configHelper = new ConfigHelper();
-			var entityConfig = configHelper.GetConfigForEntity(pseudoEntity);
+      var configHelper=new ConfigHelper();
+      var entityConfig=configHelper.GetConfigForEntity(pseudoEntity);
 
-			updateUiComponents(label.label, label.ids.length, entityConfig);
-		});
-	}
+      updateUiComponents(label.label,label.ids.length,entityConfig);
+    });
+  }
 
-	function updateUiComponents(label, entityCount, entityConfig)
-	{
-		var typeSelector = addEntityLabel(label, entityCount, entityConfig);
-		refreshEntitySelectors();
+  function updateUiComponents(label,entityCount,entityConfig) {
+    var typeSelector=addEntityLabel(label,entityCount,entityConfig);
+    refreshEntitySelectors();
     consoleApp.refreshTypeSelectors();
-	}
+  }
 
-	function stripDomainFromId(nodeId)
-	{
-		if (nodeId.length > 3)
-			if (nodeId.substring(0, 3) == 'LOC')
-				return nodeId.substring(3);
-		return nodeId;
-	}
+  function stripDomainFromId(nodeId) {
+    if(nodeId.length>3)
+      if(nodeId.substring(0,3)=='LOC')
+        return nodeId.substring(3);
+    return nodeId;
+  }
 
 }
 
@@ -855,382 +885,392 @@ function removeNodeFromGraph(nodeId)
 	removeNodeFromStage(nodeId);
 }
 
-var LocalStorageDataDriver = function () {
-
-
-    //----PUBLIC----------------------------------------------------------
-
-  this.ClearStorage = function(){
+var LocalStorageDataDriver=function() {
+  
+  //----PUBLIC----------------------------------------------------------
+  this.ClearStorage=function() {
     localStorage.clear();
+  }
+  
+  this.UpdateConfigInDb=function(name,configJson) {
+    writeConfigToStorage(name,configJson);
+    return configJson.id;
+  }
+
+  this.CreateConfigInDbAndReturnId=function(name,configJson) {
+    configJson.id=this.GetNextNewConfigId();
+    writeConfigToStorage(name,configJson);
+    return configJson.id;
+  }
+
+  this.UpdateEntityInDatabase=function(entityId,labels,properties) {
+    var entity={ "id": entityId,"labels": labels,"properties": properties }
+    entity = prepareEntity(entity);
+    writeNodeToStorage(entity);
+  }
+
+  this.CreateEntityInDatabasePopulateAndReturnId=function(labels,properties) {
+    var id = getNextNewEntityId();
+    var entity={ "id": id,"labels": labels,"properties": properties }
+    entity = prepareEntity(entity);
+    writeNodeToStorage(entity);
+    return entity.id;
+  }
+
+  this.GetRelatedNodes=function(entityId) {
+    var entity=this.GetEntityFromDatabase(entityId);
+    var nodeLinks=entity.links;
+    var dataDriver=this;
+    var relatedNodeIds=[];
+    nodeLinks.forEach(function(relationId) {
+      var link=dataDriver.GetLinkFromDatabase(relationId);
+      if(entityId==link.fromNodeId)
+        relatedNodeIds.push(link.toNodeId);
+      else
+        relatedNodeIds.push(link.fromNodeId);
+    });
+
+    return relatedNodeIds;
+  }
+
+  this.GetEntityById=function(entityId) {
+    return this.GetEntityFromDatabase(entityId);
+  }
+
+  this.GetConfigById=function(configId) {
+    return this.GetConfigFromDatabase(configId);
+  }
+
+  this.GetRelatedEntityGraph=function(entityId) {
+    var entity=this.GetEntityFromDatabase(entityId);
+    var dataDriver=this;
+    return entity.links.map(function(relationId) { return dataDriver.GetGraphOfRelation(relationId) });
+  }
+
+  this.GetGraphOfRelation=function(relationId) {
+    var link=this.GetLinkFromDatabase(relationId);
+    var graphElement=new GraphElement();
+    graphElement.fromNode=this.GetEntityFromDatabase(link.fromNodeId);
+    graphElement.toNode=this.GetEntityFromDatabase(link.toNodeId);
+    graphElement.link=link;
+    return graphElement;
+  }
+
+  this.CreateRelationPopulateAndReturnId=function(fromEntityId,toEntityId,labels,properties) {
+    link={};
+    link.id=this.GetNextNewRelationId();
+    link.fromNodeId=fromEntityId;
+    link.toNodeId=toEntityId;
+    link.labels=labels||[];
+    link.properties=properties?properties:{};
+
+    var fromEntity=this.GetEntityFromDatabase(fromEntityId);
+    fromEntity.links.push(link.id);
+    writeNodeToStorage(fromEntity);
+
+    var toEntity=this.GetEntityFromDatabase(toEntityId);
+    toEntity.links.push(link.id);
+    writeNodeToStorage(toEntity);
+
+    writeLinkToStorage(link);
+    return link.id;
+  }
+
+  this.GetConfigFromDatabase=function(configId) {
+    return getConfigFromDatabase(configId);
+  }
+
+  this.GetEntityFromDatabase=function(entityId) {
+    return getEntityFromDatabase(entityId);
+  }
+
+  this.GetLinkFromDatabase=function(relationId) {
+    return getRelationFromDatabase(relationId);
+  }
+
+  this.DeleteEntity=function(entityId) {
+    localStorage.removeItem(nodeKeyFromNodeId(entityId));
   }
 
 
-	this.UpdateConfigInDb = function (name, configJson) {
-		writeConfigToStorage(name, configJson);
-		return configJson.id;
-	}
-    this.CreateConfigInDbAndReturnId = function (name, configJson) {
-    	configJson.id = this.GetNextNewConfigId();
-        writeConfigToStorage(name, configJson);
-        return configJson.id;
+  this.EntityExists=function(entityId) {
+    var entity=readNodeFromStorage(entityId);
+    return entity!==null;
+  }
+
+  this.GetNextNewConfigId=function() {
+    var nextIndex=getNextIndexForCounter('NEXT_CONFIG_ID');
+    return nextIndex;
+  }
+
+  this.GetNextNewEntityId=function() {
+    return getNextNewEntityId();
+  }
+
+  function getNextNewEntityId(){
+    return getNextIndexForCounter('NEXT_NODE_ID');
+  }
+
+  this.GetNextNewRelationId=function() {
+    return getNextIndexForCounter('NEXT_LINK_ID');
+  }
+
+  function getNextIndexForCounter(CounterName) {
+
+    var nextId=localStorage.getItem(CounterName);
+    if(nextId===null) {
+      localStorage.setItem(CounterName,1);
+      return 1;
     }
+    nextId=Number(nextId)+1;
+    localStorage.setItem(CounterName,nextId);
+    return nextId;
+  }
 
-	this.CreateEntityInDatabasePopulateAndReturnId = function (node) {
-		node = sanitizeNode(node);
-		node.id = this.GetNextNewEntityId();
-		writeNodeToStorage(node);
-		return node.id;
-	}
+  this.ConfigExists=function(configName) {
+    var configs=getItemsInIndex('INDEX_ON_CONFIG_NAMES',configName,'config');
+    return (configs.length>0);
+  }
 
-	this.GetRelatedNodes = function (nodeId) {
-		var node = this.GetEntityFromDatabase(nodeId);
-		var nodeLinks = node.links;
-		var dataDriver = this;
-		var relatedNodeIds = [];
-		nodeLinks.forEach(function (linkId) {
-			var link = dataDriver.GetLinkFromDatabase(linkId);
-			if (nodeId == link.fromNodeId)
-				relatedNodeIds.push(link.toNodeId);
-			else
-				relatedNodeIds.push(link.fromNodeId);
-		});
+  this.GetConfigsByName=function(configName) {
+    return getItemsInIndex('INDEX_ON_CONFIG_NAMES',configName,'config');
+  }
 
-		return relatedNodeIds;
-	}
+  this.GetEntitiesByType=function(labelName) {
+    return getItemsInIndex('INDEX_ON_NODE_LABELS',labelName,'entity');
+  }
 
-	this.GetEntityById = function (entityId){
-	    return this.GetEntityFromDatabase(entityId);
-	}
+  this.GetEntitiesByPropertyName=function(propertyName) {
+    return getItemsInIndex('INDEX_ON_NODE_PROPS',propertyName,'entity');
+  }
 
-	this.GetConfigById = function (configId) {
-	    return this.GetConfigFromDatabase(configId);
-	}
+  this.GetRelationsByLabel=function(labelName) {
+    return getItemsInIndex('INDEX_ON_LINK_LABELS',labelName,'link');
+  }
 
-	this.GetRelatedEntityGraph = function (nodeId) {
-		var node = this.GetEntityFromDatabase(nodeId);
-		var dataDriver = this;
-		return node.links.map(function (linkId) { return dataDriver.GetGraphOfRelation(linkId) });
-	}
+  this.GetRelationsByPropertyName=function(propertyName) {
+    return getItemsInIndex('INDEX_ON_LINK_PROPS',propertyName,'link');
+  }
 
-	this.GetGraphOfRelation = function (linkId) {
-		var link = this.GetLinkFromDatabase(linkId);
-		var graphElement = new GraphElement();
-		graphElement.fromNode = this.GetEntityFromDatabase(link.fromNodeId);
-		graphElement.toNode = this.GetEntityFromDatabase(link.toNodeId);
-		graphElement.link = link;
-		return graphElement;
-	}
+  this.GetAllEntityTypes=function() {
+    var nodeIndex=localStorage.getItem('INDEX_ON_NODE_LABELS');
+    return getAllLabelsFromIndex(nodeIndex);
+  }
 
-	this.CreateRelationPopulateAndReturnId = function (fromEntityId, toEntityId, labels, properties) {
-	    link = {}; //new Relation(); //sanitizeLink(relation);
-		link.id = this.GetNextNewRelationId();
-		link.fromNodeId = fromEntityId;
-		link.toNodeId = toEntityId;
-		link.labels = labels || [];
-		link.properties = properties ? properties : {};
+  this.GetAllRelationTypes=function() {
+    var linkIndex=localStorage.getItem('INDEX_ON_LINK_LABELS');
+    return getAllLabelsFromIndex(linkIndex);
+  }
 
-		var fromEntity = this.GetEntityFromDatabase(fromEntityId);
-		fromEntity.links.push(link.id);
-		writeNodeToStorage(fromEntity);
+  this.GetAllConfigNames=function() {
+    var linkIndex=localStorage.getItem('INDEX_ON_CONFIG_NAMES');
+    return getAllLabelsFromIndex(linkIndex);
+  }
 
-		var toEntity = this.GetEntityFromDatabase(toEntityId);
-		toEntity.links.push(link.id);
-		writeNodeToStorage(toEntity);
+  //this.GetAllRelationTypeInfos = function () {
+  //	var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
+  //	return getAllLabelsFromIndex(linkIndex);
+  //}
 
-		writeLinkToStorage(link);
-		return link.id;
-	}
+  this.GetAllEntityTypesAndEntityIds=function() {
+    return getAllLabelsAndIdsForIndex('INDEX_ON_NODE_LABELS');
+  }
 
-	this.GetConfigFromDatabase = function (configId) {
-	    return getConfigFromDatabase(configId);
-	}
+  this.GetAllRelationTypesAndRelationIds=function() {
+    return getAllLabelsAndIdsForIndex('INDEX_ON_LINK_LABELS');
+  }
+  //---- PRIVATE ----------------------------------------------------------
 
-	this.GetEntityFromDatabase = function (nodeId) {
-		return getEntityFromDatabase(nodeId);
-	}
+  function getConfigFromDatabase(configId) {
+    throwIfInvalidConfigId(configId);
+    var config=readConfigFromStorage(configId);
+    return config;
+  }
 
-	this.GetLinkFromDatabase = function (linkId) {
-		return getRelationFromDatabase(linkId);
-	}
+  function getEntityFromDatabase(entityId) {
+    throwIfInvalidNodeId(entityId);
+    var entity=readNodeFromStorage(entityId);
+    return entity;
+  }
 
-	this.DeleteEntity = function(nodeId)
-	{
-		localStorage.removeItem(nodeKeyFromNodeId(nodeId));
-	}
+  function getRelationFromDatabase(relationId) {
+    throwIfInvalidLinkId(relationId);
+    var link=readLinkFromStorage(relationId);
+    return link;
+  }
 
+  function getItemsInIndex(indexName,elementName,itemType) {
+    var dataStringHelper=new DataStringHelper();
+    var indexedData=dataStringHelper.getDataString(indexName);
+    if(indexedData=="|")
+      return [];
+    var itemIdList=dataStringHelper.getDataFromDataString(indexedData,elementName);
+    if(itemIdList.length==0)
+      return [];
+    var itemIdArray=itemIdList.split(',');
+    if(itemIdArray.length==0)
+      return [];
+    var itemArray=[];
+    var dataDriver=this;
+    for(var i=0;i<itemIdArray.length;i++) {
+      if(itemType==='entity')
+        itemArray.push(getEntityFromDatabase(itemIdArray[i]));
+      if(itemType==='link')
+        itemArray.push(getRelationFromDatabase(itemIdArray[i]));
+      if(itemType==='config')
+        itemArray.push(getConfigFromDatabase(itemIdArray[i]));
+    }
+    return itemArray;
+  }
 
-	this.EntityExists = function(nodeId)
-	{
-		var node = readNodeFromStorage(nodeId);
-		return node !== null;
-	}
+  function getAllLabelsAndIdsForIndex(indexName) {
+    var indexedData=localStorage.getItem(indexName);
+    var dataStringHelper=new DataStringHelper();
+    var elementArray=dataStringHelper.getAllElements(indexedData);
+    var elementInfo=elementArray.map(function(element) {
+      return elementToLabelInfo(element);
+    });
+    return elementInfo;
+  }
 
-	this.GetNextNewConfigId = function () {
-		var nextIndex = getNextIndexForCounter('NEXT_CONFIG_ID');
-		return nextIndex;
-	}
+  function getAllLabelsFromIndex(indexedData) {
+    var dataStringHelper=new DataStringHelper();
+    var elementArray=dataStringHelper.getAllElements(indexedData);
+    var elemenNames=elementArray.map(function(element) { return element.split(':')[0] });
+    return elemenNames;
+  }
 
-	this.GetNextNewEntityId = function () {
-		return getNextIndexForCounter('NEXT_NODE_ID');
-	}
+  function elementToLabelInfo(element) {
+    var elementParts=element.split(':');
+    if(elementParts.length>1)
+      return { label: elementParts[0],ids: elementParts[1].split(',') }
+    return { label: elementParts[0],ids: [] }
+  }
 
-	this.GetNextNewRelationId = function () {
-		return getNextIndexForCounter('NEXT_LINK_ID');
-	}
+  function writeConfigToStorage(name,config) {
+    if(!config.id) throw "Missing config-id in config";
+    localStorage.setItem(configKeyFromConfigId(config.id),serialize(config));
+    updateIndex("INDEX_ON_CONFIG_NAMES",name,config.id);
+  }
 
-	function getNextIndexForCounter(CounterName) {
-		
-		var nextId = localStorage.getItem(CounterName);
-		if (nextId === null) {
-			localStorage.setItem(CounterName, 1);
-			return 1;
-		}
-		nextId = Number(nextId) + 1;
-		localStorage.setItem(CounterName, nextId);
-		return nextId;
-	}
+  function writeNodeToStorage(entity) {
+    localStorage.setItem(nodeKeyFromNodeId(entity.id),serialize(entity));
+    updateLabelsIndex("INDEX_ON_NODE_LABELS",entity);
+    updatePropertyIndex("INDEX_ON_NODE_PROPS",entity);
+  }
 
-	this.ConfigExists = function (configName) {
-	    var configs = getItemsInIndex('INDEX_ON_CONFIG_NAMES', configName, 'config');
-	    return (configs.length > 0);
-	}
+  function writeLinkToStorage(link) {
+    localStorage.setItem(linkKeyFromNodeId(link.id),serialize(link));
+    updateLabelsIndex("INDEX_ON_LINK_LABELS",link);
+    updatePropertyIndex("INDEX_ON_LINK_PROPS",link);
+  }
 
-	this.GetConfigsByName = function (configName) {
-	    return getItemsInIndex('INDEX_ON_CONFIG_NAMES', configName, 'config');
-	}
+  function updateLabelsIndex(indexName,item) {
+    item.labels.forEach(function(label) {
+      updateIndex(indexName,label,item.id);
+    });
+  }
 
-	this.GetEntitiesByType = function(labelName){		
-		return getItemsInIndex('INDEX_ON_NODE_LABELS', labelName, 'node');
-	}
+  function updatePropertyIndex(indexName,item) {
+    for(var propertyKey in item.properties) {
+      updateIndex(indexName,propertyKey,item.id);
+    }
+  }
 
-	this.GetEntitiesByPropertyName = function (propertyName) {
-		return getItemsInIndex('INDEX_ON_NODE_PROPS', propertyName, 'node');
-	}
+  function updateIndex(indexName,elementName,data) {
+    var index=localStorage.getItem(indexName);
+    var dataStringHelper=new DataStringHelper();
+    if(index===null)
+      index=dataStringHelper.getNewDataString();
+    index=dataStringHelper.ensureDataIntoElement(index,elementName,data)
+    localStorage.setItem(indexName,index);
+  }
 
-	this.GetRelationsByLabel = function (labelName) {
-		return getItemsInIndex('INDEX_ON_LINK_LABELS', labelName, 'link');
-	}
+  function prepareEntity(entity) {
+    if(entity===undefined)
+      entity={};
+    entity.labels=sanitizeLabels(entity.labels);
+    entity.links = sanitizeNodeLinks(entity.links);
+    entity.properties=sanitizeProperties(entity.properties);
+    return entity;
+  }
 
-	this.GetRelationsByPropertyName = function (propertyName) {
-		return getItemsInIndex('INDEX_ON_LINK_PROPS', propertyName, 'link');
-	}
+  function sanitizeLink(link) {
+    if(link===undefined)
+      link={};
+    link.labels=sanitizeLabels(link.labels);
+    link.properties=sanitizeProperties(link.properties);
+    return link;
+  }
 
-	this.GetAllEntityTypes = function () {
-		var nodeIndex = localStorage.getItem('INDEX_ON_NODE_LABELS');
-		return getAllLabelsFromIndex(nodeIndex);
-	}
+  function sanitizeNodeLinks(links) {
+    if(links===undefined)
+      links=[];
+    return links;
+  }
 
-	this.GetAllRelationTypes = function () {
-		var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
-		return getAllLabelsFromIndex(linkIndex);
-	}
+  function sanitizeLabels(labels) {
+    if(labels===undefined)
+      throw "Cannot allow un-named node";
+    if(labels.length==0)
+      throw "Cannot allow un-named node";
+    //labels = [];
+    return labels;
+  }
 
-	this.GetAllConfigNames = function () {
-		var linkIndex = localStorage.getItem('INDEX_ON_CONFIG_NAMES');
-		return getAllLabelsFromIndex(linkIndex);
-	}
+  function sanitizeProperties(properties) {
+    if(properties===undefined)
+      properties=[];
+    return properties;
+  }
 
-	//this.GetAllRelationTypeInfos = function () {
-	//	var linkIndex = localStorage.getItem('INDEX_ON_LINK_LABELS');
-	//	return getAllLabelsFromIndex(linkIndex);
-	//}
+  function readConfigFromStorage(configId) {
+    return deserialize(localStorage.getItem(configKeyFromConfigId(configId)));
+  }
 
-	this.GetAllEntityTypesAndEntityIds = function () {
-		return getAllLabelsAndIdsForIndex('INDEX_ON_NODE_LABELS');
-	}
+  function readNodeFromStorage(entityId) {
+    return deserialize(localStorage.getItem(nodeKeyFromNodeId(entityId)));
+  }
 
-	this.GetAllRelationTypesAndRelationIds = function () {
-		return getAllLabelsAndIdsForIndex('INDEX_ON_LINK_LABELS');
-	}
-	//---- PRIVATE ----------------------------------------------------------
-
-	function getConfigFromDatabase(configId) {
-	    throwIfInvalidConfigId(configId);
-	    var config = readConfigFromStorage(configId);
-	    return config;
-	}
-
-	function getEntityFromDatabase(nodeId) {
-		throwIfInvalidNodeId(nodeId);
-		var node = readNodeFromStorage(nodeId);
-		return node;
-	}
-
-	function getRelationFromDatabase(linkId) {
-		throwIfInvalidLinkId(linkId);
-		var link = readLinkFromStorage(linkId);
-		return link;
-	}
-
-	function getItemsInIndex(indexName, elementName, itemType) {
-		var dataStringHelper = new DataStringHelper();
-		var indexedData = dataStringHelper.getDataString(indexName);
-		if (indexedData == "|")
-		    return [];
-		var itemIdList = dataStringHelper.getDataFromDataString(indexedData, elementName);
-		if (itemIdList.length == 0)
-		    return [];
-		var itemIdArray = itemIdList.split(',');
-		if (itemIdArray.length == 0)
-		    return [];
-		var itemArray = [];
-		var dataDriver = this;
-		for (var i = 0; i < itemIdArray.length; i++) {
-			if (itemType === 'node')
-				itemArray.push(getEntityFromDatabase(itemIdArray[i]));
-			if (itemType === 'link')
-			    itemArray.push(getRelationFromDatabase(itemIdArray[i]));
-			if (itemType === 'config')
-			    itemArray.push(getConfigFromDatabase(itemIdArray[i]));
-		}
-		return itemArray;
-	}
-
-	function getAllLabelsAndIdsForIndex(indexName) {
-		var indexedData = localStorage.getItem(indexName);
-		var dataStringHelper = new DataStringHelper();
-		var elementArray = dataStringHelper.getAllElements(indexedData);
-		var elementInfo = elementArray.map(function (element) {
-			return elementToLabelInfo(element);
-		});
-		return elementInfo;
-	}
-
-	function getAllLabelsFromIndex(indexedData) {
-		var dataStringHelper = new DataStringHelper();
-		var elementArray = dataStringHelper.getAllElements(indexedData);
-		var elemenNames = elementArray.map(function (element) { return element.split(':')[0] });
-		return elemenNames;
-	}
-
-	function elementToLabelInfo(element) {
-		var elementParts = element.split(':');
-		if (elementParts.length > 1)
-			return { label: elementParts[0], ids: elementParts[1].split(',') }
-		return { label: elementParts[0], ids: [] }
-	}
-	
-	function writeConfigToStorage(name, config) {
-		if (!config.id) throw "Missing config-id in config";
-	    localStorage.setItem(configKeyFromConfigId(config.id), serialize(config));
-	    updateIndex("INDEX_ON_CONFIG_NAMES", name, config.id);
-	}
-
-	function writeNodeToStorage(node) {
-		localStorage.setItem(nodeKeyFromNodeId(node.id), serialize(node));
-		updateLabelsIndex("INDEX_ON_NODE_LABELS", node);
-		updatePropertyIndex("INDEX_ON_NODE_PROPS", node);
-	}
-
-	function writeLinkToStorage(link) {
-		localStorage.setItem(linkKeyFromNodeId(link.id), serialize(link));
-		updateLabelsIndex("INDEX_ON_LINK_LABELS", link);
-		updatePropertyIndex("INDEX_ON_LINK_PROPS", link);
-	}
-
-	function updateLabelsIndex(indexName, item) {
-		item.labels.forEach(function (label) {
-			updateIndex(indexName, label, item.id);
-		});
-	}
-
-	function updatePropertyIndex(indexName, item) {
-		for (var propertyKey in item.properties) {
-			updateIndex(indexName, propertyKey, item.id);
-		}
-	}
-
-	function updateIndex(indexName, elementName, data) {
-		var index = localStorage.getItem(indexName);
-		var dataStringHelper = new DataStringHelper();
-		if (index === null)
-			index = dataStringHelper.getNewDataString();
-		index = dataStringHelper.ensureDataIntoElement(index, elementName, data)
-		localStorage.setItem(indexName, index);
-	}
-
-	function sanitizeNode(node) {
-		if (node === undefined)
-			node = {};
-		node.labels = sanitizeLabels(node.labels);
-		node.links = sanitizeNodeLinks(node.links);
-		node.properties = sanitizeProperties(node.properties);
-		return node;
-	}
-
-	function sanitizeLink(link) {
-		if (link === undefined)
-			link = {};
-		link.labels = sanitizeLabels(link.labels);
-		link.properties = sanitizeProperties(link.properties);
-		return link;
-	}
-
-	function sanitizeNodeLinks(links) {
-		if (links === undefined)
-			links = [];
-		return links;
-	}
-
-	function sanitizeLabels(labels) {
-		if (labels === undefined)
-			labels = [];
-		return labels;
-	}
-
-	function sanitizeProperties(properties) {
-		if (properties === undefined)
-			properties = [];
-		return properties;
-	}
-
-	function readConfigFromStorage(configId) {
-	    return deserialize(localStorage.getItem(configKeyFromConfigId(configId)));
-	}
-
-	function readNodeFromStorage(nodeId) {
-		return deserialize(localStorage.getItem(nodeKeyFromNodeId(nodeId)));
-	}
-
-	function readLinkFromStorage(linkId) {
-		return deserialize(localStorage.getItem(linkKeyFromNodeId(linkId)));
-	}
+  function readLinkFromStorage(relationId) {
+    return deserialize(localStorage.getItem(linkKeyFromNodeId(relationId)));
+  }
 
 
-	function throwIfInvalidConfigId(configId) {
-	    if (configId === undefined || configId === null || configId === 0)
-	        throw "Invalid config id";
-	}
+  function throwIfInvalidConfigId(configId) {
+    if(configId===undefined||configId===null||configId===0)
+      throw "Invalid config id";
+  }
 
-	function throwIfInvalidNodeId(nodeId) {
-		if (nodeId === undefined || nodeId === null || nodeId === 0)
-			throw "Invalid node id";
-	}
+  function throwIfInvalidNodeId(entityId) {
+    if(entityId===undefined||entityId===null||entityId===0)
+      throw "Invalid entity id";
+  }
 
-	function throwIfInvalidLinkId(linkId) {
-		if (linkId === undefined || linkId === null || linkId === 0)
-			throw "Invalid link id";
-	}
+  function throwIfInvalidLinkId(relationId) {
+    if(relationId===undefined||relationId===null||relationId===0)
+      throw "Invalid link id";
+  }
 
-	function configKeyFromConfigId(configId) {
-	    return 'C_' + configId;
-	}
+  function configKeyFromConfigId(configId) {
+    return 'C_'+configId;
+  }
 
-	function nodeKeyFromNodeId(nodeId) {
-		return 'N_' + nodeId;
-	}
+  function nodeKeyFromNodeId(entityId) {
+    return 'N_'+entityId;
+  }
 
-	function linkKeyFromNodeId(linkId) {
-		return 'L_' + linkId;
-	}
+  function linkKeyFromNodeId(relationId) {
+    return 'L_'+relationId;
+  }
 
-	function serialize(object) {
-		return JSON.stringify(object);
-	}
+  function serialize(object) {
+    return JSON.stringify(object);
+  }
 
-	function deserialize(object) {
-		return JSON.parse(object);
-	}
+  function deserialize(object) {
+    return JSON.parse(object);
+  }
 
 
 
@@ -3282,9 +3322,10 @@ function getType(p) {
 function EntityEventsHelper(){
 
   var eventBehaviourMapping = [
-    { name: 'AutoImage',            event: addEntityToGraph_beforeNodeAdd,   func: new NodeBehavioursApi().AutoImageToConfig },
-    { name: 'SubnodesForLinks',     event: addEntityToGraph_afterNodeAdd,    func: new NodeBehavioursApi().CreateSubNodesFromLinks },
-    { name: 'FetchLinkOnDblClick',  event: nodeDoubleClick,           func: new NodeBehavioursApi().FetchNodeLinks }
+    { name: 'AutoImage',                  event: addEntityToGraph_beforeNodeAdd,   func: new NodeBehavioursApi().AutoImageToConfig },
+    { name: 'SubnodesForLinks',           event: addEntityToGraph_afterNodeAdd,    func: new NodeBehavioursApi().CreateSubNodesFromLinks },
+    { name: 'FetchHttpDataAsChildNodes',  event: nodeDoubleClick,                  func: new NodeBehavioursApi().FetchHttpDataAsChildNodes },
+    { name: 'GetRelatedNodes',            event: nodeDoubleClick,                  func: new NodeBehavioursApi().GetRelatedNodes }
   ]
   
   this.AddEntityToGraph_beforeConfigLoad = function(nodeData){addEntityToGraph_beforeConfig(nodeData);}
@@ -3333,6 +3374,23 @@ function EntityEventsHelper(){
 
 }
 
+function NodeHelper(){
+  
+  this.RefreshNode = function(nodeId){
+    refreshNodeAppearance(nodeId);
+  }
+  
+  this.ReloadNode = function(nodeId){
+    addDataNode(node.id, node.data);
+  }
+
+  function refreshNodeAppearance(nodeId){
+	  var node = globals.GRAPH.getNode(nodeId?nodeId:globals.selectedNode.id);
+    node=addNodeToGraph(node.id, node.data);
+    return node;
+  }
+
+}
 //Graph functions
 
 
@@ -3556,73 +3614,31 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
     fromNode.data.toLinks.push(link);
     fromNode.data.toNodes.push(toNode);
   }
-
   new LinkHelper().FixTextWidth4Link(link);
-
   return link;
 }
 
-
-
-function addDataNode(nodeId, nodeData, _sourceConfig) {
-  var nodeUI;
+function addDataNode(nodeId, newNodeData) {
+  var arraySvc = new ArrayHelper();
   var isNewNode=false;
-  //if(!_sourceConfig) _sourceConfig=globals.config_ext;
-  //var configHelper=new ConfigHelper();
-  //nodeData.sourceConfig=configHelper.getConfig(_sourceConfig);
-
-  var node = getExistingNode(nodeId);
+  var node=getExistingNode(nodeId);
   if(node) {
-    var newLabels=[];
-    nodeUI = globals.graphics.getNodeUI(nodeId);
-    nodeData.labels.forEach(function(newLabel) {
-      var hasLabel=false;
-      for(var i=0;i<nodeData.labels.length;i++) {
-        if(nodeData.labels[i]==newLabel) {
-          hasLabel=true;
-          break;
-        }
-      };
-      if(!hasLabel) { newLabels.push(newLabel) }
-    });
-
-    var updatedProperties=getUpdatedProperties(node.data.properties,nodeData.properties);
-    if(newLabels.length>0||updatedProperties.length>0) {
-      if(nodeData.UI.displayTextUI) {
-        nodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(nodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
-      }
-      node.data.labels=nodeData.labels;
-      node.data.properties=nodeData.properties;
-      globals.animUpdateNodes.push(node);
+    if(newNodeData.UI.displayTextUI) {
+      newNodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(newNodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
     }
-    else {//no changes have been made to the node...
-      return; //NOTE: DO NOT RETURN THE DATA-NODE
-    }
+    node.data.labels=newNodeData.labels;
+    node.data.properties=newNodeData.properties;
+    globals.animUpdateNodes.push(node);
   }
-  else {
-    isNewNode=true;
-    nodeUI=globals.graphics.getNodeUI(nodeId);
-  }
-
-  var thisNodeData=nodeData;
-  var thisIsNewNode=isNewNode;
-  //var this_sourceConfig = _sourceConfig;
-
-  //set display attributes based on config...
-  if(thisNodeData.config.nodeDisplayBody.size) { thisNodeData.nodeSize=thisNodeData.config.nodeDisplayBody.size };
-
-  setupDisplayLabels(thisNodeData);
-
-  if(thisIsNewNode) {
-    var eventsHelper = new EntityEventsHelper();
-    setNodeColor(thisNodeData);
-    eventsHelper.AddEntityToGraph_beforeNodeAdd(thisNodeData);
-    node=addNodeToGraph(thisNodeData.id,thisNodeData);
-    //PerformNodeStatFunctions(node);
-    recordTypeInfo(node);
-    eventsHelper.AddEntityToGraph_afterNodeAdd(node);
-    return node; //RETURN ONLY IF NODE IS NEW
-  }
+  newNodeData = setupDisplayLabels(newNodeData);
+  var eventsHelper = new EntityEventsHelper();
+  setNodeColor(newNodeData);
+  eventsHelper.AddEntityToGraph_beforeNodeAdd(newNodeData);
+  node=addNodeToGraph(newNodeData.id,newNodeData);
+  //PerformNodeStatFunctions(node);
+  recordTypeInfo(node);
+  eventsHelper.AddEntityToGraph_afterNodeAdd(node);
+  return node;
 }
 
 function setupDisplayLabels(thisNodeData) {
@@ -3667,7 +3683,7 @@ function setupDisplayLabels(thisNodeData) {
   else {
     thisNodeData.circleText=finalLabel;
   }
-
+  return thisNodeData;
 }
 
 function setNodeColor(entityData) {
@@ -3810,7 +3826,7 @@ function removeNodeFromStage(nodeID) {
 
   globals.GRAPH.removeNode(nodeID);
 
-  globals.consoleService.hideNodeFlyout();
+  globals.consoleService.HideNodeFlyout();
 }
 
 function removeLinkFromStage(linkID) {
@@ -4084,15 +4100,6 @@ function fixTextWidth4Node(node)
 			
 }
 		
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function showOnNode(nodeId, text)
-{
-	var node = getExistingNode(nodeId);
-	node.data.displayLabel = text;
-	refreshNodeAppearance(nodeId);
-}
-		
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function increaseNodeSprings(nodeid)
 {
@@ -4285,7 +4292,6 @@ function checkNode(node)
 			}
 					
 		}
-				
 }
 		
 function loadNodePopout(node, config)
@@ -4306,101 +4312,11 @@ function loadNodePopout(node, config)
 	node.data.UI.popoutBodyUI.attr('class', 'slidebody');
 	node.data.UI.popoutTextUI.attr('class', 'slidetext');
 }
-		
-		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//function showNodeDetailsInToolPanel(node)
-//{
-	//var processingElement = document.getElementById('selectedNode');
-	//var labellist = ''
-	//var html = '<div class="panelHead"><p>Selected Entity:</p></div>';
-	////html += '<br/><a class="panelheader">Entity type</a>:<br/>' //+ labellist;
-	//html += '<table>'
-	//node.data.labels.forEach(function (nodeLabel, index) {
-	//	if (index!=0){labellist += ', ';}
-	//	//var button_onclick = 'globals.dataService.DeleteLabel(' + node.id + ', \'' + nodeLabel + '\')';
-	//	html += '<tr>';
-	//	html += '  <td>';
-	//	html += '    <p class="dataNameLabel">Entity Number:</p>';
-	//	html += '  </td>';
-	//	html += '  <td>';
-	//	html += '    <p class="dataValueLabel">' + globals.selectedNodeID + '</p>';
-	//	html += '  </td>';
-	//	html += '</tr>';
-
-	//	html += '<tr>';
-	//	//html += '  <td>';
-	//	//html += '    <button class="paneloption mytooltip" onclick="' + button_onclick + '" >X';
-	//	//html += '		<div class="mytooltiptext">delete label</div>';
-	//	//html += '    </button>';
-	//	//html += '  </td>';
-	//	html += '  <td>';
-	//	html += '    <p class="dataNameLabel">Entity Type:</p>';
-	//	html += '  </td>';
-	//	html += '  <td>';
-	//	html += '    <p class="dataValueLabel">' + nodeLabel + '</p>';
-	//	html += '  </td>';
-	//	html += '</tr>';
 
 
 
-	//});
-	//html += '</table>'
-			
-			
-	//processingElement.innerHTML = html;
-			
-	//html = '<div class="panelHead"><p>Properties:</p></div>';
-	//html += '<table>'
-	//var processingElement = document.getElementById('nodeDetails');
-	//node.data.properties.forEach(function(property, index){
-	//	html += '<tr>'
-	//	var button_onclick = 'showOnNode(\'' + node.id + '\', \'' + property.value + '\')';
-	//	html += '  <td>';
-	//	html += '    <button class="paneloption mytooltip" onclick="' + button_onclick + '">';
-	//	html += '      <i class="glyphicon glyphicon-eye-open sm"></i>';
-	//	html += '      <div class="mytooltiptext ttupper">display in node</div>';
-	//	html += '    </button>';
-	//	html += '  </td>';
-	//	html += '  <td> ';
-	//	html += '    <p class="dataNameLabel">' + property.key + '</p>';
-	//	html += '  </td>';
-	//	html += '  <td>';
-	//	html += '    <p class="dataValueLabel"> ' + property.value + '</p>';
-	//	html += '  </td>';
-	//	html += '</tr>'
-	//});
-	//html += '</table>'
-	//processingElement.innerHTML = html;
-			
-	//UiShow_EditEntity(node);
-	//node.data.properties.forEach(function(property, index){
-	//	html += '<tr>'
-	//	var button_onclick = 'showOnNode(' + node.id + ', \'' + property.value + '\')';
-	//	html += '<td><button class="fortext mytooltip" onclick="'+button_onclick+'">O<div class="mytooltiptext">display in node</div></button></td><td> <a class="dataNameLabel">' + property.key + '</a></td><td><a class="dataValueLabel"> ' + property.value + '</a></td>';
-	//	html += '</tr>'
-	//});
-			
-//}
-		
-//function UiShow_EditEntity(node){
-//	var updateElement = document.getElementById('new.entity.name');
-//	var panel = document.getElementById('panel.entity.props');
-//	panel.childNodes[0].innerHTML = '';
-		    
-//	node.data.properties.forEach(function(prop){
-//		panelAddKeyValue('panel.entity.props', 'new.entity', prop.key, prop.value, prop.datatype);
-//	});
-//	if (updateElement)
-//	{
-//		updateElement.value = node.data.labels[0];
-//	}
-//}
-
-function refreshNodeAppearance(nodeId){
-	var node = globals.GRAPH.getNode(nodeId?nodeId:globals.selectedNodeID);
-	addNodeToGraph(node.id, node.data);
-	node.data.UI.fullUI.attr('transform', 'scale(' + node.data.depth + ')');
-
+function applyDepth(node){
+    node.data.UI.fullUI.attr('transform', 'scale(' + node.data.depth + ')');
 	if (node.data.depth > 1) {
 		node.data.UI.fullUI.attr('opacity', 1 / node.data.depth);
 	}
@@ -4422,7 +4338,10 @@ function refreshNodesDepths() {
 		}
 		if (!inserted) { nodeZOrder.push(globals.nodeList[n]); }
 	}
-	nodeZOrder.forEach(function (znode) { refreshNodeAppearance(znode.id) });
+  var nodeSvc = new NodeHelper();
+	nodeZOrder.forEach(function (znode) { 
+    nodeSvc.RefreshNode(znode.id) 
+  });
 }
 			
 function increaseNodeSize(nodeId)
@@ -4751,78 +4670,14 @@ function addSubNode(parentNode, id, color, displayLabel)
 		
 var ConsoleService = function () {
 
-	this.hideNodeFlyout = function () {
-		var nodeFlyout = document.getElementById('panel.node');
-		nodeFlyout.classList.remove('fadein');
-		nodeFlyout.classList.add('fadeout');
-		setTimeout(function () {
-			nodeFlyout.innerHTML = "";
-			nodeFlyout.style.left = '-100px';
-		}, 200);
+	this.HideNodeFlyout = function () {
+    consoleApp.nodeFlyout.hideFlyout();
 	}
 
 	this.ShowFlyout = function (node, x, y) {
-		var nodeFlyout = document.getElementById('panel.node');
-		var newContent = '';
-		newContent += '<span class="header">'
-		newContent += node.data.labels.toString();
-		newContent += '</span>'
-
-		newContent += '<span class="pull-right">'
-		newContent += '		<span class="winbtn">'
-		newContent += '			<i onclick="nodeFlyout_Event_PinClick(\'' + node.id + '\')" class="glyphicon glyphicon-pushpin"></i>'
-		newContent += '		</span>'
-		newContent += '</span>'
-
-		newContent += '<span class="pull-right">'
-		newContent += '		<span class="winbtn">'
-		newContent += '			<i onclick="nodeFlyout_Event_HideClick(\'' + node.id + '\')" class="glyphicon glyphicon-eye-close pull-right"></i>'
-		newContent += '		</span>'
-		newContent += '</span>'
-
-		newContent += '<table>'
-		node.data.properties.forEach(function (prop) { 
-			newContent += '  <tr>'
-			newContent += '    <td>'
-			newContent += '      <b>&nbsp' + prop.key + ':&nbsp</b>';
-			newContent += '    <td>'
-			newContent += '    <td>'
-			newContent += prop.value;
-			newContent += '    <td>'
-			newContent += '  <tr>'
-		});
-		newContent += '</table>'
-
-		newContent += '<div>'
-		//console.log('node', node)
-		node.data.config.nodeFlyout.forEach(function (element) {
-			newContent += '<' + element.elementType;
-			if (element.onclick)
-				newContent += ' onclick="' + element.onclick + '"';
-			newContent += '>';
-			newContent += element.innerHTML;
-			newContent += '</' + element.elementType + '>';
-		});
-		newContent += '</div>'
-		//console.log('dialogHtml', newContent);
-		showFlyout(x, y, newContent);
+    consoleApp.nodeFlyout.showFlyout(node, x, y);
 	}
 
-
-
-	function showFlyout(x, y, newContent) {
-		var nodeFlyout = document.getElementById('panel.node');
-		nodeFlyout.classList.remove('fadein');
-		nodeFlyout.classList.add('fadeout');
-		setTimeout(function () {
-			nodeFlyout.style.left = (x + 50) + 'px'; //(node.data.config.nodeDisplayBody.size + x) + 'px';
-			nodeFlyout.style.top = (y - 30) + 'px'; //y + 'px';
-			nodeFlyout.innerHTML = newContent;
-			nodeFlyout.classList.remove('fadeout');
-			nodeFlyout.classList.add('fadein');
-		}, 200);
-
-	}
 }
 
 function getNeoId(fromGraphId)
@@ -4857,6 +4712,8 @@ function GraphHelper(){
     }
     return nodes;
   }
+
+
 
   this.ConsoleShowNode = function(node){
     consoleApp.consoleShowNode(node);
@@ -6290,16 +6147,6 @@ function node_Event_subNodePulledOut(node, x, y)
 	// create new node
 }
 
-function nodeFlyout_Event_HideClick(nodeId) {
-	removeNodeFromGraph(nodeId);
-}
-
-function nodeFlyout_Event_PinClick(nodeId) {
-	var node = globals.GRAPH.getNode(nodeId);
-	unPinNode(node);
-}
-
-
 function node_OnMouseEnter(node, x, y) {
   globals.states.overNode = node;
 	if (node.data.nodeType == "data")
@@ -6398,7 +6245,6 @@ function dataNode_OnMouseUp(node, x, y) {
 
 function dataNode_OnMouseDblClick(node, x, y) {
   //nodePositionAnimation(node, {x:0,y:0});
-	globals.dataService.FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
   new EntityEventsHelper().NodeDblClick(node);
   //globals.animator.AddNodeRipple(node);
 }
@@ -6645,7 +6491,12 @@ function NodeBehavioursApi() {
     }
   }
 
-  this.FetchNodeLinks = function(node) {
+  this.GetRelatedNodes = function(node){
+    console.log('fetching child entities');
+    new DataService().FetchEntitiesForNodeId(node.id, node.data.sourceConfig);
+  }
+
+  this.FetchHttpDataAsChildNodes = function(node) {
     for(var prop in node.data.propertiesObject) {
       var propVal = node.data.propertiesObject[prop];
       if (isLink(propVal) && !isImage(propVal) && !isHtml(propVal)){
@@ -6901,17 +6752,12 @@ function nodeAppearanceModel(node) {
     }
     effectsUi+='</defs>';
     ui.innerHTML=effectsUi;
-
-    //for(var i=0;i<nodeEffects.length;i++) {
-    //  ui.attr('filter','url(#'+nodeEffects[i].name+')');
-    //}
   }
 }
 
 
 function defineNodeAppearance_dataNode(node,ui) {
   var _cnf=node.data.entityConfig.config;
-
   ui.attr('class','datanode')
   node.data.UI={
     bodyUI: undefined,
@@ -7298,71 +7144,30 @@ globals.allUnitTests.push(function getNextNewLinkId_Given_Expect1() {
 });
 
 //[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNoNode_ExpectNode() {
+globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNoNode_ExpectError() {
 	// Arrange
 	var sut = createDataDriver();
 
 	// Act
-	var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId();
-
+  try{
+	  var result = sut.CreateEntityInDatabasePopulateAndReturnId();
+    return result;
+  }catch(e){
+    return true;
+  }
 	// Assert
-	return (nodeId !== undefined) ? true : result;
-});
-
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeId() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-
-	// Act
-	var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
-	// Assert
-	return (nodeId !== undefined) ? true : result;
-});
-
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenEmptyNode_ExpectNodeWithId() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-
-	// Act
-	var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
-	// Assert
-	var result = sut.GetEntityFromDatabase(nodeId);
-	return (result.id === nodeId) ? true : result;
-});
-
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given2NodesWithIdsGetFirstNode_ExpectFirstInputNodeId() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
-
-	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	sut.CreateEntityInDatabasePopulateAndReturnId(node2);
-
-	// Assert
-	var result = sut.GetEntityFromDatabase(node1.id);
-	return (result.id === node1.id) ? true : result;
+	
 });
 
 //[Test]
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithIdAndLabel_ExpectInputNodeLabels() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		labels: ["label1"]
-	};
+  var labels = ["label1"]
 
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
+  var nodeId = sut.CreateEntityInDatabasePopulateAndReturnId(labels);
+  var node1 = sut.GetEntityById(nodeId);
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
 	for (var i = 0 ; i < node1.labels.length; i++) {
@@ -7376,12 +7181,10 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithMultipleLabels_ExpectInputNodeLabels() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		labels: ["label1", "label2"]
-	};
+  var labels = ["label1", "label2"]
 
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -7392,50 +7195,19 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 	return true;
 });
 
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNoLabels_ExpectInputNodeNoLabels() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-
-	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
-	// Assert
-	var result = sut.GetEntityFromDatabase(node1.id);
-	if (result.labels.length > 0)
-		return result;
-	return true;
-});
-
-//[Test]
-globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith0Properties_ExpectInputNodeNoProperties() {
-	// Arrange
-	var sut = createDataDriver();
-	var node1 = {};
-
-	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-
-	// Assert
-	var result = sut.GetEntityFromDatabase(node1.id);
-	if (result.properties.length > 0)
-		return result;
-	return true;
-});
 
 //[Test]
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWith1Property_ExpectInputNodeWith1Property() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		properties: {
+	var labels = ["label3"];
+  var properties = {
 			property1: 'MyPropertyValue'
-		}
 	};
 
+
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels, properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -7448,15 +7220,15 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithNumberProperty_ExpectInputNodeWithNumberProperty() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		properties: {
+  var labels = ["label4"];
+	var properties = {
 			property1: 23
-		}
+  }
 
-	};
+
 
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels, properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -7469,15 +7241,13 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithBooleanProperty_ExpectInputNodeWithBooleanProperty() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		properties: {
+  var labels = ["label4"];
+	var properties = {
 			property1: true
 		}
 
-	};
-
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels, properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -7490,15 +7260,13 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_GivenNodeWithArrayOfStringProperty_ExpectInputNodeWithArrayOfStringProperty() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {
-		properties: {
+  var labels = ["label4"];
+	var properties = {
 			property1: ['test1', 'test2']
 		}
-
-	};
-
-	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	
+  // Act
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(labels, properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -7529,7 +7297,7 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 	};
 
 	// Act
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var node1 = sut.GetEntityById(sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties));
 
 	// Assert
 	var result = sut.GetEntityFromDatabase(node1.id);
@@ -7565,8 +7333,8 @@ globals.allUnitTests.push(function CreateNodeInDatabasePopulateAndReturnId_Given
 globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given2NodeIds_ExpectLinkId0() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 
@@ -7585,9 +7353,9 @@ globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given2N
 globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given3NodeIds_ExpectLinkIdGreaterThan0() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
-	var node3 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
+	var node3 = ["node3"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	var node3Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
@@ -7607,8 +7375,8 @@ globals.allUnitTests.push(function createRelationshipPopulateAndReturnId_Given3N
 globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNode() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
@@ -7626,8 +7394,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNode()
 globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNodeAndLink() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
@@ -7650,8 +7418,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenNode_ExpectRelatedNodeAn
 globals.allUnitTests.push(function GetRelatedNodes_Given2RelatedNodes_ExpectRelatedNodeAndLink() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
+	var node1 = ["node1"];
+	var node2 = ["node2"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
@@ -7676,10 +7444,8 @@ globals.allUnitTests.push(function GetRelatedNodes_Given2RelatedNodes_ExpectRela
 globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_ExpectVisualGraph() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = {};
-	var node2 = {};
-	node1.labels = ["HELLO"];
-	node2.labels = ["WORLD"];
+	var node1 = ["HELLO"];
+	var node2 = ["WORLD"];
 
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
 	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
@@ -7709,8 +7475,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_Expec
 		labels: ["TOOL"],
 		properties: { toolName: "WORD" }
 	};
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 	// Act
@@ -7737,8 +7503,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_Expec
 		property3: true,
 		Activities: ['Dancing', 'Hockey']
 	}
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, linkLabels, linkProperties);
 
 	// Act
@@ -7758,8 +7524,8 @@ globals.allUnitTests.push(function GetRelatedNodes_GivenGiven2RelatedNodes_Expec
 	var node2 = {};
 	node1.labels = ["CASE1"];
 	node2.labels = ["CASE2"];
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
 	var linkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id);
 
 	// Act
@@ -7776,7 +7542,8 @@ globals.allUnitTests.push(function deleteNode_Given1DeletedNode_ExpectNodeNotFou
 	// Arrange
 	var sut = createDataDriver();
 	var node1 = {};
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+  node1.labels = ["TESTCASE1"];
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels);
 	sut.DeleteEntity(node1Id);
 
 	// Act
@@ -8343,8 +8110,8 @@ globals.allUnitTests.push(function getAllElements_GivenDataString_ExpectCorrectA
 globals.allUnitTests.push(function getNodeInDatabaseByLabel_Given1NodesWithLabelAndLabel_ExpectNode() {
 	// Arrange
 	var sut = createDataDriver();
-	var node1 = { labels: ['FindMe'] };
-	var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var labels = ['FindMe'] ;
+	var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(labels);
 	// Act
 	var result = sut.GetEntitiesByType('FindMe');
 	// Assert
@@ -8364,9 +8131,9 @@ globals.allUnitTests.push(function getLinkInDatabaseByLabel_Given2NodesAndRelati
 	var link2Properties = { strength: "strong" };
 
 
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
-	var node3Id = sut.CreateEntityInDatabasePopulateAndReturnId(node3);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
+	var node3Id = sut.CreateEntityInDatabasePopulateAndReturnId(node3.labels, node3.properties);
 	var expectedLinkId1 = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, link1Labels, link1Properties);
 	var expectedLinkId2 = sut.CreateRelationPopulateAndReturnId(node2Id, node3Id, link2Labels, link2Properties);
 
@@ -8383,9 +8150,9 @@ globals.allUnitTests.push(function getAllNodeLabels_GivenNodesWithLabels_ExpectL
 	var node1 = { labels: ['ThisTestLabel0'] };
 	var node2 = { labels: ['ThisTestLabel2', 'ThisTestLabel1'] };
 	var node3 = { labels: ['ThisTestLabel3'] };
-	sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	sut.CreateEntityInDatabasePopulateAndReturnId(node2);
-	sut.CreateEntityInDatabasePopulateAndReturnId(node3);
+	sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
+	sut.CreateEntityInDatabasePopulateAndReturnId(node3.labels, node3.properties);
 	// Act
 	var result = sut.GetAllEntityTypes();
 	// Assert
@@ -8404,7 +8171,7 @@ globals.allUnitTests.push(function getNodesByPropertyName_GivenNodesWithProperti
 			prop2: "value2"
 		}
 	};
-	var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
+	var expectedNodeId = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
 
 	// Act
 	var result = sut.GetEntitiesByPropertyName(propertyName);
@@ -8438,8 +8205,8 @@ globals.allUnitTests.push(function getRelationshipByPropertyName_GivenGiven2Rela
 		OnLayby: true,
 		AttendedBy: ['Joan Luna', 'Derick Stapler']
 	}
-	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1);
-	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2);
+	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels, node1.properties);
+	var node2Id = sut.CreateEntityInDatabasePopulateAndReturnId(node2.labels, node2.properties);
 	var expectedLinkId = sut.CreateRelationPopulateAndReturnId(node1Id, node2Id, linkLabels, linkProperties);
 
 	// Act
@@ -8605,7 +8372,7 @@ globals.allUnitTests.push(function updateExistingConfig_GivenConfig_ExpectConfig
 	return (result.config.attributes.circleText.color === "#FF0000" && result.config.attributes.radius === 15) ? true : result;
 	
 	var nodes = getNodesByMatchingLabels(globals.nodeList, [testEntityName]);
-	refreshNodeAppearance(nodes[0].id);
+	//new NodeHelper().RefreshNode(nodes[0].id);
 
 });
 
@@ -9334,6 +9101,10 @@ function graphexMain() {
     runUnitTests();
     // Check params for Graphs
     processParameters();
+
+    //Set defaults
+    globals.nodeStamp = consoleApp.nodeStamp.stamps[0];
+
 	}
 
   function runUnitTests(){
@@ -9521,22 +9292,25 @@ function define_Node() {
 		nodeOuterLayer = Viva.Graph.svg('g');
 		nodeLayer = Viva.Graph.svg('g');
 
-		if (node.data.nodeType == 'data') {
-			defineNodeAppearance_dataNode(node, nodeLayer);
-		}
-		else if (node.data.nodeType == 'subnode') {
-			defineNodeAppearance_subNode(node, nodeLayer);
-			if (node.data.superNodes[0])
-				nodeLayer.attr('parentnodeid', node.data.superNodes[0].id);
-		}
-		else if (node.data.nodeType == 'planned')
-			defineNodeAppearance_plannedNode(node, nodeLayer);
-
+    switch (node.data.nodeType){
+      case 'data':
+        defineNodeAppearance_dataNode(node, nodeLayer);
+        break;
+      case 'subnode':
+			  defineNodeAppearance_subNode(node, nodeLayer);
+			  if (node.data.superNodes[0]) 
+          nodeLayer.attr('parentnodeid', node.data.superNodes[0].id);
+        break;
+      case 'planned':
+        defineNodeAppearance_plannedNode(node, nodeLayer);
+        break;
+    }
+    
 		attachMouseEventsToNode(node, nodeLayer);
 		attachMetaData(node, nodeLayer);
 		nodeOuterLayer.append(nodeLayer);
 		node.data.UI.outerUI = nodeOuterLayer;
-		return nodeOuterLayer;
+    return nodeOuterLayer;
 	});
 
 	function attachMetaData(node, ui) {
@@ -9633,7 +9407,7 @@ function defineNodeDrawing(){
         if (globals.viewOptions.screenDragType == 'depth')
             applyDepthOffset({ x: dx, y: dy })
 
-        globals.consoleService.hideNodeFlyout();
+        globals.consoleService.HideNodeFlyout();
 
     }
 	
@@ -10349,6 +10123,6 @@ function initUi() {
       globals.graphContainer.style['background-image']='url('+globals.currentTheme.sourceConfig.displaySettings.backgroundImage+')'
     };
   }
-  globals.consoleService.hideNodeFlyout();
+  globals.consoleService.HideNodeFlyout();
 
 }

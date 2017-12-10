@@ -52,7 +52,7 @@
 </head>
 
 <body onload="graphexInitialize()">
-	
+
 
 	<div id="vue-app">
 		<vw-hud v-bind:show="panels.hud.show"></vw-hud>
@@ -70,20 +70,121 @@
 		<vw-topbar v-bind:topbar="topbar"></vw-topbar>
 		<!--Modals-->
 		<vw-modal v-bind:modal="modals.commonModal"></vw-modal>
-
+		<vw-node-flyout v-bind:show="panels.flyout.show" v-bind:nodeflyout="nodeFlyout"></vw-node-flyout>
+		<vw-node-edit-content v-bind:modal="modals.nodeEditModal"></vw-node-edit-content>
 	</div>
 
-	<div class="nodeFlyout" id="panel.node">
-		<ul>
-			<li>Option 1</li>
-			<li>Option 2</li>
-			<li>Option 3</li>
-		</ul>
-		<button onclick="closeDialog('myDialog')">Close</button>
-	</div>
+
+
 
 
 	<!---------COMPONENT TEMPLATES --------------->
+	<script type="text/x-template" id="vueTemplate-hud">
+		<div v-if="show" id="indicator" style="z-index:1; position:fixed; margin-left:90%; color:white; font-size:xx-small"></div>
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-node-edit-content">
+		<!--input: modal -->
+		<div id="nodeEditModal" class="modal">
+			<div v-if="modal.editingNode" class="inputModal shadow">
+				<span class="close"
+					  onclick="new VueConsoleHelper().CloseNodeEditModal()">
+					&times;
+				</span>
+				<h2>{{modal.editingNode.data.labels[0]}}</h2>
+				<div v-if="modal.editingNode.data.properties" class="inputModal modalContent flexcroll">
+					<div v-for="prop in modal.editingNode.data.properties">
+						<label>
+							{{prop.key}}
+							<input v-model="prop.value" v-bind:value="prop.value" />
+						</label>
+					</div>
+				</div>
+				<button v-for="button in modal.buttons"
+						v-on:click="button.onclick(modal.editingNode)"
+						class="">
+					{{button.caption}}
+				</button>
+			</div>
+		</div>
+
+	</script>
+
+	<script type="text/x-template" id="vueTemplate-node-flyout">
+
+		<div v-if="nodeflyout.nodeId"
+			 class="nodeFlyout"
+			 v-bind:class="{fadein: nodeflyout.nodeId}"
+			 id="panel.node"
+			 v-bind:style="{left: nodeflyout.position.left + 'px', top: nodeflyout.position.top + 'px'}">
+
+
+			<div class="mainContent">
+
+				<span class="header">
+					{{nodeflyout.labels[0]}}
+				</span>
+
+				<span class="pull-right">
+					<span class="winbtn">
+						<i v-on:click="nodeflyout.pinClick()" class="glyphicon glyphicon-pushpin"></i>
+					</span>
+				</span>
+
+				<span class="pull-right">
+					<span class="winbtn">
+						<i v-on:click="nodeflyout.hideClick()" class="glyphicon glyphicon-eye-close pull-right"></i>
+					</span>
+				</span>
+
+				<div v-if="nodeflyout.properties.length > 0 " class="properties">
+					<table>
+						<tr v-for="prop in nodeflyout.properties">
+							<td>
+								<b>{{prop.key}}:&nbsp;</b>
+							</td>
+							<td>
+								{{prop.value}}
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="optionExpander" v-on:click="nodeflyout.showOptions = !nodeflyout.showOptions">
+					<i class="fa fa-ellipsis-h"></i>
+				</div>
+			</div>
+
+
+			<div class="extras" v-bind:class="{ nodeFlyoutHide: !nodeflyout.showOptions}">
+				<span class="buttonType2">
+					<i v-on:click="nodeflyout.editEntity()" class="fa fa-edit"></i>
+				</span>
+				<span class="buttonType2">
+					<i v-on:click="nodeflyout.editEntity()" class="fa fa-trash"></i>
+				</span>
+			</div>
+
+			<!--<table>
+				<tr>
+					<td>
+						<span class="buttonType2">
+							<i v-on:click="nodeflyout.hideClick()" class="glyphicon glyphicon-eye-close"></i>
+						</span>
+					</td>
+					<td>
+						<span class="buttonType2">
+							<i v-on:click="nodeflyout.hideClick()" class="fa fa-trash"></i>
+						</span>
+					</td>
+				</tr>
+			</table>-->
+
+
+		</div>
+	</script>
+
+
 	<script type="text/x-template" id="vueTemplate-panel-nodeEditor">
 		<div class='modPanel' id='nodeEditor'>
 			<div class="panelHead">Node Type Editor<i class="glyphicon glyphicon-menu-hamburger pull-right"></i></div>
@@ -114,10 +215,7 @@
 		</div>
 	</script>
 
-	<script type="text/x-template" id="vueTemplate-hud">
-		<div v-if="show" id="indicator" style="z-index:1; position:fixed; margin-left:90%; color:white; font-size:xx-small"></div>
-	</script>
-	
+
 	<script type="text/x-template" id="vueTemplate-panel-nodeEditor-matching">
 		<div class="tabcontent">
 
