@@ -666,10 +666,18 @@ var DataService=function() {
     return entityId;
   }
 
-  this.DeleteEntity=function(entityID,_sourceConfig) {
-    dataDriver.DeleteEntity(entityID);
-    //Neo4jDeleteNode(nodeID, _sourceConfig);
+  this.DeleteEntity=function(entityId,_sourceConfig) {
+    var graphElements=dataDriver.GetRelatedEntityGraph(stripDomainFromId(entityId));
+    for (var i = 0; i < graphElements.length; i++){
+      var relatedNode = (graphElements[i].fromNode.id==entityId)? graphElements[i].toNode: graphElements[i].fromNode;
+      dataDriver.RemoveLinkFromNode(graphElements[i].link.id, relatedNode.id);
+      dataDriver.DeleteRelation(graphElements[i].link.id);
+    }
+    dataDriver.DeleteEntity(entityId);
+    removeNodeFromGraph(entityId);
   }
+
+
 
   this.CheckMonitoredNodes=function(_sourceConfig) {
     //Neo4jCheckMonitoredNodes(_sourceConfig);
@@ -865,6 +873,8 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
   return newNodes;
 }
 
+
+
 function addRelationToGraphReturnLink(relation, _sourceConfig) {
     var link = getExistingLink(relation.id);
     if (!link){
@@ -895,6 +905,7 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 	
 	return newNodes;
 }
+
 
 function GetConfigForEntityId(nodeData)
 {
@@ -967,7 +978,9 @@ var LocalStorageDataDriver=function() {
   this.GetRelatedEntityGraph=function(entityId) {
     var entity=this.GetEntityFromDatabase(entityId);
     var dataDriver=this;
-    return entity.links.map(function(relationId) { return dataDriver.GetGraphOfRelation(relationId) });
+    return entity.links.map(function(relationId) { 
+      return dataDriver.GetGraphOfRelation(relationId) 
+    });
   }
 
   this.GetGraphOfRelation=function(relationId) {
@@ -1012,9 +1025,44 @@ var LocalStorageDataDriver=function() {
   }
 
   this.DeleteEntity=function(entityId) {
-    localStorage.removeItem(nodeKeyFromNodeId(entityId));
+    var entity = getEntityFromDatabase(entityId)
+    deleteNodeFromStorage(entity);
   }
 
+  this.DeleteRelation=function(relationId) {
+    var relation = getRelationFromDatabase(relationId)
+    deleteLinkFromStorage(relation);
+  }
+
+
+  this.AddLinkToNode=function(relationId, entityId) {
+    var entity = getEntityFromDatabase(entityId)
+    if (entity.links.indexOf(relationId) == -1)
+      entity.links.push(relationId);
+    writeNodeToStorage(entity);
+  }
+
+  this.AddPropertyToNode=function(propertyName, propertyValue, entityId) {
+    var entity = getEntityFromDatabase(entityId)
+    entity.properties[propertyName] = propertyValue;
+    writeNodeToStorage(entity);
+  }
+
+  this.RemovePropertyFromNode=function(propertyName, entityId) {
+    var entity = getEntityFromDatabase(entityId)
+    var newProps = {};
+    for (prop in entity.properties)
+      if (prop != propertyName)
+        newProps[prop] = entity.properties[prop]
+    entity.properties = newProps;
+    writeNodeToStorage(entity);
+  }
+
+  this.RemoveLinkFromNode=function(relationId, entityId) {
+    var entity = getEntityFromDatabase(entityId)
+    entity.links.splice(entity.links.indexOf(relationId), 1);
+    writeNodeToStorage(entity);
+  }
 
   this.EntityExists=function(entityId) {
     var entity=readNodeFromStorage(entityId);
@@ -1182,10 +1230,34 @@ var LocalStorageDataDriver=function() {
     updatePropertyIndex("INDEX_ON_NODE_PROPS",entity);
   }
 
-  function writeLinkToStorage(link) {
-    localStorage.setItem(linkKeyFromNodeId(link.id),serialize(link));
-    updateLabelsIndex("INDEX_ON_LINK_LABELS",link);
-    updatePropertyIndex("INDEX_ON_LINK_PROPS",link);
+  function writeLinkToStorage(relation) {
+    localStorage.setItem(linkKeyFromLinkId(relation.id),serialize(relation));
+    updateLabelsIndex("INDEX_ON_LINK_LABELS",relation);
+    updatePropertyIndex("INDEX_ON_LINK_PROPS",relation);
+  }
+
+  function deleteNodeFromStorage(entity) {
+    localStorage.removeItem(nodeKeyFromNodeId(entity.id));
+    removeFromLabelsIndex("INDEX_ON_NODE_LABELS",entity);
+    removeFromPropertyIndex("INDEX_ON_NODE_PROPS",entity);
+  }
+
+  function deleteLinkFromStorage(relation) {
+    localStorage.removeItem(linkKeyFromLinkId(relation.id));
+    removeFromLabelsIndex("INDEX_ON_LINK_LABELS",relation);
+    removeFromPropertyIndex("INDEX_ON_LINK_PROPS",relation);
+  }
+
+  function removeFromLabelsIndex(indexName,item) {
+    item.labels.forEach(function(label) {
+      removeFromIndex(indexName,label,item.id);
+    });
+  }
+
+  function removeFromPropertyIndex(indexName,item) {
+    for(var propertyKey in item.properties) {
+      removeFromIndex(indexName,propertyKey,item.id);
+    }
   }
 
   function updateLabelsIndex(indexName,item) {
@@ -1206,6 +1278,14 @@ var LocalStorageDataDriver=function() {
     if(index===null)
       index=dataStringHelper.getNewDataString();
     index=dataStringHelper.ensureDataIntoElement(index,elementName,data)
+    localStorage.setItem(indexName,index);
+  }
+
+  function removeFromIndex(indexName,elementName,data){
+    var index=localStorage.getItem(indexName);
+    if(index===null) return;
+    var dataStringHelper=new DataStringHelper();
+    index=dataStringHelper.ensureDataNotInElement(index,elementName,data)
     localStorage.setItem(indexName,index);
   }
 
@@ -1256,7 +1336,7 @@ var LocalStorageDataDriver=function() {
   }
 
   function readLinkFromStorage(relationId) {
-    return deserialize(localStorage.getItem(linkKeyFromNodeId(relationId)));
+    return deserialize(localStorage.getItem(linkKeyFromLinkId(relationId)));
   }
 
 
@@ -1283,7 +1363,7 @@ var LocalStorageDataDriver=function() {
     return 'N_'+entityId;
   }
 
-  function linkKeyFromNodeId(relationId) {
+  function linkKeyFromLinkId(relationId) {
     return 'L_'+relationId;
   }
 
@@ -1477,11 +1557,12 @@ var DataStringHelper = function () {
 
 	// ===== PRIVATE ===== //
 	function removeDataFromString(dataString, excludeData) {
+    var exData = excludeData.toString();
 		var dataArray = dataString.split(',');
-		var index = dataArray.indexOf(excludeData.toString());
+		var index = dataArray.indexOf(exData);
 		if (index == -1)
 			return dataString;
-		dataArray = dataArray.splice(index - 1, 1);
+		dataArray.splice(index, 1);
 		return dataArray.join();
 	}
 
@@ -2795,7 +2876,7 @@ function getEntityNode() {
 }
 
 function GetRelatedEntityGraph() {
-	globals.dataService.GetRelatedEntityGraph(globals.selectedNodeID);
+	globals.dataService.GetRelatedEntityGraph(globals.selectedNode.id);
 }
 
 function deleteLink() {
@@ -2858,7 +2939,7 @@ function submitCreateRelation(nodeID1, nodeID2, planOnly, _sourceConfig) {
 
 function submitUpdateEntity() {
 	if (!nodeID) {
-		nodeID = globals.selectedNodeID;
+		nodeID = globals.selectedNode.id;
 	}
 	var node = globals.GRAPH.getNode(nodeID);
 	var _sourceConfig = node.data.sourceConfig;
@@ -3610,9 +3691,14 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
     link.data.fromNodeID=fromNodeID;
     link.data.toNodeID=toNodeID;
     link.data.displayLabel=linkData.name;
+
+
+
     globals.linkList.push(link);
     new LinkHelper().FixLinkIndexes(fromNodeID,toNodeID);
   }
+
+
 
   var toNode=globals.GRAPH.getNode(toNodeID);
   var fromNode=globals.GRAPH.getNode(fromNodeID);
@@ -3632,30 +3718,42 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
   new LinkHelper().RefreshLinkVisual(link);
 
   if(bIsNew) {
-    toNode.data.fromLinks.push(link);
-    toNode.data.fromNodes.push(fromNode);
-    fromNode.data.toLinks.push(link);
-    fromNode.data.toNodes.push(toNode);
+    ensureLinkIntoListList(link,toNode.data.fromLinks);
+    ensureLinkIntoListList(link,fromNode.data.toLinks);
+    ensureNodeIntoNodeList(fromNode,toNode.data.fromNodes);
+    ensureNodeIntoNodeList(toNode,fromNode.data.toNodes);
   }
   new LinkHelper().FixTextWidth4Link(link);
   return link;
 }
 
-function addDataNode(nodeId, newNodeData) {
-  var arraySvc = new ArrayHelper();
+function ensureLinkIntoListList(link,linkList) {
+  for(var i=0;i<linkList.length;i++) {
+    if(linkList[i].id==link.id)
+      return;
+  }
+  linkList.push(link);
+}
+
+function ensureNodeIntoNodeList(node,nodeList) {
+  for(var i=0;i<nodeList.length;i++) {
+    if(nodeList[i].id==node.id)
+      return;
+  }
+  nodeList.push(node);
+}
+
+
+function addDataNode(nodeId,newNodeData) {
+  var arraySvc=new ArrayHelper();
   var isNewNode=true;
   var node=getExistingNode(nodeId);
   if(node) {
-    //if(newNodeData.UI.displayTextUI) {
-    //  newNodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(newNodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
-    //}
     node.data.labels=newNodeData.labels;
     node.data.properties=newNodeData.properties;
-    //globals.animUpdateNodes.push(node);
-    //isNewNode = false;
   }
   setupDisplayLabelsIn(newNodeData);
-  var eventsHelper = new EntityEventsHelper();
+  var eventsHelper=new EntityEventsHelper();
   setNodeColorIn(newNodeData);
   eventsHelper.AddEntityToGraph_beforeNodeAdd(newNodeData);
   node=addNodeToGraph(newNodeData.id,newNodeData);
@@ -3806,46 +3904,29 @@ function refreshEntitySelectors() {
 }
 
 function removeNodeFromStage(nodeID) {
-  if(!nodeID) { nodeID=globals.selectedNodeID; }
+  if(!nodeID) { return; }
   var node=globals.GRAPH.getNode(nodeID);
 
-  var relativeLinks=node.data.toLinks.concat(node.data.fromLinks);
-  relativeLinks.forEach(function(link) {
-    removeLinkFromStage(link.id);
-    //globals.GRAPH.removeLink(link.id);
-  });
+  //var relativeLinks=node.data.toLinks.concat(node.data.fromLinks);
+  //relativeLinks.forEach(function(link) {
+  //  removeLinkFromStage(link.id);
+  //  //globals.GRAPH.removeLink(link.id);
+  //});
 
-  //var allNodeLists = globals.nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
-  var i=-1;
-  while(++i<globals.nodeList.length)
-    if(globals.nodeList[i].id==nodeID)
-      globals.nodeList.splice(i,1);
-  var i=-1;
-  while(++i<globals.monitoredNodes.length)
-    if(globals.monitoredNodes[i].id==nodeID)
-      globals.monitoredNodes.splice(i,1);
-  var i=-1;
-  while(++i<globals.checkedNodes.length)
-    if(globals.checkedNodes[i].id==nodeID)
-      globals.checkedNodes.splice(i,1);
+  var relativeLinkIds=node.data.toLinks.map(function(l) { return l.id }).concat(node.data.fromLinks.map(function(l) { return l.id }));
+  for(var i=0;i<relativeLinkIds.length;i++) {
+    removeLinkFromStage(relativeLinkIds[i]);
+  };
+
+  removeNodeFromNodeList(globals.nodeList,nodeID);
+  removeNodeFromNodeList(globals.monitoredNodes,nodeID);
+  removeNodeFromNodeList(globals.checkedNodes,nodeID);
 
   globals.nodeList.forEach(function(node) {
-    var i=-1;
-    while(++i<node.data.toNodes.length)
-      if(node.data.toNodes[i].id==nodeID)
-        node.data.toNodes.splice(i,1);
-    var i=-1;
-    while(++i<node.data.fromNodes.length)
-      if(node.data.fromNodes[i].id==nodeID)
-        node.data.fromNodes.splice(i,1);
-    var i=-1;
-    while(++i<node.data.toLinks.length)
-      if(node.data.toLinks[i].toNodeID==nodeID)
-        node.data.toLinks.splice(i,1);
-    var i=-1;
-    while(++i<node.data.fromLinks.length)
-      if(node.data.fromLinks[i].fromNodeID==nodeID)
-        node.data.fromLinks.splice(i,1);
+    removeNodeFromNodeList(node.data.toNodes,nodeID);
+    removeNodeFromNodeList(node.data.fromNodes,nodeID);
+    removeLinkFromLinkListByNodeId(node.data.toLinks,nodeID)
+    removeLinkFromLinkListByNodeId(node.data.fromLinks,nodeID)
   });
 
   globals.GRAPH.removeNode(nodeID);
@@ -3853,51 +3934,56 @@ function removeNodeFromStage(nodeID) {
   globals.consoleService.HideNodeFlyout();
 }
 
-function removeLinkFromStage(linkID) {
-  if(!linkID) { linkID=globals.selectedLink.data.id; }
-
-  var link=new LinkHelper().GetLinkById(linkID);
-  var i=-1;
-  while(++i<globals.linkList.length)
-    if(globals.linkList[i].id==linkID)
-      globals.linkList.splice(i,1);
-  var i=-1;
-  while(++i<globals.monitoredLinks.length)
-    if(globals.monitoredLinks[i].id==linkID)
-      globals.monitoredLinks.splice(i,1);
-
-  var fromNode=globals.GRAPH.getNode(link.data.fromNodeID);
-  var toNode=globals.GRAPH.getNode(link.data.toNodeID);
-  var i=-1;
-  while(++i<fromNode.data.toNodes.length)
-    if(fromNode.data.toNodes[i].id==link.data.toNodeID)
-      fromNode.data.toNodes.splice(i,1);
-  var i=-1;
-  while(++i<toNode.data.fromNodes.length)
-    if(toNode.data.fromNodes[i].id==link.data.fromNodeID)
-      toNode.data.fromNodes.splice(i,1);
-
-  var i=-1;
-  while(++i<fromNode.links.length)
-    if(fromNode.links[i].id==link.id)
-      fromNode.links.splice(i,1);
-  var i=-1;
-  while(++i<toNode.links.length)
-    if(toNode.links[i].id==link.id)
-      toNode.links.splice(i,1);
-
-  var i=-1;
-  while(++i<fromNode.data.toLinks.length)
-    if(fromNode.data.toLinks[i].id==link.id)
-      fromNode.data.toLinks.splice(i,1);
-  var i=-1;
-  while(++i<toNode.data.fromLinks.length)
-    if(toNode.data.fromLinks[i].id==link.id)
-      toNode.data.fromLinks.splice(i,1);
-
-  globals.GRAPH.removeLink(link);
+function removeLinkFromStage(linkId) {
+  if(!linkId) { return; }
+  var linkToRemove=new LinkHelper().GetLinkById(linkId);
+  if(!linkToRemove) {
+    // ...Link has already been removed.
+    return;
+  }
+  removeLinkFromLinkList(globals.linkList,linkId);
+  removeLinkFromLinkList(globals.monitoredLinks,linkId);
+  var fromNode=globals.GRAPH.getNode(linkToRemove.data.fromNodeID);
+  var toNode=globals.GRAPH.getNode(linkToRemove.data.toNodeID);
+  removeNodeFromNodeList(fromNode.data.toNodes,linkToRemove.data.toNodeID);
+  removeNodeFromNodeList(toNode.data.fromNodes,linkToRemove.data.fromNodeID);
+  removeLinkFromLinkList(fromNode.links,linkToRemove.id);
+  removeLinkFromLinkList(toNode.links,linkToRemove.id);
+  removeLinkFromLinkList(fromNode.data.toLinks,linkToRemove.id);
+  removeLinkFromLinkList(toNode.data.fromLinks,linkToRemove.id);
+  globals.GRAPH.removeLink(linkToRemove);
 }
 
+
+function removeLinkFromLinkListByNodeId(linkList,nodeId) {
+  var i=-1;
+  while(++i<linkList.length) {
+    if(linkList[i].toNodeID==nodeId||linkList[i].fromNodeID==nodeId) {
+      linkList.splice(i,1);
+      i--;
+    }
+  }
+}
+
+function removeLinkFromLinkList(linkList,linkId) {
+  var i=-1;
+  while(++i<linkList.length) {
+    if(linkList[i].id==linkId) {
+      linkList.splice(i,1);
+      i--;
+    }
+  }
+}
+
+function removeNodeFromNodeList(nodeList,nodeId) {
+  var i=-1;
+  while(++i<nodeList.length) {
+    if(nodeList[i].id==nodeId) {
+      nodeList.splice(i,1);
+      i--;
+    }
+  }
+}
 
 function getExistingNode(nodeID) {
   for(var i=0;i<globals.nodeList.length;i++) {
@@ -4134,7 +4220,7 @@ function fixTextWidth4Node(node)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function increaseNodeSprings(nodeid)
 {
-	if (!nodeid){nodeid=globals.selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNode.id;}
 	var node = getExistingNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
@@ -4170,7 +4256,7 @@ function decreaseNodeDepth(node)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function decreaseNodeSprings(nodeid)
 {
-	if (!nodeid){nodeid=globals.selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNode.id;}
 	var node = getExistingNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
@@ -4185,14 +4271,14 @@ function decreaseNodeSprings(nodeid)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function increaseNodeMass(nodeid)
 {
-	if (!nodeid){nodeid=globals.selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNode.id;}
 	var nodebod = globals.layout.getBody(nodeid);
 	nodebod.mass++;
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function decreaseNodeMass(nodeid)
 {
-	if (!nodeid){nodeid=globals.selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNode.id;}
 	var nodebod = globals.layout.getBody(nodeid);
 	nodebod.mass--;
 }
@@ -4210,8 +4296,8 @@ function uncheckNode(node){
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function highlightSelectedNode(nodeId) {
 		   
-	if (globals.selectedNodeID != ''){
-		if (nodeId == globals.selectedNodeID) {return;} //...we've re-clicked the same node
+	if (globals.selectedNode){
+		if (nodeId == globals.selectedNode.id) {return;} //...we've re-clicked the same node
 		//DISPOSE PREVIOUS SELECTION
 		//remove all sub nodes...
 		if (globals.config_ext.viewOptions.subnodes.relations=="ifany"){
@@ -4230,16 +4316,16 @@ function highlightSelectedNode(nodeId) {
    
 		if (globals.bRelate == true)
 		{
-			if (nodeId != globals.selectedNodeID){
-				submitCreateRelation(globals.selectedNodeID, nodeId)
+			if (nodeId != globals.selectedNode.id){
+				submitCreateRelation(globals.selectedNode.id, nodeId)
 			}
 			globals.bRelate=false;
 		}
 			   
 		if (globals.bPlanRelate==true)
 		{
-			if (nodeId != globals.selectedNodeID){
-				submitCreateRelation(globals.selectedNodeID, nodeId, true)
+			if (nodeId != globals.selectedNode.id){
+				submitCreateRelation(globals.selectedNode.id, nodeId, true)
 			}
 			globals.bPlanRelate=false;
 		}
@@ -4247,9 +4333,9 @@ function highlightSelectedNode(nodeId) {
 	}
 
 	var node = globals.GRAPH.getNode(nodeId);
-	globals.selectedNodeID = nodeId;
 	globals.selectedNodeData = node.data;
 	globals.selectedNode = node;
+  //globals.selectedNode.id = node.id;
 
 	if (globals.interactionOptions.checkNodes){
 		checkNode(node);
@@ -4377,7 +4463,7 @@ function refreshNodesDepths() {
 			
 function increaseNodeSize(nodeId)
 {
-	if (!nodeId){nodeId = globals.selectedNodeID;}
+	if (!nodeId){nodeId = globals.selectedNode.id;}
 	var node = globals.GRAPH.getNode(nodeId);
 	var nodeRadius = Number( node.data.entityConfig.config.attributes["radius"]);
 	nodeRadius = nodeRadius + 50/nodeRadius;
@@ -4407,7 +4493,7 @@ function increaseNodeSize(nodeId)
 		
 function decreaseNodeSize(nodeId)
 {
-	if (!nodeId){nodeId = globals.selectedNodeID;}
+	if (!nodeId){nodeId = globals.selectedNode.id;}
 	var node = globals.GRAPH.getNode(nodeId);
 	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
 	node.data.entityConfig.config.attributes["radius"] = nodeRadius / 1.1;
@@ -5112,7 +5198,7 @@ function Neo4jQuerySimpleSearch(fromEntity, whereProperty, equalsValue, _sourceC
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jFetchEntitiesForNode(nodeId, _sourceConfig)
 {
-	if (!nodeId) {nodeId = globals.selectedNodeID;}
+	if (!nodeId) {nodeId = globals.selectedNode.id;}
 	var command = '';
 	switch(globals.viewOptions.navigateDirection){
 	case 'child':
@@ -5325,13 +5411,13 @@ function Neo4jDeleteRelationship(relationshipID, _sourceConfig) {
 function Neo4jDeleteLabel(nodeId, labelName, _sourceConfig) {
 	var command = "MATCH (n) where ID(n) = " + getNeoId(nodeId) + " REMOVE n:" + labelName;
 	var callback = function (results, sourceConfig) {
-	    Neo4jGetNodeById(globals.selectedNodeID, sourceConfig)
+	    Neo4jGetNodeById(globals.selectedNode.id, sourceConfig)
 	};
 	Neo4j_Command([command], callback, _sourceConfig, callback);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jAddProperty(nodeId, _sourceConfig) {
-	if (!nodeId) { nodeId = globals.selectedNodeID }
+	if (!nodeId) { nodeId = globals.selectedNode.id }
 	var elePropKey = document.getElementById('add.property.key').value;
 	var elePropVal = document.getElementById('add.property.value').value;
 	var elePropType = document.getElementById('add.property.type').value;
@@ -5340,7 +5426,7 @@ function Neo4jAddProperty(nodeId, _sourceConfig) {
 	var command = "MATCH (n) where ID(n) = " + getNeoId(nodeId) + " SET n +={" + elePropKey + ":" + elePropVal + "}";
 
 	var callback = function (results, sourceConfig) {
-	    Neo4jGetNodeById(globals.selectedNodeID, sourceConfig);
+	    Neo4jGetNodeById(globals.selectedNode.id, sourceConfig);
 	};
 	Neo4j_Command([command], callback, _sourceConfig, callback);
 }
@@ -5352,10 +5438,10 @@ function Neo4jAddLabel(_sourceConfig) {
 	if (!processingElement.value) return;
 
 	var callback = function (results, sourceConfig) {
-	    Neo4jGetNodeById(globals.selectedNodeID, sourceConfig);
+	    Neo4jGetNodeById(globals.selectedNode.id, sourceConfig);
 	};
 
-	var command = "MATCH (n) where ID(n) = " + getNeoId(globals.selectedNodeID) + " SET n:" + processingElement.value;
+	var command = "MATCH (n) where ID(n) = " + getNeoId(globals.selectedNode.id) + " SET n:" + processingElement.value;
 	Neo4j_Command([command], callback, _sourceConfig, callback);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -7574,11 +7660,23 @@ globals.allUnitTests.push(function deleteNode_Given1DeletedNode_ExpectNodeNotFou
   node1.labels = ["TESTCASE1"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels);
 	sut.DeleteEntity(node1Id);
+  
+  
+
 
 	// Act
 	var result = sut.EntityExists(node1Id);
+  
 
 	// Assert
+  console.log('node1Id', node1Id);
+  var nodeLabelsIndex = localStorage.getItem("INDEX_ON_NODE_LABELS");
+  if (nodeLabelsIndex.indexOf(',' + node1Id + ',') > -1
+    || nodeLabelsIndex.indexOf(':' + node1Id + ',') > -1
+    || nodeLabelsIndex.indexOf(':' + node1Id + '|') > -1
+    || nodeLabelsIndex.indexOf(',' + node1Id + '|') > -1)
+    return result;
+
 	if (result === false)
 		return true
 
@@ -9782,49 +9880,46 @@ function defineLinkObjectsCommonAssets()
 
 }
 
-function defineLinkObjects()
-{
-	//LINKS SETUP (occurs once for every link...)
-	//** UNIQUE REFERENCES ************************************************
-	globals.graphics.link(function(link){ //...get called for every link
-		//====== DATA LINKS ========================================================================================================
-		if (link.data.linkType == 'data')
-		{
-			var linklabelId = link.data.id;//'link'+link.fromId + 'To' + link.toId;
-			if (link.data.sourceConfig.displaySettings.showRelationships == "all" || link.data.sourceConfig.displaySettings.showRelationships == "on-highlight")
-			{
+function defineLinkObjects() {
+    //LINKS SETUP (occurs once for every link...)
+    //** UNIQUE REFERENCES ************************************************
+    globals.graphics.link(function(link) { //...get called for every link
+        //====== DATA LINKS ========================================================================================================
+        if(link.data.linkType=='data') {
+            var linklabelId=link.data.id;//'link'+link.fromId + 'To' + link.toId;
+            if(link.data.sourceConfig.displaySettings.showRelationships=="all"||link.data.sourceConfig.displaySettings.showRelationships=="on-highlight") {
 
-				//MARKER: TEXT
-				var midMarker = Viva.Graph.svg('marker')
-					.attr('class', 'markertextmain')
-					.attr('id', 'mid'+linklabelId )
-					.attr('viewBox', "-4 -6 8 12")
-					.attr('refX', "0")
-					.attr('refY', "0")
-					.attr('markerWidth', "500")
-					.attr('markerHeight', "100")
+                //MARKER: TEXT
+                var midMarker=Viva.Graph.svg('marker')
+					.attr('class','markertextmain')
+					.attr('id','mid'+linklabelId)
+					.attr('viewBox',"-4 -6 8 12")
+					.attr('refX',"0")
+					.attr('refY',"0")
+					.attr('markerWidth',"500")
+					.attr('markerHeight',"100")
           .attr('fill',link.data.color)
-					.attr('markerUnits', "userSpaceOnUse")
-					.attr('orient', "auto");
-				
-				//MARKER: ARROW
-				var endMarker = Viva.Graph.svg('marker')
+					.attr('markerUnits',"userSpaceOnUse")
+					.attr('orient',"auto");
+
+                //MARKER: ARROW
+                var endMarker=Viva.Graph.svg('marker')
 					//.attr('class', 'markertextmain')
-					.attr('id', 'end'+linklabelId )
-					.attr('viewBox', "-4 -6 8 12")
-					.attr('refX', "0")
-					.attr('refY', "0")
-					.attr('markerWidth', "50")
-					.attr('markerHeight', "100")
+					.attr('id','end'+linklabelId)
+					.attr('viewBox',"-4 -6 8 12")
+					.attr('refX',"0")
+					.attr('refY',"0")
+					.attr('markerWidth',"50")
+					.attr('markerHeight',"100")
           .attr('fill',link.data.color)
-					.attr('markerUnits', "userSpaceOnUse")
-					.attr('orient', "auto");
-					
-				var endArrow =  Viva.Graph.svg('path')
-					.attr('d', 'M 0 -0.7 L 2 0 L 0 0.7 z');
-					//if (!link.data.sourceConfig.displaySettings.opaque) {endArrow.attr('opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
-					//markerTraingle.append(markerArrow)
-				/*var markerLabel = Viva.Graph.svg('text')
+					.attr('markerUnits',"userSpaceOnUse")
+					.attr('orient',"auto");
+
+                var endArrow=Viva.Graph.svg('path')
+					.attr('d','M 0 -0.7 L 2 0 L 0 0.7 z');
+                //if (!link.data.sourceConfig.displaySettings.opaque) {endArrow.attr('opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
+                //markerTraingle.append(markerArrow)
+                /*var markerLabel = Viva.Graph.svg('text')
 						.attr('class','markertextlabel')
 						.attr('x', '0')
 						.attr('y', '0')
@@ -9851,257 +9946,258 @@ function defineLinkObjects()
 					if (link.data.sourceConfig.displaySettings.showRelationProperties){midMarker.append(markerProperties);}
 				}
 				*/
-				
-				endMarker.append(endArrow);
-				var defs = globals.graphics.getSvgRoot().append('defs');
-				defs.append(midMarker);
-				defs.append(endMarker);
 
-				link.data.UI.midMarkerUI = midMarker;
-				link.data.UI.toMarkerUI = endMarker;
-				//link.data.UI.nameTextUI = markerLabel; //...only added when markder is highlighted
-				//link.data.UI.subTextUI = markerProperties;
-			}
+                endMarker.append(endArrow);
+                var defs=globals.graphics.getSvgRoot().append('defs');
+                defs.append(midMarker);
+                defs.append(endMarker);
 
-			var linkPath;
-			var ui = Viva.Graph.svg('g')
+                link.data.UI.midMarkerUI=midMarker;
+                link.data.UI.toMarkerUI=endMarker;
+                //link.data.UI.nameTextUI = markerLabel; //...only added when markder is highlighted
+                //link.data.UI.subTextUI = markerProperties;
+            }
+
+            var linkPath;
+            var ui=Viva.Graph.svg('g')
 			.attr('class','link')
-			//.attr('refX', '50')
-			//.attr('refY', '50')
-			
-			var linkPath = Viva.Graph.svg('path')
+            //.attr('refX', '50')
+            //.attr('refY', '50')
+
+            var linkPath=Viva.Graph.svg('path')
 					   .attr('class','linkpath')
 					   .attr('id',linklabelId)
-					   .attr('stroke', link.data.color)
-					   .attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness)
-					   .attr('marker-mid', 'url(#mid' + linklabelId + ')')
+					   .attr('stroke',link.data.color)
+					   .attr('stroke-width',link.data.sourceConfig.displaySettings.linkThickness)
+					   .attr('marker-mid','url(#mid'+linklabelId+')')
 					   //.attr('marker-end', 'url(#Triangle)')
-					   .attr('marker-end', 'url(#end' + linklabelId + ')')
-					   .attr("fill", 'transparent');
-					   if (!link.data.sourceConfig.displaySettings.opaque) {linkPath.attr('stroke-opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
+					   .attr('marker-end','url(#end'+linklabelId+')')
+					   .attr("fill",'transparent');
+            if(!link.data.sourceConfig.displaySettings.opaque) { linkPath.attr('stroke-opacity',link.data.sourceConfig.displaySettings.linkOpacity); }
 
-					   
-			var linkPoputText = Viva.Graph.svg('text')
+
+            var linkPoputText=Viva.Graph.svg('text')
 						.attr('class','linkPoputText')
 						.attr('x',0)
 						.attr('y',0)
 						.attr('fill','#EB6A00')
-						.attr('refx', '25')
-						.attr('refy', '0')
-						.attr('stroke-width', 0)
+						.attr('refx','25')
+						.attr('refy','0')
+						.attr('stroke-width',0)
 						.attr('font-family','Arial, Helvetica, sans-serif')
 						.attr('font-size','10')
 						.text('');
-			/*
+            /*
 			var endArrow =  Viva.Graph.svg('path')
 						.attr('stroke-width',3)
 						.attr('d', 'M 0 -2 L 4 0 L 0 2 z')
 						.attr('fill',link.data.color)
 						.attr('stroke','red')*/
 
-			var textwidth = 0;
-			var proplist = ''; 
-			link.data.properties.forEach(function(prop){
-					linkPoputText.innerHTML += '<tspan dx="-' + textwidth + 'em" dy="1.5em" >' + prop.key + ": " + prop.value+  '</tspan>';
-					textwidth = 5;
-			});
+            var textwidth=0;
+            var proplist='';
+            link.data.properties.forEach(function(prop) {
+                linkPoputText.innerHTML+='<tspan dx="-'+textwidth+'em" dy="1.5em" >'+prop.key+": "+prop.value+'</tspan>';
+                textwidth=5;
+            });
 
-			var linkRect = Viva.Graph.svg('rect')
+            var linkRect=Viva.Graph.svg('rect')
 						.attr('class','linkrect')
-						.attr('refx', '30')
-						.attr('width', '150')
-						.attr('height', '25')
+						.attr('refx','30')
+						.attr('width','150')
+						.attr('height','25')
 						.attr('fill','black')
 						.attr('rx','5');
-			//linkRect.attr('refy', Number(linkRect.attr('width'))/2 );
-			//linkPoputText.attr('refy', Number(linkRect.attr('width'))/2 );
-			//linkPath.innerHTML += '<text font-family="Verdana" font-size="42.5"><textPath xlink:href="#'+linklabelId+'">HELLO</textPath></text>';
-			//linkPath.append('defs');
+            //linkRect.attr('refy', Number(linkRect.attr('width'))/2 );
+            //linkPoputText.attr('refy', Number(linkRect.attr('width'))/2 );
+            //linkPath.innerHTML += '<text font-family="Verdana" font-size="42.5"><textPath xlink:href="#'+linklabelId+'">HELLO</textPath></text>';
+            //linkPath.append('defs');
 
-			ui.append(linkPath);
-			//ui.append(endArrow);
-			if (link.data.sourceConfig.displaySettings.loadRelationPopouts)
-			{
-				ui.append(linkRect);
-				ui.append(linkPoputText);
-			}
+            ui.append(linkPath);
+            ui.append(midMarker);
+            ui.append(endMarker);
+            //ui.append(endArrow);
+            if(link.data.sourceConfig.displaySettings.loadRelationPopouts) {
+                ui.append(linkRect);
+                ui.append(linkPoputText);
+            }
 
-			$(linkPath).hover(function() { // MOUSE HOVER
-				//markerLabel.attr('fill', 'yellow');
-				if (link.data.checked){}
-				//new LinkHelper().HighlightLink(link);
-			}, function() { // mouse out
-				//new LinkHelper().UnHighlightLink(link);
-			});
-			
-			$(linkPath).click(function() { // MOUSE CLICK
-			    globals.selectedLink = link;
-			    new LinkHelper().ShowLinkDetails(link);
-				new LinkHelper().ToggleLink(link);
-			});
+            $(linkPath).hover(function() { // MOUSE HOVER
+                //markerLabel.attr('fill', 'yellow');
+                if(link.data.checked) { }
+                //new LinkHelper().HighlightLink(link);
+            },function() { // mouse out
+                //new LinkHelper().UnHighlightLink(link);
+            });
 
-			link.data.UI.fullUI = ui;
-			link.data.UI.pathUI = linkPath;
-			link.data.UI.popoutBodyUI = linkRect;
-			link.data.UI.popoutTextUI = linkPoputText;
-			
-      ui.attr('fromNodeRadius',25); //default
-			ui.attr('toNodeRadius',25);//default
-			ui.attr('labelWidth',30);//default
-			ui.attr('labelVisible',false);//default
-			//var linkUI = globals.graphics.getLinkUI(link.id);
-			if (link.data.linkType == 'data'){
-				ui.attr('fromNode',link.data.fromNodeID).attr('toNode',link.data.toNodeID);
-				ui.attr('linkDataIndex',globals.linkList.length);//default
+            $(linkPath).click(function() { // MOUSE CLICK
+                globals.selectedLink=link;
+                new LinkHelper().ShowLinkDetails(link);
+                new LinkHelper().ToggleLink(link);
+            });
 
-        //fromNode.data.entityConfig.config.attributes["radius"];//nodeSize
+            link.data.UI.fullUI=ui;
+            link.data.UI.pathUI=linkPath;
+            link.data.UI.popoutBodyUI=linkRect;
+            link.data.UI.popoutTextUI=linkPoputText;
 
-        var fromNode = node=globals.GRAPH.getNode(link.data.fromNodeID);
-        var toNode = node=globals.GRAPH.getNode(link.data.toNodeID);
-        ui.attr('fromNodeRadius',fromNode.data.entityConfig.config.attributes["radius"]);
-			  ui.attr('toNodeRadius',toNode.data.entityConfig.config.attributes["radius"]);
-			}
+            ui.attr('fromNodeRadius',25); //default
+            ui.attr('toNodeRadius',25);//default
+            ui.attr('labelWidth',30);//default
+            ui.attr('labelVisible',false);//default
+            //var linkUI = globals.graphics.getLinkUI(link.id);
+            if(link.data.linkType=='data') {
+                ui.attr('fromNode',link.data.fromNodeID).attr('toNode',link.data.toNodeID);
+                //ui.attr('linkDataIndex',globals.linkList.length);//default
 
-			//ui.attr('linkPos', getDataLinks(link.data.fromNodeID, link.data.toNodeID).length);//will be adjusted later				
-		}
-		//====== INDICATOR LINKS ========================================================================================================
-		else if(link.data.linkType == 'sub')
-		{
-			var linklabelId = link.data.id;//'link'+link.fromId + 'To' + link.toId;
+                //fromNode.data.entityConfig.config.attributes["radius"];//nodeSize
 
-			var linkPath;
-			var ui = Viva.Graph.svg('g')
-			.attr('class','link')
-			var linkPath = Viva.Graph.svg('path')
-					   .attr('id',linklabelId)
-					   .attr('stroke', link.data.color)
-					   .attr('stroke-width', '1')
-					   .attr("fill", 'transparent');
-					   if (!link.data.sourceConfig.displaySettings.opaque) {linkPath.attr('stroke-opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
+                var fromNode=node=globals.GRAPH.getNode(link.data.fromNodeID);
+                var toNode=node=globals.GRAPH.getNode(link.data.toNodeID);
+                ui.attr('fromNodeRadius',fromNode.data.entityConfig.config.attributes["radius"]);
+                ui.attr('toNodeRadius',toNode.data.entityConfig.config.attributes["radius"]);
+            }
 
-			ui.append(linkPath);
-			link.data.UI.fullUI = ui;
-			link.data.UI.pathUI = linkPath;
-			ui.attr('fromNodeRadius',25); //default
-			ui.attr('toNodeRadius',25);//default
-			ui.attr('labelWidth',30);//default
-			ui.attr('labelVisible',false);//default
-		}	
-		//====== planned LINKS ========================================================================================================
-		else if(link.data.linkType == 'planned')
-		{
-			var linklabelId = link.data.id;//'link'+link.fromId + 'To' + link.toId;
+            //ui.attr('linkPos', getDataLinks(link.data.fromNodeID, link.data.toNodeID).length);//will be adjusted later				
+        }
+        ////====== INDICATOR LINKS ========================================================================================================
+        //else if(link.data.linkType == 'sub')
+        //{
+        //	var linklabelId = link.data.id;//'link'+link.fromId + 'To' + link.toId;
 
-			var linkPath;
-			var ui = Viva.Graph.svg('g')
-			.attr('class','link')
-			var linkPath = Viva.Graph.svg('path')
-					   .attr('id',linklabelId)
-					   .attr('stroke', link.data.color)
-					   .attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness)
-					   .attr("fill", 'transparent');
-					   if (!link.data.sourceConfig.displaySettings.opaque) {linkPath.attr('stroke-opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
+        //	var linkPath;
+        //	var ui = Viva.Graph.svg('g')
+        //	.attr('class','link')
+        //	var linkPath = Viva.Graph.svg('path')
+        //			   .attr('id',linklabelId)
+        //			   .attr('stroke', link.data.color)
+        //			   .attr('stroke-width', '1')
+        //			   .attr("fill", 'transparent');
+        //			   if (!link.data.sourceConfig.displaySettings.opaque) {linkPath.attr('stroke-opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
 
-			ui.append(linkPath);
-			link.data.UI.fullUI = ui;
-			link.data.UI.pathUI = linkPath;
-			ui.attr('fromNodeRadius',25); //default
-			ui.attr('toNodeRadius',25);//default
-			ui.attr('labelWidth',30);//default
-			ui.attr('labelVisible',false);//default
-			
-		}
-		
-		ui.attr('linkType', link.data.linkType);
-		ui.attr('textOrient', '-1');
-		ui.attr('linkPathIndex',0);//default
-		return ui;   
-	});
+        //	ui.append(linkPath);
+        //	link.data.UI.fullUI = ui;
+        //	link.data.UI.pathUI = linkPath;
+        //	ui.attr('fromNodeRadius',25); //default
+        //	ui.attr('toNodeRadius',25);//default
+        //	ui.attr('labelWidth',30);//default
+        //	ui.attr('labelVisible',false);//default
+        //}	
+        ////====== planned LINKS ========================================================================================================
+        //else if(link.data.linkType == 'planned')
+        //{
+        //	var linklabelId = link.data.id;//'link'+link.fromId + 'To' + link.toId;
+
+        //	var linkPath;
+        //	var ui = Viva.Graph.svg('g')
+        //	.attr('class','link')
+        //	var linkPath = Viva.Graph.svg('path')
+        //			   .attr('id',linklabelId)
+        //			   .attr('stroke', link.data.color)
+        //			   .attr('stroke-width', link.data.sourceConfig.displaySettings.linkThickness)
+        //			   .attr("fill", 'transparent');
+        //			   if (!link.data.sourceConfig.displaySettings.opaque) {linkPath.attr('stroke-opacity', link.data.sourceConfig.displaySettings.linkOpacity);}
+
+        //	ui.append(linkPath);
+        //	link.data.UI.fullUI = ui;
+        //	link.data.UI.pathUI = linkPath;
+        //	ui.attr('fromNodeRadius',25); //default
+        //	ui.attr('toNodeRadius',25);//default
+        //	ui.attr('labelWidth',30);//default
+        //	ui.attr('labelVisible',false);//default
+        //}
+
+        ui.attr('linkType',link.data.linkType);
+        ui.attr('textOrient','-1');
+        ui.attr('linkPathIndex',0);//default
+        return ui;
+    });
 }
-function defineLinkDrawing(){
-	//LINKS DRAWING/RENDERING (occurs continuously for every link...)
-	//var geom = Viva.Graph.geom();
-	globals.graphics.placeLink(function(linkUI, fromPos, toPos) {
-		var linkDataIndex = linkUI.attr('linkDataIndex');	
-		var linkIndex = linkUI.attr('linkPos');
+function defineLinkDrawing() {
+    //LINKS DRAWING/RENDERING (occurs continuously for every link...)
+    //var geom = Viva.Graph.geom();
+    globals.graphics.placeLink(function(linkUI,fromPos,toPos) {
+        //var linkDataIndex=linkUI.attr('linkDataIndex');
+        var linkIndex=linkUI.attr('linkPos');
 
-		var from = fromPos;
-		var to = toPos;
+        var from=fromPos;
+        var to=toPos;
 
-		to.x = to.x - from.x;
-		to.y = to.y - from.y;
+        to.x=to.x-from.x;
+        to.y=to.y-from.y;
 
-		var skew = (linkIndex) *20 *(((linkIndex)%2 == 0)?-1:1); //...creates a bend in the middle for multiple relationships
-		//var curvex = from.x + (to.x - from.x)/2; //...the middle point x
-		//var curvey = from.y + (to.y - from.y)/2 + skew;//...the middle point y
-		var curvex = (to.x)/2; //...the middle point x
-		var curvey = (to.y)/2 + skew;//...the middle point y
-		linkUI.attr('transform','translate(' +fromPos.x + ',' + fromPos.y + ')');
-		
-    linkPath = linkUI.childNodes[linkUI.attr('linkPathIndex')];
-		for (var i = 0; i < linkUI.childNodes.length; i++)
-		{
-			var child = linkUI.childNodes[i];
-			if (!child) continue;
-			if (!child.attr) continue;
-			if (!child.attr('refx')) continue;
-			child.attr('x',curvex - child.attr('refx'));
-			child.attr('y',curvey - child.attr('refy'));
-			for (var h = 0; h < child.childNodes.length; h++)
-			{
-				if (!child.childNodes[h]) continue;
-			}
-		}
+        var skew=(linkIndex)*20*(((linkIndex)%2==0)?-1:1); //...creates a bend in the middle for multiple relationships
+        //var curvex = from.x + (to.x - from.x)/2; //...the middle point x
+        //var curvey = from.y + (to.y - from.y)/2 + skew;//...the middle point y
+        var curvex=(to.x)/2; //...the middle point x
+        var curvey=(to.y)/2+skew;//...the middle point y
+        linkUI.attr('transform','translate('+fromPos.x+','+fromPos.y+')');
 
-		//Flip the text orientation on relationships so that the text is never upside down...
-		if (linkUI.attr('labelVisible') == 'true'){
-			if (to.x > 0 && (linkUI.attr('textOrient') == '0' || linkUI.attr('textOrient') == '-1')){
-				globals.linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(1,1)');
-				linkUI.attr('textOrient','1');
+        linkPath=linkUI.childNodes[linkUI.attr('linkPathIndex')];
+        for(var i=0;i<linkUI.childNodes.length;i++) {
+            var child=linkUI.childNodes[i];
+            if(!child) continue;
+            if(!child.attr) continue;
+            if(!child.attr('refx')) continue;
+            child.attr('x',curvex-child.attr('refx'));
+            child.attr('y',curvey-child.attr('refy'));
+            for(var h=0;h<child.childNodes.length;h++) {
+                if(!child.childNodes[h]) continue;
+            }
+        }
 
-			}
-			else if (to.x < 0 && (linkUI.attr('textOrient') == '1' || linkUI.attr('textOrient') == '-1')){
-				linkUI.attr('textOrient', '0');
-				globals.linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(-1,-1)');
+        //Flip the text orientation on relationships so that the text is never upside down...
+        if(linkUI.attr('labelVisible')=='true') {
+            if(to.x>0&&(linkUI.attr('textOrient')=='0'||linkUI.attr('textOrient')=='-1')) {
+                //globals.linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(1,1)');
+                //debugger;
+                linkUI.childNodes[1].childNodes[0].attr('transform','scale(1,1)');
+                linkUI.attr('textOrient','1');
 
-			}
-		}
+            }
+            else if(to.x<0&&(linkUI.attr('textOrient')=='1'||linkUI.attr('textOrient')=='-1')) {
+                linkUI.attr('textOrient','0');
+                //globals.linkList[Number(linkDataIndex)].data.UI.nameTextUI.attr('transform', 'scale(-1,-1)');
+                linkUI.childNodes[1].childNodes[0].attr('transform','scale(-1,-1)');
+            }
+        }
 
-		var distance = Math.sqrt(Math.pow(to.x,2) + Math.pow(to.y,2));
-		var data;
-		//Place link line...
-		if (linkIndex == 0)
-		{
-			data = 'M '+0+' '+0+' L '+curvex + ' '+curvey + ' L '+to.x + ','+to.y;
-		}else{
-			//var multiplier = (((linkIndex)%2 == 0)?-1:1);
-			var arc = linkIndex*(distance);
-			data = 'M0,0 A' +arc +','+arc +' 0 0,0 ' +to.x+','+to.y;
-		}
-		linkPath.attr("d", data); //...DRAW LINE			
-		linkPath.attr("stroke-dasharray", "0,0");
+        var distance=Math.sqrt(Math.pow(to.x,2)+Math.pow(to.y,2));
+        var data;
+        //Place link line...
+        if(linkIndex==0) {
+            data='M '+0+' '+0+' L '+curvex+' '+curvey+' L '+to.x+','+to.y;
+        } else {
+            //var multiplier = (((linkIndex)%2 == 0)?-1:1);
+            var arc=linkIndex*(distance);
+            data='M0,0 A'+arc+','+arc+' 0 0,0 '+to.x+','+to.y;
+        }
+        linkPath.attr("d",data); //...DRAW LINE			
+        linkPath.attr("stroke-dasharray","0,0");
 
-		var fromNodeRadius = Number(linkUI.attr('fromNodeRadius'));
-		var toNodeRadius = Number(linkUI.attr('toNodeRadius'));
-		if (linkIndex == 0 ){
-			var linkTextWidth = 0;
-			if (linkUI.attr('labelVisible') == 'true') {linkTextWidth = Number(linkUI.attr('labelWidth')) * 10;}
-			
-			var firstSegment = ((distance/2) - (fromNodeRadius + 5)) - (linkTextWidth/2);
-			var secondSegment = ((distance/2) - (toNodeRadius + 10)) - (linkTextWidth/2);
-			//set the dash-pattern of the path, to exclude the node space, and the text space...
-			linkPath.attr("stroke-dasharray", "0," + (fromNodeRadius + 5) + "," + firstSegment + ","+ linkTextWidth + "," + secondSegment + "," + (toNodeRadius +10) + ",0");
-		}
+        var fromNodeRadius=Number(linkUI.attr('fromNodeRadius'));
+        var toNodeRadius=Number(linkUI.attr('toNodeRadius'));
+        if(linkIndex==0) {
+            var linkTextWidth=0;
+            if(linkUI.attr('labelVisible')=='true') { linkTextWidth=Number(linkUI.attr('labelWidth'))*10; }
 
-		//Place arrow marker...		
-		if (linkDataIndex){
-			var rad = toNodeRadius/6.5 + 2.4 //...'2' is the height of the triangle
-			if(globals.linkList[Number(linkDataIndex)]){globals.linkList[Number(linkDataIndex)].data.UI.toMarkerUI.attr('refX', rad);}
-		}
+            var firstSegment=((distance/2)-(fromNodeRadius+5))-(linkTextWidth/2);
+            var secondSegment=((distance/2)-(toNodeRadius+10))-(linkTextWidth/2);
+            //set the dash-pattern of the path, to exclude the node space, and the text space...
+            linkPath.attr("stroke-dasharray","0,"+(fromNodeRadius+5)+","+firstSegment+","+linkTextWidth+","+secondSegment+","+(toNodeRadius+10)+",0");
+        }
 
-		//Set dashed-pattern if the link is actually a planned link...
-		if (linkUI.attr('linkType') == 'planned'){linkPath.attr("stroke-dasharray", "5,5");}
-	});
+        ////Place arrow marker...		
+        //if(linkDataIndex) {
+        //    debugger;
+            var rad=toNodeRadius/6.5+2.4 //...'2' is the height of the triangle
+            //if(globals.linkList[Number(linkDataIndex)]) { globals.linkList[Number(linkDataIndex)].data.UI.toMarkerUI.attr('refX',rad); }
+            linkUI.childNodes[2].attr('refX',rad);
+        //}
+
+        //Set dashed-pattern if the link is actually a planned link...
+        if(linkUI.attr('linkType')=='planned') { linkPath.attr("stroke-dasharray","5,5"); }
+    });
 }
 
 function renderGraph() {
