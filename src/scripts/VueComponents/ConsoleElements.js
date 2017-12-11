@@ -202,6 +202,7 @@ var consoleApp=new Vue({
         var ifConfirmed=function() {
           new DataService().DeleteEntity(nodeToDelete.id);
           new VueConsoleHelper().CloseGlobalInfoModal();
+          globals.selectedNode = null;
         };
         new VueConsoleHelper().DisplayConfirmModal(header,content,ifConfirmed,'Yes','Cancel');
         //TODO

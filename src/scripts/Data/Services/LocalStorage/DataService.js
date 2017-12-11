@@ -70,11 +70,15 @@
   this.DeleteEntity=function(entityId,_sourceConfig) {
     var graphElements=dataDriver.GetRelatedEntityGraph(stripDomainFromId(entityId));
     for (var i = 0; i < graphElements.length; i++){
+      var relatedNode = (graphElements[i].fromNode.id==entityId)? graphElements[i].toNode: graphElements[i].fromNode;
+      dataDriver.RemoveLinkFromNode(graphElements[i].link.id, relatedNode.id);
       dataDriver.DeleteRelation(graphElements[i].link.id);
     }
     dataDriver.DeleteEntity(entityId);
     removeNodeFromGraph(entityId);
   }
+
+
 
   this.CheckMonitoredNodes=function(_sourceConfig) {
     //Neo4jCheckMonitoredNodes(_sourceConfig);

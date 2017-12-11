@@ -105,14 +105,43 @@ var LocalStorageDataDriver=function() {
   }
 
   this.DeleteEntity=function(entityId) {
-    debugger;
     var entity = getEntityFromDatabase(entityId)
     deleteNodeFromStorage(entity);
   }
 
   this.DeleteRelation=function(relationId) {
-    var relation = getEntityFromDatabase(relationId)
-    deleteNodeFromStorage(relation);
+    var relation = getRelationFromDatabase(relationId)
+    deleteLinkFromStorage(relation);
+  }
+
+
+  this.AddLinkToNode=function(relationId, entityId) {
+    var entity = getEntityFromDatabase(entityId)
+    if (entity.links.indexOf(relationId) == -1)
+      entity.links.push(relationId);
+    writeNodeToStorage(entity);
+  }
+
+  this.AddPropertyToNode=function(propertyName, propertyValue, entityId) {
+    var entity = getEntityFromDatabase(entityId)
+    entity.properties[propertyName] = propertyValue;
+    writeNodeToStorage(entity);
+  }
+
+  this.RemovePropertyFromNode=function(propertyName, entityId) {
+    var entity = getEntityFromDatabase(entityId)
+    var newProps = {};
+    for (prop in entity.properties)
+      if (prop != propertyName)
+        newProps[prop] = entity.properties[prop]
+    entity.properties = newProps;
+    writeNodeToStorage(entity);
+  }
+
+  this.RemoveLinkFromNode=function(relationId, entityId) {
+    var entity = getEntityFromDatabase(entityId)
+    entity.links.splice(entity.links.indexOf(relationId), 1);
+    writeNodeToStorage(entity);
   }
 
   this.EntityExists=function(entityId) {
@@ -294,7 +323,7 @@ var LocalStorageDataDriver=function() {
   }
 
   function deleteLinkFromStorage(relation) {
-    localStorage.removeItem(nodeKeyFromNodeId(relation.id));
+    localStorage.removeItem(linkKeyFromLinkId(relation.id));
     removeFromLabelsIndex("INDEX_ON_LINK_LABELS",relation);
     removeFromPropertyIndex("INDEX_ON_LINK_PROPS",relation);
   }
