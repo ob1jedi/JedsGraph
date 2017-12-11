@@ -117,12 +117,12 @@ svg, #graphContainer, #schemaContainer {
 }
 
 	.link text {
-		opacity: 0;
+		opacity: 1;
 		transition: opacity 0.2s linear;
 	}
 
 	.link rect {
-		opacity: 0;
+		opacity: 1;
 		transition: opacity 0.2s linear;
 	}
 

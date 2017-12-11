@@ -194,9 +194,14 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
     link.data.fromNodeID=fromNodeID;
     link.data.toNodeID=toNodeID;
     link.data.displayLabel=linkData.name;
+
+
+
     globals.linkList.push(link);
     new LinkHelper().FixLinkIndexes(fromNodeID,toNodeID);
   }
+
+
 
   var toNode=globals.GRAPH.getNode(toNodeID);
   var fromNode=globals.GRAPH.getNode(fromNodeID);
@@ -216,30 +221,42 @@ function addDataLink(fromNodeID,toNodeID,linkData,_sourceConfig) {
   new LinkHelper().RefreshLinkVisual(link);
 
   if(bIsNew) {
-    toNode.data.fromLinks.push(link);
-    toNode.data.fromNodes.push(fromNode);
-    fromNode.data.toLinks.push(link);
-    fromNode.data.toNodes.push(toNode);
+    ensureLinkIntoListList(link,toNode.data.fromLinks);
+    ensureLinkIntoListList(link,fromNode.data.toLinks);
+    ensureNodeIntoNodeList(fromNode,toNode.data.fromNodes);
+    ensureNodeIntoNodeList(toNode,fromNode.data.toNodes);
   }
   new LinkHelper().FixTextWidth4Link(link);
   return link;
 }
 
-function addDataNode(nodeId, newNodeData) {
-  var arraySvc = new ArrayHelper();
+function ensureLinkIntoListList(link,linkList) {
+  for(var i=0;i<linkList.length;i++) {
+    if(linkList[i].id==link.id)
+      return;
+  }
+  linkList.push(link);
+}
+
+function ensureNodeIntoNodeList(node,nodeList) {
+  for(var i=0;i<nodeList.length;i++) {
+    if(nodeList[i].id==node.id)
+      return;
+  }
+  nodeList.push(node);
+}
+
+
+function addDataNode(nodeId,newNodeData) {
+  var arraySvc=new ArrayHelper();
   var isNewNode=true;
   var node=getExistingNode(nodeId);
   if(node) {
-    //if(newNodeData.UI.displayTextUI) {
-    //  newNodeData.UI.displayTextUI.innerHTML=propertyListToSvgList(newNodeData.properties,'<tspan x="50" dy="1.2em">','</tspan>');
-    //}
     node.data.labels=newNodeData.labels;
     node.data.properties=newNodeData.properties;
-    //globals.animUpdateNodes.push(node);
-    //isNewNode = false;
   }
   setupDisplayLabelsIn(newNodeData);
-  var eventsHelper = new EntityEventsHelper();
+  var eventsHelper=new EntityEventsHelper();
   setNodeColorIn(newNodeData);
   eventsHelper.AddEntityToGraph_beforeNodeAdd(newNodeData);
   node=addNodeToGraph(newNodeData.id,newNodeData);
@@ -390,46 +407,29 @@ function refreshEntitySelectors() {
 }
 
 function removeNodeFromStage(nodeID) {
-  if(!nodeID) { nodeID=globals.selectedNode.id; }
+  if(!nodeID) { return; }
   var node=globals.GRAPH.getNode(nodeID);
 
-  var relativeLinks=node.data.toLinks.concat(node.data.fromLinks);
-  relativeLinks.forEach(function(link) {
-    removeLinkFromStage(link.id);
-    //globals.GRAPH.removeLink(link.id);
-  });
+  //var relativeLinks=node.data.toLinks.concat(node.data.fromLinks);
+  //relativeLinks.forEach(function(link) {
+  //  removeLinkFromStage(link.id);
+  //  //globals.GRAPH.removeLink(link.id);
+  //});
 
-  //var allNodeLists = globals.nodeList.concat(node.data.toNodes.concat(node.data.fromNodes));
-  var i=-1;
-  while(++i<globals.nodeList.length)
-    if(globals.nodeList[i].id==nodeID)
-      globals.nodeList.splice(i,1);
-  var i=-1;
-  while(++i<globals.monitoredNodes.length)
-    if(globals.monitoredNodes[i].id==nodeID)
-      globals.monitoredNodes.splice(i,1);
-  var i=-1;
-  while(++i<globals.checkedNodes.length)
-    if(globals.checkedNodes[i].id==nodeID)
-      globals.checkedNodes.splice(i,1);
+  var relativeLinkIds=node.data.toLinks.map(function(l) { return l.id }).concat(node.data.fromLinks.map(function(l) { return l.id }));
+  for(var i=0;i<relativeLinkIds.length;i++) {
+    removeLinkFromStage(relativeLinkIds[i]);
+  };
+
+  removeNodeFromNodeList(globals.nodeList,nodeID);
+  removeNodeFromNodeList(globals.monitoredNodes,nodeID);
+  removeNodeFromNodeList(globals.checkedNodes,nodeID);
 
   globals.nodeList.forEach(function(node) {
-    var i=-1;
-    while(++i<node.data.toNodes.length)
-      if(node.data.toNodes[i].id==nodeID)
-        node.data.toNodes.splice(i,1);
-    var i=-1;
-    while(++i<node.data.fromNodes.length)
-      if(node.data.fromNodes[i].id==nodeID)
-        node.data.fromNodes.splice(i,1);
-    var i=-1;
-    while(++i<node.data.toLinks.length)
-      if(node.data.toLinks[i].toNodeID==nodeID)
-        node.data.toLinks.splice(i,1);
-    var i=-1;
-    while(++i<node.data.fromLinks.length)
-      if(node.data.fromLinks[i].fromNodeID==nodeID)
-        node.data.fromLinks.splice(i,1);
+    removeNodeFromNodeList(node.data.toNodes,nodeID);
+    removeNodeFromNodeList(node.data.fromNodes,nodeID);
+    removeLinkFromLinkListByNodeId(node.data.toLinks,nodeID)
+    removeLinkFromLinkListByNodeId(node.data.fromLinks,nodeID)
   });
 
   globals.GRAPH.removeNode(nodeID);
@@ -437,51 +437,56 @@ function removeNodeFromStage(nodeID) {
   globals.consoleService.HideNodeFlyout();
 }
 
-function removeLinkFromStage(linkID) {
-  if(!linkID) { linkID=globals.selectedLink.data.id; }
-
-  var link=new LinkHelper().GetLinkById(linkID);
-  var i=-1;
-  while(++i<globals.linkList.length)
-    if(globals.linkList[i].id==linkID)
-      globals.linkList.splice(i,1);
-  var i=-1;
-  while(++i<globals.monitoredLinks.length)
-    if(globals.monitoredLinks[i].id==linkID)
-      globals.monitoredLinks.splice(i,1);
-
-  var fromNode=globals.GRAPH.getNode(link.data.fromNodeID);
-  var toNode=globals.GRAPH.getNode(link.data.toNodeID);
-  var i=-1;
-  while(++i<fromNode.data.toNodes.length)
-    if(fromNode.data.toNodes[i].id==link.data.toNodeID)
-      fromNode.data.toNodes.splice(i,1);
-  var i=-1;
-  while(++i<toNode.data.fromNodes.length)
-    if(toNode.data.fromNodes[i].id==link.data.fromNodeID)
-      toNode.data.fromNodes.splice(i,1);
-
-  var i=-1;
-  while(++i<fromNode.links.length)
-    if(fromNode.links[i].id==link.id)
-      fromNode.links.splice(i,1);
-  var i=-1;
-  while(++i<toNode.links.length)
-    if(toNode.links[i].id==link.id)
-      toNode.links.splice(i,1);
-
-  var i=-1;
-  while(++i<fromNode.data.toLinks.length)
-    if(fromNode.data.toLinks[i].id==link.id)
-      fromNode.data.toLinks.splice(i,1);
-  var i=-1;
-  while(++i<toNode.data.fromLinks.length)
-    if(toNode.data.fromLinks[i].id==link.id)
-      toNode.data.fromLinks.splice(i,1);
-
-  globals.GRAPH.removeLink(link);
+function removeLinkFromStage(linkId) {
+  if(!linkId) { return; }
+  var linkToRemove=new LinkHelper().GetLinkById(linkId);
+  if(!linkToRemove) {
+    // ...Link has already been removed.
+    return;
+  }
+  removeLinkFromLinkList(globals.linkList,linkId);
+  removeLinkFromLinkList(globals.monitoredLinks,linkId);
+  var fromNode=globals.GRAPH.getNode(linkToRemove.data.fromNodeID);
+  var toNode=globals.GRAPH.getNode(linkToRemove.data.toNodeID);
+  removeNodeFromNodeList(fromNode.data.toNodes,linkToRemove.data.toNodeID);
+  removeNodeFromNodeList(toNode.data.fromNodes,linkToRemove.data.fromNodeID);
+  removeLinkFromLinkList(fromNode.links,linkToRemove.id);
+  removeLinkFromLinkList(toNode.links,linkToRemove.id);
+  removeLinkFromLinkList(fromNode.data.toLinks,linkToRemove.id);
+  removeLinkFromLinkList(toNode.data.fromLinks,linkToRemove.id);
+  globals.GRAPH.removeLink(linkToRemove);
 }
 
+
+function removeLinkFromLinkListByNodeId(linkList,nodeId) {
+  var i=-1;
+  while(++i<linkList.length) {
+    if(linkList[i].toNodeID==nodeId||linkList[i].fromNodeID==nodeId) {
+      linkList.splice(i,1);
+      i--;
+    }
+  }
+}
+
+function removeLinkFromLinkList(linkList,linkId) {
+  var i=-1;
+  while(++i<linkList.length) {
+    if(linkList[i].id==linkId) {
+      linkList.splice(i,1);
+      i--;
+    }
+  }
+}
+
+function removeNodeFromNodeList(nodeList,nodeId) {
+  var i=-1;
+  while(++i<nodeList.length) {
+    if(nodeList[i].id==nodeId) {
+      nodeList.splice(i,1);
+      i--;
+    }
+  }
+}
 
 function getExistingNode(nodeID) {
   for(var i=0;i<globals.nodeList.length;i++) {
