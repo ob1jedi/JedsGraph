@@ -10,7 +10,7 @@ function getEntityNode() {
 }
 
 function GetRelatedEntityGraph() {
-	globals.dataService.GetRelatedEntityGraph(globals.selectedNodeID);
+	globals.dataService.GetRelatedEntityGraph(globals.selectedNode.id);
 }
 
 function deleteLink() {
@@ -73,7 +73,7 @@ function submitCreateRelation(nodeID1, nodeID2, planOnly, _sourceConfig) {
 
 function submitUpdateEntity() {
 	if (!nodeID) {
-		nodeID = globals.selectedNodeID;
+		nodeID = globals.selectedNode.id;
 	}
 	var node = globals.GRAPH.getNode(nodeID);
 	var _sourceConfig = node.data.sourceConfig;

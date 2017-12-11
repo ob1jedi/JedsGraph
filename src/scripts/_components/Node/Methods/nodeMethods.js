@@ -128,7 +128,7 @@ function fixTextWidth4Node(node)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function increaseNodeSprings(nodeid)
 {
-	if (!nodeid){nodeid=globals.selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNode.id;}
 	var node = getExistingNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
@@ -164,7 +164,7 @@ function decreaseNodeDepth(node)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function decreaseNodeSprings(nodeid)
 {
-	if (!nodeid){nodeid=globals.selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNode.id;}
 	var node = getExistingNode(nodeid);
 			
 	node.data.toNodes.forEach(function(toNode){
@@ -179,14 +179,14 @@ function decreaseNodeSprings(nodeid)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function increaseNodeMass(nodeid)
 {
-	if (!nodeid){nodeid=globals.selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNode.id;}
 	var nodebod = globals.layout.getBody(nodeid);
 	nodebod.mass++;
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function decreaseNodeMass(nodeid)
 {
-	if (!nodeid){nodeid=globals.selectedNodeID;}
+	if (!nodeid){nodeid=globals.selectedNode.id;}
 	var nodebod = globals.layout.getBody(nodeid);
 	nodebod.mass--;
 }
@@ -204,8 +204,8 @@ function uncheckNode(node){
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function highlightSelectedNode(nodeId) {
 		   
-	if (globals.selectedNodeID != ''){
-		if (nodeId == globals.selectedNodeID) {return;} //...we've re-clicked the same node
+	if (globals.selectedNode){
+		if (nodeId == globals.selectedNode.id) {return;} //...we've re-clicked the same node
 		//DISPOSE PREVIOUS SELECTION
 		//remove all sub nodes...
 		if (globals.config_ext.viewOptions.subnodes.relations=="ifany"){
@@ -224,16 +224,16 @@ function highlightSelectedNode(nodeId) {
    
 		if (globals.bRelate == true)
 		{
-			if (nodeId != globals.selectedNodeID){
-				submitCreateRelation(globals.selectedNodeID, nodeId)
+			if (nodeId != globals.selectedNode.id){
+				submitCreateRelation(globals.selectedNode.id, nodeId)
 			}
 			globals.bRelate=false;
 		}
 			   
 		if (globals.bPlanRelate==true)
 		{
-			if (nodeId != globals.selectedNodeID){
-				submitCreateRelation(globals.selectedNodeID, nodeId, true)
+			if (nodeId != globals.selectedNode.id){
+				submitCreateRelation(globals.selectedNode.id, nodeId, true)
 			}
 			globals.bPlanRelate=false;
 		}
@@ -241,9 +241,9 @@ function highlightSelectedNode(nodeId) {
 	}
 
 	var node = globals.GRAPH.getNode(nodeId);
-	globals.selectedNodeID = nodeId;
 	globals.selectedNodeData = node.data;
 	globals.selectedNode = node;
+  //globals.selectedNode.id = node.id;
 
 	if (globals.interactionOptions.checkNodes){
 		checkNode(node);
@@ -371,7 +371,7 @@ function refreshNodesDepths() {
 			
 function increaseNodeSize(nodeId)
 {
-	if (!nodeId){nodeId = globals.selectedNodeID;}
+	if (!nodeId){nodeId = globals.selectedNode.id;}
 	var node = globals.GRAPH.getNode(nodeId);
 	var nodeRadius = Number( node.data.entityConfig.config.attributes["radius"]);
 	nodeRadius = nodeRadius + 50/nodeRadius;
@@ -401,7 +401,7 @@ function increaseNodeSize(nodeId)
 		
 function decreaseNodeSize(nodeId)
 {
-	if (!nodeId){nodeId = globals.selectedNodeID;}
+	if (!nodeId){nodeId = globals.selectedNode.id;}
 	var node = globals.GRAPH.getNode(nodeId);
 	var nodeRadius = Number(node.data.entityConfig.config.attributes["radius"]);
 	node.data.entityConfig.config.attributes["radius"] = nodeRadius / 1.1;

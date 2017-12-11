@@ -54,7 +54,7 @@ function Neo4jQuerySimpleSearch(fromEntity, whereProperty, equalsValue, _sourceC
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jFetchEntitiesForNode(nodeId, _sourceConfig)
 {
-	if (!nodeId) {nodeId = globals.selectedNodeID;}
+	if (!nodeId) {nodeId = globals.selectedNode.id;}
 	var command = '';
 	switch(globals.viewOptions.navigateDirection){
 	case 'child':
@@ -267,13 +267,13 @@ function Neo4jDeleteRelationship(relationshipID, _sourceConfig) {
 function Neo4jDeleteLabel(nodeId, labelName, _sourceConfig) {
 	var command = "MATCH (n) where ID(n) = " + getNeoId(nodeId) + " REMOVE n:" + labelName;
 	var callback = function (results, sourceConfig) {
-	    Neo4jGetNodeById(globals.selectedNodeID, sourceConfig)
+	    Neo4jGetNodeById(globals.selectedNode.id, sourceConfig)
 	};
 	Neo4j_Command([command], callback, _sourceConfig, callback);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Neo4jAddProperty(nodeId, _sourceConfig) {
-	if (!nodeId) { nodeId = globals.selectedNodeID }
+	if (!nodeId) { nodeId = globals.selectedNode.id }
 	var elePropKey = document.getElementById('add.property.key').value;
 	var elePropVal = document.getElementById('add.property.value').value;
 	var elePropType = document.getElementById('add.property.type').value;
@@ -282,7 +282,7 @@ function Neo4jAddProperty(nodeId, _sourceConfig) {
 	var command = "MATCH (n) where ID(n) = " + getNeoId(nodeId) + " SET n +={" + elePropKey + ":" + elePropVal + "}";
 
 	var callback = function (results, sourceConfig) {
-	    Neo4jGetNodeById(globals.selectedNodeID, sourceConfig);
+	    Neo4jGetNodeById(globals.selectedNode.id, sourceConfig);
 	};
 	Neo4j_Command([command], callback, _sourceConfig, callback);
 }
@@ -294,10 +294,10 @@ function Neo4jAddLabel(_sourceConfig) {
 	if (!processingElement.value) return;
 
 	var callback = function (results, sourceConfig) {
-	    Neo4jGetNodeById(globals.selectedNodeID, sourceConfig);
+	    Neo4jGetNodeById(globals.selectedNode.id, sourceConfig);
 	};
 
-	var command = "MATCH (n) where ID(n) = " + getNeoId(globals.selectedNodeID) + " SET n:" + processingElement.value;
+	var command = "MATCH (n) where ID(n) = " + getNeoId(globals.selectedNode.id) + " SET n:" + processingElement.value;
 	Neo4j_Command([command], callback, _sourceConfig, callback);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -854,7 +854,7 @@ function VueMenuHelper() {
     globals.selectedLink='';
     globals.selectedNode='';
     globals.selectedNodeData='';
-    globals.selectedNodeID='';
+    globals.selectedNode.id='';
     globals.selectedNodeUI='';
     globals.timeoutElements=[];
   }

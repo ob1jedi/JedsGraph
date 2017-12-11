@@ -390,7 +390,7 @@ function refreshEntitySelectors() {
 }
 
 function removeNodeFromStage(nodeID) {
-  if(!nodeID) { nodeID=globals.selectedNodeID; }
+  if(!nodeID) { nodeID=globals.selectedNode.id; }
   var node=globals.GRAPH.getNode(nodeID);
 
   var relativeLinks=node.data.toLinks.concat(node.data.fromLinks);

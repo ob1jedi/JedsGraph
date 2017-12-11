@@ -51,6 +51,8 @@ function addNodesToGraphFromGraphElementsAndReturnNodes(graphElements, _sourceCo
   return newNodes;
 }
 
+
+
 function addRelationToGraphReturnLink(relation, _sourceConfig) {
     var link = getExistingLink(relation.id);
     if (!link){
@@ -81,6 +83,7 @@ function addEntitiesToGraphAndReturnNodes(entities, _sourceConfig)
 	
 	return newNodes;
 }
+
 
 function GetConfigForEntityId(nodeData)
 {
