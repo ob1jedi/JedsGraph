@@ -58,7 +58,9 @@ var LocalStorageDataDriver=function() {
   this.GetRelatedEntityGraph=function(entityId) {
     var entity=this.GetEntityFromDatabase(entityId);
     var dataDriver=this;
-    return entity.links.map(function(relationId) { return dataDriver.GetGraphOfRelation(relationId) });
+    return entity.links.map(function(relationId) { 
+      return dataDriver.GetGraphOfRelation(relationId) 
+    });
   }
 
   this.GetGraphOfRelation=function(relationId) {
@@ -103,9 +105,15 @@ var LocalStorageDataDriver=function() {
   }
 
   this.DeleteEntity=function(entityId) {
-    localStorage.removeItem(nodeKeyFromNodeId(entityId));
+    debugger;
+    var entity = getEntityFromDatabase(entityId)
+    deleteNodeFromStorage(entity);
   }
 
+  this.DeleteRelation=function(relationId) {
+    var relation = getEntityFromDatabase(relationId)
+    deleteNodeFromStorage(relation);
+  }
 
   this.EntityExists=function(entityId) {
     var entity=readNodeFromStorage(entityId);
@@ -273,10 +281,34 @@ var LocalStorageDataDriver=function() {
     updatePropertyIndex("INDEX_ON_NODE_PROPS",entity);
   }
 
-  function writeLinkToStorage(link) {
-    localStorage.setItem(linkKeyFromNodeId(link.id),serialize(link));
-    updateLabelsIndex("INDEX_ON_LINK_LABELS",link);
-    updatePropertyIndex("INDEX_ON_LINK_PROPS",link);
+  function writeLinkToStorage(relation) {
+    localStorage.setItem(linkKeyFromLinkId(relation.id),serialize(relation));
+    updateLabelsIndex("INDEX_ON_LINK_LABELS",relation);
+    updatePropertyIndex("INDEX_ON_LINK_PROPS",relation);
+  }
+
+  function deleteNodeFromStorage(entity) {
+    localStorage.removeItem(nodeKeyFromNodeId(entity.id));
+    removeFromLabelsIndex("INDEX_ON_NODE_LABELS",entity);
+    removeFromPropertyIndex("INDEX_ON_NODE_PROPS",entity);
+  }
+
+  function deleteLinkFromStorage(relation) {
+    localStorage.removeItem(nodeKeyFromNodeId(relation.id));
+    removeFromLabelsIndex("INDEX_ON_LINK_LABELS",relation);
+    removeFromPropertyIndex("INDEX_ON_LINK_PROPS",relation);
+  }
+
+  function removeFromLabelsIndex(indexName,item) {
+    item.labels.forEach(function(label) {
+      removeFromIndex(indexName,label,item.id);
+    });
+  }
+
+  function removeFromPropertyIndex(indexName,item) {
+    for(var propertyKey in item.properties) {
+      removeFromIndex(indexName,propertyKey,item.id);
+    }
   }
 
   function updateLabelsIndex(indexName,item) {
@@ -297,6 +329,14 @@ var LocalStorageDataDriver=function() {
     if(index===null)
       index=dataStringHelper.getNewDataString();
     index=dataStringHelper.ensureDataIntoElement(index,elementName,data)
+    localStorage.setItem(indexName,index);
+  }
+
+  function removeFromIndex(indexName,elementName,data){
+    var index=localStorage.getItem(indexName);
+    if(index===null) return;
+    var dataStringHelper=new DataStringHelper();
+    index=dataStringHelper.ensureDataNotInElement(index,elementName,data)
     localStorage.setItem(indexName,index);
   }
 
@@ -347,7 +387,7 @@ var LocalStorageDataDriver=function() {
   }
 
   function readLinkFromStorage(relationId) {
-    return deserialize(localStorage.getItem(linkKeyFromNodeId(relationId)));
+    return deserialize(localStorage.getItem(linkKeyFromLinkId(relationId)));
   }
 
 
@@ -374,7 +414,7 @@ var LocalStorageDataDriver=function() {
     return 'N_'+entityId;
   }
 
-  function linkKeyFromNodeId(relationId) {
+  function linkKeyFromLinkId(relationId) {
     return 'L_'+relationId;
   }
 

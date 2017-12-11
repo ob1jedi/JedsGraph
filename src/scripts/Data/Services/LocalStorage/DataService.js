@@ -67,9 +67,13 @@
     return entityId;
   }
 
-  this.DeleteEntity=function(entityID,_sourceConfig) {
-    dataDriver.DeleteEntity(entityID);
-    //Neo4jDeleteNode(nodeID, _sourceConfig);
+  this.DeleteEntity=function(entityId,_sourceConfig) {
+    var graphElements=dataDriver.GetRelatedEntityGraph(stripDomainFromId(entityId));
+    for (var i = 0; i < graphElements.length; i++){
+      dataDriver.DeleteRelation(graphElements[i].link.id);
+    }
+    dataDriver.DeleteEntity(entityId);
+    removeNodeFromGraph(entityId);
   }
 
   this.CheckMonitoredNodes=function(_sourceConfig) {

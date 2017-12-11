@@ -177,11 +177,12 @@ var DataStringHelper = function () {
 
 	// ===== PRIVATE ===== //
 	function removeDataFromString(dataString, excludeData) {
+    var exData = excludeData.toString();
 		var dataArray = dataString.split(',');
-		var index = dataArray.indexOf(excludeData.toString());
+		var index = dataArray.indexOf(exData);
 		if (index == -1)
 			return dataString;
-		dataArray = dataArray.splice(index - 1, 1);
+		dataArray.splice(index, 1);
 		return dataArray.join();
 	}
 

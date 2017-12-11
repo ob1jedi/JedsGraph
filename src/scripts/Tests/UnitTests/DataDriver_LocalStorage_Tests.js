@@ -439,11 +439,23 @@ globals.allUnitTests.push(function deleteNode_Given1DeletedNode_ExpectNodeNotFou
   node1.labels = ["TESTCASE1"];
 	var node1Id = sut.CreateEntityInDatabasePopulateAndReturnId(node1.labels);
 	sut.DeleteEntity(node1Id);
+  
+  
+
 
 	// Act
 	var result = sut.EntityExists(node1Id);
+  
 
 	// Assert
+  console.log('node1Id', node1Id);
+  var nodeLabelsIndex = localStorage.getItem("INDEX_ON_NODE_LABELS");
+  if (nodeLabelsIndex.indexOf(',' + node1Id + ',') > -1
+    || nodeLabelsIndex.indexOf(':' + node1Id + ',') > -1
+    || nodeLabelsIndex.indexOf(':' + node1Id + '|') > -1
+    || nodeLabelsIndex.indexOf(',' + node1Id + '|') > -1)
+    return result;
+
 	if (result === false)
 		return true
 
