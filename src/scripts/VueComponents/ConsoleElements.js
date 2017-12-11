@@ -185,16 +185,10 @@ var consoleApp=new Vue({
       editEntity: function(){
         var node = globals.selectedNode;
         function confirmFunction(node){
-          console.log('new node:', node);
           var propsObject = new JsonHelper().KeyValueCollectionToDictionary(node.data.properties);
-          
-          console.log('node.id:', node.id);
-          console.log('node.data.labels:', node.data.labels);
-          console.log('props object:', propsObject);
           new DataService().UpdateEntity(node.id, node.data.labels, propsObject);
           node.data.propertiesObject = propsObject;
           new NodeHelper().ReloadNode(node.id);
-          
           new VueConsoleHelper().CloseNodeEditModal();
         }
         new VueConsoleHelper().DisplayNodeEditModal(node, confirmFunction);
@@ -202,6 +196,14 @@ var consoleApp=new Vue({
 
       },
       deleteEntity: function(){
+        var nodeToDelete = globals.selectedNode;
+        var header='Are you sure?';
+        var content="Delete \""+ nodeToDelete.data.labels[0] +"\"";
+        var ifConfirmed=function() {
+          new DataService().DeleteEntity(nodeToDelete.id);
+          new VueConsoleHelper().CloseGlobalInfoModal();
+        };
+        new VueConsoleHelper().DisplayConfirmModal(header,content,ifConfirmed,'Yes','Cancel');
         //TODO
       }
 
@@ -904,13 +906,10 @@ function VueToolbarHelper() {
 function VueConsoleHelper() {
 
   this.DisplayNodeEditModal=function(editingNode, confirmFunction) {
-    console.log('editingNode', editingNode);
-    console.log('confirmFunction', confirmFunction);
     consoleApp.modals.nodeEditModal.editingNode = editingNode;
     consoleApp.modals.nodeEditModal.buttons=[];
     consoleApp.modals.nodeEditModal.buttons.push({ caption: "Cancel",onclick: new VueConsoleHelper().CloseNodeEditModal })
     consoleApp.modals.nodeEditModal.buttons.push({ caption: "Save",onclick: confirmFunction });
-    
     showNodeEditModal();
   }
   
@@ -922,8 +921,8 @@ function VueConsoleHelper() {
     consoleApp.modals.commonModal.buttons=[];
     consoleApp.modals.commonModal.header=header;
     consoleApp.modals.commonModal.htmlContent=content;
-    consoleApp.modals.commonModal.buttons.push({ caption: _confirmCaption||"yes",onclick: confirmFunction });
-    consoleApp.modals.commonModal.buttons.push({ caption: _cancelCaption||"cancel",onclick: new VueConsoleHelper().CloseGlobalInfoModal })
+    consoleApp.modals.commonModal.buttons.push({ caption: _cancelCaption||"Cancel",onclick: new VueConsoleHelper().CloseGlobalInfoModal })
+    consoleApp.modals.commonModal.buttons.push({ caption: _confirmCaption||"Yes",onclick: confirmFunction });
     showGlobalInfoModal();
   }
 
